@@ -1,0 +1,58 @@
+
+/******************************************************************************
+ *         __  __           _     _         ____  _       _                   *
+ *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
+ *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
+ *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
+ *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
+ *                                  |___/                                     *
+ *                                                                            *
+ *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
+ *	           Many thanks to creators of muds before me.                 *
+ *                                                                            *
+ *        In order to use any part of this Mud, you must comply with the      *
+ *     license in 'license.txt'.  In particular, you may not remove either    *
+ *                        of these copyright notices.                         *
+ *                                                                            *
+ *       Much time and thought has gone into this software and you are        *
+ *     benefitting.  I hope that you share your changes too.  What goes       *
+ *                            around, comes around.                           *
+ ******************************************************************************/
+
+#ifndef FLAG_H
+#define FLAG_H
+
+
+typedef long long bit_t;
+typedef struct Flag Flag;
+
+#include <muddyengine/lookup.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+struct Flag
+{
+	int *bits;
+	size_t size;
+};
+
+Flag *new_flag(  );
+Flag *init_flag( int );
+void destroy_flags( Flag * );
+Flag *copy_flags( Flag *, Flag * );
+Flag *set_bit( Flag *, bit_t);
+Flag *set_flags( Flag *, Flag * );
+Flag *toggle_bit( Flag *, bit_t );
+Flag *toggle_flags( Flag *, Flag * );
+Flag *remove_bit( Flag *, bit_t );
+Flag *remove_flags( Flag *, Flag * );
+bool is_set( Flag *, bit_t );
+bool flags_set( Flag *, Flag * );
+int parse_flags_toggle( Flag *, const char *, const Lookup * );
+const char *format_flags( Flag *, const Lookup * );
+int parse_flags( Flag *, const char *, const Lookup * );
+int flag_toint( Flag * );
+void flag_fromint( int );
+
+
+#endif							//  #ifndef FLAG_H
