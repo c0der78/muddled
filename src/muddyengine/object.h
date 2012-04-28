@@ -138,7 +138,7 @@ Object *new_object(  );
 void destroy_object( Object * );
 
 Object *load_object( identifier_t );
-int load_obj_columns( Object *, sqlite3_stmt * );
+int load_obj_columns( Object *, db_stmt * );
 int load_objects( Area * );
 int save_object( Object * );
 int delete_object( Object * );

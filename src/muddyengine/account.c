@@ -23,7 +23,6 @@
 #include <muddyengine/string.h>
 #include <muddyengine/db.h>
 #include <muddyengine/log.h>
-#include <sqlite3.h>
 #include <muddyengine/character.h>
 #include <muddyengine/player.h>
 #include <muddyengine/engine.h>
@@ -116,9 +115,9 @@ static const char *save_last_note( void *arg )
 	return buf;
 }
 
-static void read_last_note( void *data, sqlite3_stmt * stmt, int i )
+static void read_last_note( void *data, db_stmt * stmt, int i )
 {
-	const char *pstr = strtok( ( char * ) sqlite3_column_str( stmt, i ), "=" );
+	const char *pstr = strtok( ( char * ) db_column_str( stmt, i ), "=" );
 
 	time_t *lastNote = ( time_t * ) data;
 
@@ -140,59 +139,59 @@ static void read_last_note( void *data, sqlite3_stmt * stmt, int i )
 int load_account( Account * acc, const char *login )
 {
 	char buf[500];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int len = sprintf( buf, "select * from account where login='%s'", login );
 
 	log_debug( "loading account %s", login );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == SQLITE_DONE )
 	{
-		if ( sqlite3_finalize( stmt ) != SQLITE_OK )
-			log_sqlite3( "could not finalize sql statement" );
+		if ( db_finalize( stmt ) != DB_OK )
+			log_data( "could not finalize sql statement" );
 		return 0;
 	}
 
 	do
 	{
-		int i, cols = sqlite3_column_count( stmt );
+		int i, cols = db_column_count( stmt );
 		for ( i = 0; i < cols; i++ )
 		{
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "accountId" ) )
 			{
-				acc->id = sqlite3_column_int( stmt, i );
+				acc->id = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "login" ) )
 			{
-				acc->login = str_dup( sqlite3_column_str( stmt, i ) );
+				acc->login = str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "email" ) )
 			{
-				acc->email = str_dup( sqlite3_column_str( stmt, i ) );
+				acc->email = str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "timezone" ) )
 			{
-				acc->timezone = sqlite3_column_int( stmt, i );
+				acc->timezone = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "autologinId" ) )
 			{
-				acc->autologinId = sqlite3_column_int( stmt, i );
+				acc->autologinId = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 				parse_flags( acc->flags,
-							 sqlite3_column_str( stmt, i ), account_flags );
+							 db_column_str( stmt, i ), account_flags );
 			}
 			else if ( !str_cmp( colname, "password" ) )
 			{
-				acc->password = str_dup( sqlite3_column_str( stmt, i ) );
+				acc->password = str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "lastNote" ) )
 			{
@@ -204,15 +203,15 @@ int load_account( Account * acc, const char *login )
 			}
 		}
 	}
-	while ( sqlite3_step( stmt ) != SQLITE_DONE );
+	while ( db_step( stmt ) != SQLITE_DONE );
 
 	// load account players
 
 	load_account_players( acc );
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize sql statement" );
+		log_data( "could not finalize sql statement" );
 	}
 
 	return 1;
@@ -242,13 +241,13 @@ int save_account( Account * acc )
 
 		sprintf( buf, "insert into account (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert character" );
+			log_data( "could not insert character" );
 			return 0;
 		}
 
-		acc->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		acc->id = db_last_insert_rowid();
 	}
 	else
 	{
@@ -259,9 +258,9 @@ int save_account( Account * acc )
 		sprintf( buf, "update account set %s where accountId=%" PRId64, values,
 				 acc->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update character" );
+			log_data( "could not update character" );
 			return 0;
 		}
 	}
@@ -273,27 +272,27 @@ int delete_account( Account * acc )
 {
 
 	char buf[500];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int len = sprintf( buf, "delete from account where accountId=%" PRId64, acc->id );
 
 	log_debug( "deleting account %s", acc->login );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
-		if ( sqlite3_finalize( stmt ) != SQLITE_OK )
-			log_sqlite3( "could not finalize sql statement" );
+		if ( db_finalize( stmt ) != DB_OK )
+			log_data( "could not finalize sql statement" );
 		return 0;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize sql statement" );
+		log_data( "could not finalize sql statement" );
 	}
 
 	return 1;
@@ -302,22 +301,22 @@ int delete_account( Account * acc )
 int load_account_players( Account * acc )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int len = sprintf( buf,
 					   "select * from character natural join player where accountId=%" PRId64,
 					   acc->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == SQLITE_DONE )
 	{
-		if ( sqlite3_finalize( stmt ) != SQLITE_OK )
-			log_sqlite3( "could not finalize sql statement" );
+		if ( db_finalize( stmt ) != DB_OK )
+			log_data( "could not finalize sql statement" );
 		return 0;
 	}
 
@@ -325,23 +324,23 @@ int load_account_players( Account * acc )
 
 	do
 	{
-		int i, cols = sqlite3_column_count( stmt );
+		int i, cols = db_column_count( stmt );
 
 		for ( i = 0; i < cols; i++ )
 		{
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
-				ch->name = str_dup( sqlite3_column_str( stmt, i ) );
+				ch->name = str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
-				ch->level = sqlite3_column_int( stmt, i );
+				ch->level = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "accountId" ) )
 			{
-				if ( acc->id != sqlite3_column_int( stmt, i ) )
+				if ( acc->id != db_column_int( stmt, i ) )
 				{
 					log_error( "sql retrieved invalid player for account" );
 					break;
@@ -350,15 +349,15 @@ int load_account_players( Account * acc )
 			}
 			else if ( !str_cmp( colname, "charId" ) )
 			{
-				ch->charId = sqlite3_column_int( stmt, i );
+				ch->charId = db_column_int( stmt, i );
 			}
 		}
 	}
-	while ( sqlite3_step( stmt ) != SQLITE_DONE );
+	while ( db_step( stmt ) != SQLITE_DONE );
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "unable to finalize statement" );
+		log_data( "unable to finalize statement" );
 	}
 
 	return 1;

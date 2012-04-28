@@ -28,27 +28,70 @@
 #include <stdio.h>
 #include "config.h"
 
-sqlite3 *sqlite3_instance = 0;
-
-void init_sqlite3( const char *root_path )
+sqlite3 *enginedb()
 {
-	int rc = sqlite3_open( formatf(root_path, SQLITE3_FILE), &sqlite3_instance );	//, SQLITE_OPEN_READWRITE|SQLITE_OPEN_FULLMUTEX, 0);
-	if ( rc )
+	return engine_info.db;
+}
+
+int db_errcode() {
+	sqlite3 *db = enginedb();
+	return db == 0 ? DB_OK : sqlite3_errcode( enginedb() );
+}
+
+const char *db_errmsg() {
+	return sqlite3_errmsg( enginedb() );
+}
+
+int db_last_insert_rowid() {
+	return sqlite3_last_insert_rowid( enginedb() );
+}
+
+int db_exec(const char *buf) {
+	return sqlite3_exec( enginedb(), buf, 0, 0, 0);
+}
+
+void db_close() {
+	if(sqlite3_close(enginedb()) != SQLITE_OK)
 	{
-		log_sqlite3( "Can't open database" );
-		sqlite3_close( sqlite3_instance );
-		exit( EXIT_FAILURE );
+		log_data("unable to close db");
 	}
 }
 
-void close_sqlite3(  )
+int db_open(const char *root_path)
 {
-	if ( sqlite3_instance != 0 )
-	{
-		log_info( "shutting down database" );
-		sqlite3_close( sqlite3_instance );
-		sqlite3_instance = 0;
-	}
+	return sqlite3_open( formatf("%s/" SQLITE3_FILE, root_path), &engine_info.db );
+}
+
+int db_query(const char *buf, int len, db_stmt **stmt) {
+	return sqlite3_prepare( enginedb(), buf,  len,  stmt, 0);
+}
+
+int db_step(db_stmt *stmt) {
+	return sqlite3_step(stmt);
+}
+
+int db_finalize(db_stmt *stmt) {
+	return sqlite3_finalize(stmt);
+}
+
+int db_column_count(db_stmt *stmt) {
+	return sqlite3_column_count(stmt);
+}
+
+const char *db_column_name(db_stmt *stmt, int column) {
+	return sqlite3_column_name(stmt, column);
+}
+
+int db_column_int(db_stmt *stmt, int column) {
+	return sqlite3_column_int(stmt, column);
+}
+
+const char *db_column_str(db_stmt *stmt, int column) {
+	return (const char *) sqlite3_column_text(stmt, column);
+}
+
+int64_t db_column_int64(db_stmt *stmt, int column) {
+	return sqlite3_column_int64(stmt, column);
 }
 
 const char *escape_db_str( const char *pstr )
@@ -205,10 +248,10 @@ const char *db_save_int_array( int max, void *arg )
 	return buf;
 }
 
-void db_read_int_array( int max, void *arg, sqlite3_stmt * stmt, int i )
+void db_read_int_array( int max, void *arg, db_stmt * stmt, int i )
 {
 	int *values = ( int * ) arg;
-	const char *value = strtok( ( char * ) sqlite3_column_str( stmt, i ), "," );
+	const char *value = strtok( ( char * ) db_column_str( stmt, i ), "," );
 	int index = 0;
 
 	while ( value )
@@ -226,10 +269,10 @@ void load_field_values(  )
 {
 }
 
-sqlite3_stmt *db_select_all( table_map * table, ... )
+db_stmt *db_select_all( table_map * table, ... )
 {
 	char buf[500];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	va_list args;
 	table_map *arg;
 	int len = sprintf( buf, "select * from %s", table->name );
@@ -242,20 +285,20 @@ sqlite3_stmt *db_select_all( table_map * table, ... )
 	}
 	va_end( args );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
 	return stmt;
 }
 
-sqlite3_stmt *db_select_where( const char *fields, const char *where,
+db_stmt *db_select_where( const char *fields, const char *where,
 							   table_map * table, ... )
 {
 	char buf[BUF_SIZ];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	va_list args;
 	table_map *arg;
 	int len = sprintf( buf, "select %s from %s", fields, table->name );
@@ -273,9 +316,9 @@ sqlite3_stmt *db_select_where( const char *fields, const char *where,
 		len += sprintf( &buf[len], " %s", where );
 	}
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
@@ -318,9 +361,9 @@ void build_update_values( struct dbvalues *table, char *values )
 
 int db_begin_transaction(  )
 {
-	if ( sqlite3_exec( sqlite3_instance, "BEGIN", 0, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( "BEGIN") != DB_OK )
 	{
-		log_sqlite3( "unable to begin transaction." );
+		log_data( "unable to begin transaction." );
 		return 0;
 	}
 
@@ -330,9 +373,9 @@ int db_begin_transaction(  )
 
 int db_end_transaction(  )
 {
-	if ( sqlite3_exec( sqlite3_instance, "END", 0, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( "END") != DB_OK )
 	{
-		log_sqlite3( "unable to end transaction." );
+		log_data( "unable to end transaction." );
 		return 0;
 	}
 

@@ -91,38 +91,38 @@ void destroy_race( Race * race )
 int load_races(  )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from race" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		Race *race = new_race(  );
 
 		for ( int i = 0; i < count; i++ )
 		{
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
-				race->name = str_dup( sqlite3_column_str( stmt, i ) );
+				race->name = str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "description" ) )
 			{
-				race->description = str_dup( sqlite3_column_str( stmt, i ) );
+				race->description = str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "raceId" ) )
 			{
-				race->id = sqlite3_column_int( stmt, i );
+				race->id = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "stats" ) )
 			{
@@ -135,7 +135,7 @@ int load_races(  )
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 				parse_flags( race->flags,
-							 sqlite3_column_str( stmt, i ), race_flags );
+							 db_column_str( stmt, i ), race_flags );
 			}
 			else
 			{
@@ -147,9 +147,9 @@ int load_races(  )
 		total++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return total;
@@ -179,13 +179,13 @@ int save_race( Race * race )
 
 		sprintf( buf, "insert into race (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert race" );
+			log_data( "could not insert race" );
 			return 0;
 		}
 
-		race->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		race->id = db_last_insert_rowid();
 
 	}
 	else
@@ -196,9 +196,9 @@ int save_race( Race * race )
 
 		sprintf( buf, "update race set %s where raceId=%" PRId64, values, race->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update race" );
+			log_data( "could not update race" );
 			return 0;
 		}
 	}

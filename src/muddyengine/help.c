@@ -73,13 +73,13 @@ void destroy_help( Help * help )
 }
 
 int
-load_help_column( Help * help, sqlite3_stmt * stmt, const char *colname, int i )
+load_help_column( Help * help, db_stmt * stmt, const char *colname, int i )
 {
 
 	if ( !str_cmp( colname, "keywords" ) )
 	{
 
-		help->keywords = str_dup( sqlite3_column_str( stmt, i ) );
+		help->keywords = str_dup( db_column_str( stmt, i ) );
 
 		return 1;
 
@@ -87,7 +87,7 @@ load_help_column( Help * help, sqlite3_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "syntax" ) )
 	{
 
-		help->syntax = str_dup( sqlite3_column_str( stmt, i ) );
+		help->syntax = str_dup( db_column_str( stmt, i ) );
 
 		return 1;
 
@@ -95,7 +95,7 @@ load_help_column( Help * help, sqlite3_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "text" ) )
 	{
 
-		help->text = str_dup( sqlite3_column_str( stmt, i ) );
+		help->text = str_dup( db_column_str( stmt, i ) );
 
 		return 1;
 
@@ -103,7 +103,7 @@ load_help_column( Help * help, sqlite3_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "helpId" ) )
 	{
 
-		help->id = sqlite3_column_int64( stmt, i );
+		help->id = db_column_int64( stmt, i );
 
 		return 1;
 
@@ -111,7 +111,7 @@ load_help_column( Help * help, sqlite3_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "category" ) )
 	{
 
-		help->category = sqlite3_column_int( stmt, i );
+		help->category = db_column_int( stmt, i );
 
 		return 1;
 
@@ -135,25 +135,25 @@ int load_related_helps(  )
 
 		char buf[400];
 
-		sqlite3_stmt *stmt;
+		db_stmt *stmt;
 
 		int len = sprintf( buf, "select * from help_related where helpId=%"PRId64,
 						   help->id );
 
-		if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) !=
-			 SQLITE_OK )
+		if ( db_query( buf,  len,  &stmt) !=
+			 DB_OK )
 		{
 
-			log_sqlite3( "could not prepare statement" );
+			log_data( "could not prepare statement" );
 
 			return 0;
 
 		}
 
-		while ( sqlite3_step( stmt ) != SQLITE_DONE )
+		while ( db_step( stmt ) != SQLITE_DONE )
 		{
 
-			int related = sqlite3_column_int( stmt, 1 );
+			int related = db_column_int( stmt, 1 );
 
 			for ( Help * rel = first_help; help; help = help->next )
 
@@ -172,10 +172,10 @@ int load_related_helps(  )
 
 		}
 
-		if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+		if ( db_finalize( stmt ) != DB_OK )
 		{
 
-			log_sqlite3( "could not finalize statement" );
+			log_data( "could not finalize statement" );
 
 		}
 
@@ -190,32 +190,32 @@ int load_helps(  )
 
 	char buf[400];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from help" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		Help *help = new_help(  );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			load_help_column( help, stmt, colname, i );
 
@@ -234,10 +234,10 @@ int load_helps(  )
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -271,16 +271,16 @@ int save_help( Help * help )
 
 		sprintf( buf, "insert into help (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not insert help" );
+			log_data( "could not insert help" );
 
 			return 0;
 
 		}
 
-		help->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		help->id = db_last_insert_rowid();
 
 	}
 	else
@@ -292,10 +292,10 @@ int save_help( Help * help )
 
 		sprintf( buf, "update help set %s where helpId=%" PRId64, values, help->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not update help" );
+			log_data( "could not update help" );
 
 			return 0;
 

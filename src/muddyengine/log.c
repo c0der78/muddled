@@ -22,8 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <muddyengine/log.h>
-#include <sqlite3.h>
-#include <muddyengine/db.h>
 #include <muddyengine/engine.h>
 #include <muddyengine/flag.h>
 #include <muddyengine/util.h>
@@ -35,7 +33,7 @@ const Lookup logging_flags[] = {
 	{LOG_ERR, "error"},
 	{LOG_DEBUG, "debug"},
 	{LOG_WARN, "warning"},
-	{LOG_SQLITE3, "sqlite3"},
+	{LOG_DATA, "data"},
 	{LOG_TRACE, "trace"},
 	{LOG_BUG, "bug"},
 	{LOG_FILE, "file"},
@@ -78,12 +76,11 @@ void log_fun( const char *func, int level, const char *fmt, ... )
 		case LOG_WARN:
 			sprintf( log, "%s WARN [%s]: %s\n", date, func, buf );
 			break;
-		case LOG_SQLITE3:
-			if ( sqlite3_instance != 0
-				 && sqlite3_errcode( sqlite3_instance ) != SQLITE_OK )
+		case LOG_DATA:
+			if ( db_errcode( ) != DB_OK )
 			{
 				sprintf( log, "%s SQL [%s]: %s (%s)\n", date, func, buf,
-						 sqlite3_errmsg( sqlite3_instance ) );
+						 db_errmsg(  ) );
 			}
 			else
 			{

@@ -409,62 +409,62 @@ bool is_affected( Character * ch, identifier_t sn )
 Affect *load_affect_by_id( identifier_t id )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int len = sprintf( buf, "select * from affect where affectId=%"PRId64, id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
 	Affect *paf = 0;
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
 		paf = new_affect(  );
 		paf->id = id;
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		for ( int i = 0; i < count; i++ )
 		{
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "affectId" ) )
 			{
-				if ( id != sqlite3_column_int( stmt, i ) )
+				if ( id != db_column_int( stmt, i ) )
 					log_error( "sql statement did not return correct affect" );
 			}
 			else if ( !str_cmp( colname, "type" ) )
 			{
-				paf->type = sqlite3_column_int( stmt, i );
+				paf->type = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
-				paf->level = sqlite3_column_int( stmt, i );
+				paf->level = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "duration" ) )
 			{
-				paf->duration = sqlite3_column_int( stmt, i );
+				paf->duration = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "modifier" ) )
 			{
-				paf->modifier = sqlite3_column_int( stmt, i );
+				paf->modifier = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 				parse_flags( paf->flags,
-							 sqlite3_column_str( stmt, i ), affect_flags );
+							 db_column_str( stmt, i ), affect_flags );
 			}
 			else if ( !str_cmp( colname, "whereTo" ) )
 			{
-				paf->where = sqlite3_column_int( stmt, i );
+				paf->where = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "location" ) )
 			{
-				paf->location = sqlite3_column_int( stmt, i );
+				paf->location = db_column_int( stmt, i );
 			}
 			else
 			{
@@ -473,9 +473,9 @@ Affect *load_affect_by_id( identifier_t id )
 		}
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "unable to finalize statement" );
+		log_data( "unable to finalize statement" );
 	}
 
 	return paf;
@@ -505,13 +505,13 @@ int save_affect( Affect * paf )
 
 		sprintf( buf, "insert into affect (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert affect" );
+			log_data( "could not insert affect" );
 			return 0;
 		}
 
-		paf->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		paf->id = db_last_insert_rowid();
 
 	}
 	else
@@ -523,9 +523,9 @@ int save_affect( Affect * paf )
 		sprintf( buf, "update affect set %s where affectId=%"PRId64, values,
 				 paf->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update character" );
+			log_data( "could not update character" );
 			return 0;
 		}
 	}

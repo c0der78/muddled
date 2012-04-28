@@ -64,26 +64,26 @@ void destroy_area( Area * area )
 	free_mem( area );
 }
 
-void load_area_columns( Area * area, sqlite3_stmt * stmt )
+void load_area_columns( Area * area, db_stmt * stmt )
 {
-	int count = sqlite3_column_count( stmt );
+	int count = db_column_count( stmt );
 
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = sqlite3_column_name( stmt, i );
+		const char *colname = db_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "areaId" ) )
 		{
-			area->id = sqlite3_column_int( stmt, i );
+			area->id = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "name" ) )
 		{
-			area->name = str_dup( sqlite3_column_str( stmt, i ) );
+			area->name = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 			parse_flags( area->flags,
-						 sqlite3_column_str( stmt, i ), area_flags );
+						 db_column_str( stmt, i ), area_flags );
 		}
 		else
 		{
@@ -96,19 +96,19 @@ void load_area_columns( Area * area, sqlite3_stmt * stmt )
 Area *load_area( identifier_t id )
 {
 	char buf[500];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	Area *area = 0;
 
 	int len =
 		sprintf( buf, "select * from area where areaId = %"PRId64" limit 1", id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
 		area = new_area( );
 
@@ -122,9 +122,9 @@ Area *load_area( identifier_t id )
 		max_area++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return area;
@@ -133,18 +133,18 @@ Area *load_area( identifier_t id )
 int load_areas(  )
 {
 	char buf[500];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from area" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 		Area *area = new_area(  );
 
@@ -159,9 +159,9 @@ int load_areas(  )
 		max_area++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	finalize_exits(  );
@@ -200,13 +200,13 @@ int save_area_only( Area * area )
 
 		sprintf( buf, "insert into area (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert area" );
+			log_data( "could not insert area" );
 			return 0;
 		}
 
-		area->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		area->id = db_last_insert_rowid();
 
 	}
 	else
@@ -217,9 +217,9 @@ int save_area_only( Area * area )
 
 		sprintf( buf, "update area set %s where areaId=%" PRId64, values, area->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update area" );
+			log_data( "could not update area" );
 			return 0;
 		}
 	}

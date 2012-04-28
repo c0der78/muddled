@@ -22,7 +22,9 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#ifdef HAVE_LIBLUA5_1
+#include "config.h"
+ 
+#ifdef HAVE_LUA
 
 #include <lua.h>
 #include <lualib.h>

@@ -35,17 +35,17 @@ void synch_table( const char *tablename, const Lookup * table )
 
 	sprintf( buf, "delete from %s", tablename );
 
-	if ( sqlite3_exec( sqlite3_instance, buf, 0, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( buf) != DB_OK )
 	{
-		log_sqlite3( "could not clear table, creating.." );
+		log_data( "could not clear table, creating.." );
 
 		sprintf( buf, "CREATE TABLE [%s] ("
 				 "[value] INTEGER NOT NULL PRIMARY KEY UNIQUE,"
 				 "[name] VARCHAR NOT NULL" ")", tablename );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, 0, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not create %s", tablename );
+			log_data( "could not create %s", tablename );
 			return;
 		}
 	}
@@ -66,9 +66,9 @@ void synch_table( const char *tablename, const Lookup * table )
 		sprintf( buf, "insert into %s (%s) values(%s)", tablename, names,
 				 values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert into %s", tablename );
+			log_data( "could not insert into %s", tablename );
 			return;
 		}
 	}
@@ -77,8 +77,6 @@ void synch_table( const char *tablename, const Lookup * table )
 void synchronize_tables(  )
 {
 	log_info( "synchronizing tables" );
-
-	db_begin_transaction(  );
 
 	synch_table( "direction", direction_table );
 	synch_table( "sex", sex_table );
@@ -91,8 +89,6 @@ void synchronize_tables(  )
 	synch_table( "where_type", where_types );
 	synch_table( "apply_type", apply_types );
 	synch_table( "dam_type", dam_types );
-
-	db_end_transaction(  );
 }
 
 long value_lookup( const Lookup * table, const char *arg )

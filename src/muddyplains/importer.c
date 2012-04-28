@@ -385,7 +385,7 @@ void import_commit( bool load )
 	import_cleanup(  );
 }
 
-void server_import( const char *file )
+void server_import( const char *db_path, const char *file )
 {
 	FILE *fp = fopen( file, "r" );
 	bool success;
@@ -396,7 +396,12 @@ void server_import( const char *file )
 		return;
 	}
 
-	init_sqlite3(  );
+	if(db_open(db_path ))
+	{
+		log_data( "Can't open database" );
+		db_close( );
+		exit( EXIT_FAILURE );
+	}
 
 	log_info( "loaded %d races", load_races(  ) );
 
@@ -427,7 +432,7 @@ void server_import( const char *file )
 		log_info( "Areas commited." );
 	}
 
-	close_sqlite3(  );
+	db_close(  );
 }
 
 bool import_rom_file( FILE * fpArea )

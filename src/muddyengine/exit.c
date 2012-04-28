@@ -107,25 +107,25 @@ int load_exits( Room * room )
 
 	char buf[BUF_SIZ];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from exit where fromRoom=%"PRId64, room->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		Exit *exit = new_exit(  );
 
@@ -136,18 +136,18 @@ int load_exits( Room * room )
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "exitId" ) )
 			{
 
-				exit->id = sqlite3_column_int( stmt, i );
+				exit->id = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "fromRoom" ) )
 			{
 
-				if ( room->id != sqlite3_column_int( stmt, i ) )
+				if ( room->id != db_column_int( stmt, i ) )
 
 					log_error( "sql returned invalid exit for room" );
 
@@ -155,20 +155,20 @@ int load_exits( Room * room )
 			else if ( !str_cmp( colname, "toRoom" ) )
 			{
 
-				exit->toRoomId = sqlite3_column_int( stmt, i );
+				exit->toRoomId = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "direction" ) )
 			{
 
-				dir = sqlite3_column_int( stmt, i );
+				dir = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 
 				parse_flags( exit->flags,
-							 sqlite3_column_str( stmt, i ), exit_flags );
+							 db_column_str( stmt, i ), exit_flags );
 
 				copy_flags( exit->status, exit->flags );
 
@@ -215,10 +215,10 @@ int load_exits( Room * room )
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -260,16 +260,16 @@ int save_exit( Exit * exit, direction_t dir )
 
 		sprintf( buf, "insert into exit (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not insert exit" );
+			log_data( "could not insert exit" );
 
 			return 0;
 
 		}
 
-		exit->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		exit->id = db_last_insert_rowid();
 
 	}
 	else
@@ -281,10 +281,10 @@ int save_exit( Exit * exit, direction_t dir )
 
 		sprintf( buf, "update exit set %s where exitId=%" PRId64, values, exit->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not update exit" );
+			log_data( "could not update exit" );
 
 			return 0;
 

@@ -20,7 +20,6 @@
 
 #include <muddyengine/room.h>
 #include "olc.h"
-#include <sqlite3.h>
 #include <stdlib.h>
 #include <string.h>
 #include "client.h"

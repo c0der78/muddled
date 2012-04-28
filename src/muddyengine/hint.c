@@ -58,36 +58,36 @@ int load_hints(  )
 
 	char buf[400];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select count(*) from hint" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	if ( sqlite3_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == SQLITE_DONE )
 	{
 
-		log_sqlite3( "could not count hints" );
+		log_data( "could not count hints" );
 
 		return 0;
 
 	}
 
-	max_hint = sqlite3_column_int( stmt, 0 );
+	max_hint = db_column_int( stmt, 0 );
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -95,42 +95,42 @@ int load_hints(  )
 
 	len = sprintf( buf, "select * from hint" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "text" ) )
 			{
 
 				hint_table[total].text =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "hintId" ) )
 			{
 
-				hint_table[total].id = sqlite3_column_int( stmt, i );
+				hint_table[total].id = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
 
-				hint_table[total].level = sqlite3_column_int( stmt, i );
+				hint_table[total].level = db_column_int( stmt, i );
 
 			}
 			else
@@ -146,10 +146,10 @@ int load_hints(  )
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -186,16 +186,16 @@ int save_hint( Hint * hint )
 
 		sprintf( buf, "insert into hint (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not insert hint" );
+			log_data( "could not insert hint" );
 
 			return 0;
 
 		}
 
-		hint->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		hint->id = db_last_insert_rowid();
 
 	}
 	else
@@ -207,10 +207,10 @@ int save_hint( Hint * hint )
 
 		sprintf( buf, "update hint set %s where hintId=%" PRId64, values, hint->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not update hint" );
+			log_data( "could not update hint" );
 
 			return 0;
 

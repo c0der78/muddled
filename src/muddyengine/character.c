@@ -220,19 +220,19 @@ void extract_char( Character * ch, bool fPull )
 int load_char_objs( Character * ch )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from char_objects where carriedById=%"PRId64,
 					   ch->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
 		Object *obj = new_object(  );
@@ -259,9 +259,9 @@ int load_char_objs( Character * ch )
 		total++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return total;
@@ -285,9 +285,9 @@ static const char *save_char_classes( void *arg )
 	return buf;
 }
 
-static int read_char_classes( void *arg, sqlite3_stmt * stmt, int i )
+static int read_char_classes( void *arg, db_stmt * stmt, int i )
 {
-	const char *pstr = strtok( ( char * ) sqlite3_column_str( stmt, i ), "," );
+	const char *pstr = strtok( ( char * ) db_column_str( stmt, i ), "," );
 	int total = 0;
 	int **data = ( int ** ) arg;
 
@@ -312,72 +312,72 @@ static int read_char_classes( void *arg, sqlite3_stmt * stmt, int i )
 }
 
 int
-load_char_column( Character * ch, sqlite3_stmt * stmt,
+load_char_column( Character * ch, db_stmt * stmt,
 				  const char *colname, int i )
 {
 	if ( !str_cmp( colname, "name" ) )
 	{
-		ch->name = str_dup( sqlite3_column_str( stmt, i ) );
+		ch->name = str_dup( db_column_str( stmt, i ) );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "version" ) )
 	{
-		ch->version = sqlite3_column_int( stmt, i );
+		ch->version = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "description" ) )
 	{
-		ch->description = str_dup( sqlite3_column_str( stmt, i ) );
+		ch->description = str_dup( db_column_str( stmt, i ) );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "level" ) )
 	{
-		ch->level = sqlite3_column_int( stmt, i );
+		ch->level = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "charId" ) )
 	{
-		ch->id = sqlite3_column_int( stmt, i );
+		ch->id = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "position" ) )
 	{
-		ch->position = sqlite3_column_int( stmt, i );
+		ch->position = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "hit" ) )
 	{
-		ch->hit = sqlite3_column_int( stmt, i );
+		ch->hit = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "maxHit" ) )
 	{
-		ch->maxHit = sqlite3_column_int( stmt, i );
+		ch->maxHit = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "move" ) )
 	{
-		ch->move = sqlite3_column_int( stmt, i );
+		ch->move = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "maxMove" ) )
 	{
-		ch->maxMove = sqlite3_column_int( stmt, i );
+		ch->maxMove = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "mana" ) )
 	{
-		ch->mana = sqlite3_column_int( stmt, i );
+		ch->mana = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "maxMana" ) )
 	{
-		ch->maxMana = sqlite3_column_int( stmt, i );
+		ch->maxMana = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "sex" ) )
 	{
-		ch->sex = sqlite3_column_int( stmt, i );
+		ch->sex = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "gold" ) )
@@ -387,7 +387,7 @@ load_char_column( Character * ch, sqlite3_stmt * stmt,
 	}
 	else if ( !str_cmp( colname, "raceId" ) )
 	{
-		ch->race = get_race_by_id( sqlite3_column_int( stmt, i ) );
+		ch->race = get_race_by_id( db_column_int( stmt, i ) );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "classes" ) )
@@ -407,7 +407,7 @@ load_char_column( Character * ch, sqlite3_stmt * stmt,
 	}
 	else if ( !str_cmp( colname, "alignment" ) )
 	{
-		ch->alignment = sqlite3_column_int( stmt, i );
+		ch->alignment = db_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "size" ) )
@@ -425,9 +425,9 @@ int delete_character( Character * ch )
 
 	sprintf( buf, "delete from character where charId=%"PRId64, ch->id );
 
-	if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( buf) != DB_OK )
 	{
-		log_sqlite3( "could not delete character" );
+		log_data( "could not delete character" );
 		return 0;
 	}
 
@@ -437,7 +437,7 @@ int delete_character( Character * ch )
 int save_char_objs( Character * ch )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int len;
 	Object *obj;
 
@@ -445,21 +445,21 @@ int save_char_objs( Character * ch )
 	{
 		len =
 			sprintf( buf,
-					 "select * from char_objects where carriedById=%"PRId64" and objectId=%"PRId64,
+					 "select objectId from char_objects where carriedById=%"PRId64" and objectId=%"PRId64,
 					 ch->id, obj->id );
 
-		if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) !=
-			 SQLITE_OK )
+		if ( db_query( buf,  len,  &stmt) !=
+			 DB_OK )
 		{
-			log_sqlite3( "could not prepare statement" );
+			log_data( "could not prepare statement" );
 			return 0;
 		}
 
-		bool update = sqlite3_step( stmt ) != SQLITE_DONE;
+		bool update = db_step( stmt ) != SQLITE_DONE;
 
-		if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+		if ( db_finalize( stmt ) != DB_OK )
 		{
-			log_sqlite3( "unable to finalize sql statement" );
+			log_data( "unable to finalize sql statement" );
 			return 0;
 		}
 
@@ -478,17 +478,17 @@ int save_char_objs( Character * ch )
 		sprintf( buf, "select * from char_objects where carriedById=%"PRId64,
 				 ch->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 		obj = ch->carrying;
 
-		identifier_t id = sqlite3_column_int64( stmt, 0 );
+		identifier_t id = db_column_int64( stmt, 0 );
 
 		while ( obj )
 		{
@@ -503,17 +503,17 @@ int save_char_objs( Character * ch )
 					 "delete from object where carriedById=%"PRId64" and objectId=%"PRId64,
 					 ch->id, id );
 
-			if ( sqlite3_exec( sqlite3_instance, buf, 0, 0, 0 ) != SQLITE_OK )
+			if ( db_exec( buf) != DB_OK )
 			{
-				log_sqlite3( "could not delete character object %"PRId64, id );
+				log_data( "could not delete character object %"PRId64, id );
 				return 0;
 			}
 		}
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 		return 0;
 	}
 
@@ -559,13 +559,13 @@ int save_character( Character * ch, const Lookup * flag_table )
 
 		sprintf( buf, "insert into character (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert character" );
+			log_data( "could not insert character" );
 			return 0;
 		}
 
-		ch->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		ch->id = db_last_insert_rowid();
 
 		return 1;
 	}
@@ -577,9 +577,9 @@ int save_character( Character * ch, const Lookup * flag_table )
 		sprintf( buf, "update character set %s where charId=%" PRId64, values,
 				 ch->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update character" );
+			log_data( "could not update character" );
 			return 0;
 		}
 
@@ -589,22 +589,22 @@ int save_character( Character * ch, const Lookup * flag_table )
 int load_char_affects( Character * ch )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len =
 		sprintf( buf, "select * from char_affect where charId=%" PRId64, ch->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int affId = sqlite3_column_int( stmt, 1 );
+		int affId = db_column_int( stmt, 1 );
 
 		Affect *aff = load_affect_by_id( affId );
 
@@ -616,9 +616,9 @@ int load_char_affects( Character * ch )
 		total++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return total;
@@ -627,7 +627,7 @@ int load_char_affects( Character * ch )
 int save_char_affects( Character * ch )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int len;
 	Affect *aff;
 
@@ -638,18 +638,18 @@ int save_char_affects( Character * ch )
 					 "select * from char_affect where charId=%"PRId64" and affectId=%" PRId64,
 					 ch->id, aff->id );
 
-		if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) !=
-			 SQLITE_OK )
+		if ( db_query( buf,  len,  &stmt) !=
+			 DB_OK )
 		{
-			log_sqlite3( "could not prepare statement" );
+			log_data( "could not prepare statement" );
 			return 0;
 		}
 
-		bool update = sqlite3_step( stmt ) != SQLITE_DONE;
+		bool update = db_step( stmt ) != SQLITE_DONE;
 
-		if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+		if ( db_finalize( stmt ) != DB_OK )
 		{
-			log_sqlite3( "unable to finalize sql statement" );
+			log_data( "unable to finalize sql statement" );
 			return 0;
 		}
 
@@ -672,10 +672,10 @@ int save_char_affects( Character * ch )
 			sprintf( buf, "insert into char_affect (%s) values(%s)",
 					 names, values );
 
-			if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) !=
-				 SQLITE_OK )
+			if ( db_exec( buf) !=
+				 DB_OK )
 			{
-				log_sqlite3( "could not insert affect" );
+				log_data( "could not insert affect" );
 				return 0;
 			}
 		}
@@ -689,10 +689,10 @@ int save_char_affects( Character * ch )
 					 "update char_affect set %s where affectId=%"PRId64" and charId=%" PRId64,
 					 values, aff->id, ch->id );
 
-			if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) !=
-				 SQLITE_OK )
+			if ( db_exec( buf) !=
+				 DB_OK )
 			{
-				log_sqlite3( "could not update character" );
+				log_data( "could not update character" );
 				return 0;
 			}
 		}
@@ -703,15 +703,15 @@ int save_char_affects( Character * ch )
 
 	len = sprintf( buf, "select * from char_affect where charId=%" PRId64, ch->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
-		identifier_t id = sqlite3_column_int64( stmt, 1 );
+		identifier_t id = db_column_int64( stmt, 1 );
 
 		for ( aff = ch->affects; aff; aff = aff->next )
 		{
@@ -725,17 +725,17 @@ int save_char_affects( Character * ch )
 					 "delete from char_affect where charId=%"PRId64" and affectId=%" PRId64,
 					 ch->id, id );
 
-			if ( sqlite3_exec( sqlite3_instance, buf, 0, 0, 0 ) != SQLITE_OK )
+			if ( db_exec( buf) != DB_OK )
 			{
-				log_sqlite3( "could not delete character affect %"PRId64, id );
+				log_data( "could not delete character affect %"PRId64, id );
 				return 0;
 			}
 		}
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 		return 0;
 	}
 

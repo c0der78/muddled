@@ -5,9 +5,8 @@ require 'rake/builder'
 directory 'var'
 directory 'var/run'
 directory 'var/log'
-directory 'bin'
 
-task :init => ['var', 'var/run', 'var/log', 'bin']
+task :init => ['var', 'var/run', 'var/log']
 
 Rake::Builder.new do |builder|
   builder.target               = 'muddyplainsd'
@@ -20,13 +19,13 @@ Rake::Builder.new do |builder|
   builder.include_paths		     = [ 'src', 'src/muddyplains' ]
   builder.library_dependencies = [ 'mud', 'sqlite3', 'lua' ]
   builder.library_paths        = [ '.' ]
-  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-Werror','-Wno-uninitialized','-O0','-DDEBUG',"-DROOT_DIR=#{builder.rakefile_path}"]
+  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-Werror','-Wno-uninitialized','-O0','-DDEBUG',"-DROOT_DIR=\"#{builder.rakefile_path}\""]
 end
 
 Rake::Builder.new do |builder|
 	builder.target               = 'libmud.a'
   builder.target_type          = :static_library
-  builder.target_prerequisites = :init
+  builder.target_prerequisites = [:init]
   builder.architecture         = 'x86_64'
   builder.programming_language = 'c'
   builder.objects_path         = 'debug/lib'
@@ -48,7 +47,7 @@ Rake::Builder.new do |builder|
   builder.include_paths		     = [ 'src', 'src/muddyplains' ]
   builder.library_dependencies = [ 'mud', 'sqlite3', 'lua' ]
   builder.library_paths        = [ '.' ]
-  builder.compilation_options  = ['-std=gnu99','-Wall','-Werror','-Wno-uninitialized','-O3',"-DROOT_DIR=#{builder.rakefile_path}"]
+  builder.compilation_options  = ['-std=gnu99','-Wall','-Werror','-Wno-uninitialized','-O3',"-DROOT_DIR=\"#{builder.rakefile_path}\""]
 end
 
 Rake::Builder.new do |builder|
@@ -61,5 +60,5 @@ Rake::Builder.new do |builder|
   builder.source_search_paths  = [ 'tests' ]
   builder.objects_path         = 'tests'
   builder.library_dependencies = [ 'check', 'mud' ]
-  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-Werror','-Wno-uninitialized','-O0','-DDEBUG',"-DROOT_DIR=#{builder.rakefile_path}"]
+  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-Werror','-Wno-uninitialized','-O0','-DDEBUG',"-DROOT_DIR=\"#{builder.rakefile_path}\""]
 end

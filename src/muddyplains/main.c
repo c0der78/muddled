@@ -90,7 +90,7 @@ void parse_options( int argc, char *argv[] )
 				server_port = atoi( optarg );
 				break;
 			case 'i':
-				server_import( optarg );
+				server_import( Stringify(ROOT_DIR), optarg );
 				exit( EXIT_SUCCESS );
 			default:
 				break;
@@ -347,6 +347,6 @@ void init_signals(  )
 		init_sig( &sig_table[i] );
 
 	atexit( close_lua );
-	atexit( close_sqlite3 );
+	atexit( db_close );
 	atexit( exit_engine );
 }

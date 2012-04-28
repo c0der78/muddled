@@ -71,7 +71,6 @@ typedef enum
 #include <muddyengine/race.h>
 #include <muddyengine/fight.h>
 #include <muddyengine/room.h>
-#include <sqlite3.h>
 
 struct Character
 {
@@ -125,7 +124,7 @@ Character *new_char(  );
 void destroy_char( Character * );
 short scrwidth( const Character * );
 short scrheight( const Character * );
-int load_char_column( Character *, sqlite3_stmt *, const char *, int );
+int load_char_column( Character *, db_stmt *, const char *, int );
 int save_character( Character *, const Lookup * );
 int delete_character( Character * );
 int load_char_objs( Character * );

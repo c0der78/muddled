@@ -179,17 +179,17 @@ int load_skill_levels( Skill * skill )
 
 	char buf[400];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from skill_level where skillId=%"PRId64,
 					   skill->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
@@ -197,10 +197,10 @@ int load_skill_levels( Skill * skill )
 
 	skill->levels = ( int * ) alloc_mem( max_class, sizeof( int ) );
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		int classId = 0;
 
@@ -211,12 +211,12 @@ int load_skill_levels( Skill * skill )
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "skillId" ) )
 			{
 
-				if ( sqlite3_column_int( stmt, i ) != skill->id )
+				if ( db_column_int( stmt, i ) != skill->id )
 
 					log_error
 						( "load_skill_levels: sql returned invalid skill" );
@@ -225,13 +225,13 @@ int load_skill_levels( Skill * skill )
 			else if ( !str_cmp( colname, "classId" ) )
 			{
 
-				classId = sqlite3_column_int( stmt, i );
+				classId = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
 
-				level = sqlite3_column_int( stmt, i );
+				level = db_column_int( stmt, i );
 
 			}
 			else
@@ -257,6 +257,10 @@ int load_skill_levels( Skill * skill )
 
 	}
 
+	if (db_finalize(stmt) != DB_OK) {
+		log_data("unable to finalize skill sql statement");
+	}
+
 	return total;
 
 }
@@ -273,36 +277,36 @@ int load_skills(  )
 
 	char buf[400];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select count(*) from skill" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	if ( sqlite3_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == SQLITE_DONE )
 	{
 
-		log_sqlite3( "could not count skills" );
+		log_data( "could not count skills" );
 
 		return 0;
 
 	}
 
-	max_skill = sqlite3_column_int( stmt, 0 );
+	max_skill = db_column_int( stmt, 0 );
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -310,62 +314,62 @@ int load_skills(  )
 
 	len = sprintf( buf, "select * from skill" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
 
 				skill_table[total].name =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "skillId" ) )
 			{
 
-				skill_table[total].id = sqlite3_column_int( stmt, i );
+				skill_table[total].id = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "msgOff" ) )
 			{
 
 				skill_table[total].msgOff =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "msgObj" ) )
 			{
 
 				skill_table[total].msgObj =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "mana" ) )
 			{
 
-				skill_table[total].mana = sqlite3_column_int( stmt, i );
+				skill_table[total].mana = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "wait" ) )
 			{
 
-				skill_table[total].wait = sqlite3_column_int( stmt, i );
+				skill_table[total].wait = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "cost" ) )
@@ -378,34 +382,34 @@ int load_skills(  )
 			{
 
 				skill_table[total].damage =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 
 				parse_flags( &skill_table[total].flags,
-							 sqlite3_column_str( stmt, i ), skill_flags );
+							 db_column_str( stmt, i ), skill_flags );
 
 			}
 			else if ( !str_cmp( colname, "min_pos" ) )
 			{
 
-				skill_table[total].minPos = sqlite3_column_int( stmt, i );
+				skill_table[total].minPos = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "spell" ) )
 			{
 
 				skill_table[total].spellfun =
-					spellfun_lookup( sqlite3_column_str( stmt, i ) );
+					spellfun_lookup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "gsn" ) )
 			{
 
 				skill_table[total].pgsn =
-					gsn_lookup( sqlite3_column_str( stmt, i ) );
+					gsn_lookup( db_column_str( stmt, i ) );
 
 				if ( skill_table[total].pgsn != 0 )
 
@@ -427,10 +431,10 @@ int load_skills(  )
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -490,16 +494,16 @@ int save_skill( Skill * skill )
 
 		sprintf( buf, "insert into skill (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not insert skill" );
+			log_data( "could not insert skill" );
 
 			return 0;
 
 		}
 
-		skill->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		skill->id = db_last_insert_rowid();
 
 	}
 	else
@@ -512,10 +516,10 @@ int save_skill( Skill * skill )
 		sprintf( buf, "update skill set %s where skillId=%"PRId64, values,
 				 skill->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not update skill" );
+			log_data( "could not update skill" );
 
 			return 0;
 

@@ -490,11 +490,11 @@ int delete_note( Forum * forum, Note * note )
 
 	sprintf( buf, "delete from note where noteId=%"PRId64, note->id );
 
-	if ( sqlite3_exec( sqlite3_instance, buf, 0, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( buf) != DB_OK )
 
 	{
 
-		log_sqlite3( "could not delete note" );
+		log_data( "could not delete note" );
 
 		return 0;
 
@@ -513,44 +513,44 @@ int load_notes( Forum * forum )
 
 	char buf[BUF_SIZ];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from note where forumId=%" PRId64, 
 		forum->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		Note *note = new_note(  );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "noteId" ) )
 			{
 
-				note->id = sqlite3_column_int( stmt, i );
+				note->id = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "forumId" ) )
 			{
 
-				if ( forum->id != sqlite3_column_int( stmt, i ) )
+				if ( forum->id != db_column_int( stmt, i ) )
 
 					log_error( "sql returned invalid note for forum" );
 
@@ -558,37 +558,37 @@ int load_notes( Forum * forum )
 			else if ( !str_cmp( colname, "toList" ) )
 			{
 
-				note->toList = str_dup( sqlite3_column_str( stmt, i ) );
+				note->toList = str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "sender" ) )
 			{
 
-				note->from = str_dup( sqlite3_column_str( stmt, i ) );
+				note->from = str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "subject" ) )
 			{
 
-				note->subject = str_dup( sqlite3_column_str( stmt, i ) );
+				note->subject = str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "text" ) )
 			{
 
-				note->text = str_dup( sqlite3_column_str( stmt, i ) );
+				note->text = str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "date_stamp" ) )
 			{
 
-				note->date = sqlite3_column_int( stmt, i );
+				note->date = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "expire" ) )
 			{
 
-				note->expire = sqlite3_column_int( stmt, i );
+				note->expire = db_column_int( stmt, i );
 
 			}
 			else
@@ -606,10 +606,10 @@ int load_notes( Forum * forum )
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -622,36 +622,36 @@ int load_forums(  )
 
 	char buf[BUF_SIZ];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select count(*) from forum" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	if ( sqlite3_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == SQLITE_DONE )
 	{
 
-		log_sqlite3( "could not count forums" );
+		log_data( "could not count forums" );
 
 		return 0;
 
 	}
 
-	max_forum = sqlite3_column_int( stmt, 0 );
+	max_forum = db_column_int( stmt, 0 );
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -659,80 +659,80 @@ int load_forums(  )
 
 	len = sprintf( buf, "select * from forum" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 
 		return 0;
 
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "forumId" ) )
 			{
 
-				forum_table[total].id = sqlite3_column_int( stmt, i );
+				forum_table[total].id = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "name" ) )
 			{
 
 				forum_table[total].name =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "description" ) )
 			{
 
 				forum_table[total].description =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "defaultTo" ) )
 			{
 
 				forum_table[total].defaultTo =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "readLevel" ) )
 			{
 
-				forum_table[total].readLevel = sqlite3_column_int( stmt, i );
+				forum_table[total].readLevel = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "writeLevel" ) )
 			{
 
-				forum_table[total].writeLevel = sqlite3_column_int( stmt, i );
+				forum_table[total].writeLevel = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "type" ) )
 			{
 
-				forum_table[total].type = sqlite3_column_int( stmt, i );
+				forum_table[total].type = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "purgeDays" ) )
 			{
 
-				forum_table[total].purgeDays = sqlite3_column_int( stmt, i );
+				forum_table[total].purgeDays = db_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 
-				forum_table[total].flags = sqlite3_column_int( stmt, i );
+				forum_table[total].flags = db_column_int( stmt, i );
 
 			}
 			else
@@ -750,10 +750,10 @@ int load_forums(  )
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 
 	}
 
@@ -792,16 +792,16 @@ int save_note( Forum * forum, Note * note )
 
 		log_trace( "%s", buf );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not insert note" );
+			log_data( "could not insert note" );
 
 			return 0;
 
 		}
 
-		note->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		note->id = db_last_insert_rowid();
 
 	}
 	else
@@ -813,10 +813,10 @@ int save_note( Forum * forum, Note * note )
 
 		sprintf( buf, "update note set %s where noteId=%"PRId64, values, note->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not update note" );
+			log_data( "could not update note" );
 
 			return 0;
 

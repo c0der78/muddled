@@ -100,32 +100,32 @@ void destroy_room( Room * room )
 	free_mem( room );
 }
 
-void load_room_columns( Room * room, sqlite3_stmt * stmt )
+void load_room_columns( Room * room, db_stmt * stmt )
 {
-	int count = sqlite3_column_count( stmt );
+	int count = db_column_count( stmt );
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = sqlite3_column_name( stmt, i );
+		const char *colname = db_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "name" ) )
 		{
-			room->name = str_dup( sqlite3_column_str( stmt, i ) );
+			room->name = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "description" ) )
 		{
-			room->description = str_dup( sqlite3_column_str( stmt, i ) );
+			room->description = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "roomId" ) )
 		{
-			room->id = sqlite3_column_int( stmt, i );
+			room->id = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "reset" ) )
 		{
-			room->reset = str_dup( sqlite3_column_str( stmt, i ) );
+			room->reset = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "areaId" ) )
 		{
-			int areaId = sqlite3_column_int( stmt, i );
+			int areaId = db_column_int( stmt, i );
 
 			if ( room->area != 0 )
 			{
@@ -139,12 +139,12 @@ void load_room_columns( Room * room, sqlite3_stmt * stmt )
 		}
 		else if ( !str_cmp( colname, "sector" ) )
 		{
-			room->sector = sqlite3_column_int( stmt, i );
+			room->sector = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 			parse_flags( room->flags,
-						 sqlite3_column_str( stmt, i ), room_flags );
+						 db_column_str( stmt, i ), room_flags );
 		}
 		else
 		{
@@ -159,18 +159,18 @@ void load_room_columns( Room * room, sqlite3_stmt * stmt )
 int load_rooms( Area * area )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from room where areaId=%" PRId64, area->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 		Room *room = new_room(  );
 
@@ -187,9 +187,9 @@ int load_rooms( Area * area )
 			max_explorable_room++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return total;
@@ -198,18 +198,18 @@ int load_rooms( Area * area )
 Room *load_room( identifier_t id )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	Room *room = 0;
 
 	int len = sprintf( buf, "select * from room where roomId=%"PRId64" limit 1", id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
 		room = new_room(  );
 
@@ -226,9 +226,9 @@ Room *load_room( identifier_t id )
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return room;
@@ -257,13 +257,13 @@ int save_room_only( Room * room )
 
 		sprintf( buf, "insert into room (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert room" );
+			log_data( "could not insert room" );
 			return 0;
 		}
 
-		room->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		room->id = db_last_insert_rowid();
 
 	}
 	else
@@ -274,9 +274,9 @@ int save_room_only( Room * room )
 
 		sprintf( buf, "update room set %s where roomId=%" PRId64, values, room->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update room" );
+			log_data( "could not update room" );
 			return 0;
 		}
 	}

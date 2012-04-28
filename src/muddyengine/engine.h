@@ -50,6 +50,7 @@ typedef double money_t;
 #include <time.h>
 #include <muddyengine/flag.h>
 #include <muddyengine/macro.h>
+#include <muddyengine/db.h>
 extern const char *weekdays[];
 extern const char *months[];
 extern const char *seasons[];
@@ -107,6 +108,7 @@ struct Engine
 	int total_logins;
 	int logins;
 	Flag *logging;
+	db_type *db;
 };
 
 extern Engine engine_info;
@@ -116,8 +118,12 @@ extern time_t current_time;
 extern const Lookup engine_flags[];
 extern const Lookup stat_table[];
 
-FILE *engine_open_file(const char *filepath, const char *perm);
-FILE *engine_open_file_in_dir(const char *folder, const char *name, const char *perm);
+FILE *engine_open_file(const char *, const char *);
+FILE *engine_open_file_in_dir(const char *, const char *, const char *);
+
+sqlite3 *enginedb();
+
+int engine_query(const char *, size_t, db_stmt*);
 
 int load_engine( const char *root_path );
 int save_engine(  );

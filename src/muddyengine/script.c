@@ -23,7 +23,7 @@
 #include <muddyengine/script.h>
 #include <muddyengine/log.h>
 
-#ifdef HAVE_LIBLUA5_1
+#ifdef HAVE_LUA
 
 lua_State *lua_instance = 0;
 

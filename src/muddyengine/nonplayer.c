@@ -60,36 +60,36 @@ void destroy_npc( NPC * npc )
 	free_mem( npc );
 }
 
-void load_npc_columns( Character * ch, sqlite3_stmt * stmt )
+void load_npc_columns( Character * ch, db_stmt * stmt )
 {
-	int count = sqlite3_column_count( stmt );
+	int count = db_column_count( stmt );
 
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = sqlite3_column_name( stmt, i );
+		const char *colname = db_column_name( stmt, i );
 
 		if ( load_char_column( ch, stmt, colname, i ) )
 		{
 		}
 		else if ( !str_cmp( colname, "shortDescr" ) )
 		{
-			ch->npc->shortDescr = str_dup( sqlite3_column_str( stmt, i ) );
+			ch->npc->shortDescr = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "longDescr" ) )
 		{
-			ch->npc->longDescr = str_dup( sqlite3_column_str( stmt, i ) );
+			ch->npc->longDescr = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "startPosition" ) )
 		{
-			ch->npc->startPosition = sqlite3_column_int( stmt, i );
+			ch->npc->startPosition = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
-			parse_flags( ch->flags, sqlite3_column_str( stmt, i ), npc_flags );
+			parse_flags( ch->flags, db_column_str( stmt, i ), npc_flags );
 		}
 		else if ( !str_cmp( colname, "areaId" ) )
 		{
-			ch->npc->area = get_area_by_id( sqlite3_column_int( stmt, i ) );
+			ch->npc->area = get_area_by_id( db_column_int( stmt, i ) );
 		}
 		else
 		{
@@ -101,20 +101,20 @@ void load_npc_columns( Character * ch, sqlite3_stmt * stmt )
 Character *load_npc( identifier_t id )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	Character *ch = 0;
 
 	int len = sprintf( buf,
 					   "select * from character natural join nonplayer where charId=%" PRId64,
 					   id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
 		ch = new_char(  );
 		ch->npc = new_npc(  );
@@ -125,9 +125,9 @@ Character *load_npc( identifier_t id )
 		LINK( first_character, ch, next );
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return ch;
@@ -136,20 +136,20 @@ Character *load_npc( identifier_t id )
 int load_npcs( Area * area )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf,
 					   "select * from character natural join nonplayer where areaId=%"PRId64,
 					   area->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 		Character *ch = new_char(  );
 		ch->npc = new_npc(  );
@@ -163,9 +163,9 @@ int load_npcs( Area * area )
 		total++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return total;
@@ -195,9 +195,9 @@ int save_npc( Character * ch )
 		sprintf( buf, "insert into nonplayer (charId,%s) values(%"PRId64",%s)",
 				 names, ch->id, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert player" );
+			log_data( "could not insert player" );
 			return 0;
 		}
 	}
@@ -210,9 +210,9 @@ int save_npc( Character * ch )
 		sprintf( buf, "update nonplayer set %s where charId=%"PRId64, values,
 				 ch->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update character" );
+			log_data( "could not update character" );
 			return 0;
 		}
 	}
@@ -229,9 +229,9 @@ int delete_npc( Character * ch )
 
 	sprintf( buf, "delete from nonplayer where charId=%"PRId64, ch->id );
 
-	if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( buf) != DB_OK )
 	{
-		log_sqlite3( "could not delete player" );
+		log_data( "could not delete player" );
 		return 0;
 	}
 

@@ -53,75 +53,75 @@ void destroy_class( Class * c )
 int load_classes(  )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select count(*) from class" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == SQLITE_DONE )
 	{
-		log_sqlite3( "could not count hints" );
+		log_data( "could not count hints" );
 		return 0;
 	}
 
-	max_class = sqlite3_column_int( stmt, 0 );
+	max_class = db_column_int( stmt, 0 );
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	class_table = ( Class * ) alloc_mem( max_class, sizeof( Class ) );
 
 	len = sprintf( buf, "select * from class" );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
-		int count = sqlite3_column_count( stmt );
+		int count = db_column_count( stmt );
 
 		// Class *c = new_class();
 
 		for ( int i = 0; i < count; i++ )
 		{
-			const char *colname = sqlite3_column_name( stmt, i );
+			const char *colname = db_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
 				class_table[total].name =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "description" ) )
 			{
 				class_table[total].description =
-					str_dup( sqlite3_column_str( stmt, i ) );
+					str_dup( db_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "classId" ) )
 			{
-				class_table[total].id = sqlite3_column_int( stmt, i );
+				class_table[total].id = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "fMana" ) )
 			{
-				class_table[total].fMana = sqlite3_column_int( stmt, i );
+				class_table[total].fMana = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "thac0" ) )
 			{
-				class_table[total].thac0 = sqlite3_column_int( stmt, i );
+				class_table[total].thac0 = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "thac32" ) )
 			{
-				class_table[total].thac32 = sqlite3_column_int( stmt, i );
+				class_table[total].thac32 = db_column_int( stmt, i );
 			}
 			else
 			{
@@ -133,9 +133,9 @@ int load_classes(  )
 		total++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return total;

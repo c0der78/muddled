@@ -33,7 +33,7 @@ void log_debug(const char *, ...) __attribute__((format(printf, 1, 2)));
 
 void log_warn(const char *, ...) __attribute__((format(printf, 1, 2)));
 
-void log_sqlite3(const char *, ...) __attribute__((format(printf, 1, 2)));
+void log_data(const char *, ...) __attribute__((format(printf, 1, 2)));
 
 void log_trace(const char *, ...) __attribute__((format(printf, 1, 2)));
 
@@ -44,7 +44,7 @@ void log_bug(const char *, ...) __attribute__((format(printf, 1, 2)));
 #define log_error(msg, ...)	log_fun(__FUNCTION__, LOG_ERR, msg, ## __VA_ARGS__)
 #define log_debug(msg, ...)	log_fun(__FUNCTION__, LOG_DEBUG, msg, ## __VA_ARGS__)
 #define log_warn(msg, ...)	log_fun(__FUNCTION__, LOG_WARN, msg, ## __VA_ARGS__)
-#define log_sqlite3(msg, ...)	log_fun(__FUNCTION__, LOG_SQLITE3, msg, ## __VA_ARGS__)
+#define log_data(msg, ...)	log_fun(__FUNCTION__, LOG_DATA, msg, ## __VA_ARGS__)
 #define log_trace(msg, ...)	log_fun(__FUNCTION__, LOG_TRACE, msg, ## __VA_ARGS__)
 #define log_bug(msg, ...)	log_fun(__FUNCTION__, LOG_BUG, msg, ## __VA_ARGS__)
 
@@ -54,7 +54,7 @@ enum
 	LOG_ERR,
 	LOG_DEBUG,
 	LOG_WARN,
-	LOG_SQLITE3,
+	LOG_DATA,
 	LOG_TRACE,
 	LOG_BUG,
 	LOG_FILE

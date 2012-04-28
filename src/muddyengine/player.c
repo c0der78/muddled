@@ -26,8 +26,6 @@
 #include <muddyengine/player.h>
 #include <muddyengine/string.h>
 #include <muddyengine/character.h>
-#include <sqlite3.h>
-#include <muddyengine/db.h>
 #include <muddyengine/log.h>
 #include <muddyengine/class.h>
 #include <stdio.h>
@@ -110,10 +108,10 @@ int delete_player( Character * ch )
 
 	sprintf( buf, "delete from player where charId=%" PRId64, ch->id );
 
-	if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( buf) != DB_OK )
 	{
 
-		log_sqlite3( "could not delete player" );
+		log_data( "could not delete player" );
 
 		return 0;
 
@@ -151,7 +149,7 @@ static const char *save_condition( void *arg )
 
 }
 
-static void read_condition( void *data, sqlite3_stmt * stmt, int col )
+static void read_condition( void *data, db_stmt * stmt, int col )
 {
 
 	int *cond = ( int * ) data;
@@ -159,7 +157,7 @@ static void read_condition( void *data, sqlite3_stmt * stmt, int col )
 	int index = 0;
 
 	const char *pstr =
-		strtok( ( char * ) sqlite3_column_str( stmt, col ), "," );
+		strtok( ( char * ) db_column_str( stmt, col ), "," );
 
 	while ( pstr )
 
@@ -227,10 +225,10 @@ int save_player( Character * ch )
 		sprintf( buf, "insert into player (charId,%s) values(%"PRId64",%s)",
 				 names, ch->id, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not insert player" );
+			log_data( "could not insert player" );
 
 			return 0;
 
@@ -246,10 +244,10 @@ int save_player( Character * ch )
 
 		sprintf( buf, "update player set %s where charId=%"PRId64, values, ch->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
 
-			log_sqlite3( "could not update character" );
+			log_data( "could not update character" );
 
 			return 0;
 
@@ -271,15 +269,15 @@ int save_player( Character * ch )
 
 }
 
-void load_player_columns( Account * acc, Character * ch, sqlite3_stmt * stmt )
+void load_player_columns( Account * acc, Character * ch, db_stmt * stmt )
 {
 
-	int i, cols = sqlite3_column_count( stmt );
+	int i, cols = db_column_count( stmt );
 
 	for ( i = 0; i < cols; i++ )
 	{
 
-		const char *colname = sqlite3_column_name( stmt, i );
+		const char *colname = db_column_name( stmt, i );
 
 		if ( load_char_column( ch, stmt, colname, i ) )
 		{
@@ -288,7 +286,7 @@ void load_player_columns( Account * acc, Character * ch, sqlite3_stmt * stmt )
 		else if ( !str_cmp( colname, "title" ) )
 		{
 
-			ch->pc->title = str_dup( sqlite3_column_str( stmt, i ) );
+			ch->pc->title = str_dup( db_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "prompt" ) )
@@ -296,7 +294,7 @@ void load_player_columns( Account * acc, Character * ch, sqlite3_stmt * stmt )
 
 			free_str( ch->pc->prompt );
 
-			ch->pc->prompt = str_dup( sqlite3_column_str( stmt, i ) );
+			ch->pc->prompt = str_dup( db_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "battlePrompt" ) )
@@ -304,13 +302,13 @@ void load_player_columns( Account * acc, Character * ch, sqlite3_stmt * stmt )
 
 			free_str( ch->pc->battlePrompt );
 
-			ch->pc->battlePrompt = str_dup( sqlite3_column_str( stmt, i ) );
+			ch->pc->battlePrompt = str_dup( db_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "accountId" ) )
 		{
 
-			if ( acc && acc->id != sqlite3_column_int( stmt, i ) )
+			if ( acc && acc->id != db_column_int( stmt, i ) )
 
 				log_error( "sql returned invalid account for player" );
 
@@ -318,27 +316,27 @@ void load_player_columns( Account * acc, Character * ch, sqlite3_stmt * stmt )
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 
-			parse_flags( ch->flags, sqlite3_column_str( stmt, i ), plr_flags );
+			parse_flags( ch->flags, db_column_str( stmt, i ), plr_flags );
 
 		}
 		else if ( !str_cmp( colname, "roomId" ) )
 		{
 
-			ch->inRoom = get_room_by_id( sqlite3_column_int( stmt, i ) );
+			ch->inRoom = get_room_by_id( db_column_int( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "explored" ) )
 		{
 
 			convert_explored_rle( ch->pc->explored,
-								  sqlite3_column_str( stmt, i ) );
+								  db_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "channels" ) )
 		{
 
 			parse_flags( ch->pc->channels,
-						 sqlite3_column_str( stmt, i ), channel_flags );
+						 db_column_str( stmt, i ), channel_flags );
 
 		}
 		else if ( !str_cmp( colname, "condition" ) )
@@ -350,31 +348,31 @@ void load_player_columns( Account * acc, Character * ch, sqlite3_stmt * stmt )
 		else if ( !str_cmp( colname, "experience" ) )
 		{
 
-			ch->pc->experience = sqlite3_column_int( stmt, i );
+			ch->pc->experience = db_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "permHit" ) )
 		{
 
-			ch->pc->permHit = sqlite3_column_int( stmt, i );
+			ch->pc->permHit = db_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "permMana" ) )
 		{
 
-			ch->pc->permMana = sqlite3_column_int( stmt, i );
+			ch->pc->permMana = db_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "permMove" ) )
 		{
 
-			ch->pc->permMove = sqlite3_column_int( stmt, i );
+			ch->pc->permMove = db_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "created" ) )
 		{
 
-			ch->pc->created = sqlite3_column_int( stmt, i );
+			ch->pc->created = db_column_int( stmt, i );
 
 		}
 		else
@@ -393,7 +391,7 @@ Character *load_player_by_id( Connection * conn, identifier_t charId )
 
 	char buf[400];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	db_begin_transaction(  );
 
@@ -401,10 +399,10 @@ Character *load_player_by_id( Connection * conn, identifier_t charId )
 					   "select * from character natural join player where charId=%"PRId64,
 					   charId );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 
 		return 0;
 
@@ -414,17 +412,17 @@ Character *load_player_by_id( Connection * conn, identifier_t charId )
 
 	ch->pc = new_player( conn );
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
 
 		load_player_columns( conn->account, ch, stmt );
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "unable to finalize statement" );
+		log_data( "unable to finalize statement" );
 
 	}
 
@@ -443,7 +441,7 @@ Character *load_player_by_name( Connection * conn, const char *name )
 
 	char buf[400];
 
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 
 	db_begin_transaction(  );
 
@@ -451,10 +449,10 @@ Character *load_player_by_name( Connection * conn, const char *name )
 					   "select * from character natural join player where name='%s'",
 					   escape_db_str( name ) );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
 
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "could not prepare sql statement" );
 
 		return 0;
 
@@ -464,17 +462,17 @@ Character *load_player_by_name( Connection * conn, const char *name )
 
 	ch->pc = new_player( conn );
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
 
 		load_player_columns( conn->account, ch, stmt );
 
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
 
-		log_sqlite3( "unable to finalize statement" );
+		log_data( "unable to finalize statement" );
 
 	}
 

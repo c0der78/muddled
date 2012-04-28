@@ -254,56 +254,56 @@ void destroy_object( Object * obj )
 	free_mem( obj );
 }
 
-int load_obj_columns( Object * obj, sqlite3_stmt * stmt )
+int load_obj_columns( Object * obj, db_stmt * stmt )
 {
-	int count = sqlite3_column_count( stmt );
+	int count = db_column_count( stmt );
 
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = sqlite3_column_name( stmt, i );
+		const char *colname = db_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "name" ) )
 		{
-			obj->name = str_dup( sqlite3_column_str( stmt, i ) );
+			obj->name = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "shortDescr" ) )
 		{
-			obj->shortDescr = str_dup( sqlite3_column_str( stmt, i ) );
+			obj->shortDescr = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "longDescr" ) )
 		{
-			obj->longDescr = str_dup( sqlite3_column_str( stmt, i ) );
+			obj->longDescr = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "description" ) )
 		{
-			obj->description = str_dup( sqlite3_column_str( stmt, i ) );
+			obj->description = str_dup( db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "objectId" ) )
 		{
-			obj->id = sqlite3_column_int( stmt, i );
+			obj->id = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "level" ) )
 		{
-			obj->level = sqlite3_column_int( stmt, i );
+			obj->level = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "areaId" ) )
 		{
-			if ( obj->area && obj->area->id != sqlite3_column_int64( stmt, i ) )
+			if ( obj->area && obj->area->id != db_column_int64( stmt, i ) )
 				log_error( "sql returned invalid room for area" );
 			else
-				obj->area = get_area_by_id( sqlite3_column_int( stmt, i ) );
+				obj->area = get_area_by_id( db_column_int( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "type" ) )
 		{
-			obj->type = ( object_type ) sqlite3_column_int( stmt, i );
+			obj->type = ( object_type ) db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "inObjId" ) )
 		{
-			obj->inObj = get_obj_by_id( sqlite3_column_int( stmt, i ) );
+			obj->inObj = get_obj_by_id( db_column_int( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "wearFlags" ) )
 		{
-			obj->wearFlags = ( wear_type ) sqlite3_column_int( stmt, i );
+			obj->wearFlags = ( wear_type ) db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "weight" ) )
 		{
@@ -320,7 +320,7 @@ int load_obj_columns( Object * obj, sqlite3_stmt * stmt )
 		else if ( !str_cmp( colname, "carriedById" ) )
 		{
 			if ( obj->carriedBy
-				 && obj->carriedBy->id != sqlite3_column_int( stmt, i ) )
+				 && obj->carriedBy->id != db_column_int( stmt, i ) )
 				log_error( "sql returned invalid character for object" );
 		}
 		else
@@ -335,18 +335,18 @@ int load_obj_columns( Object * obj, sqlite3_stmt * stmt )
 Object *load_object( identifier_t id )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	Object *obj = 0;
 
 	int len = sprintf( buf, "select * from object where objectId=%"PRId64, id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != SQLITE_DONE )
 	{
 
 		obj = new_object(  );
@@ -357,9 +357,9 @@ Object *load_object( identifier_t id )
 		LINK( obj->area->objects, obj, next_in_area );
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return obj;
@@ -368,18 +368,18 @@ Object *load_object( identifier_t id )
 int load_objects( Area * area )
 {
 	char buf[400];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from object where areaId=%"PRId64, area->id );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
 	{
-		log_sqlite3( "could not prepare statement" );
+		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( sqlite3_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != SQLITE_DONE )
 	{
 
 		Object *obj = new_object(  );
@@ -393,9 +393,9 @@ int load_objects( Area * area )
 		total++;
 	}
 
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize statement" );
+		log_data( "could not finalize statement" );
 	}
 
 	return total;
@@ -431,13 +431,13 @@ int save_object( Object * obj )
 
 		sprintf( buf, "insert into object (%s) values(%s)", names, values );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not insert object" );
+			log_data( "could not insert object" );
 			return 0;
 		}
 
-		obj->id = sqlite3_last_insert_rowid( sqlite3_instance );
+		obj->id = db_last_insert_rowid();
 	}
 	else
 	{
@@ -448,9 +448,9 @@ int save_object( Object * obj )
 		sprintf( buf, "update object set %s where objectId=%"PRId64, values,
 				 obj->id );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf) != DB_OK )
 		{
-			log_sqlite3( "could not update object" );
+			log_data( "could not update object" );
 			return 0;
 		}
 	}
@@ -464,9 +464,9 @@ int delete_object( Object * obj )
 
 	sprintf( buf, "delete from object where objectId=%"PRId64, obj->id );
 
-	if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+	if ( db_exec( buf) != DB_OK )
 	{
-		log_sqlite3( "could not delete object" );
+		log_data( "could not delete object" );
 		return 0;
 	}
 

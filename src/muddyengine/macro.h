@@ -24,7 +24,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define Stringify(var) #var
+#define xstr(var) #var
+#define Stringify(var) xstr(var)
 
 #define UPPER(c) (toupper((int)(c)))
 #define LOWER(c) (tolower((int)(c)))

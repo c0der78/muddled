@@ -97,7 +97,7 @@ void initialize_default_engine(  )
 	set_bit( engine_info.logging, LOG_ERR );
 	set_bit( engine_info.logging, LOG_WARN );
 	set_bit( engine_info.logging, LOG_INFO );
-	set_bit( engine_info.logging, LOG_SQLITE3 );
+	set_bit( engine_info.logging, LOG_DATA );
 	set_bit( engine_info.logging, LOG_DEBUG );
 	set_bit( engine_info.logging, LOG_TRACE );
 }
@@ -117,63 +117,70 @@ FILE *engine_open_file(const char *filepath, const char *perm) {
 int load_engine( const char *root_path )
 {
 	char buf[500];
-	sqlite3_stmt *stmt;
+	db_stmt *stmt;
 	int len = sprintf( buf, "select * from engine" );
 
 	engine_info.flags = new_flag(  );
 	engine_info.logging = new_flag(  );
 	engine_info.root_path = str_dup( root_path );
 
-	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
+	if ( db_open( root_path ) )
 	{
-		log_sqlite3( "could not prepare sql statement" );
+		log_data( "Can't open database" );
+		db_close( );
+		exit( EXIT_FAILURE );
+	}
+
+	if ( db_query(buf, len, &stmt) != DB_OK )
+	{
+		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( sqlite3_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == SQLITE_DONE )
 	{
-		if ( sqlite3_finalize( stmt ) != SQLITE_OK )
-			log_sqlite3( "could not find engine info records" );
+		if ( db_finalize( stmt ) != DB_OK )
+			log_data( "could not find engine info records" );
 
 		initialize_default_engine(  );
 		return 0;
 	}
 
-	int i, cols = sqlite3_column_count( stmt );
+	int i, cols = db_column_count( stmt );
 	for ( i = 0; i < cols; i++ )
 	{
-		const char *colname = sqlite3_column_name( stmt, i );
+		const char *colname = db_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "engineId" ) )
 		{
-			engine_info.id = sqlite3_column_int( stmt, i );
+			engine_info.id = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "name" ) )
 		{
-			free_str_dup( &engine_info.name, sqlite3_column_str( stmt, i ) );
+			free_str_dup( &engine_info.name, db_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "logins" ) )
 		{
-			engine_info.total_logins = sqlite3_column_int( stmt, i );
+			engine_info.total_logins = db_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 			parse_flags( engine_info.flags,
-						 sqlite3_column_str( stmt, i ), engine_flags );
+						 db_column_str( stmt, i ), engine_flags );
 		}
 		else if ( !str_cmp( colname, "logging" ) )
 		{
 			parse_flags( engine_info.logging,
-						 sqlite3_column_str( stmt, i ), logging_flags );
+						 db_column_str( stmt, i ), logging_flags );
 		}
 		else
 		{
 			log_warn( "unknown account column '%s'", colname );
 		}
 	}
-	if ( sqlite3_finalize( stmt ) != SQLITE_OK )
+	if ( db_finalize( stmt ) != DB_OK )
 	{
-		log_sqlite3( "could not finalize sql statement" );
+		log_data( "could not finalize sql statement" );
 	}
 
 	log_info( "Starting %s", engine_info.name );
@@ -204,13 +211,13 @@ int save_engine(  )
 											  engine_flags ),
 				 format_flags( engine_info.logging, logging_flags ) );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf ) != DB_OK )
 		{
-			log_sqlite3( "could not insert engine" );
+			log_data( "could not insert engine" );
 			return 0;
 		}
 
-		engine_info.id = sqlite3_last_insert_rowid( sqlite3_instance );
+		engine_info.id = db_last_insert_rowid( );
 	}
 	else
 	{
@@ -222,9 +229,9 @@ int save_engine(  )
 				 values, format_flags( engine_info.flags, engine_flags ),
 				 format_flags( engine_info.logging, logging_flags ) );
 
-		if ( sqlite3_exec( sqlite3_instance, buf, NULL, 0, 0 ) != SQLITE_OK )
+		if ( db_exec( buf ) != DB_OK )
 		{
-			log_sqlite3( "could not update engine" );
+			log_data( "could not update engine" );
 			return 0;
 		}
 	}
@@ -244,15 +251,15 @@ void free_mem( void *data )
 
 void initialize_engine( const char *root_path )
 {
-	current_time = time( 0 );
+	log_info("Running from %s", root_path);
 
-	init_sqlite3( root_path );
+	current_time = time(0);
 
 	init_lua(  );
 
-	db_begin_transaction(  );
-
 	load_engine( root_path );
+
+	db_begin_transaction(  );
 
 	synchronize_tables(  );
 
