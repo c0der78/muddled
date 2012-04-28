@@ -102,7 +102,19 @@ void initialize_default_engine(  )
 	set_bit( engine_info.logging, LOG_TRACE );
 }
 
-int load_engine(  )
+FILE *engine_open_file_in_dir(const char *folder, const char *name, const char *perm) {
+	char buf[BUF_SIZ];
+	sprintf(buf, "%s/%s/%s", engine_info.root_path, folder, name);
+	return fopen(buf, perm);
+}
+
+FILE *engine_open_file(const char *filepath, const char *perm) {
+	char buf[BUF_SIZ];
+	sprintf(buf, "%s/%s", engine_info.root_path, filepath);
+	return fopen(buf, perm);
+}
+
+int load_engine( const char *root_path )
 {
 	char buf[500];
 	sqlite3_stmt *stmt;
@@ -110,6 +122,7 @@ int load_engine(  )
 
 	engine_info.flags = new_flag(  );
 	engine_info.logging = new_flag(  );
+	engine_info.root_path = str_dup( root_path );
 
 	if ( sqlite3_prepare( sqlite3_instance, buf, len, &stmt, 0 ) != SQLITE_OK )
 	{
@@ -229,17 +242,17 @@ void free_mem( void *data )
 	free( data );
 }
 
-void initialize_engine(  )
+void initialize_engine( const char *root_path )
 {
 	current_time = time( 0 );
 
-	init_sqlite3(  );
+	init_sqlite3( root_path );
 
 	init_lua(  );
 
 	db_begin_transaction(  );
 
-	load_engine(  );
+	load_engine( root_path );
 
 	synchronize_tables(  );
 

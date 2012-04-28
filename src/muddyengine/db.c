@@ -30,9 +30,9 @@
 
 sqlite3 *sqlite3_instance = 0;
 
-void init_sqlite3(  )
+void init_sqlite3( const char *root_path )
 {
-	int rc = sqlite3_open( SQLITE3_FILE, &sqlite3_instance );	//, SQLITE_OPEN_READWRITE|SQLITE_OPEN_FULLMUTEX, 0);
+	int rc = sqlite3_open( formatf(root_path, SQLITE3_FILE), &sqlite3_instance );	//, SQLITE_OPEN_READWRITE|SQLITE_OPEN_FULLMUTEX, 0);
 	if ( rc )
 	{
 		log_sqlite3( "Can't open database" );

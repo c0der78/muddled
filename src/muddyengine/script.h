@@ -22,14 +22,19 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
+#ifdef HAVE_LIBLUA5_1
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
+
+extern lua_State *lua_instance;
+
+#endif
 
 void init_lua(  );
 
 void close_lua(  );
 
-extern lua_State *lua_instance;
 
 #endif							//  #ifndef SCRIPT_H

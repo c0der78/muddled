@@ -109,8 +109,9 @@ void initialize_server(  )
 	}
 	else
 	{
-		FILE *fp = fopen( REBOOT_FILE, "r" );
 		char buf[ARG_SIZ];
+
+		FILE *fp = engine_open_file( REBOOT_FILE, "r" );
 
 		last_reboot = time( 0 );
 
@@ -120,7 +121,6 @@ void initialize_server(  )
 		}
 		else
 		{
-
 			log_trace( "parsing reboot file" );
 			if ( fgets( buf, sizeof( buf ), fp ) != NULL )
 			{
@@ -413,7 +413,7 @@ void stop_server(  )
 		server_socket = -1;
 	}
 
-	FILE *fp = fopen( LOG_DIR "/shutdown.log", "w+" );
+	FILE *fp = engine_open_file(LOG_DIR "/shutdown.log", "w+");
 
 	if ( fp )
 	{
@@ -425,8 +425,10 @@ void stop_server(  )
 
 void reboot_server(  )
 {
-	FILE *fp = fopen( REBOOT_FILE, "w" );
+	FILE *fp = engine_open_file( REBOOT_FILE, "w" );
+
 	char arg1[50];
+
 	char arg2[50];
 
 	if ( fp == 0 )

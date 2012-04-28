@@ -23,6 +23,8 @@
 #include <muddyengine/script.h>
 #include <muddyengine/log.h>
 
+#ifdef HAVE_LIBLUA5_1
+
 lua_State *lua_instance = 0;
 
 void init_lua(  )
@@ -51,3 +53,14 @@ void close_lua(  )
 	}
 
 }
+#else
+
+void init_lua() {
+		log_info("No lua scripting support");
+}
+
+void close_lua() {
+
+}
+
+#endif

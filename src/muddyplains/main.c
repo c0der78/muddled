@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
 
 	init_signals(  );
 
-	initialize_engine(  );
+	initialize_engine( Stringify(ROOT_DIR) );
 
 	initialize_channels(  );
 

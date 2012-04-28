@@ -22,6 +22,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <stdio.h>
+
 typedef struct Engine Engine;
 
 typedef long long identifier_t;
@@ -100,6 +102,7 @@ struct Engine
 {
 	identifier_t id;
 	const char *name;
+	const char *root_path;
 	Flag *flags;
 	int total_logins;
 	int logins;
@@ -112,10 +115,14 @@ extern time_t current_time;
 
 extern const Lookup engine_flags[];
 extern const Lookup stat_table[];
-int load_engine(  );
+
+FILE *engine_open_file(const char *filepath, const char *perm);
+FILE *engine_open_file_in_dir(const char *folder, const char *name, const char *perm);
+
+int load_engine( const char *root_path );
 int save_engine(  );
 void *alloc_mem( size_t, size_t );
 void free_mem( void * );
-void initialize_engine(  );
+void initialize_engine( const char *root_path );
 
 #endif							//  #ifndef ENGINE_H

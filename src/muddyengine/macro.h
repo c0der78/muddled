@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define Stringify(var) #var
+
 #define UPPER(c) (toupper((int)(c)))
 #define LOWER(c) (tolower((int)(c)))
 #define UMIN(a, b) ((a) < (b) ? (a) : (b))
