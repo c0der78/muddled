@@ -73,7 +73,7 @@ int load_hints(  )
 
 	}
 
-	if ( db_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == DB_DONE )
 	{
 
 		log_data( "could not count hints" );
@@ -104,7 +104,7 @@ int load_hints(  )
 
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -170,8 +170,8 @@ int save_hint( Hint * hint )
 	char buf[OUT_SIZ];
 
 	struct dbvalues hintvals[] = {
-		{"text", &hint->text, SQLITE_TEXT},
-		{"level", &hint->level, SQLITE_INTEGER},
+		{"text", &hint->text, DB_TEXT},
+		{"level", &hint->level, DB_INTEGER},
 		{0}
 	};
 

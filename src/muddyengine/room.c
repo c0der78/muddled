@@ -39,29 +39,29 @@ int max_room = 0;
 int max_explorable_room = 0;
 
 const Lookup sector_table[] = {
-	{SECT_INSIDE, "inside"},
-	{SECT_CITY, "city"},
-	{SECT_FIELD, "field"},
-	{SECT_FOREST, "forest"},
-	{SECT_HILLS, "hills"},
-	{SECT_MOUNTAIN, "mountain"},
-	{SECT_WATER_SWIM, "water_swim"},
-	{SECT_WATER_NOSWIM, "water_noswim"},
-	{SECT_AIR, "air"},
-	{SECT_DESERT, "desert"},
-	{SECT_JUNGLE, "jungle"},
-	{SECT_ROAD, "road"},
-	{SECT_PATH, "path"},
-	{SECT_CAVE, "cave"},
-	{SECT_SWAMP, "swamp"},
-	{SECT_UNKNOWN, "unknown"},
+	{ "inside", SECT_INSIDE},
+	{ "city", SECT_CITY},
+	{ "field", SECT_FIELD},
+	{ "forest", SECT_FOREST},
+	{ "hills", SECT_HILLS},
+	{ "mountain", SECT_MOUNTAIN},
+	{ "water_swim", SECT_WATER_SWIM},
+	{ "water_noswim", SECT_WATER_NOSWIM},
+	{ "air", SECT_AIR},
+	{ "desert", SECT_DESERT},
+	{ "jungle", SECT_JUNGLE},
+	{ "road", SECT_ROAD},
+	{ "path", SECT_PATH},
+	{ "cave", SECT_CAVE},
+	{ "swamp", SECT_SWAMP},
+	{ "unknown", SECT_UNKNOWN},
 	{0, 0}
 };
 
 const Lookup room_flags[] = {
-	{ROOM_NOEXPLORE, "noexplore"},
-	{ROOM_SAFE, "safe"},
-	{ROOM_NO_RECALL, "no_recall"},
+	{ "noexplore", ROOM_NOEXPLORE},
+	{ "safe", ROOM_SAFE},
+	{ "no_recall", ROOM_NO_RECALL},
 	{0, 0}
 };
 
@@ -170,7 +170,7 @@ int load_rooms( Area * area )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 		Room *room = new_room(  );
 
@@ -209,7 +209,7 @@ Room *load_room( identifier_t id )
 		return 0;
 	}
 
-	if ( db_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != DB_DONE )
 	{
 		room = new_room(  );
 
@@ -239,12 +239,12 @@ int save_room_only( Room * room )
 	char buf[OUT_SIZ * 4];
 
 	struct dbvalues roomvals[] = {
-		{"name", &room->name, SQLITE_TEXT},
-		{"description", &room->description, SQLITE_TEXT},
-		{"areaId", &room->area->id, SQLITE_INTEGER},
-		{"sector", &room->sector, SQLITE_INTEGER},
-		{"flags", &room->flags, DBTYPE_FLAG, room_flags},
-		{"reset", &room->reset, SQLITE_TEXT},
+		{"name", &room->name, DB_TEXT, },
+		{ "description", &room->description, DB_TEXT},
+		{ "areaId", &room->area->id, DB_INTEGER},
+		{ "sector", &room->sector, DB_INTEGER},
+		{ "flags", &room->flags, DB_FLAG, room_flags},
+		{ "reset", &room->reset, DB_TEXT},
 		{0}
 	};
 

@@ -46,22 +46,22 @@
 Character *first_character = 0;
 
 const Lookup sex_table[] = {
-	{SEX_NEUTRAL, "neutral"},
-	{SEX_MALE, "male"},
-	{SEX_FEMALE, "female"},
-	{SEX_HERMAPHRODITE, "hermaphrodite"},
+	{ "neutral", SEX_NEUTRAL},
+	{ "male", SEX_MALE},
+	{ "female", SEX_FEMALE},
+	{ "hermaphrodite", SEX_HERMAPHRODITE},
 	{0, 0}
 };
 
 const Lookup position_table[] = {
-	{POS_FIGHTING, "fighting"},
-	{POS_STANDING, "standing"},
-	{POS_SITTING, "sitting"},
-	{POS_RESTING, "resting"},
-	{POS_STUNNED, "stunned"},
-	{POS_INCAPICATED, "incapacitated"},
-	{POS_MORTAL, "mortally wounded"},
-	{POS_DEAD, "dead"},
+	{ "fighting", POS_FIGHTING},
+	{ "standing", POS_STANDING},
+	{ "sitting", POS_SITTING},
+	{ "resting", POS_RESTING},
+	{ "stunned", POS_STUNNED},
+	{ "incapacitated", POS_INCAPICATED},
+	{ "mortally wounded", POS_MORTAL},
+	{ "dead", POS_DEAD},
 	{0, 0}
 };
 
@@ -232,7 +232,7 @@ int load_char_objs( Character * ch )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		Object *obj = new_object(  );
@@ -455,7 +455,7 @@ int save_char_objs( Character * ch )
 			return 0;
 		}
 
-		bool update = db_step( stmt ) != SQLITE_DONE;
+		bool update = db_step( stmt ) != DB_DONE;
 
 		if ( db_finalize( stmt ) != DB_OK )
 		{
@@ -484,7 +484,7 @@ int save_char_objs( Character * ch )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 		obj = ch->carrying;
 
@@ -512,7 +512,7 @@ int save_char_objs( Character * ch )
 	}
 
 	if ( db_finalize( stmt ) != DB_OK )
-	{
+	{ 
 		log_data( "could not finalize statement" );
 		return 0;
 	}
@@ -520,32 +520,30 @@ int save_char_objs( Character * ch )
 	return 1;
 }
 
-int save_character( Character * ch, const Lookup * flag_table )
+int save_character( Character * ch,const Lookup * flag_table )
 {
 	static const int CharSaveVersion = 1;
 
 	struct dbvalues chvalues[] = {
-		{"version", &CharSaveVersion, SQLITE_INTEGER},
-		{"name", &ch->name, SQLITE_TEXT},
-		{"description", &ch->description, SQLITE_TEXT},
-		{"level", &ch->level, SQLITE_INTEGER},
-		{"sex", &ch->sex, SQLITE_INTEGER},
-		{"raceId", &ch->race->id, SQLITE_INTEGER},
-		{"hit", &ch->hit, SQLITE_INTEGER},
-		{"maxHit", &ch->maxHit, SQLITE_INTEGER},
-		{"mana", &ch->mana, SQLITE_INTEGER},
-		{"maxMana", &ch->maxMana, SQLITE_INTEGER},
-		{"move", &ch->move, SQLITE_INTEGER},
-		{"maxMove", &ch->maxMove, SQLITE_INTEGER},
-		{"gold", &ch->gold, SQLITE_FLOAT},
-		{"flags", &ch->flags, DBTYPE_FLAG, flag_table},
-		{"classes", &ch->classes, DBTYPE_CUSTOM, save_char_classes},
-		{"stats", &ch->stats, DBTYPE_ARRAY, db_save_int_array,
-		 ( void * ) MAX_STAT},
-		{"alignment", &ch->alignment, SQLITE_INTEGER},
-		{"resists", &ch->resists, DBTYPE_ARRAY, db_save_int_array,
-		 ( void * ) MAX_DAM},
-		{"size", &ch->size, DBTYPE_FLOAT},
+		{"version", &CharSaveVersion, DB_INTEGER},
+		{ "name", &ch->name, DB_TEXT},
+		{ "description", &ch->description, DB_TEXT},
+		{ "level", &ch->level, DB_INTEGER},
+		{ "sex", &ch->sex, DB_INTEGER},
+		{ "raceId", &ch->race->id, DB_INTEGER},
+		{ "hit", &ch->hit, DB_INTEGER},
+		{ "maxHit", &ch->maxHit, DB_INTEGER},
+		{ "mana", &ch->mana, DB_INTEGER},
+		{ "maxMana", &ch->maxMana, DB_INTEGER},
+		{ "move", &ch->move, DB_INTEGER},
+		{ "maxMove", &ch->maxMove, DB_INTEGER},
+		{ "gold", &ch->gold, DB_FLOAT},
+		{ "flags", &ch->flags, DB_FLAG, flag_table},
+		{ "classes", &ch->classes, DBTYPE_CUSTOM, save_char_classes},
+		{ "stats", &ch->stats, DBTYPE_ARRAY, db_save_int_array, ( void * ) MAX_STAT},
+		{ "alignment", &ch->alignment, DB_INTEGER},
+		{ "resists", &ch->resists, DBTYPE_ARRAY, db_save_int_array, ( void * ) MAX_DAM},
+		{ "size", &ch->size, DBTYPE_FLOAT},
 		{0, 0, 0}
 	};
 	char values[OUT_SIZ * 2] = { 0 };
@@ -601,15 +599,17 @@ int load_char_affects( Character * ch )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
-		int affId = db_column_int( stmt, 1 );
+		int affId = db_col_int( stmt, "affectId");
 
 		Affect *aff = load_affect_by_id( affId );
 
 		if ( aff != 0 )
 		{
+			aff->duration = db_col_int(stmt, "duration");
+
 			affect_to_char( ch, aff );
 		}
 
@@ -638,14 +638,13 @@ int save_char_affects( Character * ch )
 					 "select * from char_affect where charId=%"PRId64" and affectId=%" PRId64,
 					 ch->id, aff->id );
 
-		if ( db_query( buf,  len,  &stmt) !=
-			 DB_OK )
-		{
+		if ( db_query( buf,  len,  &stmt) != DB_OK )
+		{ 
 			log_data( "could not prepare statement" );
 			return 0;
 		}
 
-		bool update = db_step( stmt ) != SQLITE_DONE;
+		bool update = db_step( stmt ) != DB_DONE;
 
 		if ( db_finalize( stmt ) != DB_OK )
 		{
@@ -657,8 +656,8 @@ int save_char_affects( Character * ch )
 			return 0;
 
 		struct dbvalues affvalues[] = {
-			{"charId", &ch->id, SQLITE_INTEGER},
-			{"affectId", &aff->id, SQLITE_INTEGER},
+			{ "charId", &ch->id, DB_INTEGER },
+			{ "affectId", &aff->id, DB_INTEGER},
 			{0}
 		};
 
@@ -709,7 +708,7 @@ int save_char_affects( Character * ch )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 		identifier_t id = db_column_int64( stmt, 1 );
 

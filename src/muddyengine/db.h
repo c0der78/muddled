@@ -24,7 +24,21 @@
 #include <sqlite3.h>
 #include <stdint.h>
 
+typedef long long DB_ID;
+
 #define DB_OK SQLITE_OK
+
+#define DB_DONE SQLITE_DONE
+
+#define DB_INTEGER SQLITE_INTEGER
+
+#define DB_FLOAT SQLITE_FLOAT
+
+#define DB_BLOB SQLITE_BLOB
+
+#define DB_NULL SQLITE_NULL
+
+#define DB_TEXT SQLITE_TEXT
 
 #define db_stmt sqlite3_stmt
 
@@ -62,7 +76,7 @@ typedef const char *( *map_save_array_t ) ( int, const void * );
 typedef void ( *map_read_t ) ( void *, db_stmt *, int );
 typedef void ( *map_read_array_t ) ( int, void *, db_stmt *, int );
 
-#define DBTYPE_FLAG	1000
+#define DB_FLAG	1000
 #define DBTYPE_CUSTOM	1001
 #define DBTYPE_FLOAT	1002
 #define DBTYPE_ARRAY 1003
@@ -88,8 +102,19 @@ int db_finalize(db_stmt *);
 int db_column_count(db_stmt *);
 const char *db_column_name(db_stmt *, int);
 int db_column_int(db_stmt *, int);
+int db_col_int(db_stmt *, const char *);
 int64_t db_column_int64(db_stmt *, int);
 const char *db_column_str(db_stmt *, int);
+int db_column_index(db_stmt *, const char *);
+
+/*!
+ * saves a record
+ * @param table the dbvalues structure to save
+ * @param tableName the name of the table
+ * @param id the current id of the value
+ * @return the identifier of the value
+ */
+DB_ID db_save(struct dbvalues *, const char *, DB_ID);
 
 #define field(type, base, value, data) \
 	*( (type *) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )

@@ -64,7 +64,7 @@ int load_classes(  )
 		return 0;
 	}
 
-	if ( db_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == DB_DONE )
 	{
 		log_data( "could not count hints" );
 		return 0;
@@ -87,7 +87,7 @@ int load_classes(  )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 		int count = db_column_count( stmt );
 

@@ -425,13 +425,7 @@ void equip_char( Character * ch, Object * obj, int iWear )
 
 	{
 
-		if ( paf->location == APPLY_SPELL_AFFECT )
-
-			affect_to_char( ch, paf );
-
-		else
-
-			affect_modify( ch, paf, true );
+		affect_modify( ch, paf, true );
 
 	}
 
@@ -458,6 +452,13 @@ void unequip_char( Character * ch, Object * obj )
 
 	}
 
+	for ( Affect * paf = obj->affects; paf; paf = paf->next )
+
+	{
+
+		affect_modify( ch, paf, false );
+
+	}
 	obj->wearLoc = WEAR_NONE;
 
 	return;

@@ -30,6 +30,9 @@ typedef struct Flag Flag;
 #include <stdbool.h>
 #include <stddef.h>
 
+/*!
+ * A bitvector structure with unlimited number of bits
+ */
 struct Flag
 {
 	int *bits;
@@ -47,12 +50,29 @@ Flag *toggle_flags( Flag *, Flag * );
 Flag *remove_bit( Flag *, bit_t );
 Flag *remove_flags( Flag *, Flag * );
 bool is_set( Flag *, bit_t );
+/*!
+ * checks if all bits in a flag are set in another flag
+ */
 bool flags_set( Flag *, Flag * );
+/*!
+ * parses the flags from a string  using 'toggle' instead of 'set'
+ * 
+ * @return the number of flags parsed
+ */
 int parse_flags_toggle( Flag *, const char *, const Lookup * );
+/*!
+ * formats the flags into a string
+ */
 const char *format_flags( Flag *, const Lookup * );
+/*!
+ * Parses flags into a string
+ * 
+ * @return the number of flags parsed
+ */
 int parse_flags( Flag *, const char *, const Lookup * );
+/*!
+ * @return the flag as an integer
+ */
 int flag_toint( Flag * );
-void flag_fromint( int );
-
 
 #endif							//  #ifndef FLAG_H

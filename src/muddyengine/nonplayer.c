@@ -33,11 +33,11 @@
 #include <muddyengine/race.h>
 
 const Lookup npc_flags[] = {
-	{NPC_SENTINEL, "sentinel"},
-	{NPC_SCAVENGER, "scavenger"},
-	{NPC_AGGRESSIVE, "aggressive"},
-	{NPC_WIMPY, "wimpy"},
-	{NPC_STAY_AREA, "stay_area"},
+	{ "sentinel", NPC_SENTINEL},
+	{ "scavenger", NPC_SCAVENGER},
+	{ "aggressive", NPC_AGGRESSIVE},
+	{ "wimpy", NPC_WIMPY},
+	{ "stay_area", NPC_STAY_AREA},
 	{0, 0}
 };
 
@@ -114,7 +114,7 @@ Character *load_npc( identifier_t id )
 		return 0;
 	}
 
-	if ( db_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != DB_DONE )
 	{
 		ch = new_char(  );
 		ch->npc = new_npc(  );
@@ -149,7 +149,7 @@ int load_npcs( Area * area )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 		Character *ch = new_char(  );
 		ch->npc = new_npc(  );
@@ -176,10 +176,10 @@ int save_npc( Character * ch )
 	char buf[OUT_SIZ * 2];
 
 	struct dbvalues npcvalues[] = {
-		{"shortDescr", &ch->npc->shortDescr, SQLITE_TEXT},
-		{"longDescr", &ch->npc->longDescr, SQLITE_TEXT},
-		{"startPosition", &ch->npc->startPosition, SQLITE_INTEGER},
-		{"areaId", &ch->npc->area->id, SQLITE_INTEGER},
+		{ "shortDescr",  &ch->npc->shortDescr, DB_TEXT},
+		{  "longDescr", &ch->npc->longDescr, DB_TEXT},
+		{  "startPosition", &ch->npc->startPosition, DB_INTEGER},
+		{  "areaId", &ch->npc->area->id, DB_INTEGER},
 		{0, 0, 0}
 	};
 

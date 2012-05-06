@@ -33,28 +33,21 @@ void synch_table( const char *tablename, const Lookup * table )
 {
 	char buf[400];
 
-	sprintf( buf, "delete from %s", tablename );
+	sprintf( buf, "CREATE TABLE IF NOT EXISTS [%s] ("
+				 "[name] VARCHAR NOT NULL PRIMARY KEY UNIQUE,"
+				 "[value] INTEGER)", tablename );
 
 	if ( db_exec( buf) != DB_OK )
 	{
-		log_data( "could not clear table, creating.." );
-
-		sprintf( buf, "CREATE TABLE [%s] ("
-				 "[value] INTEGER NOT NULL PRIMARY KEY UNIQUE,"
-				 "[name] VARCHAR NOT NULL" ")", tablename );
-
-		if ( db_exec( buf) != DB_OK )
-		{
-			log_data( "could not create %s", tablename );
-			return;
-		}
+		log_data( "could not create %s", tablename );
+		return;
 	}
 
 	for ( const Lookup * ptable = table; ptable->name != 0; ptable++ )
 	{
 		struct dbvalues tablevals[] = {
-			{"value", &ptable->value, SQLITE_INTEGER},
-			{"name", &ptable->name, SQLITE_TEXT},
+			{"name", &ptable->name, DB_TEXT},
+			{"value", &ptable->value, DB_INTEGER},
 			{0}
 		};
 
@@ -68,8 +61,18 @@ void synch_table( const char *tablename, const Lookup * table )
 
 		if ( db_exec( buf) != DB_OK )
 		{
-			log_data( "could not insert into %s", tablename );
-			return;
+			values[0] = 0;
+			
+			build_update_values( tablevals, values );
+
+			sprintf( buf, "update %s set %s where name='%s'", tablename, values, ptable->name );
+
+			if ( db_exec( buf) != DB_OK )
+			{
+				log_data( "could not save into %s", tablename );
+
+				return;
+			}
 		}
 	}
 }
@@ -86,12 +89,11 @@ void synchronize_tables(  )
 	synch_table( "object_type", object_types );
 	synch_table( "sector", sector_table );
 	synch_table( "stats", stat_table );
-	synch_table( "where_type", where_types );
-	synch_table( "apply_type", apply_types );
 	synch_table( "dam_type", dam_types );
+	synch_table( "affect_type", affect_callbacks);
 }
 
-long value_lookup( const Lookup * table, const char *arg )
+uintptr_t value_lookup( const Lookup * table, const char *arg )
 {
 	if ( !arg || !*arg )
 		return -1;
@@ -105,7 +107,7 @@ long value_lookup( const Lookup * table, const char *arg )
 	return -1;
 }
 
-int pos_lookup( const Lookup * table, const char *arg )
+int index_lookup( const Lookup * table, const char *arg )
 {
 	if ( nullstr( arg ) )
 		return -1;
@@ -134,7 +136,7 @@ const char *lookup_names( const Lookup * table )
 	return buf;
 }
 
-const char *lookup_name( const Lookup * table, int value )
+const char *lookup_name( const Lookup * table, uintptr_t value )
 {
 	for ( const Lookup * t = table; t->name != 0; t++ )
 	{

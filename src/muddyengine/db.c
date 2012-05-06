@@ -26,6 +26,7 @@
 #include <muddyengine/string.h>
 #include <string.h>
 #include <stdio.h>
+#include <inttypes.h>
 #include "config.h"
 
 sqlite3 *enginedb()
@@ -86,6 +87,10 @@ int db_column_int(db_stmt *stmt, int column) {
 	return sqlite3_column_int(stmt, column);
 }
 
+int db_col_int(db_stmt *stmt, const char *column) {
+	return sqlite3_column_int(stmt, db_column_index(stmt, column));
+}
+
 const char *db_column_str(db_stmt *stmt, int column) {
 	return (const char *) sqlite3_column_text(stmt, column);
 }
@@ -94,6 +99,14 @@ int64_t db_column_int64(db_stmt *stmt, int column) {
 	return sqlite3_column_int64(stmt, column);
 }
 
+int db_column_index(db_stmt *stmt, const char *name) {
+	for(int i = 0, size = db_column_count(stmt); i < size; ++i) {
+		if(!strcmp(db_column_name(stmt, i), name)) {
+			return i;
+		}
+	}
+	return -1;
+}
 const char *escape_db_str( const char *pstr )
 {
 	static char buf[OUT_SIZ * 3];
@@ -113,6 +126,44 @@ const char *escape_db_str( const char *pstr )
 	return buf;
 }
 
+identifier_t db_save(struct dbvalues *table, const char *tableName, identifier_t id)
+{
+	char buf[OUT_SIZ];
+
+	if ( id == 0 )
+	{
+		char names[BUF_SIZ] = { 0 };
+		char values[OUT_SIZ] = { 0 };
+
+		build_insert_values( table, names, values );
+
+		sprintf( buf, "insert into %s (%s) values(%s)", tableName, names, values );
+
+		if ( db_exec( buf) != DB_OK)
+		{
+			log_data( "could not insert account forum" );
+			return 0;
+		}
+
+		return db_last_insert_rowid();
+	}
+	else
+	{
+		char values[OUT_SIZ] = { 0 };
+
+		build_update_values( table, values );
+
+		sprintf( buf, "update %s set %s where accountId=%"PRId64, tableName, values, id );
+
+		if ( db_exec( buf) != DB_OK)
+		{
+			log_data( "could not update account_forum" );
+			return 0;
+		}
+		return id;
+	}
+}
+
 void set_db_values( struct dbvalues *table, char *values )
 {
 	if ( table->value == 0 )
@@ -122,18 +173,18 @@ void set_db_values( struct dbvalues *table, char *values )
 	}
 	switch ( table->type )
 	{
-		case SQLITE_INTEGER:
+		case DB_INTEGER:
 			sprintf( &values[strlen( values )], "%d",
 					 *( ( int * ) table->value ) );
 			strcat( values, "," );
 			break;
-		case SQLITE_TEXT:
+		case DB_TEXT:
 			strcat( values, "'" );
 			strcat( values,
 					escape_db_str( *( ( const char ** ) table->value ) ) );
 			strcat( values, "'," );
 			break;
-		case SQLITE_FLOAT:
+		case DB_FLOAT:
 			sprintf( &values[strlen( values )], "%f",
 					 *( ( double * ) table->value ) );
 			strcat( values, "," );
@@ -159,7 +210,7 @@ void set_db_values( struct dbvalues *table, char *values )
 			strcat( values, "'," );
 		}
 			break;
-		case DBTYPE_FLAG:
+		case DB_FLAG:
 			strcat( values, "'" );
 			strcat( values,
 					format_flags( *( ( Flag ** ) table->value ),
@@ -183,19 +234,19 @@ save_field_values( table_map * table, field_map * field, char *values,
 	}
 	switch ( field->type )
 	{
-		case SQLITE_INTEGER:
+		case DB_INTEGER:
 			sprintf( &values[strlen( values )], "%d",
 					 field_int( field->value, table->base, data ) );
 			strcat( values, "," );
 			break;
-		case SQLITE_TEXT:
+		case DB_TEXT:
 			strcat( values, "'" );
 			strcat( values,
 					escape_db_str( field_str
 								   ( field->value, table->base, data ) ) );
 			strcat( values, "'," );
 			break;
-		case SQLITE_FLOAT:
+		case DB_FLOAT:
 			sprintf( &values[strlen( values )], "%f",
 					 field_double( field->value, table->base, data ) );
 			strcat( values, "," );
@@ -216,7 +267,7 @@ save_field_values( table_map * table, field_map * field, char *values,
 			strcat( values, "'," );
 		}
 			break;
-		case DBTYPE_FLAG:
+		case DB_FLAG:
 			strcat( values, "'" );
 			strcat( values,
 					format_flags( field_flag

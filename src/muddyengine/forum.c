@@ -135,12 +135,12 @@ bool is_note_to( Character * ch, Note * note )
 
 }
 
-int forum_number( const Forum * forum )
+int lookup_forum_by_id( const identifier_t id )
 {
 
 	for ( int i = 0; i < max_forum; i++ )
 
-		if ( forum == &forum_table[i] )
+		if ( id == forum_table[i].id )
 
 			return i;
 
@@ -148,7 +148,7 @@ int forum_number( const Forum * forum )
 
 }
 
-int forum_lookup( const char *name )
+int lookup_forum_by_name( const char *name )
 {
 
 	for ( int i = 0; i < max_forum; i++ )
@@ -237,32 +237,34 @@ void check_notes( Forum * b )
 bool is_subscribed( Account * acc, int forum )
 {
 
-	return ( acc->unsubscribed & ( 1 << forum ) ) == 0;
+	return !acc->forumData[forum].unsubscribed;
 
 }
 
 void set_subscribed( Account * acc, int forum )
 {
 
-	acc->unsubscribed &= ~( 1 << forum );
+	acc->forumData[forum].unsubscribed = false;
 
 }
 
 void remove_subscribed( Account * acc, int forum )
 {
 
-	acc->unsubscribed |= ( 1 << forum );
+	acc->forumData[forum].unsubscribed = true;
 
 }
 
 int unread_notes( Character * ch, Forum * forum )
 {
 
-	if ( forum->readLevel > ch->level )
+	int f = lookup_forum_by_id( forum->id );
+
+	if ( f == FORUM_ERROR || forum->readLevel > ch->level )
 
 		return FORUM_ERROR;
 
-	time_t last_read = ch->pc->account->lastNote[forum_number( forum )];
+	time_t last_read = ch->pc->account->forumData[f].lastNote;
 
 	int count = 0;
 
@@ -297,7 +299,7 @@ Note *last_note( Character * ch, Forum * forum )
 void next_forum( Character * ch )
 {
 
-	int i = forum_number( ch->pc->account->forum ) + 1;
+	int i = lookup_forum_by_id( ch->pc->account->forum->id ) + 1;
 
 	while ( ( i < max_forum )
 			&& ( unread_notes( ch, &forum_table[i] ) == FORUM_ERROR
@@ -447,7 +449,7 @@ make_note( const char *forum_name, const char *sender,
 		   const int expire_days, const char *text )
 {
 
-	int forum_index = forum_lookup( forum_name );
+	int forum_index = lookup_forum_by_name( forum_name );
 
 	Forum *forum;
 
@@ -529,7 +531,7 @@ int load_notes( Forum * forum )
 
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -579,7 +581,7 @@ int load_notes( Forum * forum )
 				note->text = str_dup( db_column_str( stmt, i ) );
 
 			}
-			else if ( !str_cmp( colname, "date_stamp" ) )
+			else if ( !str_cmp( colname, "timestamp" ) )
 			{
 
 				note->date = db_column_int( stmt, i );
@@ -637,7 +639,7 @@ int load_forums(  )
 
 	}
 
-	if ( db_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == DB_DONE )
 	{
 
 		log_data( "could not count forums" );
@@ -668,7 +670,7 @@ int load_forums(  )
 
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -766,16 +768,14 @@ int save_note( Forum * forum, Note * note )
 
 	char buf[BUF_SIZ];
 
-	int fId = forum_number( forum );
-
 	struct dbvalues notevals[] = {
-		{"text", &note->text, SQLITE_TEXT},
-		{"subject", &note->subject, SQLITE_TEXT},
-		{"date_stamp", &note->date, SQLITE_INTEGER},
-		{"expire", &note->expire, SQLITE_INTEGER},
-		{"toList", &note->toList, SQLITE_TEXT},
-		{"sender", &note->from, SQLITE_TEXT},
-		{"forumId", &fId, SQLITE_INTEGER},
+		{"text", &note->text, DB_TEXT},
+		{"subject", &note->subject, DB_TEXT},
+		{"date_stamp", &note->date, DB_INTEGER},
+		{"expire", &note->expire, DB_INTEGER},
+		{"toList", &note->toList, DB_TEXT},
+		{"sender", &note->from, DB_TEXT},
+		{"forumId", &forum->id, DB_INTEGER},
 		{0}
 	};
 

@@ -43,10 +43,10 @@
 Character *first_player = 0;
 
 const Lookup plr_flags[] = {
-	{PLR_TICKS_OFF, "ticksoff"},
-	{PLR_BRIEF, "brief"},
-	{PLR_HINTS, "hints"},
-	{PLR_AUTOMAP_OFF, "automapoff"},
+	{ "ticksoff", PLR_TICKS_OFF},
+	{ "brief", PLR_BRIEF},
+	{ "hints", PLR_HINTS},
+	{ "automapoff", PLR_AUTOMAP_OFF},
 	{0, 0}
 };
 
@@ -172,7 +172,7 @@ static void read_condition( void *data, db_stmt * stmt, int col )
 }
 
 int save_player( Character * ch )
-{
+{ 
 
 	char buf[OUT_SIZ * 2];
 
@@ -195,19 +195,19 @@ int save_player( Character * ch )
 	}
 
 	struct dbvalues pcvalues[] = {
-		{"accountId", &ch->pc->account->id, SQLITE_INTEGER},
-		{"title", &ch->pc->title, SQLITE_TEXT},
-		{"roomId", ( ch->inRoom ? &ch->inRoom->id : 0 ), SQLITE_INTEGER},
-		{"prompt", &ch->pc->prompt, SQLITE_TEXT},
-		{"battlePrompt", &ch->pc->battlePrompt, SQLITE_TEXT},
-		{"explored", &ch->pc->explored, DBTYPE_CUSTOM, save_explored},
-		{"channels", &ch->pc->channels, DBTYPE_FLAG, channel_flags},
-		{"condition", &ch->pc->condition, DBTYPE_CUSTOM, save_condition},
-		{"experience", &ch->pc->experience, SQLITE_INTEGER},
-		{"permHit", &ch->pc->permHit, SQLITE_INTEGER},
-		{"permMana", &ch->pc->permMana, SQLITE_INTEGER},
-		{"permMove", &ch->pc->permMove, SQLITE_INTEGER},
-		{"created", &ch->pc->created, SQLITE_INTEGER},
+		{"accountId", &ch->pc->account->id, DB_INTEGER},
+		{ "title", &ch->pc->title, DB_TEXT},
+		{ "roomId", ( ch->inRoom ? &ch->inRoom->id : 0 ), DB_INTEGER},
+		{ "prompt", &ch->pc->prompt, DB_TEXT},
+		{ "battlePrompt", &ch->pc->battlePrompt, DB_TEXT},
+		{ "explored", &ch->pc->explored, DBTYPE_CUSTOM, save_explored},
+		{ "channels", &ch->pc->channels, DB_FLAG, channel_flags},
+		{ "condition", &ch->pc->condition, DBTYPE_CUSTOM, save_condition},
+		{ "experience", &ch->pc->experience, DB_INTEGER},
+		{ "permHit", &ch->pc->permHit, DB_INTEGER},
+		{ "permMana", &ch->pc->permMana, DB_INTEGER},
+		{ "permMove", &ch->pc->permMove, DB_INTEGER},
+		{ "created", &ch->pc->created, DB_INTEGER},
 		{0}
 	};
 
@@ -412,7 +412,7 @@ Character *load_player_by_id( Connection * conn, identifier_t charId )
 
 	ch->pc = new_player( conn );
 
-	if ( db_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != DB_DONE )
 	{
 
 		load_player_columns( conn->account, ch, stmt );
@@ -462,7 +462,7 @@ Character *load_player_by_name( Connection * conn, const char *name )
 
 	ch->pc = new_player( conn );
 
-	if ( db_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != DB_DONE )
 	{
 
 		load_player_columns( conn->account, ch, stmt );

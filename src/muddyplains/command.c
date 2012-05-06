@@ -105,13 +105,13 @@ const Command cmd_table[] = {
 int max_command = ( sizeof( cmd_table ) / sizeof( cmd_table[0] ) - 1 );
 
 const Lookup command_types[] = {
-	{COMMAND_INFO, "info"},
-	{COMMAND_SETTINGS, "settings"},
-	{COMMAND_ADMIN, "admin"},
-	{COMMAND_MANIP, "manipulation"},
-	{COMMAND_CONN, "connection"},
-	{COMMAND_COMM, "communication"},
-	{COMMAND_COMBAT, "combat"},
+	{ "info", COMMAND_INFO},
+	{ "settings", COMMAND_SETTINGS},
+	{ "admin", COMMAND_ADMIN},
+	{ "manipulation", COMMAND_MANIP},
+	{ "connection", COMMAND_CONN},
+	{ "communication", COMMAND_COMM},
+	{ "combat", COMMAND_COMBAT},
 	{0, 0}
 };
 

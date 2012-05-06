@@ -798,10 +798,14 @@ bool import_rom_mobiles( FILE * fp )
 		rom_resists_flag_convert( pMobIndex, fread_flag( fp ), -100 );	/*
 																		   | race_table[pMobIndex->race].vuln */ ;
 
+		int e = value_lookup( position_table, fread_word( fp ) );
+
 		/* vital statistics */
-		pMobIndex->position = (position_t) value_lookup( position_table, fread_word( fp ) );
-		pMobIndex->npc->startPosition = (position_t) value_lookup(position_table, fread_word( fp ) );
-		pMobIndex->sex = (sex_t) value_lookup(sex_table, fread_word( fp ) );
+		pMobIndex->position = e == -1 ? POS_STANDING : ((position_t) e);
+		e = value_lookup(position_table, fread_word( fp ) );
+		pMobIndex->npc->startPosition = e == -1 ? POS_STANDING : ((position_t) e);
+		e = value_lookup(sex_table, fread_word( fp ));
+		pMobIndex->sex = e == -1 ? SEX_NEUTRAL : ((sex_t) e);
 
 		pMobIndex->gold = fread_number( fp );
 
@@ -1251,6 +1255,30 @@ Flag *rom_convert_affect_flags( long bits )
 	return flags;
 }
 
+void *convert_affect_location(int location) {
+	static const struct {
+		void *callback;
+		int location;
+	} convert[] = {
+		{ &affect_apply_str, 1 },
+		{ &affect_apply_dex, 2 },
+		{ &affect_apply_int, 3 },
+		{ &affect_apply_wis, 4 },
+		{ &affect_apply_con, 5 },
+		{ &affect_apply_sex, 6 },
+		{ &affect_apply_level, 8 },
+		{ &affect_apply_mana, 12},
+		{ &affect_apply_hit, 13},
+		{ &affect_apply_move, 14}
+	};
+	for ( int i = 0; i < sizeof( convert ) / sizeof( convert[0] ); i++ )
+	{
+		if ( convert[i].location == location)
+			return convert[i].callback;
+	}
+	return 0;
+}
+
 bool import_rom_objects( FILE * fp )
 {
 	Object *pObjIndex;
@@ -1348,11 +1376,9 @@ bool import_rom_objects( FILE * fp )
 				Affect *paf;
 
 				paf = new_affect(  );
-				paf->where = TO_OBJECT;
-				paf->type = -1;
 				paf->level = pObjIndex->level;
 				paf->duration = -1;
-				paf->location = (int) fread_number( fp );
+				paf->callback = convert_affect_location(fread_number( fp ));
 				paf->modifier = (int) fread_number( fp );
 				paf->flags = new_flag(  );
 				LINK( pObjIndex->affects, paf, next );
@@ -1367,12 +1393,11 @@ bool import_rom_objects( FILE * fp )
 				switch ( letter )
 				{
 					case 'A':
-						paf->where = TO_AFFECTS;
 						break;
 					case 'I':
 					case 'R':
 					case 'V':
-						paf->where = TO_RESIST;
+						paf->callback = &affect_apply_resists;
 						break;
 
 					default:
@@ -1380,10 +1405,9 @@ bool import_rom_objects( FILE * fp )
 						destroy_object( pObjIndex );
 						return false;
 				}
-				paf->type = -1;
 				paf->level = pObjIndex->level;
 				paf->duration = -1;
-				paf->location = (int) fread_number( fp );
+				paf->callback = convert_affect_location(fread_number( fp ));
 				paf->modifier = (int) fread_number( fp );
 				/*paf->flag          = */
 				paf->flags = rom_convert_affect_flags( fread_flag( fp ) );

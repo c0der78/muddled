@@ -251,7 +251,7 @@ int load_socials(  )
 
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -373,18 +373,18 @@ int save_social( Social * soc )
 	char buf[OUT_SIZ];
 
 	struct dbvalues svals[] = {
-		{"name", &soc->name, SQLITE_TEXT},
-		{"charNoArg", &soc->charNoArg, SQLITE_TEXT},
-		{"othersNoArg", &soc->othersNoArg, SQLITE_TEXT},
-		{"charFound", &soc->charFound, SQLITE_TEXT},
-		{"othersFound", &soc->othersFound, SQLITE_TEXT},
-		{"victFound", &soc->victFound, SQLITE_TEXT},
-		{"charNotFound", &soc->charNotFound, SQLITE_TEXT},
-		{"charAuto", &soc->charAuto, SQLITE_TEXT},
-		{"othersAuto", &soc->othersAuto, SQLITE_TEXT},
-		{"charObjFound", &soc->charObjFound, SQLITE_TEXT},
-		{"othersObjFound", &soc->othersObjFound, SQLITE_TEXT},
-		{"minPosition", &soc->minPosition, SQLITE_INTEGER},
+		{"name", &soc->name, DB_TEXT},
+		{"charNoArg", &soc->charNoArg, DB_TEXT},
+		{"othersNoArg", &soc->othersNoArg, DB_TEXT},
+		{"charFound", &soc->charFound, DB_TEXT},
+		{"othersFound", &soc->othersFound, DB_TEXT},
+		{"victFound", &soc->victFound, DB_TEXT},
+		{"charNotFound", &soc->charNotFound, DB_TEXT},
+		{"charAuto", &soc->charAuto, DB_TEXT},
+		{"othersAuto", &soc->othersAuto, DB_TEXT},
+		{"charObjFound", &soc->charObjFound, DB_TEXT},
+		{"othersObjFound", &soc->othersObjFound, DB_TEXT},
+		{"minPosition", &soc->minPosition, DB_INTEGER},
 		{0}
 	};
 

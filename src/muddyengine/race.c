@@ -33,7 +33,7 @@
 Race *first_race = 0;
 
 const Lookup race_flags[] = {
-	{RACE_PC, "pcrace"},
+	{ "pcrace", RACE_PC},
 	{0, 0}
 };
 
@@ -102,7 +102,7 @@ int load_races(  )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 		int count = db_column_count( stmt );
 
@@ -148,7 +148,7 @@ int load_races(  )
 	}
 
 	if ( db_finalize( stmt ) != DB_OK )
-	{
+	{ 
 		log_data( "could not finalize statement" );
 	}
 
@@ -160,13 +160,11 @@ int save_race( Race * race )
 	char buf[OUT_SIZ];
 
 	struct dbvalues racevals[] = {
-		{"name", &race->name, SQLITE_TEXT},
-		{"description", &race->description, SQLITE_TEXT},
-		{"flags", &race->flags, DBTYPE_FLAG, race_flags},
-		{"stats", &race->stats, DBTYPE_ARRAY, db_save_int_array,
-		 ( void * ) MAX_STAT},
-		{"statMods", &race->statMods, DBTYPE_ARRAY, db_save_int_array,
-		 ( void * ) MAX_STAT},
+		{"name", &race->name, DB_TEXT},
+		{ "description", &race->description, DB_TEXT},
+		{ "flags", &race->flags, DB_FLAG, race_flags},
+		{ "stats", &race->stats, DBTYPE_ARRAY, db_save_int_array,( void * ) MAX_STAT},
+		{  "statMods", &race->statMods, DBTYPE_ARRAY, db_save_int_array, ( void * ) MAX_STAT},
 		{0}
 	};
 

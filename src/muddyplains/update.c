@@ -614,13 +614,13 @@ void character_update(  )
 			}
 			else if ( paf->duration == 0 )
 			{
-				if ( !paf_next || paf_next->type != paf->type
+				if ( !paf_next || paf_next->from != paf->from
 					 || paf_next->duration > 0 )
 				{
-					if ( valid_skill( paf->type )
-						 && !nullstr( skill_table[paf->type].msgOff ) )
+					if ( valid_skill( paf->from )
+						 && !nullstr( skill_table[paf->from].msgOff ) )
 					{
-						writeln( ch, skill_table[paf->type].msgOff );
+						writeln( ch, skill_table[paf->from].msgOff );
 					}
 				}
 				affect_remove( ch, paf );

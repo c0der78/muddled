@@ -197,7 +197,7 @@ int load_skill_levels( Skill * skill )
 
 	skill->levels = ( int * ) alloc_mem( max_class, sizeof( int ) );
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -292,7 +292,7 @@ int load_skills(  )
 
 	}
 
-	if ( db_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == DB_DONE )
 	{
 
 		log_data( "could not count skills" );
@@ -323,7 +323,7 @@ int load_skills(  )
 
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -392,7 +392,7 @@ int load_skills(  )
 							 db_column_str( stmt, i ), skill_flags );
 
 			}
-			else if ( !str_cmp( colname, "min_pos" ) )
+			else if ( !str_cmp( colname, "minPos" ) )
 			{
 
 				skill_table[total].minPos = db_column_int( stmt, i );
@@ -469,17 +469,17 @@ int save_skill( Skill * skill )
 	char buf[OUT_SIZ];
 
 	struct dbvalues skillvals[] = {
-		{"name", &skill->name, SQLITE_TEXT},
-		{"damage", &skill->damage, SQLITE_TEXT},
-		{"msgOff", &skill->msgOff, SQLITE_TEXT},
-		{"msgObj", &skill->msgObj, SQLITE_TEXT},
-		{"cost", &skill->cost, SQLITE_FLOAT},
-		{"minPos", &skill->minPos, SQLITE_INTEGER},
-		{"mana", &skill->mana, SQLITE_INTEGER},
-		{"wait", &skill->wait, SQLITE_INTEGER},
+		{"name", &skill->name, DB_TEXT},
+		{"damage", &skill->damage, DB_TEXT},
+		{"msgOff", &skill->msgOff, DB_TEXT},
+		{"msgObj", &skill->msgObj, DB_TEXT},
+		{"cost", &skill->cost, DB_FLOAT},
+		{"minPos", &skill->minPos, DB_INTEGER},
+		{"mana", &skill->mana, DB_INTEGER},
+		{"wait", &skill->wait, DB_INTEGER},
 		{"gsn", &skill->pgsn, DBTYPE_CUSTOM, save_gsn},
 		{"spell", &skill->spellfun, DBTYPE_CUSTOM, save_skillspell},
-		{"flags", &skill->flags, DBTYPE_FLAG, skill_flags},
+		{"flags", &skill->flags, DB_FLAG, skill_flags},
 		{0}
 	};
 
@@ -552,9 +552,7 @@ SPELL( energy_shield )
 
 	Affect *paf = new_affect(  );
 
-	paf->type = sn;
-
-	paf->where = TO_AFFECTS;
+	paf->from = sn;
 
 	paf->level = ch->level;
 
@@ -562,7 +560,7 @@ SPELL( energy_shield )
 
 	paf->modifier = 20;
 
-	paf->location = APPLY_RESIST;
+	paf->callback = &affect_apply_resists;
 
 	affect_to_char( ch, paf );
 

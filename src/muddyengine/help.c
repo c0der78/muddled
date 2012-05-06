@@ -34,9 +34,9 @@ const char *greeting = 0;
 Help *first_help = 0;
 
 const Lookup help_categories[] = {
-	{HELP_UNKNOWN, "unknown"},
-	{HELP_INFO, "information"},
-	{HELP_COMMUNICATION, "communication"},
+	{ "unknown", HELP_UNKNOWN},
+	{ "information", HELP_INFO},
+	{ "communication", HELP_COMMUNICATION},
 	{0, 0}
 };
 
@@ -150,7 +150,7 @@ int load_related_helps(  )
 
 		}
 
-		while ( db_step( stmt ) != SQLITE_DONE )
+		while ( db_step( stmt ) != DB_DONE )
 		{
 
 			int related = db_column_int( stmt, 1 );
@@ -205,7 +205,7 @@ int load_helps(  )
 
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -253,10 +253,10 @@ int save_help( Help * help )
 	char buf[OUT_SIZ * 3];
 
 	struct dbvalues helpvals[] = {
-		{"keywords", &help->keywords, SQLITE_TEXT},
-		{"text", &help->text, SQLITE_TEXT},
-		{"related", &help->related, SQLITE_TEXT},
-		{"category", &help->category, SQLITE_INTEGER},
+		{"keywords", &help->keywords, DB_TEXT},
+		{"text", &help->text, DB_TEXT},
+		{"related", &help->related, DB_TEXT},
+		{"category", &help->category, DB_INTEGER},
 		{0}
 	};
 

@@ -2,11 +2,19 @@ require 'rubygems' if RUBY_VERSION < '1.9'
 require 'rake'
 require 'rake/builder'
 
+# create runtime directories
 directory 'var'
 directory 'var/run'
 directory 'var/log'
 
+# call initialize tasks
 task :init => ['var', 'var/run', 'var/log']
+
+task :doc do
+    sh 'headerdoc2html -j -o html src/muddyengine/*.h'
+
+    sh 'gatherheaderdoc html index.html'
+end
 
 Rake::Builder.new do |builder|
   builder.target               = 'muddyplainsd'

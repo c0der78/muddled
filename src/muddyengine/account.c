@@ -1,4 +1,3 @@
-
 /******************************************************************************
  *         __  __           _     _         ____  _       _                   *
  *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
@@ -28,12 +27,13 @@
 #include <muddyengine/engine.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <assert.h>
 #include <muddyengine/forum.h>
 #include <muddyengine/lookup.h>
 #include <muddyengine/flag.h>
 
 const Lookup account_flags[] = {
-	{ACC_COLOR_OFF, "coloroff"},
+	{"coloroff", ACC_COLOR_OFF},
 	{0, 0}
 };
 
@@ -51,7 +51,10 @@ Account *new_account( Connection * conn )
 
 	acc->flags = new_flag(  );
 
-	acc->lastNote = ( time_t * ) alloc_mem( max_forum, sizeof( time_t ) );
+	acc->forumData = ( AccountForum * ) alloc_mem( max_forum, sizeof( AccountForum ) );
+
+	for(int i = 0; i < max_forum; i++) 
+		acc->forumData[i].draft = str_empty;
 
 	return acc;
 }
@@ -64,7 +67,11 @@ void destroy_account( Account * acc )
 
 	destroy_flags( acc->flags );
 
-	free_mem( acc->lastNote );
+	for(int i = 0; i < max_forum; i++) {
+		free_str(acc->forumData[i].draft);
+	}
+
+	free_mem( acc->forumData );
 
 	for ( AccountPlayer * ch_next, *ch = acc->players; ch != 0; ch = ch_next )
 	{
@@ -96,44 +103,36 @@ void destroy_account_player( AccountPlayer * p )
 	free_mem( p );
 }
 
-static const char *save_last_note( void *arg )
+void account_forum_set_last_note(Account *acc, time_t value)
 {
-	static char buf[OUT_SIZ];
-	time_t *data = *( ( time_t ** ) arg );
-	int len = 0;
+	assert(acc != 0);
 
-	buf[0] = 0;
+	int i = lookup_forum_by_id(acc->forum->id);
 
-	for ( int i = 0; i < max_forum; i++ )
-	{
-		len += sprintf( &buf[len], "%s=%ld,", forum_table[i].name, data[i] );
-	}
+	if(i == FORUM_ERROR) return;
 
-	if ( len > 0 )
-		buf[len - 1] = 0;
+	acc->forumData[i].lastNote = value;
+}
+time_t account_forum_last_note(Account *acc)
+{
+	assert(acc != 0 && acc->forum != 0);
 
-	return buf;
+	int i = lookup_forum_by_id(acc->forum->id);
+
+	if(i == FORUM_ERROR) return 0;
+
+	return acc->forumData[i].lastNote;
 }
 
-static void read_last_note( void *data, db_stmt * stmt, int i )
+bool account_forum_is_subscribed(Account *acc)
 {
-	const char *pstr = strtok( ( char * ) db_column_str( stmt, i ), "=" );
+	assert(acc != 0 && acc->forum != 0);
 
-	time_t *lastNote = ( time_t * ) data;
+	int i = lookup_forum_by_id(acc->forum->id);
 
-	while ( pstr != 0 )
-	{
-		int f = forum_lookup( pstr );
+	if (i == FORUM_ERROR) return true;
 
-		if ( f != FORUM_ERROR )
-		{
-			const char *val = strtok( NULL, "," );
-
-			lastNote[f] = atol( val );
-		}
-
-		pstr = strtok( NULL, "=" );
-	}
+	return !acc->forumData[i].unsubscribed;
 }
 
 int load_account( Account * acc, const char *login )
@@ -150,7 +149,7 @@ int load_account( Account * acc, const char *login )
 		return 0;
 	}
 
-	if ( db_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == DB_DONE )
 	{
 		if ( db_finalize( stmt ) != DB_OK )
 			log_data( "could not finalize sql statement" );
@@ -193,106 +192,86 @@ int load_account( Account * acc, const char *login )
 			{
 				acc->password = str_dup( db_column_str( stmt, i ) );
 			}
-			else if ( !str_cmp( colname, "lastNote" ) )
-			{
-				read_last_note( acc->lastNote, stmt, i );
-			}
 			else
 			{
 				log_warn( "unknown account column '%s'", colname );
 			}
 		}
 	}
-	while ( db_step( stmt ) != SQLITE_DONE );
-
-	// load account players
-
-	load_account_players( acc );
+	while ( db_step( stmt ) != DB_DONE );
 
 	if ( db_finalize( stmt ) != DB_OK )
 	{
 		log_data( "could not finalize sql statement" );
 	}
 
+	// load account players
+
+	load_account_players( acc );
+
+	load_account_forums( acc );
+
 	return 1;
+}
+int save_account_forum( Account *acc, int f )
+{
+	AccountForum *forum = &acc->forumData[f];
+
+	struct dbvalues accvalues[] = {
+		{"forumId", &forum->id, DB_INTEGER},
+		{"accountId", &acc->id, DB_INTEGER},
+		{"lastNote", &forum->lastNote, DB_INTEGER},
+		{"unsubscribed", &forum->unsubscribed, DB_INTEGER},
+		{"draft", &forum->draft, DB_TEXT},
+		{0, 0, 0}
+	};
+
+	forum->id = db_save(accvalues, "account_forum", forum->id);
+
+	return forum->id != 0;
 }
 
 int save_account( Account * acc )
 {
-	char buf[BUF_SIZ];
-
 	struct dbvalues accvalues[] = {
-		{"login", &acc->login, SQLITE_TEXT},
-		{"email", &acc->email, SQLITE_TEXT},
-		{"password", &acc->password, SQLITE_TEXT},
-		{"timezone", &acc->timezone, SQLITE_INTEGER},
-		{"autologinId", &acc->autologinId, SQLITE_INTEGER},
-		{"lastNote", &acc->lastNote, DBTYPE_CUSTOM, save_last_note},
-		{"flags", &acc->flags, DBTYPE_FLAG, account_flags},
+		{"login", &acc->login, DB_TEXT},
+		{"email", &acc->email, DB_TEXT},
+		{"password", &acc->password, DB_TEXT},
+		{"timezone", &acc->timezone, DB_INTEGER},
+		{"autologinId", &acc->autologinId, DB_INTEGER},
+		{"flags", &acc->flags, DB_FLAG, account_flags},
 		{0, 0, 0}
 	};
 
-	if ( acc->id == 0 )
-	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
+	acc->id = db_save(accvalues, "account", acc->id);
 
-		build_insert_values( accvalues, names, values );
+	for(int i = 0; i < max_forum; ++i) 
+		save_account_forum(acc, i);
 
-		sprintf( buf, "insert into account (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
-		{
-			log_data( "could not insert character" );
-			return 0;
-		}
-
-		acc->id = db_last_insert_rowid();
-	}
-	else
-	{
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( accvalues, values );
-
-		sprintf( buf, "update account set %s where accountId=%" PRId64, values,
-				 acc->id );
-
-		if ( db_exec( buf) != DB_OK )
-		{
-			log_data( "could not update character" );
-			return 0;
-		}
-	}
-
-	return 1;
+	return acc->id != 0;
 }
 
 int delete_account( Account * acc )
 {
 
 	char buf[500];
-	db_stmt *stmt;
-	int len = sprintf( buf, "delete from account where accountId=%" PRId64, acc->id );
+	
+	sprintf( buf, "delete from account where accountId=%" PRId64, acc->id );
 
 	log_debug( "deleting account %s", acc->login );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( db_exec( buf) != DB_OK )
 	{
-		log_data( "could not prepare sql statement" );
+		log_data( "could not exec sql statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) != SQLITE_DONE )
-	{
-		if ( db_finalize( stmt ) != DB_OK )
-			log_data( "could not finalize sql statement" );
-		return 0;
-	}
+	sprintf(buf, "delete from account_forum where accountId=%"PRId64, acc->id );
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( db_exec( buf) != DB_OK )
 	{
-		log_data( "could not finalize sql statement" );
+		log_data( "could not exec sql statement" );
+		return 0;
 	}
 
 	return 1;
@@ -313,7 +292,7 @@ int load_account_players( Account * acc )
 		return 0;
 	}
 
-	if ( db_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == DB_DONE )
 	{
 		if ( db_finalize( stmt ) != DB_OK )
 			log_data( "could not finalize sql statement" );
@@ -353,7 +332,75 @@ int load_account_players( Account * acc )
 			}
 		}
 	}
-	while ( db_step( stmt ) != SQLITE_DONE );
+	while ( db_step( stmt ) != DB_DONE );
+
+	if ( db_finalize( stmt ) != DB_OK )
+	{
+		log_data( "unable to finalize statement" );
+	}
+
+	return 1;
+
+}
+
+
+int load_account_forums( Account * acc )
+{
+	char buf[400];
+	db_stmt *stmt;
+
+	int len = sprintf( buf,
+					   "select * from account_forum where accountId=%" PRId64,
+					   acc->id );
+
+	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	{
+		log_data( "could not prepare sql statement" );
+		return 0;
+	}
+
+	if ( db_step( stmt ) == DB_DONE )
+	{
+		if ( db_finalize( stmt ) != DB_OK )
+			log_data( "could not finalize sql statement" );
+		return 0;
+	}
+
+	do
+	{
+		int i, cols = db_column_count( stmt );
+
+		AccountForum f;
+
+		for ( i = 0; i < cols; i++ )
+		{
+			const char *colname = db_column_name( stmt, i );
+			if ( !str_cmp( colname, "timestamp" ) )
+			{
+				f.lastNote = db_column_int( stmt, i );
+			}
+			else if ( !str_cmp( colname, "unsubscribed" ) )
+			{
+				f.unsubscribed = db_column_int( stmt, i ) == 1;
+			}
+			else if ( !str_cmp( colname, "draft" )) 
+			{
+				f.draft = db_column_str(stmt, i );
+			}
+			else if ( !str_cmp( colname, "forumId" ) )
+			{
+				f.id = db_column_int(stmt, i);
+			}
+		}
+
+		int index = lookup_forum_by_id(f.id);
+
+		if(index != FORUM_ERROR) {
+			memcpy(&acc->forumData[index], &f, sizeof(f));
+		}
+	
+	}
+	while ( db_step( stmt ) != DB_DONE );
 
 	if ( db_finalize( stmt ) != DB_OK )
 	{

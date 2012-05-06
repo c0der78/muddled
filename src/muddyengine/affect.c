@@ -30,70 +30,160 @@
 #include <muddyengine/db.h>
 #include <muddyengine/string.h>
 #include <muddyengine/lookup.h>
+#include <assert.h>
 
-const Lookup apply_types[] = {
-	{APPLY_NONE, "none"},
-	{APPLY_STR, "strength"},
-	{APPLY_DEX, "dexterity"},
-	{APPLY_INT, "intelligence"},
-	{APPLY_WIS, "wisdom"},
-	{APPLY_CON, "constitution"},
-	{APPLY_SEX, "sex"},
-	{APPLY_LEVEL, "level"},
-	{APPLY_AGE, "age"},
-	{APPLY_WEIGHT, "weight"},
-	{APPLY_MANA, "mana"},
-	{APPLY_HIT, "hit"},
-	{APPLY_MOVE, "move"},
-	{APPLY_GOLD, "gold"},
-	{APPLY_EXP, "experience"},
-	{APPLY_HITROLL, "hitroll"},
-	{APPLY_DAMROLL, "damroll"},
-	{APPLY_RESIST, "resistence"},
-	{APPLY_LUCK, "luck"},
-	{APPLY_SIZE, "size"},
-	{APPLY_ALIGN, "align"},
-	{APPLY_SKILL, "skill"},
-	{APPLY_SPELL_AFFECT, "spell_affect"},
-	{0, 0}
-};
-
-const Lookup where_types[] = {
-	{TO_AFFECTS, "affects"},
-	{TO_OBJECT, "object"},
-	{TO_RESIST, "resistencies"},
-	{TO_WEAPON, "weapon"},
-	{0, 0}
-};
 const Lookup affect_flags[] = {
-	{AFF_BLIND, "blindness"},
-	{AFF_INVISIBLE, "invisibility"},
-	{AFF_DETECT_EVIL, "detect_evil"},
-	{AFF_DETECT_INVIS, "detect_invis"},
-	{AFF_DETECT_MAGIC, "detect_magic"},
-	{AFF_DETECT_HIDDEN, "detect_hidden"},
-	{AFF_DETECT_GOOD, "detect_good"},
-	{AFF_SANCTUARY, "sactuary"},
-	{AFF_FAERIE_FIRE, "faerie_fire"},
-	{AFF_INFRARED, "infrared"},
-	{AFF_CURSE, "curse"},
-	{AFF_POISON, "poison"},
-	{AFF_PROTECT_EVIL, "protect_evil"},
-	{AFF_PROTECT_GOOD, "protect_good"},
-	{AFF_SNEAK, "sneak"},
-	{AFF_HIDE, "hide"},
-	{AFF_SLEEP, "sleep"},
-	{AFF_CHARM, "charm"},
-	{AFF_FLYING, "flying"},
-	{AFF_PASS_DOOR, "pass_door"},
-	{AFF_HASTE, "haste"},
-	{AFF_CALM, "calm"},
-	{AFF_PLAGUE, "plague"},
-	{AFF_WEAKEN, "weaken"},
-	{AFF_DARK_VISION, "dark_vision"},
-	{AFF_BERSERK, "berserk"},
-	{AFF_REGENERATION, "regeneration"},
-	{AFF_SLOW, "slow"},
+	{ "blindness", AFF_BLIND},
+	{ "invisibility", AFF_INVISIBLE},
+	{ "detect_evil", AFF_DETECT_EVIL},
+	{ "detect_invis", AFF_DETECT_INVIS},
+	{ "detect_magic", AFF_DETECT_MAGIC},
+	{ "detect_hidden", AFF_DETECT_HIDDEN},
+	{ "detect_good", AFF_DETECT_GOOD},
+	{ "sactuary", AFF_SANCTUARY},
+	{ "faerie_fire", AFF_FAERIE_FIRE},
+	{ "infrared", AFF_INFRARED},
+	{ "curse", AFF_CURSE},
+	{ "poison", AFF_POISON},
+	{ "protect_evil", AFF_PROTECT_EVIL},
+	{ "protect_good", AFF_PROTECT_GOOD},
+	{ "sneak", AFF_SNEAK},
+	{ "hide", AFF_HIDE},
+	{ "sleep", AFF_SLEEP},
+	{ "charm", AFF_CHARM},
+	{ "flying", AFF_FLYING},
+	{ "pass_door", AFF_PASS_DOOR},
+	{ "haste", AFF_HASTE},
+	{ "calm", AFF_CALM},
+	{ "plague", AFF_PLAGUE},
+	{ "weaken", AFF_WEAKEN},
+	{ "dark_vision", AFF_DARK_VISION},
+	{ "berserk", AFF_BERSERK},
+	{ "regeneration", AFF_REGENERATION},
+	{ "slow", AFF_SLOW},
+	{0, 0}
+};
+
+static int affect_mod(Affect *paf, bool fRemove) {
+	int mod = paf->modifier;
+
+	if(fRemove) mod = 0 - mod;
+
+	return mod;
+}
+
+void affect_apply_stat(Affect *aff, void *obj, bool fRemove, int stat)
+{
+	Character *ch = (Character*) obj;
+
+	assert(ch != 0);
+
+	ch->statMods[stat] += affect_mod(aff, fRemove);
+
+}
+
+void affect_apply_resist(Affect *paf, void *obj, bool fRemove, int arg)
+{
+	Character *ch = (Character *) obj;
+
+	assert(ch != 0);
+
+	ch->resists[arg] = affect_mod(paf, fRemove);
+}
+
+void affect_apply_resists(Affect *paf, void *obj, bool fRemove) {
+	Character *ch = (Character *) obj;
+	assert(ch != 0);
+
+	for(int i = DAM_BASH; i <= DAM_SLASH; i++) {
+		ch->resists[i] += affect_mod(paf, fRemove);
+	}
+}
+
+void affect_apply_str(Affect *paf, void *obj, bool fRemove) {
+	affect_apply_stat(paf, obj, fRemove, STAT_STR);
+}
+
+void affect_apply_dex(Affect *aff, void *obj, bool fRemove) {
+	affect_apply_stat(aff, obj, fRemove, STAT_DEX);
+}
+
+void affect_apply_int(Affect *paf, void *obj, bool fRemove) {
+	affect_apply_stat(paf, obj, fRemove, STAT_INT);
+}
+
+void affect_apply_wis(Affect *paf, void *obj, bool fRemove) {
+	affect_apply_stat(paf, obj, fRemove, STAT_WIS);
+}
+
+void affect_apply_con(Affect *paf, void *obj, bool fRemove) {
+	affect_apply_stat(paf, obj, fRemove, STAT_CON);
+}
+
+void affect_apply_luck(Affect *paf, void *obj, bool fRemove) {
+	affect_apply_stat(paf, obj, fRemove, STAT_LUCK);
+}
+
+void affect_apply_sex(Affect *paf, void *obj, bool fRemove) {
+	Character *ch = (Character *) obj;
+	assert(ch != 0);
+	int s = ch->sex;
+	s += affect_mod(paf, fRemove);
+	ch->sex = ( sex_t ) s;
+}
+
+void affect_apply_level(Affect *paf, void *affected, bool fRemove) {
+	Character *ch = (Character*) affected;
+	ch->level += affect_mod(paf, fRemove);
+}
+
+void affect_apply_mana(Affect *paf, void *obj, bool fRemove) {
+	Character *ch = (Character*) obj;
+	assert(ch != 0);
+	ch->maxMana += affect_mod(paf, fRemove);
+}
+
+void affect_apply_move(Affect *paf, void *obj, bool fRemove) {
+	Character *ch = (Character*) obj;
+	assert(ch != 0);
+	ch->maxMove += affect_mod(paf, fRemove);
+}
+
+void affect_apply_hit(Affect *paf, void *obj, bool fRemove) {
+	Character *ch = (Character*) obj;
+	assert(ch != 0);
+	ch->maxHit += affect_mod(paf, fRemove);
+}
+
+void affect_apply_size(Affect *paf, void *obj, bool fRemove) {
+	Character *ch = (Character *) obj;
+	assert(ch != 0);
+	ch->size += URANGE(SIZE_TINY, affect_mod(paf, fRemove), SIZE_HUGE);
+}
+
+void affect_apply_align(Affect *paf, void *obj, bool fRemove) {
+	Character *ch = (Character *) obj;
+	assert(ch != 0);
+
+	ch->alignment =
+				URANGE( -MAX_ALIGN, ch->alignment + affect_mod(paf, fRemove), MAX_ALIGN );
+}
+
+const Lookup affect_callbacks[] = {
+	{ "none", 0},
+	{ "strength", (uintptr_t) &affect_apply_str},
+	{ "dexterity", (uintptr_t) &affect_apply_dex},
+	{ "intelligence", (uintptr_t) &affect_apply_int},
+	{ "wisdom", (uintptr_t) &affect_apply_wis},
+	{ "constitution", (uintptr_t) &affect_apply_con },
+	{ "luck", (uintptr_t) &affect_apply_luck},
+	{ "sex", (uintptr_t) &affect_apply_sex},
+	{ "level", (uintptr_t) &affect_apply_level},
+	{ "mana", (uintptr_t) &affect_apply_mana},
+	{ "hit", (uintptr_t) &affect_apply_hit},
+	{ "move", (uintptr_t) &affect_apply_move},
+	{ "size", (uintptr_t) &affect_apply_size},
+	{ "align", (uintptr_t) &affect_apply_align},
 	{0, 0}
 };
 
@@ -101,8 +191,7 @@ Affect *new_affect(  )
 {
 	Affect *aff = ( Affect * ) alloc_mem( 1, sizeof( Affect ) );
 
-	aff->location = APPLY_NONE;
-	aff->where = TO_AFFECTS;
+	aff->from = -1;
 
 	return aff;
 }
@@ -114,30 +203,19 @@ void destroy_affect( Affect * aff )
 
 void affect_remove( Character * ch, Affect * paf )
 {
-	int where;
-	Flag *vector;
-	identifier_t type;
-
 	if ( ch->affects == 0 )
 	{
 		log_bug( "no affects." );
 		return;
 	}
-	//affect_modify(ch, paf, false);
-	where = paf->where;
-	vector = paf->flags;
-	type = paf->type;
-
+	
+	affect_modify(ch, paf, false);
+	
 	UNLINK( ch->affects, Affect, paf, next );
-
-	//affect_check(ch, where, vector);
 }
 
 void affect_remove_obj( Object * obj, Affect * paf )
 {
-	where_t where;
-	Flag *vector;
-
 	if ( obj->affects == 0 )
 	{
 		log_bug( "no affects on object." );
@@ -145,141 +223,25 @@ void affect_remove_obj( Object * obj, Affect * paf )
 	}
 
 	if ( obj->carriedBy != NULL && obj->wearLoc != WEAR_NONE )
-		affect_modify( obj->carriedBy, paf, false );
+		(*paf->callback)(paf, obj->carriedBy, true);
 
-	where = paf->where;
-	vector = paf->flags;
 
-	if ( paf->flags )
-	{
-		switch ( paf->where )
-		{
-			case TO_OBJECT:
-				//remove_flags(obj->flags, paf->flags);
-				break;
-				/* case TO_WEAPON:
-				   if (obj->item_type == ITEM_WEAPON)
-				   REMOVE_BIT(obj->value[4], paf->flags);
-				   break; */
-			default:
-				break;
-		}
-	}
+	(*paf->callback)(paf, obj, true);
+	
 	UNLINK( obj->affects, Affect, paf, next );
+}
 
-	if ( obj->carriedBy != NULL && obj->wearLoc != WEAR_NONE )
-		affect_check( obj->carriedBy, where, vector );
+const char *affect_name( Affect *paf ) {
+	return lookup_name(affect_callbacks, (uintptr_t) paf->callback);
 }
 
 void affect_modify( Character * ch, Affect * paf, bool fAdd )
 {
-	int mod = paf->modifier;
+	if(ch && paf && paf->callback) {
 
-	if ( fAdd )
-	{
-		switch ( paf->where )
-		{
-			case TO_AFFECTS:
-				//set_bit(ch->affectedBy, paf->flags);
-				break;
-			case TO_RESIST:
-				//SET_BIT(ch->res_flags, paf->flags);
-				break;
-			default:
-				break;
-		}
-	}
-	else
-	{
-		switch ( paf->where )
-		{
-			case TO_AFFECTS:
-				//REMOVE_BIT(ch->affected_by, paf->flags);
-				break;
-			case TO_RESIST:
-				//REMOVE_BIT(ch->res_flags, paf->flags);
-				break;
-			default:
-				break;
-		}
-		mod = 0 - mod;
+		(*paf->callback)(paf, ch, !fAdd);
 	}
 
-	switch ( paf->location )
-	{
-		default:
-			log_bug( "bad location: %d on %s room %"PRId64, paf->location,
-					 NAME( ch ), ch->inRoom ? ch->inRoom->id : 0 );
-			return;
-
-		case APPLY_NONE:
-			break;
-		case APPLY_STR:
-			ch->statMods[STAT_STR] += mod;
-			break;
-		case APPLY_DEX:
-			ch->statMods[STAT_DEX] += mod;
-			break;
-		case APPLY_INT:
-			ch->statMods[STAT_INT] += mod;
-			break;
-		case APPLY_WIS:
-			ch->statMods[STAT_WIS] += mod;
-			break;
-		case APPLY_CON:
-			ch->statMods[STAT_CON] += mod;
-			break;
-		case APPLY_LUCK:
-			ch->statMods[STAT_LUCK] += mod;
-			break;
-		case APPLY_SEX:
-		{
-			int s = ch->sex;
-			s += mod;
-			ch->sex = ( sex_t ) mod;
-		}
-			break;
-		case APPLY_LEVEL:
-			break;
-		case APPLY_AGE:
-			break;
-		case APPLY_WEIGHT:
-			break;
-		case APPLY_MANA:
-			ch->maxMana += mod;
-			break;
-		case APPLY_HIT:
-			ch->maxHit += mod;
-			break;
-		case APPLY_MOVE:
-			ch->maxMove += mod;
-			break;
-		case APPLY_GOLD:
-			break;
-		case APPLY_ALIGN:
-			ch->alignment =
-				URANGE( -MAX_ALIGN, ch->alignment + mod, MAX_ALIGN );
-			break;
-		case APPLY_SIZE:
-			ch->size += mod;
-			break;
-		case APPLY_EXP:
-			break;
-		case APPLY_SKILL:
-			/*    if (!IS_NPC(ch) && IS_VALID_SKILL(paf->type))
-			   ch->pcdata->skill_mod[paf->type] += mod; */
-			break;
-		case APPLY_HITROLL:
-			//ch->hitroll += mod;
-			break;
-		case APPLY_DAMROLL:
-			//ch->damroll += mod;
-			break;
-		case APPLY_RESIST:
-			break;
-		case APPLY_SPELL_AFFECT:
-			break;
-	}
 
 	/*if (ch->pc && (wield = get_eq_char(ch, WEAR_WIELD)) != NULL
 	   && get_obj_weight(wield) > (str_app[get_curr_stat(ch, STAT_STR)].wield * 10)
@@ -306,67 +268,13 @@ Affect *affect_find( Affect * paf, identifier_t sn )
 
 	for ( Affect * paf_find = paf; paf_find; paf_find = paf_find->next )
 	{
-		if ( paf_find->type == sn )
+		if ( paf_find->from == sn )
 			return paf_find;
 	}
 
 	return 0;
 }
 
-void affect_check( Character * ch, where_t where, Flag * vector )
-{
-	Affect *paf;
-	Object *obj;
-
-	if ( where == TO_OBJECT || where == TO_WEAPON || vector == 0 )
-		return;
-
-	for ( paf = ch->affects; paf; paf = paf->next )
-	{
-		if ( paf->where == where && flags_set( paf->flags, vector ) )
-		{
-			switch ( where )
-			{
-				case TO_AFFECTS:
-					//SET_BIT(ch->affected_by, vector);
-					break;
-
-				case TO_RESIST:
-					//SET_BIT(ch->res_flags, vector);
-					break;
-
-				default:
-					break;
-			}
-			return;
-		}
-	}
-
-	for ( obj = ch->carrying; obj; obj = obj->next_content )
-	{
-		for ( Affect * aff = obj->affects; aff; aff = aff->next )
-		{
-			if ( paf->where == where && flags_set( paf->flags, vector ) )
-			{
-				switch ( where )
-				{
-					case TO_AFFECTS:
-						//SET_BIT(ch->affected_by, vector);
-						break;
-
-					case TO_RESIST:
-						//SET_BIT(ch->res_flags, vector);
-						break;
-
-					default:
-						break;
-				}
-				return;
-			}
-		}
-
-	}
-}
 void affect_to_char( Character * ch, Affect * paf )
 {
 	LINK( ch->affects, paf, next );
@@ -380,22 +288,8 @@ void affect_to_obj( Object * obj, Affect * paf )
 {
 	LINK( obj->affects, paf, next );
 
-	if ( paf->flags )
-	{
-		switch ( paf->where )
-		{
-			case TO_OBJECT:
-				//SET_BIT(obj->extra_flags, paf->flags);
-				break;
-			case TO_WEAPON:
-
-				break;
-			default:
-				break;
-		}
-
-		return;
-	}
+	if(obj->carriedBy && obj->wearLoc != WEAR_NONE)
+		affect_modify( obj->carriedBy, paf, true);
 }
 
 bool is_affected( Character * ch, identifier_t sn )
@@ -421,7 +315,7 @@ Affect *load_affect_by_id( identifier_t id )
 
 	Affect *paf = 0;
 
-	if ( db_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != DB_DONE )
 	{
 		paf = new_affect(  );
 		paf->id = id;
@@ -437,9 +331,9 @@ Affect *load_affect_by_id( identifier_t id )
 				if ( id != db_column_int( stmt, i ) )
 					log_error( "sql statement did not return correct affect" );
 			}
-			else if ( !str_cmp( colname, "type" ) )
+			else if ( !str_cmp( colname, "from" ) )
 			{
-				paf->type = db_column_int( stmt, i );
+				paf->from = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
@@ -447,7 +341,7 @@ Affect *load_affect_by_id( identifier_t id )
 			}
 			else if ( !str_cmp( colname, "duration" ) )
 			{
-				paf->duration = db_column_int( stmt, i );
+				paf->duration = paf->perm_duration = db_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "modifier" ) )
 			{
@@ -458,13 +352,11 @@ Affect *load_affect_by_id( identifier_t id )
 				parse_flags( paf->flags,
 							 db_column_str( stmt, i ), affect_flags );
 			}
-			else if ( !str_cmp( colname, "whereTo" ) )
+			else if ( !str_cmp( colname, "type" ) )
 			{
-				paf->where = db_column_int( stmt, i );
-			}
-			else if ( !str_cmp( colname, "location" ) )
-			{
-				paf->location = db_column_int( stmt, i );
+
+				paf->callback = (affect_callback *) value_lookup(affect_callbacks, db_column_str( stmt, i ));
+
 			}
 			else
 			{
@@ -486,13 +378,12 @@ int save_affect( Affect * paf )
 	char buf[OUT_SIZ * 2];
 
 	struct dbvalues affvalues[] = {
-		{"type", &paf->type, SQLITE_INTEGER},
-		{"duration", &paf->duration, SQLITE_INTEGER},
-		{"modifier", &paf->modifier, SQLITE_INTEGER},
-		{"level", &paf->level, SQLITE_INTEGER},
-		{"flags", &paf->flags, DBTYPE_FLAG, affect_flags},
-		{"whereTo", &paf->where, SQLITE_INTEGER},
-		{"location", &paf->location, SQLITE_INTEGER},
+		{"duration", &paf->duration, DB_INTEGER},
+		{"perm_duration", &paf->perm_duration, DB_INTEGER},
+		{"modifier", &paf->modifier, DB_INTEGER},
+		{"level", &paf->level, DB_INTEGER},
+		{"flags", &paf->flags, DB_FLAG, affect_flags},
+		{"type", &paf->callback, DB_FLAG, affect_callbacks},
 		{0}
 	};
 

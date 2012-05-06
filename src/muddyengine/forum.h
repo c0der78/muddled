@@ -64,12 +64,6 @@ struct Note
 	time_t expire;
 };
 
-struct ForumStatus
-{
-	bool unubscribed;
-	time_t lastNote;
-};
-
 extern Forum *forum_table;
 extern int max_forum;
 
@@ -83,9 +77,9 @@ enum
 
 Note *new_note(  );
 void destroy_note( Note * );
-int forum_lookup( const char * );
+int lookup_forum_by_name( const char * );
+int lookup_forum_by_id(identifier_t);
 void finish_note( Forum *, Note * );
-int forum_number( const Forum * );
 bool is_note_to( Character *, Note * );
 void show_note_to_char( Character *, Note *, int );
 void next_forum( Character * );

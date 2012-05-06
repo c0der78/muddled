@@ -32,18 +32,18 @@
 #include <muddyengine/engine.h>
 
 const Lookup direction_table[] = {
-	{DIR_NORTH, "north"},
-	{DIR_EAST, "east"},
-	{DIR_SOUTH, "south"},
-	{DIR_WEST, "west"},
-	{DIR_UP, "up"},
-	{DIR_DOWN, "down"},
+	{  "north",  DIR_NORTH},
+	{  "east",  DIR_EAST},
+	{  "south",  DIR_SOUTH},
+	{  "west",  DIR_WEST},
+	{  "up",  DIR_UP},
+	{  "down",  DIR_DOWN},
 	{0, 0}
 };
 
 const Lookup exit_flags[] = {
-	{EXIT_CLOSED, "closed"},
-	{EXIT_LOCKED, "locked"},
+	{  "closed",  EXIT_CLOSED},
+	{  "locked",  EXIT_LOCKED},
 	{0, 0}
 };
 
@@ -122,7 +122,7 @@ int load_exits( Room * room )
 
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 
 		int count = db_column_count( stmt );
@@ -242,10 +242,10 @@ int save_exit( Exit * exit, direction_t dir )
 	}
 
 	struct dbvalues exitvals[] = {
-		{"toRoom", &exit->toRoom->id, SQLITE_INTEGER},
-		{"fromRoom", &exit->fromRoom->id, SQLITE_INTEGER},
-		{"direction", &dir, SQLITE_INTEGER},
-		{"flags", &exit->flags, DBTYPE_FLAG, exit_flags},
+		{ "toRoom",  &exit->toRoom->id, DB_INTEGER},
+		{ "fromRoom",  &exit->fromRoom->id, DB_INTEGER},
+		{ "direction",  &dir, DB_INTEGER},
+		{ "flags",  &exit->flags, DB_FLAG, exit_flags},
 		{0}
 	};
 

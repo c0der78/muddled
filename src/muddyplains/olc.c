@@ -674,7 +674,7 @@ edit_flag( const char *arg, Client * conn, Flag * flags,
 
 	int res = parse_flags_toggle( flags, argument, table );
 
-	if ( res == -1 )
+	if ( res == 0 )
 	{
 
 		writelnf( conn, "~CNo such flag.  See '%s ?' for a list.", arg );

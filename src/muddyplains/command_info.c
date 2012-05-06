@@ -72,7 +72,7 @@ DOFUN( commands )
 
 	}
 
-	int type = pos_lookup( command_types, argument );
+	int type = index_lookup( command_types, argument );
 
 	int count = 0;
 
@@ -777,7 +777,7 @@ DOFUN( affects )
 
 		{
 
-			if ( paf_last != NULL && paf->type == paf_last->type )
+			if ( paf_last != NULL && paf->from == paf_last->from )
 
 			{
 
@@ -794,9 +794,8 @@ DOFUN( affects )
 			{
 
 				writef( buffer, "Spell: ~c%-19s~x",
-						valid_skill( paf->
-									 type )
-						? skill_table[paf->type].name : "unknown" );
+						valid_skill( paf->from )
+						? skill_table[paf->from].name : "unknown" );
 
 			}
 
@@ -804,8 +803,8 @@ DOFUN( affects )
 
 			{
 
-				writef( buffer, ": modifies %s by %d ",
-						apply_types[paf->location].name, paf->modifier );
+				writef( buffer, ": modifies %s by %d ", 
+						affect_name(paf), paf->modifier );
 
 				if ( paf->duration == -1 )
 

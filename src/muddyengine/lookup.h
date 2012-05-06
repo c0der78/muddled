@@ -23,23 +23,26 @@
 #ifndef LOOKUP_H
 #define LOOKUP_H
 
+#include <stdint.h>
+
 typedef struct Lookup Lookup;
 
 struct Lookup
 {
-	int value;
 	const char *name;
+	uintptr_t value;
 };
 
-int pos_lookup( const Lookup *, const char * );
+int index_lookup( const Lookup *, const char * );
 
+uintptr_t value_lookup( const Lookup *, const char * );
 
-long value_lookup( const Lookup *, const char * );
-const char *values_tostring( const Lookup *, int * );
-void values_fromstring( const Lookup *, const char *, int * );
+const char *values_tostring( const Lookup *, uintptr_t * );
+void values_fromstring( const Lookup *, const char *, uintptr_t * );
 
 const char *lookup_names( const Lookup * );
-const char *lookup_name( const Lookup *, int );
+const char *lookup_name( const Lookup *, uintptr_t );
+
 void synchronize_tables(  );
 
 #endif							//  #ifndef LOOKUP_H

@@ -37,8 +37,8 @@ Area *first_area = 0;
 int max_area = 0;
 
 const Lookup area_flags[] = {
-	{AREA_NOEXPLORE, "noexplore"},
-	{AREA_CHANGED, "changed"},
+	{ "noexplore", AREA_NOEXPLORE},
+	{ "changed", AREA_CHANGED},
 	{0, 0}
 };
 
@@ -108,7 +108,7 @@ Area *load_area( identifier_t id )
 		return 0;
 	}
 
-	if ( db_step( stmt ) != SQLITE_DONE )
+	if ( db_step( stmt ) != DB_DONE )
 	{
 		area = new_area( );
 
@@ -144,7 +144,7 @@ int load_areas(  )
 		return 0;
 	}
 
-	while ( db_step( stmt ) != SQLITE_DONE )
+	while ( db_step( stmt ) != DB_DONE )
 	{
 		Area *area = new_area(  );
 
@@ -186,8 +186,8 @@ int save_area_only( Area * area )
 	remove_bit( area->flags, AREA_CHANGED );
 
 	struct dbvalues areavals[] = {
-		{"name", &area->name, SQLITE_TEXT},
-		{"flags", &area->flags, DBTYPE_FLAG, area_flags},
+		{"name", &area->name, DB_TEXT},
+		{"flags", &area->flags, DB_FLAG, area_flags},
 		{0}
 	};
 

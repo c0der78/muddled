@@ -76,12 +76,12 @@ const float exp_table[EXP_TABLE_SIZ] = {
 };
 
 const Lookup stat_table[] = {
-	{STAT_STR, "strength"},
-	{STAT_INT, "intelligence"},
-	{STAT_WIS, "wisdom"},
-	{STAT_DEX, "dexterity"},
-	{STAT_CON, "constitution"},
-	{STAT_LUCK, "luck"},
+	{ "strength", STAT_STR},
+	{ "intelligence", STAT_INT},
+	{ "wisdom", STAT_WIS},
+	{ "dexterity", STAT_DEX},
+	{ "constitution", STAT_CON},
+	{ "luck", STAT_LUCK},
 	{0, 0}
 };
 
@@ -137,7 +137,7 @@ int load_engine( const char *root_path )
 		return 0;
 	}
 
-	if ( db_step( stmt ) == SQLITE_DONE )
+	if ( db_step( stmt ) == DB_DONE )
 	{
 		if ( db_finalize( stmt ) != DB_OK )
 			log_data( "could not find engine info records" );
@@ -193,8 +193,8 @@ int save_engine(  )
 	char buf[BUF_SIZ];
 
 	struct dbvalues enginevalues[] = {
-		{"name", &engine_info.name, SQLITE_TEXT},
-		{"logins", &engine_info.total_logins, SQLITE_INTEGER},
+		{"name", &engine_info.name, DB_TEXT},
+		{"logins", &engine_info.total_logins, DB_INTEGER},
 		{0, 0, 0}
 	};
 

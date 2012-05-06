@@ -29,14 +29,14 @@
 #include "config.h"
 
 const Lookup logging_flags[] = {
-	{LOG_INFO, "info"},
-	{LOG_ERR, "error"},
-	{LOG_DEBUG, "debug"},
-	{LOG_WARN, "warning"},
-	{LOG_DATA, "data"},
-	{LOG_TRACE, "trace"},
-	{LOG_BUG, "bug"},
-	{LOG_FILE, "file"},
+	{ "info", LOG_INFO},
+	{ "error", LOG_ERR},
+	{ "debug", LOG_DEBUG},
+	{ "warning", LOG_WARN},
+	{ "data", LOG_DATA},
+	{ "trace", LOG_TRACE},
+	{ "bug", LOG_BUG},
+	{ "file", LOG_FILE},
 	{0, 0}
 };
 

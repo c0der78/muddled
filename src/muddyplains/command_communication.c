@@ -587,9 +587,7 @@ void note_read( Character * ch, const char *argument )
 
 	int count = 0, number;
 
-	time_t *last_note =
-		&ch->pc->conn->account->
-		lastNote[forum_number( ch->pc->conn->account->forum )];
+	time_t last_note = account_forum_last_note(ch->pc->account);
 
 	if ( !str_cmp( argument, "again" ) )
 
@@ -602,7 +600,7 @@ void note_read( Character * ch, const char *argument )
 		for ( p = ch->pc->conn->account->forum->notes; p; p = p->next, count++ )
 		{
 
-			if ( p->date > *last_note )
+			if ( p->date > last_note )
 
 				break;
 
@@ -656,7 +654,7 @@ void note_read( Character * ch, const char *argument )
 
 			show_note_to_char( ch, p, count );
 
-			*last_note = UMAX( *last_note, p->date );
+			last_note = UMAX( last_note, p->date );
 
 		}
 
@@ -672,13 +670,13 @@ void note_read( Character * ch, const char *argument )
 
 		{
 
-			if ( ( p->date > *last_note ) && is_note_to( ch, p ) )
+			if ( ( p->date > last_note ) && is_note_to( ch, p ) )
 
 			{
 
 				show_note_to_char( ch, p, count );
 
-				*last_note = UMAX( *last_note, p->date );
+				last_note = UMAX( last_note, p->date );
 
 				return;
 
@@ -807,8 +805,7 @@ void note_list( Character * ch, const char *argument )
 	grid_addf( grid, ALIGN_LEFT, 1, 0, 0, 0, 0, "~rNum> %-12s Subject",
 			   "Author" );
 
-	last_note =
-		ch->pc->account->lastNote[forum_number( ch->pc->account->forum )];
+	last_note = account_forum_last_note(ch->pc->account);
 
 	for ( p = ch->pc->account->forum->notes; p; p = p->next )
 
@@ -889,7 +886,7 @@ void note_catchup( Character * ch, const char *argument )
 
 			{
 
-				ch->pc->account->lastNote[forum_number( forum )] = p->date;
+				account_forum_set_last_note(ch->pc->account, p->date);
 
 				writelnf( ch, "All notes in ~W%s~x forum skipped.",
 						  forum->name );
@@ -923,8 +920,7 @@ void note_catchup( Character * ch, const char *argument )
 
 	{
 
-		ch->pc->account->
-			lastNote[forum_number( ch->pc->account->forum )] = p->date;
+		account_forum_set_last_note(ch->pc->account, p->date);
 
 		writeln( ch, "All messages skipped." );
 
@@ -959,7 +955,7 @@ void note_reset( Character * ch, const char *argument )
 
 	for ( int pos = 0; pos < max_forum; pos++ )
 
-		ch->pc->account->lastNote[pos] = 0;
+		ch->pc->account->forumData[pos].lastNote = 0;
 
 	writeln( ch, "All notes marked as unread." );
 

@@ -203,7 +203,7 @@ bool flags_set( Flag * flags, Flag * val )
 int parse_flags_toggle( Flag * flags, const char *arglist,
 						const Lookup * table )
 {
-	int res = -1;
+	int res = 0;
 
 	for ( const Lookup * t = table; t->name != 0; t++ )
 	{
@@ -219,7 +219,7 @@ int parse_flags_toggle( Flag * flags, const char *arglist,
 int parse_flags( Flag * flags, const char *format, const Lookup * table )
 {
 	const char *name = strtok( ( char * ) format, "," );
-	int res = -1;
+	int res = 0;
 
 	while ( name != 0 )
 	{

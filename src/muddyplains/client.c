@@ -526,8 +526,7 @@ bool parse_input_buffer( Client * conn )
 
 		}
 
-#endif							/* 
-								 */
+#endif
 	}
 
 	/*if (k == 0)

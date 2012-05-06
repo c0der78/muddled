@@ -40,8 +40,8 @@ int gcn_chat = 0;
 int gcn_admin = 0;
 
 const Lookup channel_flags[] = {
-	{CHANNEL_CHAT, "chat"},
-	{CHANNEL_ADMIN, "admin"},
+	{"chat", CHANNEL_CHAT},
+	{"admin", CHANNEL_ADMIN},
 	{0, 0}
 };
 
