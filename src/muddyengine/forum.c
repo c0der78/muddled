@@ -492,7 +492,7 @@ int delete_note( Forum * forum, Note * note )
 
 	sprintf( buf, "delete from note where noteId=%"PRId64, note->id );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 
 	{
 
@@ -515,14 +515,14 @@ int load_notes( Forum * forum )
 
 	char buf[BUF_SIZ];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from note where forumId=%" PRId64, 
 		forum->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -531,28 +531,28 @@ int load_notes( Forum * forum )
 
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		Note *note = new_note(  );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "noteId" ) )
 			{
 
-				note->id = db_column_int( stmt, i );
+				note->id = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "forumId" ) )
 			{
 
-				if ( forum->id != db_column_int( stmt, i ) )
+				if ( forum->id != sql_column_int( stmt, i ) )
 
 					log_error( "sql returned invalid note for forum" );
 
@@ -560,37 +560,37 @@ int load_notes( Forum * forum )
 			else if ( !str_cmp( colname, "toList" ) )
 			{
 
-				note->toList = str_dup( db_column_str( stmt, i ) );
+				note->toList = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "sender" ) )
 			{
 
-				note->from = str_dup( db_column_str( stmt, i ) );
+				note->from = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "subject" ) )
 			{
 
-				note->subject = str_dup( db_column_str( stmt, i ) );
+				note->subject = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "text" ) )
 			{
 
-				note->text = str_dup( db_column_str( stmt, i ) );
+				note->text = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "timestamp" ) )
 			{
 
-				note->date = db_column_int( stmt, i );
+				note->date = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "expire" ) )
 			{
 
-				note->expire = db_column_int( stmt, i );
+				note->expire = sql_column_int( stmt, i );
 
 			}
 			else
@@ -608,7 +608,7 @@ int load_notes( Forum * forum )
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -624,13 +624,13 @@ int load_forums(  )
 
 	char buf[BUF_SIZ];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select count(*) from forum" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -639,7 +639,7 @@ int load_forums(  )
 
 	}
 
-	if ( db_step( stmt ) == DB_DONE )
+	if ( sql_step( stmt ) == SQL_DONE )
 	{
 
 		log_data( "could not count forums" );
@@ -648,9 +648,9 @@ int load_forums(  )
 
 	}
 
-	max_forum = db_column_int( stmt, 0 );
+	max_forum = sql_column_int( stmt, 0 );
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -661,7 +661,7 @@ int load_forums(  )
 
 	len = sprintf( buf, "select * from forum" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -670,71 +670,71 @@ int load_forums(  )
 
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "forumId" ) )
 			{
 
-				forum_table[total].id = db_column_int( stmt, i );
+				forum_table[total].id = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "name" ) )
 			{
 
 				forum_table[total].name =
-					str_dup( db_column_str( stmt, i ) );
+					str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "description" ) )
 			{
 
 				forum_table[total].description =
-					str_dup( db_column_str( stmt, i ) );
+					str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "defaultTo" ) )
 			{
 
 				forum_table[total].defaultTo =
-					str_dup( db_column_str( stmt, i ) );
+					str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "readLevel" ) )
 			{
 
-				forum_table[total].readLevel = db_column_int( stmt, i );
+				forum_table[total].readLevel = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "writeLevel" ) )
 			{
 
-				forum_table[total].writeLevel = db_column_int( stmt, i );
+				forum_table[total].writeLevel = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "type" ) )
 			{
 
-				forum_table[total].type = db_column_int( stmt, i );
+				forum_table[total].type = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "purgeDays" ) )
 			{
 
-				forum_table[total].purgeDays = db_column_int( stmt, i );
+				forum_table[total].purgeDays = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 
-				forum_table[total].flags = db_column_int( stmt, i );
+				forum_table[total].flags = sql_column_int( stmt, i );
 
 			}
 			else
@@ -752,7 +752,7 @@ int load_forums(  )
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -765,34 +765,20 @@ int load_forums(  )
 
 int save_note( Forum * forum, Note * note )
 {
-
-	char buf[BUF_SIZ];
-
-	struct dbvalues notevals[] = {
-		{"text", &note->text, DB_TEXT},
-		{"subject", &note->subject, DB_TEXT},
-		{"date_stamp", &note->date, DB_INTEGER},
-		{"expire", &note->expire, DB_INTEGER},
-		{"toList", &note->toList, DB_TEXT},
-		{"sender", &note->from, DB_TEXT},
-		{"forumId", &forum->id, DB_INTEGER},
+	field_map note_values[] = {
+		{"text", &note->text, SQL_TEXT},
+		{"subject", &note->subject, SQL_TEXT},
+		{"date_stamp", &note->date, SQL_INT},
+		{"expire", &note->expire, SQL_INT},
+		{"toList", &note->toList, SQL_TEXT},
+		{"sender", &note->from, SQL_TEXT},
+		{"forumId", &forum->id, SQL_INT},
 		{0}
 	};
 
 	if ( note->id == 0 )
 	{
-
-		char names[BUF_SIZ] = { 0 };
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( notevals, names, values );
-
-		sprintf( buf, "insert into note (%s) values(%s)", names, values );
-
-		log_trace( "%s", buf );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( note_values, "note" ) != SQL_OK )
 		{
 
 			log_data( "could not insert note" );
@@ -806,14 +792,7 @@ int save_note( Forum * forum, Note * note )
 	}
 	else
 	{
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( notevals, values );
-
-		sprintf( buf, "update note set %s where noteId=%"PRId64, values, note->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( note_values, "note", note->id) != SQL_OK )
 		{
 
 			log_data( "could not update note" );

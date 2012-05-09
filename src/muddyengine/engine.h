@@ -35,9 +35,7 @@
 
 typedef struct Engine Engine;
 
-typedef long long identifier_t;
 typedef double money_t;
-
 
 #define BUF_SIZ		512
 
@@ -60,12 +58,14 @@ typedef double money_t;
 #include <muddyengine/flag.h>
 #include <muddyengine/macro.h>
 #include <muddyengine/db.h>
+
 extern const char *weekdays[];
 extern const char *months[];
 extern const char *seasons[];
 
 extern const float exp_table[EXP_TABLE_SIZ];
 
+typedef sql_int64 identifier_t;
 
 typedef enum
 {
@@ -117,7 +117,7 @@ struct Engine
 	int total_logins;
 	int logins;
 	Flag *logging;
-	db_type *db;
+	sql *db;
 };
 
 extern Engine engine_info;
@@ -132,7 +132,7 @@ FILE *engine_open_file_in_dir(const char *, const char *, const char *);
 
 sqlite3 *enginedb();
 
-int engine_query(const char *, size_t, db_stmt*);
+int engine_query(const char *, size_t, sql_stmt*);
 
 int load_engine( const char *root_path );
 int save_engine(  );

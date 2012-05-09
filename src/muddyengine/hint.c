@@ -58,13 +58,13 @@ int load_hints(  )
 
 	char buf[400];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select count(*) from hint" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -73,7 +73,7 @@ int load_hints(  )
 
 	}
 
-	if ( db_step( stmt ) == DB_DONE )
+	if ( sql_step( stmt ) == SQL_DONE )
 	{
 
 		log_data( "could not count hints" );
@@ -82,9 +82,9 @@ int load_hints(  )
 
 	}
 
-	max_hint = db_column_int( stmt, 0 );
+	max_hint = sql_column_int( stmt, 0 );
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -95,7 +95,7 @@ int load_hints(  )
 
 	len = sprintf( buf, "select * from hint" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -104,33 +104,33 @@ int load_hints(  )
 
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "text" ) )
 			{
 
 				hint_table[total].text =
-					str_dup( db_column_str( stmt, i ) );
+					str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "hintId" ) )
 			{
 
-				hint_table[total].id = db_column_int( stmt, i );
+				hint_table[total].id = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
 
-				hint_table[total].level = db_column_int( stmt, i );
+				hint_table[total].level = sql_column_int( stmt, i );
 
 			}
 			else
@@ -146,7 +146,7 @@ int load_hints(  )
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -166,27 +166,15 @@ int load_hints(  )
 
 int save_hint( Hint * hint )
 {
-
-	char buf[OUT_SIZ];
-
-	struct dbvalues hintvals[] = {
-		{"text", &hint->text, DB_TEXT},
-		{"level", &hint->level, DB_INTEGER},
+	field_map hint_values[] = {
+		{"text", &hint->text, SQL_TEXT},
+		{"level", &hint->level, SQL_INT},
 		{0}
 	};
 
 	if ( hint->id == 0 )
 	{
-
-		char names[BUF_SIZ] = { 0 };
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( hintvals, names, values );
-
-		sprintf( buf, "insert into hint (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( hint_values, "hint") != SQL_OK )
 		{
 
 			log_data( "could not insert hint" );
@@ -201,13 +189,7 @@ int save_hint( Hint * hint )
 	else
 	{
 
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( hintvals, values );
-
-		sprintf( buf, "update hint set %s where hintId=%" PRId64, values, hint->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( hint_values, "hint", hint->id) != SQL_OK )
 		{
 
 			log_data( "could not update hint" );

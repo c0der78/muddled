@@ -303,11 +303,11 @@ bool is_affected( Character * ch, identifier_t sn )
 Affect *load_affect_by_id( identifier_t id )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int len = sprintf( buf, "select * from affect where affectId=%"PRId64, id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare sql statement" );
 		return 0;
@@ -315,47 +315,47 @@ Affect *load_affect_by_id( identifier_t id )
 
 	Affect *paf = 0;
 
-	if ( db_step( stmt ) != DB_DONE )
+	if ( sql_step( stmt ) != SQL_DONE )
 	{
 		paf = new_affect(  );
 		paf->id = id;
 
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		for ( int i = 0; i < count; i++ )
 		{
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "affectId" ) )
 			{
-				if ( id != db_column_int( stmt, i ) )
+				if ( id != sql_column_int( stmt, i ) )
 					log_error( "sql statement did not return correct affect" );
 			}
 			else if ( !str_cmp( colname, "from" ) )
 			{
-				paf->from = db_column_int( stmt, i );
+				paf->from = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
-				paf->level = db_column_int( stmt, i );
+				paf->level = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "duration" ) )
 			{
-				paf->duration = paf->perm_duration = db_column_int( stmt, i );
+				paf->duration = paf->perm_duration = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "modifier" ) )
 			{
-				paf->modifier = db_column_int( stmt, i );
+				paf->modifier = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 				parse_flags( paf->flags,
-							 db_column_str( stmt, i ), affect_flags );
+							 sql_column_str( stmt, i ), affect_flags );
 			}
 			else if ( !str_cmp( colname, "type" ) )
 			{
 
-				paf->callback = (affect_callback *) value_lookup(affect_callbacks, db_column_str( stmt, i ));
+				paf->callback = (affect_callback *) value_lookup(affect_callbacks, sql_column_str( stmt, i ));
 
 			}
 			else
@@ -365,7 +365,7 @@ Affect *load_affect_by_id( identifier_t id )
 		}
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "unable to finalize statement" );
 	}
@@ -375,28 +375,19 @@ Affect *load_affect_by_id( identifier_t id )
 
 int save_affect( Affect * paf )
 {
-	char buf[OUT_SIZ * 2];
-
-	struct dbvalues affvalues[] = {
-		{"duration", &paf->duration, DB_INTEGER},
-		{"perm_duration", &paf->perm_duration, DB_INTEGER},
-		{"modifier", &paf->modifier, DB_INTEGER},
-		{"level", &paf->level, DB_INTEGER},
-		{"flags", &paf->flags, DB_FLAG, affect_flags},
-		{"type", &paf->callback, DB_FLAG, affect_callbacks},
+	field_map affect_values[] = {
+		{"duration", &paf->duration, SQL_INT},
+		{"perm_duration", &paf->perm_duration, SQL_INT},
+		{"modifier", &paf->modifier, SQL_INT},
+		{"level", &paf->level, SQL_INT},
+		{"flags", &paf->flags, SQL_FLAG, affect_flags},
+		{"type", &paf->callback, SQL_FLAG, affect_callbacks},
 		{0}
 	};
 
 	if ( paf->id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( affvalues, names, values );
-
-		sprintf( buf, "insert into affect (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( affect_values, "affect" ) != SQL_OK )
 		{
 			log_data( "could not insert affect" );
 			return 0;
@@ -407,16 +398,9 @@ int save_affect( Affect * paf )
 	}
 	else
 	{
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( affvalues, values );
-
-		sprintf( buf, "update affect set %s where affectId=%"PRId64, values,
-				 paf->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( affect_values, "affect", paf->id ) != SQL_OK )
 		{
-			log_data( "could not update character" );
+			log_data( "could not update affect" );
 			return 0;
 		}
 	}

@@ -103,16 +103,14 @@ int delete_player( Character * ch )
 	char buf[BUF_SIZ];
 
 	if ( !delete_character( ch ) )
-
 		return 0;
 
-	sprintf( buf, "delete from player where charId=%" PRId64, ch->id );
+	sprintf( buf, "delete from player where characterId=%" PRId64, ch->id );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 	{
 
 		log_data( "could not delete player" );
-
 		return 0;
 
 	}
@@ -121,146 +119,70 @@ int delete_player( Character * ch )
 
 }
 
-static const char *save_explored( void *arg )
+static int save_explored( sql_stmt *stmt, int index, field_map *table )
 {
 
-	return get_explored_rle( *( ( Flag ** ) arg ) );
+	const char *rle = get_explored_rle( *( ( Flag ** ) table->value ) );
 
-}
-
-static const char *save_condition( void *arg )
-{
-
-	int *cond = ( int * ) arg;
-
-	static char buf[BUF_SIZ];
-
-	int len = 0;
-
-	for ( int i = 0; i < MAX_COND; i++ )
-
-		len += sprintf( &buf[len], "%d,", cond[i] );
-
-	if ( len > 0 )
-
-		buf[len - 1] = 0;
-
-	return buf;
-
-}
-
-static void read_condition( void *data, db_stmt * stmt, int col )
-{
-
-	int *cond = ( int * ) data;
-
-	int index = 0;
-
-	const char *pstr =
-		strtok( ( char * ) db_column_str( stmt, col ), "," );
-
-	while ( pstr )
-
-	{
-
-		cond[index++] = atoi( pstr );
-
-		pstr = strtok( NULL, "," );
-
-	}
-
+	return sql_bind_text(stmt, index, rle, strlen(rle), 0);
 }
 
 int save_player( Character * ch )
 { 
-
-	char buf[OUT_SIZ * 2];
-
 	if ( ch->pc == 0 )
 	{
-
 		log_error( "character not a player" );
-
 		return 0;
-
 	}
 
 	db_begin_transaction(  );
 
 	if ( !save_account( ch->pc->account ) )
 	{
-
 		return 0;
-
 	}
-
-	struct dbvalues pcvalues[] = {
-		{"accountId", &ch->pc->account->id, DB_INTEGER},
-		{ "title", &ch->pc->title, DB_TEXT},
-		{ "roomId", ( ch->inRoom ? &ch->inRoom->id : 0 ), DB_INTEGER},
-		{ "prompt", &ch->pc->prompt, DB_TEXT},
-		{ "battlePrompt", &ch->pc->battlePrompt, DB_TEXT},
-		{ "explored", &ch->pc->explored, DBTYPE_CUSTOM, save_explored},
-		{ "channels", &ch->pc->channels, DB_FLAG, channel_flags},
-		{ "condition", &ch->pc->condition, DBTYPE_CUSTOM, save_condition},
-		{ "experience", &ch->pc->experience, DB_INTEGER},
-		{ "permHit", &ch->pc->permHit, DB_INTEGER},
-		{ "permMana", &ch->pc->permMana, DB_INTEGER},
-		{ "permMove", &ch->pc->permMove, DB_INTEGER},
-		{ "created", &ch->pc->created, DB_INTEGER},
-		{0}
-	};
 
 	int res = save_character( ch, plr_flags );
 
+	field_map pc_values[] = {
+		{ "playerId", &ch->id, SQL_INT},
+		{ "accountId", &ch->pc->account->id, SQL_INT},
+		{ "title", &ch->pc->title, SQL_TEXT},
+		{ "roomId", ( ch->inRoom ? &ch->inRoom->id : 0 ), SQL_INT},
+		{ "prompt", &ch->pc->prompt, SQL_TEXT},
+		{ "battlePrompt", &ch->pc->battlePrompt, SQL_TEXT},
+		{ "explored", &ch->pc->explored, SQL_CUSTOM, save_explored},
+		{ "channels", &ch->pc->channels, SQL_FLAG, channel_flags},
+		{ "condition", &ch->pc->condition, SQL_CUSTOM, db_save_int_array, (void*) MAX_COND},
+		{ "experience", &ch->pc->experience, SQL_INT},
+		{ "permHit", &ch->pc->permHit, SQL_INT},
+		{ "permMana", &ch->pc->permMana, SQL_INT},
+		{ "permMove", &ch->pc->permMove, SQL_INT},
+		{ "created", &ch->pc->created, SQL_INT},
+		{0}
+	};
+
 	if ( res == 1 )
 	{
-
-		char names[BUF_SIZ] = { 0 };
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( pcvalues, names, values );
-
-		sprintf( buf, "insert into player (charId,%s) values(%"PRId64",%s)",
-				 names, ch->id, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( pc_values, "player" ) != SQL_OK )
 		{
-
 			log_data( "could not insert player" );
-
 			return 0;
-
 		}
-
 	}
 	else if ( res == 2 )
 	{
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( pcvalues, values );
-
-		sprintf( buf, "update player set %s where charId=%"PRId64, values, ch->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( pc_values, "player", ch->id) != SQL_OK )
 		{
-
 			log_data( "could not update character" );
-
 			return 0;
-
 		}
-
 	}
 
 	if ( !save_char_objs( ch ) )
-
 		res = 0;
 
 	if ( !save_char_affects( ch ) )
-
 		res = 0;
 
 	db_end_transaction(  );
@@ -269,15 +191,15 @@ int save_player( Character * ch )
 
 }
 
-void load_player_columns( Account * acc, Character * ch, db_stmt * stmt )
+void load_player_columns( Account * acc, Character * ch, sql_stmt * stmt )
 {
 
-	int i, cols = db_column_count( stmt );
+	int i, cols = sql_column_count( stmt );
 
 	for ( i = 0; i < cols; i++ )
 	{
 
-		const char *colname = db_column_name( stmt, i );
+		const char *colname = sql_column_name( stmt, i );
 
 		if ( load_char_column( ch, stmt, colname, i ) )
 		{
@@ -286,7 +208,7 @@ void load_player_columns( Account * acc, Character * ch, db_stmt * stmt )
 		else if ( !str_cmp( colname, "title" ) )
 		{
 
-			ch->pc->title = str_dup( db_column_str( stmt, i ) );
+			ch->pc->title = str_dup( sql_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "prompt" ) )
@@ -294,7 +216,7 @@ void load_player_columns( Account * acc, Character * ch, db_stmt * stmt )
 
 			free_str( ch->pc->prompt );
 
-			ch->pc->prompt = str_dup( db_column_str( stmt, i ) );
+			ch->pc->prompt = str_dup( sql_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "battlePrompt" ) )
@@ -302,13 +224,13 @@ void load_player_columns( Account * acc, Character * ch, db_stmt * stmt )
 
 			free_str( ch->pc->battlePrompt );
 
-			ch->pc->battlePrompt = str_dup( db_column_str( stmt, i ) );
+			ch->pc->battlePrompt = str_dup( sql_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "accountId" ) )
 		{
 
-			if ( acc && acc->id != db_column_int( stmt, i ) )
+			if ( acc && acc->id != sql_column_int( stmt, i ) )
 
 				log_error( "sql returned invalid account for player" );
 
@@ -316,63 +238,63 @@ void load_player_columns( Account * acc, Character * ch, db_stmt * stmt )
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 
-			parse_flags( ch->flags, db_column_str( stmt, i ), plr_flags );
+			parse_flags( ch->flags, sql_column_str( stmt, i ), plr_flags );
 
 		}
 		else if ( !str_cmp( colname, "roomId" ) )
 		{
 
-			ch->inRoom = get_room_by_id( db_column_int( stmt, i ) );
+			ch->inRoom = get_room_by_id( sql_column_int( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "explored" ) )
 		{
 
 			convert_explored_rle( ch->pc->explored,
-								  db_column_str( stmt, i ) );
+								  sql_column_str( stmt, i ) );
 
 		}
 		else if ( !str_cmp( colname, "channels" ) )
 		{
 
 			parse_flags( ch->pc->channels,
-						 db_column_str( stmt, i ), channel_flags );
+						 sql_column_str( stmt, i ), channel_flags );
 
 		}
 		else if ( !str_cmp( colname, "condition" ) )
 		{
 
-			read_condition( ch->pc->condition, stmt, i );
+			db_read_int_array(MAX_COND, ch->pc->condition, stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "experience" ) )
 		{
 
-			ch->pc->experience = db_column_int( stmt, i );
+			ch->pc->experience = sql_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "permHit" ) )
 		{
 
-			ch->pc->permHit = db_column_int( stmt, i );
+			ch->pc->permHit = sql_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "permMana" ) )
 		{
 
-			ch->pc->permMana = db_column_int( stmt, i );
+			ch->pc->permMana = sql_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "permMove" ) )
 		{
 
-			ch->pc->permMove = db_column_int( stmt, i );
+			ch->pc->permMove = sql_column_int( stmt, i );
 
 		}
 		else if ( !str_cmp( colname, "created" ) )
 		{
 
-			ch->pc->created = db_column_int( stmt, i );
+			ch->pc->created = sql_column_int( stmt, i );
 
 		}
 		else
@@ -391,15 +313,15 @@ Character *load_player_by_id( Connection * conn, identifier_t charId )
 
 	char buf[400];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	db_begin_transaction(  );
 
 	int len = sprintf( buf,
-					   "select * from character natural join player where charId=%"PRId64,
+					   "select * from character join player on playerId=characterId where characterId=%"PRId64,
 					   charId );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare sql statement" );
@@ -412,14 +334,14 @@ Character *load_player_by_id( Connection * conn, identifier_t charId )
 
 	ch->pc = new_player( conn );
 
-	if ( db_step( stmt ) != DB_DONE )
+	if ( sql_step( stmt ) != SQL_DONE )
 	{
 
 		load_player_columns( conn->account, ch, stmt );
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "unable to finalize statement" );
@@ -441,15 +363,15 @@ Character *load_player_by_name( Connection * conn, const char *name )
 
 	char buf[400];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	db_begin_transaction(  );
 
 	int len = sprintf( buf,
 					   "select * from character natural join player where name='%s'",
-					   escape_db_str( name ) );
+					   escape_sql_str( name ) );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare sql statement" );
@@ -462,14 +384,14 @@ Character *load_player_by_name( Connection * conn, const char *name )
 
 	ch->pc = new_player( conn );
 
-	if ( db_step( stmt ) != DB_DONE )
+	if ( sql_step( stmt ) != SQL_DONE )
 	{
 
 		load_player_columns( conn->account, ch, stmt );
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "unable to finalize statement" );

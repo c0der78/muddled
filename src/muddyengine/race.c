@@ -37,8 +37,6 @@ const Lookup race_flags[] = {
 	{0, 0}
 };
 
-const char *save_stats( void * );
-
 Race *get_race_by_id( identifier_t id )
 {
 
@@ -91,38 +89,38 @@ void destroy_race( Race * race )
 int load_races(  )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from race" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		Race *race = new_race(  );
 
 		for ( int i = 0; i < count; i++ )
 		{
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
-				race->name = str_dup( db_column_str( stmt, i ) );
+				race->name = str_dup( sql_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "description" ) )
 			{
-				race->description = str_dup( db_column_str( stmt, i ) );
+				race->description = str_dup( sql_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "raceId" ) )
 			{
-				race->id = db_column_int( stmt, i );
+				race->id = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "stats" ) )
 			{
@@ -135,7 +133,7 @@ int load_races(  )
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 				parse_flags( race->flags,
-							 db_column_str( stmt, i ), race_flags );
+							 sql_column_str( stmt, i ), race_flags );
 			}
 			else
 			{
@@ -147,7 +145,7 @@ int load_races(  )
 		total++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{ 
 		log_data( "could not finalize statement" );
 	}
@@ -157,27 +155,18 @@ int load_races(  )
 
 int save_race( Race * race )
 {
-	char buf[OUT_SIZ];
-
-	struct dbvalues racevals[] = {
-		{"name", &race->name, DB_TEXT},
-		{ "description", &race->description, DB_TEXT},
-		{ "flags", &race->flags, DB_FLAG, race_flags},
-		{ "stats", &race->stats, DBTYPE_ARRAY, db_save_int_array,( void * ) MAX_STAT},
-		{  "statMods", &race->statMods, DBTYPE_ARRAY, db_save_int_array, ( void * ) MAX_STAT},
+	field_map race_values[] = {
+		{"name", &race->name, SQL_TEXT},
+		{ "description", &race->description, SQL_TEXT},
+		{ "flags", &race->flags, SQL_FLAG, race_flags},
+		{ "stats", &race->stats, SQL_ARRAY, db_save_int_array,( void * ) MAX_STAT},
+		{  "statMods", &race->statMods, SQL_ARRAY, db_save_int_array, ( void * ) MAX_STAT},
 		{0}
 	};
 
 	if ( race->id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( racevals, names, values );
-
-		sprintf( buf, "insert into race (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( race_values, "race") != SQL_OK )
 		{
 			log_data( "could not insert race" );
 			return 0;
@@ -188,13 +177,7 @@ int save_race( Race * race )
 	}
 	else
 	{
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( racevals, values );
-
-		sprintf( buf, "update race set %s where raceId=%" PRId64, values, race->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( race_values, "race", race->id ) != SQL_OK )
 		{
 			log_data( "could not update race" );
 			return 0;

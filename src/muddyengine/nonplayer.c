@@ -60,36 +60,36 @@ void destroy_npc( NPC * npc )
 	free_mem( npc );
 }
 
-void load_npc_columns( Character * ch, db_stmt * stmt )
+void load_npc_columns( Character * ch, sql_stmt * stmt )
 {
-	int count = db_column_count( stmt );
+	int count = sql_column_count( stmt );
 
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = db_column_name( stmt, i );
+		const char *colname = sql_column_name( stmt, i );
 
 		if ( load_char_column( ch, stmt, colname, i ) )
 		{
 		}
 		else if ( !str_cmp( colname, "shortDescr" ) )
 		{
-			ch->npc->shortDescr = str_dup( db_column_str( stmt, i ) );
+			ch->npc->shortDescr = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "longDescr" ) )
 		{
-			ch->npc->longDescr = str_dup( db_column_str( stmt, i ) );
+			ch->npc->longDescr = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "startPosition" ) )
 		{
-			ch->npc->startPosition = db_column_int( stmt, i );
+			ch->npc->startPosition = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
-			parse_flags( ch->flags, db_column_str( stmt, i ), npc_flags );
+			parse_flags( ch->flags, sql_column_str( stmt, i ), npc_flags );
 		}
 		else if ( !str_cmp( colname, "areaId" ) )
 		{
-			ch->npc->area = get_area_by_id( db_column_int( stmt, i ) );
+			ch->npc->area = get_area_by_id( sql_column_int( stmt, i ) );
 		}
 		else
 		{
@@ -101,20 +101,20 @@ void load_npc_columns( Character * ch, db_stmt * stmt )
 Character *load_npc( identifier_t id )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	Character *ch = 0;
 
 	int len = sprintf( buf,
-					   "select * from character natural join nonplayer where charId=%" PRId64,
+					   "select * from character join nonplayer on nonplayerId=characterId where charId=%" PRId64,
 					   id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) != DB_DONE )
+	if ( sql_step( stmt ) != SQL_DONE )
 	{
 		ch = new_char(  );
 		ch->npc = new_npc(  );
@@ -125,7 +125,7 @@ Character *load_npc( identifier_t id )
 		LINK( first_character, ch, next );
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -136,20 +136,20 @@ Character *load_npc( identifier_t id )
 int load_npcs( Area * area )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf,
 					   "select * from character natural join nonplayer where areaId=%"PRId64,
 					   area->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 		Character *ch = new_char(  );
 		ch->npc = new_npc(  );
@@ -163,7 +163,7 @@ int load_npcs( Area * area )
 		total++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -173,29 +173,21 @@ int load_npcs( Area * area )
 
 int save_npc( Character * ch )
 {
-	char buf[OUT_SIZ * 2];
-
-	struct dbvalues npcvalues[] = {
-		{ "shortDescr",  &ch->npc->shortDescr, DB_TEXT},
-		{  "longDescr", &ch->npc->longDescr, DB_TEXT},
-		{  "startPosition", &ch->npc->startPosition, DB_INTEGER},
-		{  "areaId", &ch->npc->area->id, DB_INTEGER},
-		{0, 0, 0}
-	};
 
 	int res = save_character( ch, npc_flags );
 
+	field_map npc_values[] = {
+		{ "nonplayerId", &ch->id, SQL_INT},
+		{ "shortDescr",  &ch->npc->shortDescr, SQL_TEXT},
+		{  "longDescr", &ch->npc->longDescr, SQL_TEXT},
+		{  "startPosition", &ch->npc->startPosition, SQL_INT},
+		{  "areaId", &ch->npc->area->id, SQL_INT},
+		{0, 0, 0}
+	};
+
 	if ( res == 1 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( npcvalues, names, values );
-
-		sprintf( buf, "insert into nonplayer (charId,%s) values(%"PRId64",%s)",
-				 names, ch->id, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( npc_values, "nonplayer" ) != SQL_OK )
 		{
 			log_data( "could not insert player" );
 			return 0;
@@ -203,14 +195,7 @@ int save_npc( Character * ch )
 	}
 	else if ( res == 2 )
 	{
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( npcvalues, values );
-
-		sprintf( buf, "update nonplayer set %s where charId=%"PRId64, values,
-				 ch->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( npc_values, "nonplayer", ch->id) != SQL_OK )
 		{
 			log_data( "could not update character" );
 			return 0;
@@ -229,7 +214,7 @@ int delete_npc( Character * ch )
 
 	sprintf( buf, "delete from nonplayer where charId=%"PRId64, ch->id );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 	{
 		log_data( "could not delete player" );
 		return 0;

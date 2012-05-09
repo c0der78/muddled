@@ -23,35 +23,28 @@
 
 #include <sqlite3.h>
 #include <stdint.h>
+#include <muddyengine/flag.h>
 
-typedef long long DB_ID;
+#define sql 		sqlite3
+#define sql_stmt 	sqlite3_stmt
+#define sql_int64 	sqlite3_int64
+#define sql_uint64 	sqlite3_uint64
 
-#define DB_OK SQLITE_OK
+#define SQL_OK 		SQLITE_OK
+#define SQL_DONE 	SQLITE_DONE
+#define SQL_NONTYPE	SQLITE_NOTFOUND
 
-#define DB_DONE SQLITE_DONE
+#define SQL_INT 	SQLITE_INTEGER
+#define SQL_DOUBLE 	SQLITE_FLOAT
+#define SQL_BLOB 	SQLITE_BLOB
+#define SQL_NULL 	SQLITE_NULL
+#define SQL_TEXT 	SQLITE_TEXT
 
-#define DB_INTEGER SQLITE_INTEGER
-
-#define DB_FLOAT SQLITE_FLOAT
-
-#define DB_BLOB SQLITE_BLOB
-
-#define DB_NULL SQLITE_NULL
-
-#define DB_TEXT SQLITE_TEXT
-
-#define db_stmt sqlite3_stmt
-
-#define db_type sqlite3
-
-struct dbvalues
-{
-	const char *name;
-	const void *value;
-	int type;
-	const void *arg1;
-	const void *arg2;
-};
+#define SQL_FLAG	1000
+#define SQL_CUSTOM	1001
+#define SQL_FLOAT	1002
+#define SQL_ARRAY 	SQL_CUSTOM
+#define SQL_LOOKUP	1003
 
 typedef struct field_map
 {
@@ -63,49 +56,59 @@ typedef struct field_map
 	int flags;
 } field_map;
 
-typedef struct table_map
-{
-	const char *name;
-	const char *key;
-	const void *base;
-	field_map *fields;
-} table_map;
+typedef int ( *custom_sql_bind ) ( sql_stmt *, int, field_map * );
 
-typedef const char *( *map_save_t ) ( const void * );
-typedef const char *( *map_save_array_t ) ( int, const void * );
-typedef void ( *map_read_t ) ( void *, db_stmt *, int );
-typedef void ( *map_read_array_t ) ( int, void *, db_stmt *, int );
-
-#define DB_FLAG	1000
-#define DBTYPE_CUSTOM	1001
-#define DBTYPE_FLOAT	1002
-#define DBTYPE_ARRAY 1003
-
-void build_update_values( struct dbvalues *, char * );
-void build_insert_values( struct dbvalues *, char *, char * );
-const char *escape_db_str( const char * );
-const char *db_save_int_array( int, void * );
-void db_read_int_array( int, void *, db_stmt *, int );
+const char *tablenameid(const char *tablename);
+const char *escape_sql_str( const char * );
+int db_save_int_array( sql_stmt *, int, field_map* );
+void db_read_int_array( int, void *, sql_stmt *, int );
 int db_begin_transaction(  );
 int db_end_transaction(  );
-int db_exec(const char *);
-sqlite3 *enginedb();
-int db_errcode();
-const char *db_errmsg();
+int sql_exec(const char *);
+sql *enginedb();
+int sql_errcode();
+const char *sql_errmsg();
 int db_last_insert_rowid();
-int db_exec(const char *);
+int sql_exec(const char *);
 void db_close();
 int db_open(const char *);
-int db_query(const char *, int, db_stmt **);
-int db_step(db_stmt *);
-int db_finalize(db_stmt *);
-int db_column_count(db_stmt *);
-const char *db_column_name(db_stmt *, int);
-int db_column_int(db_stmt *, int);
-int db_col_int(db_stmt *, const char *);
-int64_t db_column_int64(db_stmt *, int);
-const char *db_column_str(db_stmt *, int);
-int db_column_index(db_stmt *, const char *);
+int sql_query(const char *, int, sql_stmt **);
+int sql_insert_query(field_map *, const char *);
+int sql_update_query(field_map *, const char *, sql_int64);
+
+const char *sql_column_str(sql_stmt *, int);
+int sql_column_index(sql_stmt *, const char *);
+int sql_col_int(sql_stmt *, const char *);
+
+int db_save_lookup(sql_stmt *, int, field_map*);
+
+#define sql_step			sqlite3_step
+#define sql_finalize		sqlite3_finalize
+#define sql_reset			sqlite3_reset
+
+#define sql_bind_blob 		sqlite3_bind_blob
+#define sql_bind_double 	sqlite3_bind_double
+#define sql_bind_float		sqlite3_bind_double
+#define sql_bind_int 		sqlite3_bind_int
+#define sql_bind_int64 		sqlite3_bind_int64
+#define sql_bind_null		sqlite3_bind_null
+#define sql_bind_text 		sqlite3_bind_text
+#define sql_bind_text16  	sqlite3_bind_text16
+#define sql_bind_value		sqlite3_bind_value
+#define sql_bind_zeroblob	sqlite3_bind_zeroblob
+
+#define sql_column_blob		sqlite3_column_blob
+#define sql_column_bytes 	sqlite3_column_bytes
+#define sql_column_bytes16 	sqlite3_column_bytes16
+#define sql_column_double 	sqlite3_column_double
+#define sql_column_int 		sqlite3_column_int
+#define sql_column_int64 	sqlite3_column_int64
+#define sql_column_text 	sqlite3_column_text
+#define sql_column_text16 	sqlite3_column_text16
+#define sql_column_type 	sqlite3_column_type
+#define sql_column_value 	sqlite3_column_value
+#define sql_column_name		sqlite3_column_name
+#define sql_column_count 	sqlite3_column_count
 
 /*!
  * saves a record
@@ -114,8 +117,15 @@ int db_column_index(db_stmt *, const char *);
  * @param id the current id of the value
  * @return the identifier of the value
  */
-DB_ID db_save(struct dbvalues *, const char *, DB_ID);
+sql_int64 db_save(field_map *, const char *, sql_int64);
 
+int field_map_int(field_map *);
+float field_map_float(field_map *);
+double field_map_double(field_map *);
+const char *field_map_str(field_map *);
+Flag * field_map_flag(field_map *);
+
+/*
 #define field(type, base, value, data) \
 	*( (type *) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
 
@@ -133,5 +143,6 @@ DB_ID db_save(struct dbvalues *, const char *, DB_ID);
 
 #define field_flag(base, value, data) \
 	*( (Flag **) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
+*/
 
 #endif							//  #ifndef DB_H

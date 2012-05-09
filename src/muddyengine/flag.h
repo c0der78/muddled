@@ -50,6 +50,8 @@ Flag *toggle_flags( Flag *, Flag * );
 Flag *remove_bit( Flag *, bit_t );
 Flag *remove_flags( Flag *, Flag * );
 bool is_set( Flag *, bit_t );
+bool is_empty(Flag *);
+
 /*!
  * checks if all bits in a flag are set in another flag
  */

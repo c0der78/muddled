@@ -236,13 +236,13 @@ int load_socials(  )
 
 	char buf[400];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from social" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -251,94 +251,94 @@ int load_socials(  )
 
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		Social *soc = new_social(  );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
 
-				soc->name = str_dup( db_column_str( stmt, i ) );
+				soc->name = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "charNoArg" ) )
 			{
 
-				soc->charNoArg = str_dup( db_column_str( stmt, i ) );
+				soc->charNoArg = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "othersNoArg" ) )
 			{
 
-				soc->othersNoArg = str_dup( db_column_str( stmt, i ) );
+				soc->othersNoArg = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "charFound" ) )
 			{
 
-				soc->charFound = str_dup( db_column_str( stmt, i ) );
+				soc->charFound = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "othersFound" ) )
 			{
 
-				soc->othersFound = str_dup( db_column_str( stmt, i ) );
+				soc->othersFound = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "victFound" ) )
 			{
 
-				soc->victFound = str_dup( db_column_str( stmt, i ) );
+				soc->victFound = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "charNotFound" ) )
 			{
 
-				soc->charNotFound = str_dup( db_column_str( stmt, i ) );
+				soc->charNotFound = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "charAuto" ) )
 			{
 
-				soc->charAuto = str_dup( db_column_str( stmt, i ) );
+				soc->charAuto = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "othersAuto" ) )
 			{
 
-				soc->othersAuto = str_dup( db_column_str( stmt, i ) );
+				soc->othersAuto = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "charObjFound" ) )
 			{
 
-				soc->charObjFound = str_dup( db_column_str( stmt, i ) );
+				soc->charObjFound = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "othersObjFound" ) )
 			{
 
-				soc->othersObjFound = str_dup( db_column_str( stmt, i ) );
+				soc->othersObjFound = str_dup( sql_column_str( stmt, i ) );
 
 			}
 			else if ( !str_cmp( colname, "socialId" ) )
 			{
 
-				soc->id = db_column_int( stmt, i );
+				soc->id = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "minPosition" ) )
 			{
 
-				soc->minPosition = db_column_int( stmt, i );
+				soc->minPosition = sql_column_int( stmt, i );
 
 			}
 			else
@@ -356,7 +356,7 @@ int load_socials(  )
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -369,43 +369,28 @@ int load_socials(  )
 
 int save_social( Social * soc )
 {
-
-	char buf[OUT_SIZ];
-
-	struct dbvalues svals[] = {
-		{"name", &soc->name, DB_TEXT},
-		{"charNoArg", &soc->charNoArg, DB_TEXT},
-		{"othersNoArg", &soc->othersNoArg, DB_TEXT},
-		{"charFound", &soc->charFound, DB_TEXT},
-		{"othersFound", &soc->othersFound, DB_TEXT},
-		{"victFound", &soc->victFound, DB_TEXT},
-		{"charNotFound", &soc->charNotFound, DB_TEXT},
-		{"charAuto", &soc->charAuto, DB_TEXT},
-		{"othersAuto", &soc->othersAuto, DB_TEXT},
-		{"charObjFound", &soc->charObjFound, DB_TEXT},
-		{"othersObjFound", &soc->othersObjFound, DB_TEXT},
-		{"minPosition", &soc->minPosition, DB_INTEGER},
+	field_map social_values[] = {
+		{"name", &soc->name, SQL_TEXT},
+		{"charNoArg", &soc->charNoArg, SQL_TEXT},
+		{"othersNoArg", &soc->othersNoArg, SQL_TEXT},
+		{"charFound", &soc->charFound, SQL_TEXT},
+		{"othersFound", &soc->othersFound, SQL_TEXT},
+		{"victFound", &soc->victFound, SQL_TEXT},
+		{"charNotFound", &soc->charNotFound, SQL_TEXT},
+		{"charAuto", &soc->charAuto, SQL_TEXT},
+		{"othersAuto", &soc->othersAuto, SQL_TEXT},
+		{"charObjFound", &soc->charObjFound, SQL_TEXT},
+		{"othersObjFound", &soc->othersObjFound, SQL_TEXT},
+		{"minPosition", &soc->minPosition, SQL_INT},
 		{0}
 	};
 
 	if ( soc->id == 0 )
 	{
-
-		char names[BUF_SIZ] = { 0 };
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( svals, names, values );
-
-		sprintf( buf, "insert into social (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query(social_values, "social") != SQL_OK )
 		{
-
 			log_data( "could not insert social" );
-
 			return 0;
-
 		}
 
 		soc->id = db_last_insert_rowid();
@@ -413,21 +398,10 @@ int save_social( Social * soc )
 	}
 	else
 	{
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( svals, values );
-
-		sprintf( buf, "update social set %s where socialId=%"PRId64, values,
-				 soc->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query(social_values, "social", soc->id) != SQL_OK )
 		{
-
 			log_data( "could not update social" );
-
 			return 0;
-
 		}
 
 	}

@@ -138,59 +138,59 @@ bool account_forum_is_subscribed(Account *acc)
 int load_account( Account * acc, const char *login )
 {
 	char buf[500];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int len = sprintf( buf, "select * from account where login='%s'", login );
 
 	log_debug( "loading account %s", login );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) == DB_DONE )
+	if ( sql_step( stmt ) == SQL_DONE )
 	{
-		if ( db_finalize( stmt ) != DB_OK )
+		if ( sql_finalize( stmt ) != SQL_OK )
 			log_data( "could not finalize sql statement" );
 		return 0;
 	}
 
 	do
 	{
-		int i, cols = db_column_count( stmt );
+		int i, cols = sql_column_count( stmt );
 		for ( i = 0; i < cols; i++ )
 		{
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "accountId" ) )
 			{
-				acc->id = db_column_int( stmt, i );
+				acc->id = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "login" ) )
 			{
-				acc->login = str_dup( db_column_str( stmt, i ) );
+				acc->login = str_dup( sql_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "email" ) )
 			{
-				acc->email = str_dup( db_column_str( stmt, i ) );
+				acc->email = str_dup( sql_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "timezone" ) )
 			{
-				acc->timezone = db_column_int( stmt, i );
+				acc->timezone = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "autologinId" ) )
 			{
-				acc->autologinId = db_column_int( stmt, i );
+				acc->autologinId = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 				parse_flags( acc->flags,
-							 db_column_str( stmt, i ), account_flags );
+							 sql_column_str( stmt, i ), account_flags );
 			}
 			else if ( !str_cmp( colname, "password" ) )
 			{
-				acc->password = str_dup( db_column_str( stmt, i ) );
+				acc->password = str_dup( sql_column_str( stmt, i ) );
 			}
 			else
 			{
@@ -198,9 +198,9 @@ int load_account( Account * acc, const char *login )
 			}
 		}
 	}
-	while ( db_step( stmt ) != DB_DONE );
+	while ( sql_step( stmt ) != SQL_DONE );
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize sql statement" );
 	}
@@ -217,29 +217,29 @@ int save_account_forum( Account *acc, int f )
 {
 	AccountForum *forum = &acc->forumData[f];
 
-	struct dbvalues accvalues[] = {
-		{"forumId", &forum->id, DB_INTEGER},
-		{"accountId", &acc->id, DB_INTEGER},
-		{"lastNote", &forum->lastNote, DB_INTEGER},
-		{"unsubscribed", &forum->unsubscribed, DB_INTEGER},
-		{"draft", &forum->draft, DB_TEXT},
+	field_map account_values[] = {
+		{"forumId", &forum->id, SQL_INT},
+		{"accountId", &acc->id, SQL_INT},
+		{"lastNote", &forum->lastNote, SQL_INT},
+		{"unsubscribed", &forum->unsubscribed, SQL_INT},
+		{"draft", &forum->draft, SQL_TEXT},
 		{0, 0, 0}
 	};
 
-	forum->id = db_save(accvalues, "account_forum", forum->id);
+	forum->id = db_save(account_values, "account_forum", forum->id);
 
 	return forum->id != 0;
 }
 
 int save_account( Account * acc )
 {
-	struct dbvalues accvalues[] = {
-		{"login", &acc->login, DB_TEXT},
-		{"email", &acc->email, DB_TEXT},
-		{"password", &acc->password, DB_TEXT},
-		{"timezone", &acc->timezone, DB_INTEGER},
-		{"autologinId", &acc->autologinId, DB_INTEGER},
-		{"flags", &acc->flags, DB_FLAG, account_flags},
+	field_map accvalues[] = {
+		{"login", &acc->login, SQL_TEXT},
+		{"email", &acc->email, SQL_TEXT},
+		{"password", &acc->password, SQL_TEXT},
+		{"timezone", &acc->timezone, SQL_INT},
+		{"autologinId", &acc->autologinId, SQL_INT},
+		{"flags", &acc->flags, SQL_FLAG, account_flags},
 		{0, 0, 0}
 	};
 
@@ -260,7 +260,7 @@ int delete_account( Account * acc )
 
 	log_debug( "deleting account %s", acc->login );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 	{
 		log_data( "could not exec sql statement" );
 		return 0;
@@ -268,7 +268,7 @@ int delete_account( Account * acc )
 
 	sprintf(buf, "delete from account_forum where accountId=%"PRId64, acc->id );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 	{
 		log_data( "could not exec sql statement" );
 		return 0;
@@ -280,21 +280,21 @@ int delete_account( Account * acc )
 int load_account_players( Account * acc )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int len = sprintf( buf,
 					   "select * from character natural join player where accountId=%" PRId64,
 					   acc->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) == DB_DONE )
+	if ( sql_step( stmt ) == SQL_DONE )
 	{
-		if ( db_finalize( stmt ) != DB_OK )
+		if ( sql_finalize( stmt ) != SQL_OK )
 			log_data( "could not finalize sql statement" );
 		return 0;
 	}
@@ -303,38 +303,38 @@ int load_account_players( Account * acc )
 
 	do
 	{
-		int i, cols = db_column_count( stmt );
+		int i, cols = sql_column_count( stmt );
 
 		for ( i = 0; i < cols; i++ )
 		{
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
-				ch->name = str_dup( db_column_str( stmt, i ) );
+				ch->name = str_dup( sql_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "level" ) )
 			{
-				ch->level = db_column_int( stmt, i );
+				ch->level = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "accountId" ) )
 			{
-				if ( acc->id != db_column_int( stmt, i ) )
+				if ( acc->id != sql_column_int( stmt, i ) )
 				{
 					log_error( "sql retrieved invalid player for account" );
 					break;
 				}
 				LINK( acc->players, ch, next );
 			}
-			else if ( !str_cmp( colname, "charId" ) )
+			else if ( !str_cmp( colname, "characterId" ) )
 			{
-				ch->charId = db_column_int( stmt, i );
+				ch->charId = sql_column_int( stmt, i );
 			}
 		}
 	}
-	while ( db_step( stmt ) != DB_DONE );
+	while ( sql_step( stmt ) != SQL_DONE );
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "unable to finalize statement" );
 	}
@@ -347,49 +347,49 @@ int load_account_players( Account * acc )
 int load_account_forums( Account * acc )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int len = sprintf( buf,
 					   "select * from account_forum where accountId=%" PRId64,
 					   acc->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) == DB_DONE )
+	if ( sql_step( stmt ) == SQL_DONE )
 	{
-		if ( db_finalize( stmt ) != DB_OK )
+		if ( sql_finalize( stmt ) != SQL_OK )
 			log_data( "could not finalize sql statement" );
 		return 0;
 	}
 
 	do
 	{
-		int i, cols = db_column_count( stmt );
+		int i, cols = sql_column_count( stmt );
 
 		AccountForum f;
 
 		for ( i = 0; i < cols; i++ )
 		{
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 			if ( !str_cmp( colname, "timestamp" ) )
 			{
-				f.lastNote = db_column_int( stmt, i );
+				f.lastNote = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "unsubscribed" ) )
 			{
-				f.unsubscribed = db_column_int( stmt, i ) == 1;
+				f.unsubscribed = sql_column_int( stmt, i ) == 1;
 			}
 			else if ( !str_cmp( colname, "draft" )) 
 			{
-				f.draft = db_column_str(stmt, i );
+				f.draft = sql_column_str(stmt, i );
 			}
 			else if ( !str_cmp( colname, "forumId" ) )
 			{
-				f.id = db_column_int(stmt, i);
+				f.id = sql_column_int(stmt, i);
 			}
 		}
 
@@ -400,9 +400,9 @@ int load_account_forums( Account * acc )
 		}
 	
 	}
-	while ( db_step( stmt ) != DB_DONE );
+	while ( sql_step( stmt ) != SQL_DONE );
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "unable to finalize statement" );
 	}

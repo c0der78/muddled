@@ -64,26 +64,26 @@ void destroy_area( Area * area )
 	free_mem( area );
 }
 
-void load_area_columns( Area * area, db_stmt * stmt )
+void load_area_columns( Area * area, sql_stmt * stmt )
 {
-	int count = db_column_count( stmt );
+	int count = sql_column_count( stmt );
 
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = db_column_name( stmt, i );
+		const char *colname = sql_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "areaId" ) )
 		{
-			area->id = db_column_int( stmt, i );
+			area->id = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "name" ) )
 		{
-			area->name = str_dup( db_column_str( stmt, i ) );
+			area->name = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 			parse_flags( area->flags,
-						 db_column_str( stmt, i ), area_flags );
+						 sql_column_str( stmt, i ), area_flags );
 		}
 		else
 		{
@@ -96,19 +96,19 @@ void load_area_columns( Area * area, db_stmt * stmt )
 Area *load_area( identifier_t id )
 {
 	char buf[500];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	Area *area = 0;
 
 	int len =
 		sprintf( buf, "select * from area where areaId = %"PRId64" limit 1", id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) != DB_DONE )
+	if ( sql_step( stmt ) != SQL_DONE )
 	{
 		area = new_area( );
 
@@ -122,7 +122,7 @@ Area *load_area( identifier_t id )
 		max_area++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -133,18 +133,18 @@ Area *load_area( identifier_t id )
 int load_areas(  )
 {
 	char buf[500];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from area" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 		Area *area = new_area(  );
 
@@ -159,7 +159,7 @@ int load_areas(  )
 		max_area++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -181,26 +181,17 @@ Area *get_area_by_id( identifier_t id )
 
 int save_area_only( Area * area )
 {
-	char buf[BUF_SIZ];
-
 	remove_bit( area->flags, AREA_CHANGED );
 
-	struct dbvalues areavals[] = {
-		{"name", &area->name, DB_TEXT},
-		{"flags", &area->flags, DB_FLAG, area_flags},
+	field_map area_values[] = {
+		{"name", &area->name, SQL_TEXT},
+		{"flags", &area->flags, SQL_FLAG, area_flags},
 		{0}
 	};
 
 	if ( area->id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( areavals, names, values );
-
-		sprintf( buf, "insert into area (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( area_values, "area" ) != SQL_OK )
 		{
 			log_data( "could not insert area" );
 			return 0;
@@ -211,13 +202,7 @@ int save_area_only( Area * area )
 	}
 	else
 	{
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( areavals, values );
-
-		sprintf( buf, "update area set %s where areaId=%" PRId64, values, area->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( area_values, "area", area->id ) != SQL_OK )
 		{
 			log_data( "could not update area" );
 			return 0;

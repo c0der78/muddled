@@ -124,7 +124,7 @@ Character *new_char(  );
 void destroy_char( Character * );
 short scrwidth( const Character * );
 short scrheight( const Character * );
-int load_char_column( Character *, db_stmt *, const char *, int );
+int load_char_column( Character *, sql_stmt *, const char *, int );
 int save_character( Character *, const Lookup * );
 int delete_character( Character * );
 int load_char_objs( Character * );

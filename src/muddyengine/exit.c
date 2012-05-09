@@ -107,13 +107,13 @@ int load_exits( Room * room )
 
 	char buf[BUF_SIZ];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from exit where fromRoom=%"PRId64, room->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -122,10 +122,10 @@ int load_exits( Room * room )
 
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		Exit *exit = new_exit(  );
 
@@ -136,18 +136,18 @@ int load_exits( Room * room )
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "exitId" ) )
 			{
 
-				exit->id = db_column_int( stmt, i );
+				exit->id = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "fromRoom" ) )
 			{
 
-				if ( room->id != db_column_int( stmt, i ) )
+				if ( room->id != sql_column_int( stmt, i ) )
 
 					log_error( "sql returned invalid exit for room" );
 
@@ -155,20 +155,20 @@ int load_exits( Room * room )
 			else if ( !str_cmp( colname, "toRoom" ) )
 			{
 
-				exit->toRoomId = db_column_int( stmt, i );
+				exit->toRoomId = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "direction" ) )
 			{
 
-				dir = db_column_int( stmt, i );
+				dir = sql_column_int( stmt, i );
 
 			}
 			else if ( !str_cmp( colname, "flags" ) )
 			{
 
 				parse_flags( exit->flags,
-							 db_column_str( stmt, i ), exit_flags );
+							 sql_column_str( stmt, i ), exit_flags );
 
 				copy_flags( exit->status, exit->flags );
 
@@ -215,7 +215,7 @@ int load_exits( Room * room )
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -228,9 +228,6 @@ int load_exits( Room * room )
 
 int save_exit( Exit * exit, direction_t dir )
 {
-
-	char buf[OUT_SIZ];
-
 	if ( exit->toRoom == 0 )
 
 	{
@@ -241,26 +238,17 @@ int save_exit( Exit * exit, direction_t dir )
 
 	}
 
-	struct dbvalues exitvals[] = {
-		{ "toRoom",  &exit->toRoom->id, DB_INTEGER},
-		{ "fromRoom",  &exit->fromRoom->id, DB_INTEGER},
-		{ "direction",  &dir, DB_INTEGER},
-		{ "flags",  &exit->flags, DB_FLAG, exit_flags},
+	field_map exit_values[] = {
+		{ "toRoom",  &exit->toRoom->id, SQL_INT},
+		{ "fromRoom",  &exit->fromRoom->id, SQL_INT},
+		{ "direction",  &dir, SQL_INT},
+		{ "flags",  &exit->flags, SQL_FLAG, exit_flags},
 		{0}
 	};
 
 	if ( exit->id == 0 )
 	{
-
-		char names[BUF_SIZ] = { 0 };
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( exitvals, names, values );
-
-		sprintf( buf, "insert into exit (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( exit_values, "exit" ) != SQL_OK )
 		{
 
 			log_data( "could not insert exit" );
@@ -274,14 +262,7 @@ int save_exit( Exit * exit, direction_t dir )
 	}
 	else
 	{
-
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( exitvals, values );
-
-		sprintf( buf, "update exit set %s where exitId=%" PRId64, values, exit->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( exit_values, "exit", exit->id) != SQL_OK )
 		{
 
 			log_data( "could not update exit" );

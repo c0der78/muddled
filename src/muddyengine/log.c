@@ -77,10 +77,10 @@ void log_fun( const char *func, int level, const char *fmt, ... )
 			sprintf( log, "%s WARN [%s]: %s\n", date, func, buf );
 			break;
 		case LOG_DATA:
-			if ( db_errcode( ) != DB_OK )
+			if ( sql_errcode( ) != SQL_OK )
 			{
 				sprintf( log, "%s SQL [%s]: %s (%s)\n", date, func, buf,
-						 db_errmsg(  ) );
+						 sql_errmsg(  ) );
 			}
 			else
 			{

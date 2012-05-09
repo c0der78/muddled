@@ -71,7 +71,7 @@ Room *new_room(  )
 
 	room->name = str_empty;
 	room->description = str_empty;
-
+	room->reset = str_empty;
 	room->flags = new_flag(  );
 
 	return room;
@@ -100,32 +100,32 @@ void destroy_room( Room * room )
 	free_mem( room );
 }
 
-void load_room_columns( Room * room, db_stmt * stmt )
+void load_room_columns( Room * room, sql_stmt * stmt )
 {
-	int count = db_column_count( stmt );
+	int count = sql_column_count( stmt );
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = db_column_name( stmt, i );
+		const char *colname = sql_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "name" ) )
 		{
-			room->name = str_dup( db_column_str( stmt, i ) );
+			room->name = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "description" ) )
 		{
-			room->description = str_dup( db_column_str( stmt, i ) );
+			room->description = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "roomId" ) )
 		{
-			room->id = db_column_int( stmt, i );
+			room->id = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "reset" ) )
 		{
-			room->reset = str_dup( db_column_str( stmt, i ) );
+			room->reset = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "areaId" ) )
 		{
-			int areaId = db_column_int( stmt, i );
+			int areaId = sql_column_int( stmt, i );
 
 			if ( room->area != 0 )
 			{
@@ -139,12 +139,12 @@ void load_room_columns( Room * room, db_stmt * stmt )
 		}
 		else if ( !str_cmp( colname, "sector" ) )
 		{
-			room->sector = db_column_int( stmt, i );
+			room->sector = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 			parse_flags( room->flags,
-						 db_column_str( stmt, i ), room_flags );
+						 sql_column_str( stmt, i ), room_flags );
 		}
 		else
 		{
@@ -159,18 +159,18 @@ void load_room_columns( Room * room, db_stmt * stmt )
 int load_rooms( Area * area )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from room where areaId=%" PRId64, area->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 		Room *room = new_room(  );
 
@@ -187,7 +187,7 @@ int load_rooms( Area * area )
 			max_explorable_room++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -198,18 +198,18 @@ int load_rooms( Area * area )
 Room *load_room( identifier_t id )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	Room *room = 0;
 
 	int len = sprintf( buf, "select * from room where roomId=%"PRId64" limit 1", id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) != DB_DONE )
+	if ( sql_step( stmt ) != SQL_DONE )
 	{
 		room = new_room(  );
 
@@ -226,7 +226,7 @@ Room *load_room( identifier_t id )
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -236,28 +236,19 @@ Room *load_room( identifier_t id )
 
 int save_room_only( Room * room )
 {
-	char buf[OUT_SIZ * 4];
-
-	struct dbvalues roomvals[] = {
-		{"name", &room->name, DB_TEXT, },
-		{ "description", &room->description, DB_TEXT},
-		{ "areaId", &room->area->id, DB_INTEGER},
-		{ "sector", &room->sector, DB_INTEGER},
-		{ "flags", &room->flags, DB_FLAG, room_flags},
-		{ "reset", &room->reset, DB_TEXT},
+	field_map room_values[] = {
+		{ "name", &room->name, SQL_TEXT, },
+		{ "description", &room->description, SQL_TEXT},
+		{ "areaId", &room->area->id, SQL_INT},
+		{ "sector", &room->sector, SQL_INT},
+		{ "flags", &room->flags, SQL_FLAG, room_flags},
+		{ "reset", &room->reset, SQL_TEXT},
 		{0}
 	};
 
 	if ( room->id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ * 4] = { 0 };
-
-		build_insert_values( roomvals, names, values );
-
-		sprintf( buf, "insert into room (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( room_values, "room" ) != SQL_OK )
 		{
 			log_data( "could not insert room" );
 			return 0;
@@ -268,13 +259,7 @@ int save_room_only( Room * room )
 	}
 	else
 	{
-		char values[OUT_SIZ * 4] = { 0 };
-
-		build_update_values( roomvals, values );
-
-		sprintf( buf, "update room set %s where roomId=%" PRId64, values, room->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( room_values, "room", room->id) != SQL_OK )
 		{
 			log_data( "could not update room" );
 			return 0;

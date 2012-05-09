@@ -117,7 +117,7 @@ FILE *engine_open_file(const char *filepath, const char *perm) {
 int load_engine( const char *root_path )
 {
 	char buf[500];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int len = sprintf( buf, "select * from engine" );
 
 	engine_info.flags = new_flag(  );
@@ -131,54 +131,54 @@ int load_engine( const char *root_path )
 		exit( EXIT_FAILURE );
 	}
 
-	if ( db_query(buf, len, &stmt) != DB_OK )
+	if ( sql_query(buf, len, &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare sql statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) == DB_DONE )
+	if ( sql_step( stmt ) == SQL_DONE )
 	{
-		if ( db_finalize( stmt ) != DB_OK )
+		if ( sql_finalize( stmt ) != SQL_OK )
 			log_data( "could not find engine info records" );
 
 		initialize_default_engine(  );
 		return 0;
 	}
 
-	int i, cols = db_column_count( stmt );
+	int i, cols = sql_column_count( stmt );
 	for ( i = 0; i < cols; i++ )
 	{
-		const char *colname = db_column_name( stmt, i );
+		const char *colname = sql_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "engineId" ) )
 		{
-			engine_info.id = db_column_int( stmt, i );
+			engine_info.id = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "name" ) )
 		{
-			free_str_dup( &engine_info.name, db_column_str( stmt, i ) );
+			free_str_dup( &engine_info.name, sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "logins" ) )
 		{
-			engine_info.total_logins = db_column_int( stmt, i );
+			engine_info.total_logins = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "flags" ) )
 		{
 			parse_flags( engine_info.flags,
-						 db_column_str( stmt, i ), engine_flags );
+						 sql_column_str( stmt, i ), engine_flags );
 		}
 		else if ( !str_cmp( colname, "logging" ) )
 		{
 			parse_flags( engine_info.logging,
-						 db_column_str( stmt, i ), logging_flags );
+						 sql_column_str( stmt, i ), logging_flags );
 		}
 		else
 		{
 			log_warn( "unknown account column '%s'", colname );
 		}
 	}
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize sql statement" );
 	}
@@ -190,28 +190,17 @@ int load_engine( const char *root_path )
 
 int save_engine(  )
 {
-	char buf[BUF_SIZ];
-
-	struct dbvalues enginevalues[] = {
-		{"name", &engine_info.name, DB_TEXT},
-		{"logins", &engine_info.total_logins, DB_INTEGER},
+	field_map engine_values[] = {
+		{"name", &engine_info.name, SQL_TEXT},
+		{"logins", &engine_info.total_logins, SQL_INT},
+		{"flags", &engine_info.flags, SQL_FLAG, engine_flags},
+		{"logging", &engine_info.logging, SQL_FLAG, logging_flags},
 		{0, 0, 0}
 	};
 
 	if ( engine_info.id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( enginevalues, names, values );
-
-		sprintf( buf,
-				 "insert into engine (%s,flags,logging) values(%s,'%s','%s')",
-				 names, values, format_flags( engine_info.flags,
-											  engine_flags ),
-				 format_flags( engine_info.logging, logging_flags ) );
-
-		if ( db_exec( buf ) != DB_OK )
+		if ( sql_insert_query( engine_values, "engine" ) != SQL_OK )
 		{
 			log_data( "could not insert engine" );
 			return 0;
@@ -221,15 +210,7 @@ int save_engine(  )
 	}
 	else
 	{
-		char values[OUT_SIZ] = { 0 };
-
-		build_update_values( enginevalues, values );
-
-		sprintf( buf, "update engine set %s,flags='%s',logging='%s'",
-				 values, format_flags( engine_info.flags, engine_flags ),
-				 format_flags( engine_info.logging, logging_flags ) );
-
-		if ( db_exec( buf ) != DB_OK )
+		if ( sql_update_query( engine_values, "engine", engine_info.id ) != SQL_OK )
 		{
 			log_data( "could not update engine" );
 			return 0;

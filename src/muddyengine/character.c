@@ -1,4 +1,3 @@
-
 /******************************************************************************
  *         __  __           _     _         ____  _       _                   *
  *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
@@ -220,19 +219,19 @@ void extract_char( Character * ch, bool fPull )
 int load_char_objs( Character * ch )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from char_objects where carriedById=%"PRId64,
 					   ch->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
 		Object *obj = new_object(  );
@@ -259,7 +258,7 @@ int load_char_objs( Character * ch )
 		total++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -267,9 +266,9 @@ int load_char_objs( Character * ch )
 	return total;
 }
 
-static const char *save_char_classes( void *arg )
+static int save_char_classes( sql_stmt *stmt, int index, field_map *table )
 {
-	int *data = *( ( int ** ) arg );
+	int *data = *( ( int ** ) table->value );
 
 	static char buf[100];
 	int len = 0;
@@ -282,12 +281,12 @@ static const char *save_char_classes( void *arg )
 	if ( len > 0 )
 		buf[len - 1] = 0;
 
-	return buf;
+	return sql_bind_text(stmt, index, buf, len, 0);
 }
 
-static int read_char_classes( void *arg, db_stmt * stmt, int i )
+static int read_char_classes( void *arg, sql_stmt * stmt, int i )
 {
-	const char *pstr = strtok( ( char * ) db_column_str( stmt, i ), "," );
+	const char *pstr = strtok( ( char * ) sql_column_str( stmt, i ), "," );
 	int total = 0;
 	int **data = ( int ** ) arg;
 
@@ -312,72 +311,72 @@ static int read_char_classes( void *arg, db_stmt * stmt, int i )
 }
 
 int
-load_char_column( Character * ch, db_stmt * stmt,
+load_char_column( Character * ch, sql_stmt * stmt,
 				  const char *colname, int i )
 {
 	if ( !str_cmp( colname, "name" ) )
 	{
-		ch->name = str_dup( db_column_str( stmt, i ) );
+		ch->name = str_dup( sql_column_str( stmt, i ) );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "version" ) )
 	{
-		ch->version = db_column_int( stmt, i );
+		ch->version = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "description" ) )
 	{
-		ch->description = str_dup( db_column_str( stmt, i ) );
+		ch->description = str_dup( sql_column_str( stmt, i ) );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "level" ) )
 	{
-		ch->level = db_column_int( stmt, i );
+		ch->level = sql_column_int( stmt, i );
 		return 1;
 	}
-	else if ( !str_cmp( colname, "charId" ) )
+	else if ( !str_cmp( colname, "characterId" ) )
 	{
-		ch->id = db_column_int( stmt, i );
+		ch->id = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "position" ) )
 	{
-		ch->position = db_column_int( stmt, i );
+		ch->position = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "hit" ) )
 	{
-		ch->hit = db_column_int( stmt, i );
+		ch->hit = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "maxHit" ) )
 	{
-		ch->maxHit = db_column_int( stmt, i );
+		ch->maxHit = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "move" ) )
 	{
-		ch->move = db_column_int( stmt, i );
+		ch->move = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "maxMove" ) )
 	{
-		ch->maxMove = db_column_int( stmt, i );
+		ch->maxMove = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "mana" ) )
 	{
-		ch->mana = db_column_int( stmt, i );
+		ch->mana = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "maxMana" ) )
 	{
-		ch->maxMana = db_column_int( stmt, i );
+		ch->maxMana = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "sex" ) )
 	{
-		ch->sex = db_column_int( stmt, i );
+		ch->sex = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "gold" ) )
@@ -387,7 +386,7 @@ load_char_column( Character * ch, db_stmt * stmt,
 	}
 	else if ( !str_cmp( colname, "raceId" ) )
 	{
-		ch->race = get_race_by_id( db_column_int( stmt, i ) );
+		ch->race = get_race_by_id( sql_column_int( stmt, i ) );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "classes" ) )
@@ -407,7 +406,7 @@ load_char_column( Character * ch, db_stmt * stmt,
 	}
 	else if ( !str_cmp( colname, "alignment" ) )
 	{
-		ch->alignment = db_column_int( stmt, i );
+		ch->alignment = sql_column_int( stmt, i );
 		return 1;
 	}
 	else if ( !str_cmp( colname, "size" ) )
@@ -423,9 +422,9 @@ int delete_character( Character * ch )
 {
 	char buf[BUF_SIZ];
 
-	sprintf( buf, "delete from character where charId=%"PRId64, ch->id );
+	sprintf( buf, "delete from character where characterId=%"PRId64, ch->id );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 	{
 		log_data( "could not delete character" );
 		return 0;
@@ -437,7 +436,7 @@ int delete_character( Character * ch )
 int save_char_objs( Character * ch )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int len;
 	Object *obj;
 
@@ -448,16 +447,16 @@ int save_char_objs( Character * ch )
 					 "select objectId from char_objects where carriedById=%"PRId64" and objectId=%"PRId64,
 					 ch->id, obj->id );
 
-		if ( db_query( buf,  len,  &stmt) !=
-			 DB_OK )
+		if ( sql_query( buf,  len,  &stmt) !=
+			 SQL_OK )
 		{
 			log_data( "could not prepare statement" );
 			return 0;
 		}
 
-		bool update = db_step( stmt ) != DB_DONE;
+		bool update = sql_step( stmt ) != SQL_DONE;
 
-		if ( db_finalize( stmt ) != DB_OK )
+		if ( sql_finalize( stmt ) != SQL_OK )
 		{
 			log_data( "unable to finalize sql statement" );
 			return 0;
@@ -478,17 +477,17 @@ int save_char_objs( Character * ch )
 		sprintf( buf, "select * from char_objects where carriedById=%"PRId64,
 				 ch->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 		obj = ch->carrying;
 
-		identifier_t id = db_column_int64( stmt, 0 );
+		identifier_t id = sql_column_int64( stmt, 0 );
 
 		while ( obj )
 		{
@@ -503,7 +502,7 @@ int save_char_objs( Character * ch )
 					 "delete from object where carriedById=%"PRId64" and objectId=%"PRId64,
 					 ch->id, id );
 
-			if ( db_exec( buf) != DB_OK )
+			if ( sql_exec( buf) != SQL_OK )
 			{
 				log_data( "could not delete character object %"PRId64, id );
 				return 0;
@@ -511,7 +510,7 @@ int save_char_objs( Character * ch )
 		}
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{ 
 		log_data( "could not finalize statement" );
 		return 0;
@@ -524,40 +523,34 @@ int save_character( Character * ch,const Lookup * flag_table )
 {
 	static const int CharSaveVersion = 1;
 
-	struct dbvalues chvalues[] = {
-		{"version", &CharSaveVersion, DB_INTEGER},
-		{ "name", &ch->name, DB_TEXT},
-		{ "description", &ch->description, DB_TEXT},
-		{ "level", &ch->level, DB_INTEGER},
-		{ "sex", &ch->sex, DB_INTEGER},
-		{ "raceId", &ch->race->id, DB_INTEGER},
-		{ "hit", &ch->hit, DB_INTEGER},
-		{ "maxHit", &ch->maxHit, DB_INTEGER},
-		{ "mana", &ch->mana, DB_INTEGER},
-		{ "maxMana", &ch->maxMana, DB_INTEGER},
-		{ "move", &ch->move, DB_INTEGER},
-		{ "maxMove", &ch->maxMove, DB_INTEGER},
-		{ "gold", &ch->gold, DB_FLOAT},
-		{ "flags", &ch->flags, DB_FLAG, flag_table},
-		{ "classes", &ch->classes, DBTYPE_CUSTOM, save_char_classes},
-		{ "stats", &ch->stats, DBTYPE_ARRAY, db_save_int_array, ( void * ) MAX_STAT},
-		{ "alignment", &ch->alignment, DB_INTEGER},
-		{ "resists", &ch->resists, DBTYPE_ARRAY, db_save_int_array, ( void * ) MAX_DAM},
-		{ "size", &ch->size, DBTYPE_FLOAT},
+	field_map char_values[] = {
+		{"version", &CharSaveVersion, SQL_INT},
+		{ "name", &ch->name, SQL_TEXT},
+		{ "description", &ch->description, SQL_TEXT},
+		{ "level", &ch->level, SQL_INT},
+		{ "sex", &ch->sex, SQL_LOOKUP, sex_table},
+		{ "raceId", &ch->race->id, SQL_INT},
+		{ "hit", &ch->hit, SQL_INT},
+		{ "maxHit", &ch->maxHit, SQL_INT},
+		{ "mana", &ch->mana, SQL_INT},
+		{ "maxMana", &ch->maxMana, SQL_INT},
+		{ "move", &ch->move, SQL_INT},
+		{ "maxMove", &ch->maxMove, SQL_INT},
+		{ "gold", &ch->gold, SQL_DOUBLE},
+		{ "position", &ch->position, SQL_LOOKUP, position_table},
+		{ "flags", &ch->flags, SQL_FLAG, flag_table},
+		{ "classes", &ch->classes, SQL_CUSTOM, save_char_classes},
+		{ "stats", &ch->stats, SQL_ARRAY, db_save_int_array, ( void * ) MAX_STAT},
+		{ "alignment", &ch->alignment, SQL_INT},
+		{ "resists", &ch->resists, SQL_ARRAY, db_save_int_array, ( void * ) MAX_DAM},
+		{ "size", &ch->size, SQL_FLOAT},
+		{ "level", &ch->level, SQL_INT},
 		{0, 0, 0}
 	};
-	char values[OUT_SIZ * 2] = { 0 };
-	char buf[OUT_SIZ * 2] = { 0 };
 
 	if ( ch->id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-
-		build_insert_values( chvalues, names, values );
-
-		sprintf( buf, "insert into character (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( char_values, "character" ) != SQL_OK )
 		{
 			log_data( "could not insert character" );
 			return 0;
@@ -569,13 +562,7 @@ int save_character( Character * ch,const Lookup * flag_table )
 	}
 	else
 	{
-
-		build_update_values( chvalues, values );
-
-		sprintf( buf, "update character set %s where charId=%" PRId64, values,
-				 ch->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( char_values, "character", ch->id) != SQL_OK )
 		{
 			log_data( "could not update character" );
 			return 0;
@@ -587,28 +574,28 @@ int save_character( Character * ch,const Lookup * flag_table )
 int load_char_affects( Character * ch )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len =
-		sprintf( buf, "select * from char_affect where charId=%" PRId64, ch->id );
+		sprintf( buf, "select * from char_affect where characterId=%" PRId64, ch->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
-		int affId = db_col_int( stmt, "affectId");
+		int affId = sql_col_int( stmt, "affectId");
 
 		Affect *aff = load_affect_by_id( affId );
 
 		if ( aff != 0 )
 		{
-			aff->duration = db_col_int(stmt, "duration");
+			aff->duration = sql_col_int(stmt, "duration");
 
 			affect_to_char( ch, aff );
 		}
@@ -616,7 +603,7 @@ int load_char_affects( Character * ch )
 		total++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -627,7 +614,7 @@ int load_char_affects( Character * ch )
 int save_char_affects( Character * ch )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int len;
 	Affect *aff;
 
@@ -635,18 +622,20 @@ int save_char_affects( Character * ch )
 	{
 		len =
 			sprintf( buf,
-					 "select * from char_affect where charId=%"PRId64" and affectId=%" PRId64,
+					 "select charAffectId from char_affect where characterId=%"PRId64" and affectId=%" PRId64,
 					 ch->id, aff->id );
 
-		if ( db_query( buf,  len,  &stmt) != DB_OK )
+		if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 		{ 
 			log_data( "could not prepare statement" );
 			return 0;
 		}
 
-		bool update = db_step( stmt ) != DB_DONE;
+		bool update = sql_step( stmt ) != SQL_DONE;
 
-		if ( db_finalize( stmt ) != DB_OK )
+		sql_int64 id = sql_column_int64(stmt, 1);
+
+		if ( sql_finalize( stmt ) != SQL_OK )
 		{
 			log_data( "unable to finalize sql statement" );
 			return 0;
@@ -655,24 +644,15 @@ int save_char_affects( Character * ch )
 		if ( !save_affect( aff ) )
 			return 0;
 
-		struct dbvalues affvalues[] = {
-			{ "charId", &ch->id, DB_INTEGER },
-			{ "affectId", &aff->id, DB_INTEGER},
+		field_map char_affect[] = {
+			{ "characterId", &ch->id, SQL_INT },
+			{ "affectId", &aff->id, SQL_INT},
 			{0}
 		};
 
 		if ( !update )
 		{
-			char names[BUF_SIZ] = { 0 };
-			char values[OUT_SIZ] = { 0 };
-
-			build_insert_values( affvalues, names, values );
-
-			sprintf( buf, "insert into char_affect (%s) values(%s)",
-					 names, values );
-
-			if ( db_exec( buf) !=
-				 DB_OK )
+			if ( sql_insert_query( char_affect, "char_affect" ) != SQL_OK )
 			{
 				log_data( "could not insert affect" );
 				return 0;
@@ -680,16 +660,7 @@ int save_char_affects( Character * ch )
 		}
 		else
 		{
-			char values[OUT_SIZ] = { 0 };
-
-			build_update_values( affvalues, values );
-
-			sprintf( buf,
-					 "update char_affect set %s where affectId=%"PRId64" and charId=%" PRId64,
-					 values, aff->id, ch->id );
-
-			if ( db_exec( buf) !=
-				 DB_OK )
+			if ( sql_update_query( char_affect, "char_affect", id) != SQL_OK )
 			{
 				log_data( "could not update character" );
 				return 0;
@@ -700,17 +671,17 @@ int save_char_affects( Character * ch )
 
 	// try and cleanup old objects
 
-	len = sprintf( buf, "select * from char_affect where charId=%" PRId64, ch->id );
+	len = sprintf( buf, "select charAffectId from char_affect where characterId=%" PRId64, ch->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
-		identifier_t id = db_column_int64( stmt, 1 );
+		identifier_t id = sql_column_int64( stmt, 1 );
 
 		for ( aff = ch->affects; aff; aff = aff->next )
 		{
@@ -721,10 +692,10 @@ int save_char_affects( Character * ch )
 		if ( !aff )
 		{
 			sprintf( buf,
-					 "delete from char_affect where charId=%"PRId64" and affectId=%" PRId64,
+					 "delete from char_affect where characterId=%"PRId64" and affectId=%" PRId64,
 					 ch->id, id );
 
-			if ( db_exec( buf) != DB_OK )
+			if ( sql_exec( buf) != SQL_OK )
 			{
 				log_data( "could not delete character affect %"PRId64, id );
 				return 0;
@@ -732,7 +703,7 @@ int save_char_affects( Character * ch )
 		}
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 		return 0;

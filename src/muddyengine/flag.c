@@ -180,6 +180,18 @@ bool is_set( Flag * flags, bit_t bit )
 	return ( flags->bits[pos] & ( 1 << ( bit % sizeof( bit_t ) ) ) );
 }
 
+bool is_empty(Flag *flag) {
+	if(flag->size == 0) {
+		return true;
+	}
+	bool empty = true;
+
+	for(int i = 0; i < flag->size; i++) 
+		empty = empty && flag->bits[i] == 0;
+
+	return empty;
+}
+
 bool flags_set( Flag * flags, Flag * val )
 {
 	bool isset = true;

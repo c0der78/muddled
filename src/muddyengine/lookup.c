@@ -28,6 +28,7 @@
 #include <muddyengine/affect.h>
 #include <muddyengine/help.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 void synch_table( const char *tablename, const Lookup * table )
 {
@@ -37,7 +38,7 @@ void synch_table( const char *tablename, const Lookup * table )
 				 "[name] VARCHAR NOT NULL PRIMARY KEY UNIQUE,"
 				 "[value] INTEGER)", tablename );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 	{
 		log_data( "could not create %s", tablename );
 		return;
@@ -45,29 +46,14 @@ void synch_table( const char *tablename, const Lookup * table )
 
 	for ( const Lookup * ptable = table; ptable->name != 0; ptable++ )
 	{
-		struct dbvalues tablevals[] = {
-			{"name", &ptable->name, DB_TEXT},
-			{"value", &ptable->value, DB_INTEGER},
-			{0}
-		};
+		sprintf( buf, "insert into %s (name,value) values('%s','%"PRIXPTR"')", tablename, ptable->name, ptable->value );
 
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( tablevals, names, values );
-
-		sprintf( buf, "insert into %s (%s) values(%s)", tablename, names,
-				 values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_exec( buf) != SQL_OK )
 		{
-			values[0] = 0;
-			
-			build_update_values( tablevals, values );
 
-			sprintf( buf, "update %s set %s where name='%s'", tablename, values, ptable->name );
+			sprintf( buf, "update %s set name='%s', value='%"PRIXPTR"' where name='%s'", tablename, ptable->name, ptable->value, ptable->name );
 
-			if ( db_exec( buf) != DB_OK )
+			if ( sql_exec( buf) != SQL_OK )
 			{
 				log_data( "could not save into %s", tablename );
 

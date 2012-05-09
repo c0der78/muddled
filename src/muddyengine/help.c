@@ -73,13 +73,13 @@ void destroy_help( Help * help )
 }
 
 int
-load_help_column( Help * help, db_stmt * stmt, const char *colname, int i )
+load_help_column( Help * help, sql_stmt * stmt, const char *colname, int i )
 {
 
 	if ( !str_cmp( colname, "keywords" ) )
 	{
 
-		help->keywords = str_dup( db_column_str( stmt, i ) );
+		help->keywords = str_dup( sql_column_str( stmt, i ) );
 
 		return 1;
 
@@ -87,7 +87,7 @@ load_help_column( Help * help, db_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "syntax" ) )
 	{
 
-		help->syntax = str_dup( db_column_str( stmt, i ) );
+		help->syntax = str_dup( sql_column_str( stmt, i ) );
 
 		return 1;
 
@@ -95,7 +95,7 @@ load_help_column( Help * help, db_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "text" ) )
 	{
 
-		help->text = str_dup( db_column_str( stmt, i ) );
+		help->text = str_dup( sql_column_str( stmt, i ) );
 
 		return 1;
 
@@ -103,7 +103,7 @@ load_help_column( Help * help, db_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "helpId" ) )
 	{
 
-		help->id = db_column_int64( stmt, i );
+		help->id = sql_column_int64( stmt, i );
 
 		return 1;
 
@@ -111,7 +111,7 @@ load_help_column( Help * help, db_stmt * stmt, const char *colname, int i )
 	else if ( !str_cmp( colname, "category" ) )
 	{
 
-		help->category = db_column_int( stmt, i );
+		help->category = sql_column_int( stmt, i );
 
 		return 1;
 
@@ -135,13 +135,13 @@ int load_related_helps(  )
 
 		char buf[400];
 
-		db_stmt *stmt;
+		sql_stmt *stmt;
 
 		int len = sprintf( buf, "select * from help_related where helpId=%"PRId64,
 						   help->id );
 
-		if ( db_query( buf,  len,  &stmt) !=
-			 DB_OK )
+		if ( sql_query( buf,  len,  &stmt) !=
+			 SQL_OK )
 		{
 
 			log_data( "could not prepare statement" );
@@ -150,10 +150,10 @@ int load_related_helps(  )
 
 		}
 
-		while ( db_step( stmt ) != DB_DONE )
+		while ( sql_step( stmt ) != SQL_DONE )
 		{
 
-			int related = db_column_int( stmt, 1 );
+			int related = sql_column_int( stmt, 1 );
 
 			for ( Help * rel = first_help; help; help = help->next )
 
@@ -172,7 +172,7 @@ int load_related_helps(  )
 
 		}
 
-		if ( db_finalize( stmt ) != DB_OK )
+		if ( sql_finalize( stmt ) != SQL_OK )
 		{
 
 			log_data( "could not finalize statement" );
@@ -190,13 +190,13 @@ int load_helps(  )
 
 	char buf[400];
 
-	db_stmt *stmt;
+	sql_stmt *stmt;
 
 	int total = 0;
 
 	int len = sprintf( buf, "select * from help" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 
 		log_data( "could not prepare statement" );
@@ -205,17 +205,17 @@ int load_helps(  )
 
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		Help *help = new_help(  );
 
 		for ( int i = 0; i < count; i++ )
 		{
 
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			load_help_column( help, stmt, colname, i );
 
@@ -234,7 +234,7 @@ int load_helps(  )
 
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 
 		log_data( "could not finalize statement" );
@@ -249,35 +249,20 @@ int load_helps(  )
 
 int save_help( Help * help )
 {
-
-	char buf[OUT_SIZ * 3];
-
-	struct dbvalues helpvals[] = {
-		{"keywords", &help->keywords, DB_TEXT},
-		{"text", &help->text, DB_TEXT},
-		{"related", &help->related, DB_TEXT},
-		{"category", &help->category, DB_INTEGER},
+	field_map help_values[] = {
+		{"keywords", &help->keywords, SQL_TEXT},
+		{"text", &help->text, SQL_TEXT},
+		{"related", &help->related, SQL_TEXT},
+		{"category", &help->category, SQL_INT},
 		{0}
 	};
 
 	if ( help->id == 0 )
 	{
-
-		char names[BUF_SIZ] = { 0 };
-
-		char values[OUT_SIZ * 3] = { 0 };
-
-		build_insert_values( helpvals, names, values );
-
-		sprintf( buf, "insert into help (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( help_values, "help" ) != SQL_OK )
 		{
-
 			log_data( "could not insert help" );
-
 			return 0;
-
 		}
 
 		help->id = db_last_insert_rowid();
@@ -285,14 +270,7 @@ int save_help( Help * help )
 	}
 	else
 	{
-
-		char values[OUT_SIZ * 3] = { 0 };
-
-		build_update_values( helpvals, values );
-
-		sprintf( buf, "update help set %s where helpId=%" PRId64, values, help->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( help_values, "help", help->id) != SQL_OK )
 		{
 
 			log_data( "could not update help" );

@@ -1,4 +1,3 @@
-
 /******************************************************************************
  *         __  __           _     _         ____  _       _                   *
  *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
@@ -254,56 +253,56 @@ void destroy_object( Object * obj )
 	free_mem( obj );
 }
 
-int load_obj_columns( Object * obj, db_stmt * stmt )
+int load_obj_columns( Object * obj, sql_stmt * stmt )
 {
-	int count = db_column_count( stmt );
+	int count = sql_column_count( stmt );
 
 	for ( int i = 0; i < count; i++ )
 	{
-		const char *colname = db_column_name( stmt, i );
+		const char *colname = sql_column_name( stmt, i );
 
 		if ( !str_cmp( colname, "name" ) )
 		{
-			obj->name = str_dup( db_column_str( stmt, i ) );
+			obj->name = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "shortDescr" ) )
 		{
-			obj->shortDescr = str_dup( db_column_str( stmt, i ) );
+			obj->shortDescr = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "longDescr" ) )
 		{
-			obj->longDescr = str_dup( db_column_str( stmt, i ) );
+			obj->longDescr = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "description" ) )
 		{
-			obj->description = str_dup( db_column_str( stmt, i ) );
+			obj->description = str_dup( sql_column_str( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "objectId" ) )
 		{
-			obj->id = db_column_int( stmt, i );
+			obj->id = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "level" ) )
 		{
-			obj->level = db_column_int( stmt, i );
+			obj->level = sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "areaId" ) )
 		{
-			if ( obj->area && obj->area->id != db_column_int64( stmt, i ) )
+			if ( obj->area && obj->area->id != sql_column_int64( stmt, i ) )
 				log_error( "sql returned invalid room for area" );
 			else
-				obj->area = get_area_by_id( db_column_int( stmt, i ) );
+				obj->area = get_area_by_id( sql_column_int( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "type" ) )
 		{
-			obj->type = ( object_type ) db_column_int( stmt, i );
+			obj->type = ( object_type ) sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "inObjId" ) )
 		{
-			obj->inObj = get_obj_by_id( db_column_int( stmt, i ) );
+			obj->inObj = get_obj_by_id( sql_column_int( stmt, i ) );
 		}
 		else if ( !str_cmp( colname, "wearFlags" ) )
 		{
-			obj->wearFlags = ( wear_type ) db_column_int( stmt, i );
+			obj->wearFlags = ( wear_type ) sql_column_int( stmt, i );
 		}
 		else if ( !str_cmp( colname, "weight" ) )
 		{
@@ -320,7 +319,7 @@ int load_obj_columns( Object * obj, db_stmt * stmt )
 		else if ( !str_cmp( colname, "carriedById" ) )
 		{
 			if ( obj->carriedBy
-				 && obj->carriedBy->id != db_column_int( stmt, i ) )
+				 && obj->carriedBy->id != sql_column_int( stmt, i ) )
 				log_error( "sql returned invalid character for object" );
 		}
 		else
@@ -335,18 +334,18 @@ int load_obj_columns( Object * obj, db_stmt * stmt )
 Object *load_object( identifier_t id )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	Object *obj = 0;
 
 	int len = sprintf( buf, "select * from object where objectId=%"PRId64, id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) != DB_DONE )
+	if ( sql_step( stmt ) != SQL_DONE )
 	{
 
 		obj = new_object(  );
@@ -357,7 +356,7 @@ Object *load_object( identifier_t id )
 		LINK( obj->area->objects, obj, next_in_area );
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -368,18 +367,18 @@ Object *load_object( identifier_t id )
 int load_objects( Area * area )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select * from object where areaId=%"PRId64, area->id );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
 
 		Object *obj = new_object(  );
@@ -393,7 +392,7 @@ int load_objects( Area * area )
 		total++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{ 
 		log_data( "could not finalize statement" );
 	}
@@ -403,34 +402,25 @@ int load_objects( Area * area )
 
 int save_object( Object * obj )
 {
-	char buf[OUT_SIZ * 2];
-
-	struct dbvalues objvalues[] = {
-		{"name", &obj->name, DB_TEXT, 0},
-		{ "description", &obj->description, DB_TEXT, 0},
-		{ "shortDescr", &obj->shortDescr, DB_TEXT, 0},
-		{ "longDescr", &obj->longDescr, DB_TEXT, 0},
-		{ "weight", &obj->weight, DBTYPE_FLOAT, 0},
-		{ "areaId", ( obj->area ? &obj->area->id : 0 ), DB_INTEGER, 0},
-		{ "condition", &obj->condition, DBTYPE_FLOAT, 0},
-		{ "wearFlags", &obj->wearFlags, DB_INTEGER, 0},
-		{ "level", &obj->level, DB_INTEGER, 0},
-		{ "carriedById", ( obj->carriedBy ? &obj->carriedBy->id : 0 ), DB_INTEGER, 0},
-		{ "inObjId", ( obj->inObj ? &obj->inObj->id : 0 ), DB_INTEGER, 0},
-		{ "cost", &obj->cost, DB_FLOAT, 0},
+	field_map obj_values[] = {
+		{"name", &obj->name, SQL_TEXT, 0},
+		{ "description", &obj->description, SQL_TEXT, 0},
+		{ "shortDescr", &obj->shortDescr, SQL_TEXT, 0},
+		{ "longDescr", &obj->longDescr, SQL_TEXT, 0},
+		{ "weight", &obj->weight, SQL_FLOAT, 0},
+		{ "areaId", ( obj->area ? &obj->area->id : 0 ), SQL_INT, 0},
+		{ "condition", &obj->condition, SQL_FLOAT, 0},
+		{ "wearFlags", &obj->wearFlags, SQL_INT, 0},
+		{ "level", &obj->level, SQL_INT, 0},
+		{ "carriedById", ( obj->carriedBy ? &obj->carriedBy->id : 0 ), SQL_INT, 0},
+		{ "inObjId", ( obj->inObj ? &obj->inObj->id : 0 ), SQL_INT, 0},
+		{ "cost", &obj->cost, SQL_DOUBLE, 0},
 		{0, 0, 0}
 	};
 
 	if ( obj->id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ * 2] = { 0 };
-
-		build_insert_values( objvalues, names, values );
-
-		sprintf( buf, "insert into object (%s) values(%s)", names, values );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_insert_query( obj_values, "object" ) != SQL_OK )
 		{
 			log_data( "could not insert object" );
 			return 0;
@@ -440,14 +430,7 @@ int save_object( Object * obj )
 	}
 	else
 	{
-		char values[OUT_SIZ * 2] = { 0 };
-
-		build_update_values( objvalues, values );
-
-		sprintf( buf, "update object set %s where objectId=%"PRId64, values,
-				 obj->id );
-
-		if ( db_exec( buf) != DB_OK )
+		if ( sql_update_query( obj_values, "object", obj->id) != SQL_OK )
 		{
 			log_data( "could not update object" );
 			return 0;
@@ -463,7 +446,7 @@ int delete_object( Object * obj )
 
 	sprintf( buf, "delete from object where objectId=%"PRId64, obj->id );
 
-	if ( db_exec( buf) != DB_OK )
+	if ( sql_exec( buf) != SQL_OK )
 	{
 		log_data( "could not delete object" );
 		return 0;

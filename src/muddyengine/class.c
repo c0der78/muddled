@@ -53,26 +53,26 @@ void destroy_class( Class * c )
 int load_classes(  )
 {
 	char buf[400];
-	db_stmt *stmt;
+	sql_stmt *stmt;
 	int total = 0;
 
 	int len = sprintf( buf, "select count(*) from class" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	if ( db_step( stmt ) == DB_DONE )
+	if ( sql_step( stmt ) == SQL_DONE )
 	{
 		log_data( "could not count hints" );
 		return 0;
 	}
 
-	max_class = db_column_int( stmt, 0 );
+	max_class = sql_column_int( stmt, 0 );
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}
@@ -81,47 +81,47 @@ int load_classes(  )
 
 	len = sprintf( buf, "select * from class" );
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
+	if ( sql_query( buf,  len,  &stmt) != SQL_OK )
 	{
 		log_data( "could not prepare statement" );
 		return 0;
 	}
 
-	while ( db_step( stmt ) != DB_DONE )
+	while ( sql_step( stmt ) != SQL_DONE )
 	{
-		int count = db_column_count( stmt );
+		int count = sql_column_count( stmt );
 
 		// Class *c = new_class();
 
 		for ( int i = 0; i < count; i++ )
 		{
-			const char *colname = db_column_name( stmt, i );
+			const char *colname = sql_column_name( stmt, i );
 
 			if ( !str_cmp( colname, "name" ) )
 			{
 				class_table[total].name =
-					str_dup( db_column_str( stmt, i ) );
+					str_dup( sql_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "description" ) )
 			{
 				class_table[total].description =
-					str_dup( db_column_str( stmt, i ) );
+					str_dup( sql_column_str( stmt, i ) );
 			}
 			else if ( !str_cmp( colname, "classId" ) )
 			{
-				class_table[total].id = db_column_int( stmt, i );
+				class_table[total].id = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "fMana" ) )
 			{
-				class_table[total].fMana = db_column_int( stmt, i );
+				class_table[total].fMana = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "thac0" ) )
 			{
-				class_table[total].thac0 = db_column_int( stmt, i );
+				class_table[total].thac0 = sql_column_int( stmt, i );
 			}
 			else if ( !str_cmp( colname, "thac32" ) )
 			{
-				class_table[total].thac32 = db_column_int( stmt, i );
+				class_table[total].thac32 = sql_column_int( stmt, i );
 			}
 			else
 			{
@@ -133,7 +133,7 @@ int load_classes(  )
 		total++;
 	}
 
-	if ( db_finalize( stmt ) != DB_OK )
+	if ( sql_finalize( stmt ) != SQL_OK )
 	{
 		log_data( "could not finalize statement" );
 	}

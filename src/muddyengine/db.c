@@ -20,6 +20,7 @@
  ******************************************************************************/
 #include <stdlib.h>
 #include <stdarg.h>
+#include <ctype.h>
 #include <muddyengine/db.h>
 #include <muddyengine/log.h>
 #include <muddyengine/engine.h>
@@ -27,6 +28,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include <assert.h>
 #include "config.h"
 
 sqlite3 *enginedb()
@@ -34,20 +36,47 @@ sqlite3 *enginedb()
 	return engine_info.db;
 }
 
-int db_errcode() {
+int sql_errcode() {
 	sqlite3 *db = enginedb();
-	return db == 0 ? DB_OK : sqlite3_errcode( enginedb() );
+	return db == 0 ? SQL_OK : sqlite3_errcode( enginedb() );
 }
 
-const char *db_errmsg() {
+const char *sql_errmsg() {
 	return sqlite3_errmsg( enginedb() );
+}
+
+const char *tablenameid(const char *tablename) {
+	static char buf[4][100];
+	static int s = 0;
+
+	++s, s %= 4;
+
+	char *result = buf[s];
+
+	int c = 0;
+
+	for(int i =0; tablename[i] != '\0'; ++i) {
+		if(tablename[i] == '_') {
+			if(tablename[++i] == '\0') break;
+
+			result[c++] = UPPER(tablename[i]);
+		}
+		else {
+			result[c++] = tablename[i];
+		}
+	}
+
+	result[c] = 0;
+
+	strcat(result, "Id");
+	return buf[s];
 }
 
 int db_last_insert_rowid() {
 	return sqlite3_last_insert_rowid( enginedb() );
 }
 
-int db_exec(const char *buf) {
+int sql_exec(const char *buf) {
 	return sqlite3_exec( enginedb(), buf, 0, 0, 0);
 }
 
@@ -63,51 +92,48 @@ int db_open(const char *root_path)
 	return sqlite3_open( formatf("%s/" SQLITE3_FILE, root_path), &engine_info.db );
 }
 
-int db_query(const char *buf, int len, db_stmt **stmt) {
+int sql_query(const char *buf, int len, sql_stmt **stmt) {
 	return sqlite3_prepare( enginedb(), buf,  len,  stmt, 0);
 }
 
-int db_step(db_stmt *stmt) {
-	return sqlite3_step(stmt);
+int sql_col_int(sql_stmt *stmt, const char *column) {
+	return sqlite3_column_int(stmt, sql_column_index(stmt, column));
 }
 
-int db_finalize(db_stmt *stmt) {
-	return sqlite3_finalize(stmt);
-}
-
-int db_column_count(db_stmt *stmt) {
-	return sqlite3_column_count(stmt);
-}
-
-const char *db_column_name(db_stmt *stmt, int column) {
-	return sqlite3_column_name(stmt, column);
-}
-
-int db_column_int(db_stmt *stmt, int column) {
-	return sqlite3_column_int(stmt, column);
-}
-
-int db_col_int(db_stmt *stmt, const char *column) {
-	return sqlite3_column_int(stmt, db_column_index(stmt, column));
-}
-
-const char *db_column_str(db_stmt *stmt, int column) {
+const char *sql_column_str(sql_stmt *stmt, int column) {
 	return (const char *) sqlite3_column_text(stmt, column);
 }
 
-int64_t db_column_int64(db_stmt *stmt, int column) {
-	return sqlite3_column_int64(stmt, column);
-}
-
-int db_column_index(db_stmt *stmt, const char *name) {
-	for(int i = 0, size = db_column_count(stmt); i < size; ++i) {
-		if(!strcmp(db_column_name(stmt, i), name)) {
+int sql_column_index(sql_stmt *stmt, const char *name) {
+	for(int i = 0, size = sql_column_count(stmt); i < size; ++i) {
+		if(!strcmp(sql_column_name(stmt, i), name)) {
 			return i;
 		}
 	}
 	return -1;
 }
-const char *escape_db_str( const char *pstr )
+
+int field_map_int(field_map *table) {
+	return * ( (int *) table->value );
+}
+
+float field_map_float(field_map *table) {
+	return * ( (float *) table->value );
+}
+
+Flag *field_map_flag(field_map *table) {
+	return * ( (Flag **) table->value );
+}
+
+double field_map_double(field_map *table) {
+	return * ( (double *) table->value );
+}
+
+const char *field_map_str(field_map *table) {
+	return * ( (const char **) table->value );
+}
+
+const char *escape_sql_str( const char *pstr )
 {
 	static char buf[OUT_SIZ * 3];
 
@@ -126,165 +152,92 @@ const char *escape_db_str( const char *pstr )
 	return buf;
 }
 
-identifier_t db_save(struct dbvalues *table, const char *tableName, identifier_t id)
+sql_int64 db_save(field_map *table, const char *tableName, sql_int64 id)
 {
-	char buf[OUT_SIZ];
-
 	if ( id == 0 )
 	{
-		char names[BUF_SIZ] = { 0 };
-		char values[OUT_SIZ] = { 0 };
-
-		build_insert_values( table, names, values );
-
-		sprintf( buf, "insert into %s (%s) values(%s)", tableName, names, values );
-
-		if ( db_exec( buf) != DB_OK)
-		{
-			log_data( "could not insert account forum" );
-			return 0;
-		}
+		if(sql_insert_query(table, tableName) != SQL_DONE)
+			log_data("could not insert to %s", tableName);
 
 		return db_last_insert_rowid();
 	}
 	else
 	{
-		char values[OUT_SIZ] = { 0 };
+		if(sql_update_query(table, tableName, id) != SQL_DONE)
+			log_data("could not update %s", tableName);
 
-		build_update_values( table, values );
-
-		sprintf( buf, "update %s set %s where accountId=%"PRId64, tableName, values, id );
-
-		if ( db_exec( buf) != DB_OK)
-		{
-			log_data( "could not update account_forum" );
-			return 0;
-		}
 		return id;
 	}
 }
 
-void set_db_values( struct dbvalues *table, char *values )
+int sql_bind_table_value( sql_stmt *stmt, int index, field_map *table)
 {
-	if ( table->value == 0 )
-	{
-		strcat( values, "null," );
-		return;
+
+	log_trace("binding %s...", table->name);
+
+	if(table->value == 0) {
+		return sql_bind_null(stmt, index);
 	}
-	switch ( table->type )
+
+	switch(table->type)
 	{
-		case DB_INTEGER:
-			sprintf( &values[strlen( values )], "%d",
-					 *( ( int * ) table->value ) );
-			strcat( values, "," );
-			break;
-		case DB_TEXT:
-			strcat( values, "'" );
-			strcat( values,
-					escape_db_str( *( ( const char ** ) table->value ) ) );
-			strcat( values, "'," );
-			break;
-		case DB_FLOAT:
-			sprintf( &values[strlen( values )], "%f",
-					 *( ( double * ) table->value ) );
-			strcat( values, "," );
-			break;
-		case DBTYPE_FLOAT:
-			sprintf( &values[strlen( values )], "%f",
-					 *( ( float * ) table->value ) );
-			strcat( values, "," );
-			break;
-		case DBTYPE_CUSTOM:
+		case SQL_INT:
+			return sql_bind_int(stmt, index, field_map_int(table) );
+		case SQL_TEXT: 
 		{
-			map_save_t func = ( map_save_t ) ( table->arg1 );
-			strcat( values, "'" );
-			strcat( values, escape_db_str( ( *func ) ( table->value ) ) );
-			strcat( values, "'," );
+			const char *str = field_map_str(table);
+			return sql_bind_text(stmt, index, str, strlen(str), 0);
 		}
-			break;
-		case DBTYPE_ARRAY:
+		case SQL_DOUBLE:
+			return sql_bind_double(stmt, index, field_map_double(table) );
+		case SQL_FLOAT:
+			return sql_bind_float(stmt, index, field_map_float(table) );
+		case SQL_FLAG:
 		{
-			map_save_array_t func = ( map_save_array_t ) ( table->arg1 );
-			strcat( values, "'" );
-			strcat( values, ( *func ) ( *( int* ) table->arg2, table->value ) );
-			strcat( values, "'," );
+			Flag *value = field_map_flag(table);
+			if(value == 0 || is_empty(value)) return sql_bind_null(stmt, index);
+
+			const char *str = format_flags( value, ( const Lookup * ) table->arg1 );
+			return sql_bind_text(stmt, index, str, strlen(str), 0);
 		}
-			break;
-		case DB_FLAG:
-			strcat( values, "'" );
-			strcat( values,
-					format_flags( *( ( Flag ** ) table->value ),
-								  ( const Lookup * ) table->arg1 ) );
-			strcat( values, "'," );
-			break;
+		case SQL_LOOKUP:
+		{
+			int value = field_map_int(table);
+			const Lookup *lookup = (const Lookup *) table->arg1;
+			assert(lookup != 0);
+			const char *name = lookup_name(lookup, value);
+			if(name == 0) return sql_bind_null(stmt, index);
+			return sql_bind_text(stmt, index, name, strlen(name), 0);
+		}
+		case SQL_CUSTOM:
+		{
+			custom_sql_bind func = ( custom_sql_bind ) ( table->arg1 );
+			assert(func != 0);
+			return (*func)(stmt, index, table);
+		}
 		default:
 			log_bug( "unknown save type for field %s", table->name );
-			break;
+			return SQL_NONTYPE;			
 	}
 }
 
-void
-save_field_values( table_map * table, field_map * field, char *values,
-				   void *data )
+int sql_bind_values(sql_stmt *stmt, field_map *table)
 {
-	if ( field->value == 0 )
-	{
-		strcat( values, "null," );
-		return;
+
+	for(int i = 0; table[i].name != 0; i++) {
+		int err = sql_bind_table_value(stmt, i+1, &table[i]);
+
+		if(err != SQL_OK) return err;
 	}
-	switch ( field->type )
-	{
-		case DB_INTEGER:
-			sprintf( &values[strlen( values )], "%d",
-					 field_int( field->value, table->base, data ) );
-			strcat( values, "," );
-			break;
-		case DB_TEXT:
-			strcat( values, "'" );
-			strcat( values,
-					escape_db_str( field_str
-								   ( field->value, table->base, data ) ) );
-			strcat( values, "'," );
-			break;
-		case DB_FLOAT:
-			sprintf( &values[strlen( values )], "%f",
-					 field_double( field->value, table->base, data ) );
-			strcat( values, "," );
-			break;
-		case DBTYPE_CUSTOM:
-		{
-			map_save_t func = ( map_save_t ) ( field->arg1 );
-			strcat( values, "'" );
-			strcat( values, escape_db_str( ( *func ) ( field->value ) ) );
-			strcat( values, "'," );
-		}
-			break;
-		case DBTYPE_ARRAY:
-		{
-			map_save_array_t func = ( map_save_array_t ) ( field->arg1 );
-			strcat( values, "'" );
-			strcat( values, ( *func ) ( *( int* ) field->arg2, field->value ) );
-			strcat( values, "'," );
-		}
-			break;
-		case DB_FLAG:
-			strcat( values, "'" );
-			strcat( values,
-					format_flags( field_flag
-								  ( field->value, table->base, data ),
-								  ( const Lookup * ) field->arg1 ) );
-			strcat( values, "'," );
-			break;
-		default:
-			log_bug( "unknown save type for %s field %s", table->name,
-					 field->name );
-			break;
-	}
+
+	return SQL_OK;
 }
 
-const char *db_save_int_array( int max, void *arg )
+int db_save_int_array( sql_stmt *stmt, int index, field_map *table )
 {
-	int *values = ( int * ) arg;
+	int *values = (int * ) table->value;
+	size_t max = (size_t) table->arg2;
+
 	static char buf[BUF_SIZ];
 	int len = 0;
 
@@ -296,13 +249,13 @@ const char *db_save_int_array( int max, void *arg )
 	if ( len > 0 )
 		buf[len - 1] = 0;
 
-	return buf;
+	return sql_bind_text(stmt, index, buf, len, 0);
 }
 
-void db_read_int_array( int max, void *arg, db_stmt * stmt, int i )
+void db_read_int_array( int max, void *arg, sql_stmt * stmt, int i )
 {
 	int *values = ( int * ) arg;
-	const char *value = strtok( ( char * ) db_column_str( stmt, i ), "," );
+	const char *value = strtok( ( char * ) sql_column_str( stmt, i ), "," );
 	int index = 0;
 
 	while ( value )
@@ -320,63 +273,93 @@ void load_field_values(  )
 {
 }
 
-db_stmt *db_select_all( table_map * table, ... )
+int sql_insert_query( field_map *table, const char *tablename)
 {
-	char buf[500];
-	db_stmt *stmt;
-	va_list args;
-	table_map *arg;
-	int len = sprintf( buf, "select * from %s", table->name );
+	char buf[OUT_SIZ] = {0};
+	char columns[OUT_SIZ] = {0};
+	char params[OUT_SIZ] = {0};
 
-	va_start( args, table );
-
-	while ( ( arg = va_arg( args, table_map * ) ) != 0 )
+	for ( int i = 0; table[i].name != 0; i++ )
 	{
-		len += sprintf( &buf[len], ",%s", arg->name );
-	}
-	va_end( args );
+		strcat( columns, table[i].name );
+		strcat( params, "?");
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
-	{
-		log_data( "could not prepare sql statement" );
-		return 0;
+		if(table[i+1].name != 0) {
+			strcat( columns, "," );
+			strcat( params, ",");
+		}
 	}
 
-	return stmt;
+	sql_stmt *stmt;
+
+	int len = sprintf(buf, "insert into %s (%s) values(%s)", tablename, columns, params);
+
+	log_trace("%s", buf);
+
+	int err = sql_query(buf, len, &stmt);
+
+	if(err != SQL_OK) {
+		return err;
+	}
+
+	err = sql_bind_values(stmt, table);
+
+	if(err != SQL_OK) {
+		return err;
+	}
+
+	err = sql_step(stmt);
+
+	if( err != SQL_DONE) {
+		return err;
+	}
+
+	return sql_finalize(stmt);
 }
 
-db_stmt *db_select_where( const char *fields, const char *where,
-							   table_map * table, ... )
+int sql_update_query( field_map *table, const char *tablename, sql_int64 id)
 {
-	char buf[BUF_SIZ];
-	db_stmt *stmt;
-	va_list args;
-	table_map *arg;
-	int len = sprintf( buf, "select %s from %s", fields, table->name );
+	char buf[OUT_SIZ] = {0};
+	char params[OUT_SIZ] = {0};
 
-	va_start( args, table );
-
-	while ( ( arg = va_arg( args, table_map * ) ) != 0 )
+	for ( int i = 0; table[i].name != 0; i++ )
 	{
-		len += sprintf( &buf[len], ",%s", arg->name );
-	}
-	va_end( args );
+		strcat( params, table[i].name );
+		strcat( params, "=?");
 
-	if ( !nullstr( where ) )
-	{
-		len += sprintf( &buf[len], " %s", where );
+		if(table[i+1].name != 0) {
+			strcat( params, ",");
+		}
 	}
 
-	if ( db_query( buf,  len,  &stmt) != DB_OK )
-	{
-		log_data( "could not prepare sql statement" );
-		return 0;
+	sql_stmt *stmt;
+
+	int len = sprintf(buf, "update %s set %s where %s=%"PRId64, tablename, params, tablenameid(tablename), id);
+
+	int err = sql_query(buf, len, &stmt);
+
+	if(err != SQL_OK) {
+		return err;
 	}
 
-	return stmt;
+	err = sql_bind_values(stmt, table);
+
+	if(err != SQL_OK) return err;
+
+	err = sql_step(stmt);
+
+	if( err != SQL_DONE)
+		return err;
+
+	if(sql_finalize(stmt) != SQL_OK) {
+		log_data("could not finalize update statement");
+	}
+
+	return err;
 }
 
-void build_insert_values( struct dbvalues *table, char *names, char *values )
+/*
+void build_insert_values( field_map *table, char *names, char *values )
 {
 	for ( int i = 0; table[i].name != 0; i++ )
 	{
@@ -396,7 +379,7 @@ void build_insert_values( struct dbvalues *table, char *names, char *values )
 		values[strlen( values ) - 1] = 0;
 }
 
-void build_update_values( struct dbvalues *table, char *values )
+void build_update_values( field_map *table, char *values )
 {
 	for ( int i = 0; table[i].name != 0; i++ )
 	{
@@ -408,11 +391,11 @@ void build_update_values( struct dbvalues *table, char *values )
 
 	if ( values[0] != 0 )
 		values[strlen( values ) - 1] = 0;
-}
+}*/
 
 int db_begin_transaction(  )
 {
-	if ( db_exec( "BEGIN") != DB_OK )
+	if ( sql_exec( "BEGIN") != SQL_OK )
 	{
 		log_data( "unable to begin transaction." );
 		return 0;
@@ -424,7 +407,7 @@ int db_begin_transaction(  )
 
 int db_end_transaction(  )
 {
-	if ( db_exec( "END") != DB_OK )
+	if ( sql_exec( "END") != SQL_OK )
 	{
 		log_data( "unable to end transaction." );
 		return 0;

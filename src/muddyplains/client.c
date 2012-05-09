@@ -35,8 +35,7 @@
 #include <fcntl.h>
 #ifdef HAVE_LIBCRYPT
 #include <crypt.h>
-#endif							/* 
-								 */
+#endif
 #include <errno.h>
 #include <muddyengine/connection.h>
 #include <muddyengine/log.h>
