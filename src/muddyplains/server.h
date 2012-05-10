@@ -37,12 +37,12 @@ extern time_t startup_time;
 
 extern time_t last_reboot;
 
-void run_server(  );
+void run_server();
 
-void stop_server(  );
+void stop_server();
 
-void reboot_server(  );
+void reboot_server();
 
-void server_import( const char *, const char * );
+void server_import(const char *, const char *);
 
-#endif							//  #ifndef SERVER_H
+#endif				/* //  #ifndef SERVER_H */

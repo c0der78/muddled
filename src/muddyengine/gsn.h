@@ -21,17 +21,13 @@
 
 #ifdef IN_GSN_TABLE
 #define GSN(gsn)	{ &(gsn), #gsn },
-#else							/* 
-								 */
+#else				/* */
 #ifdef DEFINE_GSNS
 #define GSN(gsn)	int gsn;
-#else							/* 
-								 */
+#else				/* */
 #define GSN(gsn)	extern int gsn;
-#endif							/* 
-								 */
-#endif							/* 
-								 */
+#endif				/* */
+#endif				/* */
 
-GSN( gsn_kick )
+GSN(gsn_kick)
 #undef GSN

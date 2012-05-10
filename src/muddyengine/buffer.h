@@ -24,43 +24,42 @@
 
 typedef struct Buffer Buffer;
 
-struct Buffer
-{
+struct Buffer {
 
-	short state;				/* error state of the buffer */
+    short state;		/* error state of the buffer */
 
-	int size;					/* size in k */
+    int size;			/* size in k */
 
-	char *string;				/* buffer's string */
+    char *string;		/* buffer's string */
 
-	 bool( *write ) ( Buffer *, const char * );
+     bool(*write) (Buffer *, const char *);
 
-	 bool( *writeln ) ( Buffer *, const char * );
+     bool(*writeln) (Buffer *, const char *);
 
-	 bool( *writef ) ( Buffer *, const char *, ... );
+     bool(*writef) (Buffer *, const char *, ...);
 
-	 bool( *writelnf ) ( Buffer *, const char *, ... );
+     bool(*writelnf) (Buffer *, const char *, ...);
 
 };
 
-Buffer *new_buf(  );
+Buffer *new_buf();
 
-void destroy_buf( Buffer * );
+void destroy_buf(Buffer *);
 
-bool buf_add( Buffer *, const char * );
+bool buf_add(Buffer *, const char *);
 
-bool buf_add_len( Buffer *, const char *, size_t );
+bool buf_add_len(Buffer *, const char *, size_t);
 
-bool buf_addln( Buffer *, const char * );
+bool buf_addln(Buffer *, const char *);
 
-bool buf_addf( Buffer *, const char *, ... )
-	__attribute__ ( ( format( printf, 2, 3 ) ) );
+bool buf_addf(Buffer *, const char *, ...)
+    __attribute__ ((format(printf, 2, 3)));
 
-bool buf_addlnf( Buffer *, const char *, ... )
-	__attribute__ ( ( format( printf, 2, 3 ) ) );
+bool buf_addlnf(Buffer *, const char *, ...)
+    __attribute__ ((format(printf, 2, 3)));
 
-void clear_buf( Buffer * );
+void clear_buf(Buffer *);
 
-char *buf_string( Buffer * );
+char *buf_string(Buffer *);
 
-#endif							//  #ifndef BUFFER_H
+#endif				/* //  #ifndef BUFFER_H */

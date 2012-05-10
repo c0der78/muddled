@@ -28,6 +28,6 @@
 #define PULSE_HINT		(180 * PULSE_PER_SECOND)
 #define PULSE_VIOLENCE		(3 * PULSE_PER_SECOND)
 
-void update_handler(  );
+void update_handler();
 
-#endif							//  #ifndef UPDATE_H
+#endif				/* //  #ifndef UPDATE_H */

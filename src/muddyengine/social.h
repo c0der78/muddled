@@ -27,31 +27,30 @@ typedef struct Social Social;
 #include <muddyengine/string.h>
 #include <muddyengine/character.h>
 
-struct Social
-{
-	identifier_t id;
-	Social *next;
-	position_t minPosition;
-	const char *name;
-	const char *charNoArg;
-	const char *othersNoArg;
-	const char *charFound;
-	const char *othersFound;
-	const char *victFound;
-	const char *charNotFound;
-	const char *charAuto;
-	const char *othersAuto;
-	const char *charObjFound;
-	const char *othersObjFound;
+struct Social {
+    identifier_t id;
+    Social *next;
+    position_t minPosition;
+    const char *name;
+    const char *charNoArg;
+    const char *othersNoArg;
+    const char *charFound;
+    const char *othersFound;
+    const char *victFound;
+    const char *charNotFound;
+    const char *charAuto;
+    const char *othersAuto;
+    const char *charObjFound;
+    const char *othersObjFound;
 };
 
 extern Social *first_social;
-Social *new_social(  );
-void destroy_social( Social * );
-int load_socials(  );
-int save_social( Social * );
-void save_socials(  );
-int interpret_social( Character *, const char *, const char * );
-Social *social_lookup( const char * );
+Social *new_social();
+void destroy_social(Social *);
+int load_socials();
+int save_social(Social *);
+void save_socials();
+int interpret_social(Character *, const char *, const char *);
+Social *social_lookup(const char *);
 
-#endif							//  #ifndef SOCIAL_H
+#endif				/* //  #ifndef SOCIAL_H */

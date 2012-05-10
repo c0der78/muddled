@@ -33,679 +33,592 @@
 #include <ctype.h>
 #include <muddyengine/engine.h>
 
-Editor *new_editor(  )
+Editor *new_editor()
 {
 
-	Editor *editor = ( Editor * ) alloc_mem( 1, sizeof( Editor ) );
+    Editor *editor = (Editor *) alloc_mem(1, sizeof(Editor));
 
-	return editor;
+    return editor;
 
 }
 
-void destroy_editor( Editor * editor )
+void destroy_editor(Editor * editor)
 {
 
-	free_mem( editor );
+    free_mem(editor);
 
 }
 
-void olc_prompt( Client * conn )
+void olc_prompt(Client * conn)
 {
 
-	if ( conn->editing->show == string_editor_menu )
-	{
+    if (conn->editing->show == string_editor_menu) {
 
-		writelnf( conn, "~CType \\? for help or \\q to %s:~x ",
-				  conn->editing->next ? "go back" : "quit" );
+	writelnf(conn, "~CType \\? for help or \\q to %s:~x ",
+		 conn->editing->next ? "go back" : "quit");
 
-	}
-	else
-	{
+    } else {
 
-		writef( conn, "~CSelect an option, ? for help or Q to %s:~x ",
-				conn->editing->next ? "go back" : "quit" );
+	writef(conn, "~CSelect an option, ? for help or Q to %s:~x ",
+	       conn->editing->next ? "go back" : "quit");
 
-	}
+    }
 
 }
 
-void finish_editing( Client * conn )
+void finish_editing(Client * conn)
 {
 
-	Editor *ed = conn->editing;
+    Editor *ed = conn->editing;
 
-	conn->editing = ed->next;
+    conn->editing = ed->next;
 
-	destroy_editor( ed );
+    destroy_editor(ed);
 
-	clear_screen( conn );
+    clear_screen(conn);
 
-	set_cursor( conn, 1, 1 );
+    set_cursor(conn, 1, 1);
 
-	if ( conn->editing != 0 )
-
-		conn->editing->show( conn );
+    if (conn->editing != 0)
+	conn->editing->show(conn);
 
 }
 
-void string_editor_menu( Client * conn )
+void string_editor_menu(Client * conn)
 {
 
-	const char **pStr = ( const char ** ) conn->editing->data;
+    const char **pStr = (const char **) conn->editing->data;
 
-	const char *str = *pStr;
+    const char *str = *pStr;
 
-	char buf[ARG_SIZ];
+    char buf[ARG_SIZ];
 
-	int count = 0;
+    int count = 0;
 
-	clear_screen( conn );
+    clear_screen(conn);
 
-	set_cursor( conn, 1, 1 );
+    set_cursor(conn, 1, 1);
 
-	conn->title( conn, "Text Editor" );
+    conn->title(conn, "Text Editor");
 
-	while ( str && *str != 0 )
-	{
+    while (str && *str != 0) {
 
-		str = get_line( str, buf );
+	str = get_line(str, buf);
 
-		writelnf( conn, "~Y%2d)~x %s", ++count, buf );
+	writelnf(conn, "~Y%2d)~x %s", ++count, buf);
 
-	}
+    }
 
 }
 
 void
-string_editor_preview( Client * conn, const char *header, const char *pstr )
+string_editor_preview(Client * conn, const char *header, const char *pstr)
 {
 
-	int len = strlen_color( header );
+    int len = strlen_color(header);
 
-	char buf[ARG_SIZ];
+    char buf[ARG_SIZ];
 
-	int count = 0;
+    int count = 0;
 
-	if ( pstr && *pstr )
-	{
+    if (pstr && *pstr) {
 
-		pstr = get_line( pstr, buf );
+	pstr = get_line(pstr, buf);
 
-		writelnf( conn, "%s: ~W%2d. %s~x", header, ++count, buf );
+	writelnf(conn, "%s: ~W%2d. %s~x", header, ++count, buf);
 
-		while ( pstr && *pstr != 0 && count < 3 )
-		{
+	while (pstr && *pstr != 0 && count < 3) {
 
-			pstr = get_line( pstr, buf );
+	    pstr = get_line(pstr, buf);
 
-			writelnf( conn, "%-*s  ~W%2d. %s~x", len, " ", ++count, buf );
-
-		}
+	    writelnf(conn, "%-*s  ~W%2d. %s~x", len, " ", ++count, buf);
 
 	}
-	else
-	{
 
-		writelnf( conn, "%s: ~WEmpty~x", header );
+    } else {
 
-	}
+	writelnf(conn, "%s: ~WEmpty~x", header);
+
+    }
 
 }
 
-void string_linedel( const char *string, size_t line, char *buf )
+void string_linedel(const char *string, size_t line, char *buf)
 {
 
-	size_t cnt = 1;
+    size_t cnt = 1;
 
-	for ( const char *strtmp = string; strtmp && *strtmp != 0; strtmp++ )
-	{
+    for (const char *strtmp = string; strtmp && *strtmp != 0; strtmp++) {
 
-		if ( cnt != line )
+	if (cnt != line)
+	    *buf++ = *strtmp;
 
-			*buf++ = *strtmp;
+	if (*strtmp == '\n') {
 
-		if ( *strtmp == '\n' )
-		{
+	    if (*(strtmp + 1) == '\r') {
 
-			if ( *( strtmp + 1 ) == '\r' )
-			{
+		strtmp++;
 
-				strtmp++;
+		if (cnt != line)
+		    *buf++ = *strtmp;
 
-				if ( cnt != line )
-
-					*buf++ = *strtmp;
-
-			}
-
-			cnt++;
-
-		}
+	    }
+	    cnt++;
 
 	}
+    }
 
-	*buf = 0;
+    *buf = 0;
 
 }
 
 void
-string_lineadd( const char *string, const char *newstr, size_t line, char *buf )
+string_lineadd(const char *string, const char *newstr, size_t line,
+	       char *buf)
 {
 
-	size_t cnt = 1;
+    size_t cnt = 1;
 
-	bool done = false;
+    bool done = false;
 
-	buf = 0;
+    buf = 0;
 
-	for ( const char *strtmp = string;
-		  *strtmp != 0 || ( !done && cnt == line ); strtmp++ )
-	{
+    for (const char *strtmp = string;
+	 *strtmp != 0 || (!done && cnt == line); strtmp++) {
 
-		if ( cnt == line && !done )
-		{
+	if (cnt == line && !done) {
 
-			strcat( buf, newstr );
+	    strcat(buf, newstr);
 
-			strcat( buf, "\n\r" );
+	    strcat(buf, "\n\r");
 
-			cnt++;
+	    cnt++;
 
-			done = true;
-
-		}
-
-		*buf++ = *strtmp;
-
-		if ( done && *strtmp == 0 )
-
-			break;
-
-		if ( *strtmp == '\n' )
-		{
-
-			if ( *( strtmp + 1 ) == '\r' )
-
-				*buf++ = *( ++strtmp );
-
-			cnt++;
-
-		}
+	    done = true;
 
 	}
+	*buf++ = *strtmp;
 
-	*buf = 0;
+	if (done && *strtmp == 0)
+	    break;
+
+	if (*strtmp == '\n') {
+
+	    if (*(strtmp + 1) == '\r')
+		*buf++ = *(++strtmp);
+
+	    cnt++;
+
+	}
+    }
+
+    *buf = 0;
 
 }
 
-void olc_syntax( Client * conn, const char *arg, ... )
+void olc_syntax(Client * conn, const char *arg, ...)
 {
 
-	va_list args;
+    va_list args;
 
-	char *str;
+    char *str;
 
-	int i;
+    int i;
 
-	if ( !arg || !*arg )
+    if (!arg || !*arg)
+	return;
 
-		return;
+    writeln(conn, "~CCommands:~x");
 
-	writeln( conn, "~CCommands:~x" );
+    const char *const defaults[] =
+	{ "quit", "show", "save", "list", "delete" };
 
-	const char *const defaults[] = { "quit", "show", "save", "list", "delete" };
+    for (i = 0; i < sizeof(defaults) / sizeof(defaults[0]); i++)
+	writelnf(conn, "%10s ", defaults[i]);
 
-	for ( i = 0; i < sizeof( defaults ) / sizeof( defaults[0] ); i++ )
+    va_start(args, arg);
 
-		writelnf( conn, "%10s ", defaults[i] );
+    str = va_arg(args, char *);
 
-	va_start( args, arg );
+    if (str == NULL)
+	return;
 
-	str = va_arg( args, char * );
+    i++;
 
-	if ( str == NULL )
+    writef(conn, "%10s ", arg);
 
-		return;
+    while ((str = va_arg(args, char *)) != NULL) {
 
-	i++;
+	writef(conn, "%10s ", str);
 
-	writef( conn, "%10s ", arg );
+	if (++i % 5 == 0)
+	    writeln(conn, "");
 
-	while ( ( str = va_arg( args, char * ) ) != NULL )
+    }
 
-	{
+    va_end(args);
 
-		writef( conn, "%10s ", str );
-
-		if ( ++i % 5 == 0 )
-
-			writeln( conn, "" );
-
-	}
-
-	va_end( args );
-
-	if ( i % 5 != 0 )
-
-		writeln( conn, "" );
+    if (i % 5 != 0)
+	writeln(conn, "");
 
 }
 
-int edit_text( Client * conn, const char **pStr, const char *argument )
+int edit_text(Client * conn, const char **pStr, const char *argument)
 {
 
-	if ( !str_cmp( argument, "\\?" ) )
-	{
+    if (!str_cmp(argument, "\\?")) {
 
-		writeln( conn, "~CText Editor Help:" );
+	writeln(conn, "~CText Editor Help:");
 
-		writeln( conn, "~Y\\?~C		- this help" );
+	writeln(conn, "~Y\\?~C		- this help");
 
-		writeln( conn, "~Y\\q~C		- exit editor" );
+	writeln(conn, "~Y\\q~C		- exit editor");
 
-		writeln( conn, "~Y\\c~C		- clear all lines" );
+	writeln(conn, "~Y\\c~C		- clear all lines");
 
-		writeln( conn, "~Y\\d~C		- delete last line" );
+	writeln(conn, "~Y\\d~C		- delete last line");
 
-		writeln( conn, "~Y\\d#~C		- delete line #" );
+	writeln(conn, "~Y\\d#~C		- delete line #");
 
-		writeln( conn, "~Y\\i#~C		- insert a line at #~x" );
+	writeln(conn, "~Y\\i#~C		- insert a line at #~x");
+
+	return EDIT_NOCHANGE;
+
+    }
+    if (!str_cmp(argument, "\\q")) {
+
+	return EDIT_END;
+
+    }
+    char buf[OUT_SIZ * 4];
+
+    if (!str_prefix("\\d", argument)) {
+
+	argument += 2;
+
+	int line, lines = count_lines(*pStr);
+
+	if (*argument && is_number(argument)) {
+
+	    line = atoi(argument);
+
+	    if (line < 1 || line > lines) {
+
+		writelnf(conn,
+			 "~CYou can't delete line %d, it doesn't exist.~x",
+			 line);
 
 		return EDIT_NOCHANGE;
 
-	}
+	    }
+	} else {
 
-	if ( !str_cmp( argument, "\\q" ) )
-	{
-
-		return EDIT_END;
+	    line = lines;
 
 	}
 
-	char buf[OUT_SIZ * 4];
+	string_linedel(*pStr, line, buf);
 
-	if ( !str_prefix( "\\d", argument ) )
-	{
+	free_str(*pStr);
 
-		argument += 2;
-
-		int line, lines = count_lines( *pStr );
-
-		if ( *argument && is_number( argument ) )
-		{
-
-			line = atoi( argument );
-
-			if ( line < 1 || line > lines )
-			{
-
-				writelnf( conn,
-						  "~CYou can't delete line %d, it doesn't exist.~x",
-						  line );
-
-				return EDIT_NOCHANGE;
-
-			}
-
-		}
-		else
-		{
-
-			line = lines;
-
-		}
-
-		string_linedel( *pStr, line, buf );
-
-		free_str( *pStr );
-
-		*pStr = str_dup( buf );
-
-		return EDIT_CHANGED;
-
-	}
-
-	if ( !str_cmp( "\\c", argument ) )
-	{
-
-		free_str( *pStr );
-
-		*pStr = str_empty;
-
-		return EDIT_CHANGED;
-
-	}
-
-	if ( !str_prefix( "\\i", argument ) )
-	{
-
-		argument += 2;
-
-		if ( !argument || !*argument || !is_number( argument ) )
-		{
-
-			writeln( conn, "~CYou must specify a line to insert at.~x" );
-
-			return EDIT_NOCHANGE;
-
-		}
-
-		int line = atoi( argument );
-
-		if ( line < 1 || line > count_lines( *pStr ) )
-		{
-
-			writeln( conn, "~CThat is not a valid insert point.~x" );
-
-			return EDIT_NOCHANGE;
-
-		}
-
-		string_lineadd( *pStr, argument, line, buf );
-
-		free_str( *pStr );
-
-		*pStr = str_dup( buf );
-
-		return EDIT_CHANGED;
-
-	}
-
-	if ( *pStr )
-
-		strcpy( buf, *pStr );
-
-	else
-
-		buf[0] = 0;
-
-	strcat( buf, argument );
-
-	strcat( buf, "\n\r" );
-
-	if ( *pStr )
-
-		free_str( *pStr );
-
-	*pStr = str_dup( buf );
+	*pStr = str_dup(buf);
 
 	return EDIT_CHANGED;
 
-}
+    }
+    if (!str_cmp("\\c", argument)) {
 
-void string_edit( Client * conn, const char *argument )
-{
+	free_str(*pStr);
 
-	int rval =
-		edit_text( conn, ( const char ** ) conn->editing->data, argument );
+	*pStr = str_empty;
 
-	switch ( rval )
+	return EDIT_CHANGED;
 
-	{
+    }
+    if (!str_prefix("\\i", argument)) {
 
-		default:
+	argument += 2;
 
-		case EDIT_NOCHANGE:
+	if (!argument || !*argument || !is_number(argument)) {
 
-			break;
+	    writeln(conn, "~CYou must specify a line to insert at.~x");
 
-		case EDIT_CHANGED:
-
-			conn->editing->show( conn );
-
-			break;
-
-		case EDIT_END:
-
-			finish_editing( conn );
-
-			break;
+	    return EDIT_NOCHANGE;
 
 	}
+	int line = atoi(argument);
+
+	if (line < 1 || line > count_lines(*pStr)) {
+
+	    writeln(conn, "~CThat is not a valid insert point.~x");
+
+	    return EDIT_NOCHANGE;
+
+	}
+	string_lineadd(*pStr, argument, line, buf);
+
+	free_str(*pStr);
+
+	*pStr = str_dup(buf);
+
+	return EDIT_CHANGED;
+
+    }
+    if (*pStr)
+	strcpy(buf, *pStr);
+
+    else
+	buf[0] = 0;
+
+    strcat(buf, argument);
+
+    strcat(buf, "\n\r");
+
+    if (*pStr)
+	free_str(*pStr);
+
+    *pStr = str_dup(buf);
+
+    return EDIT_CHANGED;
 
 }
 
-Editor *build_string_editor( const char **pStr )
+void string_edit(Client * conn, const char *argument)
 {
 
-	Editor *editor = new_editor(  );
+    int rval =
+	edit_text(conn, (const char **) conn->editing->data, argument);
 
-	editor->edit = string_edit;
+    switch (rval) {
 
-	editor->data = pStr;
+    default:
 
-	editor->show = string_editor_menu;
+    case EDIT_NOCHANGE:
 
-	return editor;
+	break;
+
+    case EDIT_CHANGED:
+
+	conn->editing->show(conn);
+
+	break;
+
+    case EDIT_END:
+
+	finish_editing(conn);
+
+	break;
+
+    }
 
 }
 
-void character_editor_menu( Client * conn, Character * ch )
+Editor *build_string_editor(const char **pStr)
 {
 
-	writelnf( conn, "~C   Id: ~W%d", ch->id );
+    Editor *editor = new_editor();
 
-	writelnf( conn, "~YA) ~CName: ~W%s~x", ch->name );
+    editor->edit = string_edit;
 
-	writelnf( conn, "~YB) ~CSex: ~W%s~x", sex_table[ch->sex].name );
+    editor->data = pStr;
 
-	writelnf( conn, "~YC) ~CLevel: ~W%d~x", ch->level );
+    editor->show = string_editor_menu;
 
-	string_editor_preview( conn, "~YD) ~CDescription", ch->description );
+    return editor;
 
-	writelnf( conn, "~YE) ~CRace: ~W%s~x", capitalize( ch->race->name ) );
+}
 
-	writelnf( conn, "~YF) ~CGold: ~W%.2f~x", ch->gold );
+void character_editor_menu(Client * conn, Character * ch)
+{
+
+    writelnf(conn, "~C   Id: ~W%d", ch->id);
+
+    writelnf(conn, "~YA) ~CName: ~W%s~x", ch->name);
+
+    writelnf(conn, "~YB) ~CSex: ~W%s~x", sex_table[ch->sex].name);
+
+    writelnf(conn, "~YC) ~CLevel: ~W%d~x", ch->level);
+
+    string_editor_preview(conn, "~YD) ~CDescription", ch->description);
+
+    writelnf(conn, "~YE) ~CRace: ~W%s~x", capitalize(ch->race->name));
+
+    writelnf(conn, "~YF) ~CGold: ~W%.2f~x", ch->gold);
 
 }
 
 int
-character_editor( Client * conn, Character * ch, const char *arg,
-				  const char *argument )
+character_editor(Client * conn, Character * ch, const char *arg,
+		 const char *argument)
 {
 
-	if ( !str_cmp( arg, "A" ) || !str_cmp( arg, "name" ) )
-	{
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
 
-		if ( !argument || !*argument )
-		{
+	if (!argument || !*argument) {
 
-			writeln( conn, "~CYou must provide a name to set.~x" );
+	    writeln(conn, "~CYou must provide a name to set.~x");
 
-			return 1;
-
-		}
-
-		free_str_dup( &ch->name, argument );
-
-		conn->editing->show( conn );
-
-		return 1;
+	    return 1;
 
 	}
+	free_str_dup(&ch->name, argument);
 
-	if ( !str_cmp( arg, "D" ) || !str_cmp( arg, "description" ) )
-	{
+	conn->editing->show(conn);
 
-		Editor *editor = build_string_editor( &ch->description );
+	return 1;
 
-		editor->next = conn->editing;
+    }
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "description")) {
 
-		conn->editing = editor;
+	Editor *editor = build_string_editor(&ch->description);
 
-		conn->editing->show( conn );
+	editor->next = conn->editing;
 
-		return 1;
+	conn->editing = editor;
 
-	}
+	conn->editing->show(conn);
 
-	if ( !str_cmp( arg, "B" ) || !str_cmp( arg, "sex" ) )
-	{
+	return 1;
 
-		if ( !argument || !*argument || argument[0] == '?' )
-		{
+    }
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "sex")) {
 
-			writelnf( conn, "~CValid sexes are: ~W%s~x",
-					  lookup_names( sex_table ) );
+	if (!argument || !*argument || argument[0] == '?') {
 
-			return 1;
+	    writelnf(conn, "~CValid sexes are: ~W%s~x",
+		     lookup_names(sex_table));
 
-		}
-
-		long s = value_lookup(sex_table, argument );
-
-		if ( s == -1 )
-		{
-
-			writeln( conn, "~CNo such sex.~x" );
-
-			return 1;
-
-		}
-
-		ch->sex = (sex_t) s;
-
-		conn->editing->show( conn );
-
-		return 1;
+	    return 1;
 
 	}
+	long s = value_lookup(sex_table, argument);
 
-	if ( !str_cmp( arg, "C" ) || !str_cmp( arg, "level" ) )
-	{
+	if (s == -1) {
 
-		if ( !argument || !*argument )
-		{
+	    writeln(conn, "~CNo such sex.~x");
 
-			writeln( conn, "~CYou must specify a level to set.~x" );
-
-			return 1;
-
-		}
-
-		int l = atoi( argument );
-
-		if ( l == 0 || l >= MAX_LEVEL * 2 )
-		{
-
-			writelnf( conn, "~CA valid level is between 1 and %d.~x",
-					  MAX_LEVEL * 2 );
-
-			return 1;
-
-		}
-
-		ch->level = l;
-
-		conn->editing->show( conn );
-
-		return 1;
+	    return 1;
 
 	}
+	ch->sex = (sex_t) s;
 
-	if ( !str_cmp( arg, "E" ) || !str_cmp( arg, "race" ) )
-	{
+	conn->editing->show(conn);
 
-		if ( !argument || !*argument )
-		{
+	return 1;
 
-			writeln( conn, "~CYou must specify a race to set.~x" );
+    }
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "level")) {
 
-			return 1;
+	if (!argument || !*argument) {
 
-		}
+	    writeln(conn, "~CYou must specify a level to set.~x");
 
-		Race *r = race_lookup( argument );
-
-		if ( r == 0 )
-		{
-
-			writeln( conn, "~CInvalid race.~x" );
-
-			return 1;
-
-		}
-
-		ch->race = r;
-
-		conn->editing->show( conn );
-
-		return 1;
+	    return 1;
 
 	}
+	int l = atoi(argument);
 
-	if ( !str_cmp( arg, "F" ) || !str_cmp( arg, "gold" ) )
-	{
+	if (l == 0 || l >= MAX_LEVEL * 2) {
 
-		if ( nullstr( argument ) || !is_number( argument ) )
-		{
+	    writelnf(conn, "~CA valid level is between 1 and %d.~x",
+		     MAX_LEVEL * 2);
 
-			writeln( conn, "~CYou must specify a decimal number to set.~x" );
-
-			return 1;
-
-		}
-
-		ch->gold = atof( argument );
-
-		conn->editing->show( conn );
-
-		return 1;
+	    return 1;
 
 	}
+	ch->level = l;
 
-	return 0;
+	conn->editing->show(conn);
+
+	return 1;
+
+    }
+    if (!str_cmp(arg, "E") || !str_cmp(arg, "race")) {
+
+	if (!argument || !*argument) {
+
+	    writeln(conn, "~CYou must specify a race to set.~x");
+
+	    return 1;
+
+	}
+	Race *r = race_lookup(argument);
+
+	if (r == 0) {
+
+	    writeln(conn, "~CInvalid race.~x");
+
+	    return 1;
+
+	}
+	ch->race = r;
+
+	conn->editing->show(conn);
+
+	return 1;
+
+    }
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "gold")) {
+
+	if (nullstr(argument) || !is_number(argument)) {
+
+	    writeln(conn, "~CYou must specify a decimal number to set.~x");
+
+	    return 1;
+
+	}
+	ch->gold = atof(argument);
+
+	conn->editing->show(conn);
+
+	return 1;
+
+    }
+    return 0;
 
 }
 
 int
-edit_flag( const char *arg, Client * conn, Flag * flags,
-		   const char *argument, const Lookup * table )
+edit_flag(const char *arg, Client * conn, Flag * flags,
+	  const char *argument, const Lookup * table)
 {
 
-	if ( nullstr( argument ) || argument[0] == '?' )
-	{
+    if (nullstr(argument) || argument[0] == '?') {
 
-		writelnf( conn, "~CValid flags are: ~W%s~x", lookup_names( table ) );
+	writelnf(conn, "~CValid flags are: ~W%s~x", lookup_names(table));
 
-		return EDIT_NOCHANGE;
+	return EDIT_NOCHANGE;
 
-	}
+    }
+    int res = parse_flags_toggle(flags, argument, table);
 
-	int res = parse_flags_toggle( flags, argument, table );
+    if (res == 0) {
 
-	if ( res == 0 )
-	{
+	writelnf(conn, "~CNo such flag.  See '%s ?' for a list.", arg);
 
-		writelnf( conn, "~CNo such flag.  See '%s ?' for a list.", arg );
+	return EDIT_NOCHANGE;
 
-		return EDIT_NOCHANGE;
-
-	}
-
-	return EDIT_CHANGED;
+    }
+    return EDIT_CHANGED;
 
 }
 
 int
-edit_string( const char *arg, Client * conn, const char **str,
-			 const char *argument )
+edit_string(const char *arg, Client * conn, const char **str,
+	    const char *argument)
 {
 
-	if ( nullstr( argument ) || argument[0] == '?' )
+    if (nullstr(argument) || argument[0] == '?') {
 
-	{
+	writeln(conn, "~CYou must provide an argument.~x");
 
-		writeln( conn, "~CYou must provide an argument.~x" );
+	return EDIT_NOCHANGE;
 
-		return EDIT_NOCHANGE;
+    }
+    free_str_dup(str, argument);
 
-	}
+    conn->editing->show(conn);
 
-	free_str_dup( str, argument );
-
-	conn->editing->show( conn );
-
-	return EDIT_CHANGED;
+    return EDIT_CHANGED;
 
 }

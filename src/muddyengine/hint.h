@@ -25,19 +25,18 @@ typedef struct Hint Hint;
 
 #include <muddyengine/engine.h>
 
-struct Hint
-{
-	identifier_t id;
-	const char *text;
-	short level;
+struct Hint {
+    identifier_t id;
+    const char *text;
+    short level;
 };
 
 extern Hint *hint_table;
 extern int max_hint;
 
-Hint *new_hint(  );
-void destroy_hint( Hint * );
-int load_hints(  );
-int save_hint( Hint * );
+Hint *new_hint();
+void destroy_hint(Hint *);
+int load_hints();
+int save_hint(Hint *);
 
-#endif							//  #ifndef HINT_H
+#endif				/* //  #ifndef HINT_H */

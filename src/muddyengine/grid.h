@@ -33,102 +33,98 @@ typedef struct grid Grid;
 
 typedef struct border Border;
 
-struct border
-{
+struct border {
 
-	char color[4];
+    char color[4];
 
-	char vertical;
+    char vertical;
 
-	char horizontal;
+    char horizontal;
 
-	int flags;
-
-};
-
-struct gridcell
-{
-
-	char value[BUF_SIZ];
-
-	int span;
-
-	int left_margin;
-
-	int right_margin;
-
-	int align;
-
-	Border border;
-
-	char color[4];
+    int flags;
 
 };
 
-struct gridrow
-{
+struct gridcell {
 
-	int columns;
+    char value[BUF_SIZ];
 
-	int columnsize;
+    int span;
 
-	struct gridcell *cells;
+    int left_margin;
 
-};
+    int right_margin;
 
-struct grid
-{
+    int align;
 
-	struct gridrow *rows;
+    Border border;
 
-	int rowcount;
-
-	int defaultcolumns;
-
-	int x;
-
-	int y;
-
-	int width;
+    char color[4];
 
 };
 
-enum
-{
-	BORDER_NONE = 0,
-	BORDER_LEFT = ( 1 << 0 ),
-	BORDER_RIGHT = ( 1 << 1 ),
-	BORDER_INLINE = ( 1 << 2 )
+struct gridrow {
+
+    int columns;
+
+    int columnsize;
+
+    struct gridcell *cells;
+
 };
 
-Grid *new_grid( int, int );
+struct grid {
 
-void destroy_grid( Grid * );
+    struct gridrow *rows;
 
-void grid_init_border( Border * );
+    int rowcount;
 
-int grid_add( Grid *, align_t, int, Border *, const char *, int, int,
-			  const char * );
+    int defaultcolumns;
 
-void grid_set( Grid *, int, int, align_t, int, Border *, const char *, int,
-			   int );
+    int x;
 
-int grid_addf( Grid *, align_t, int, Border *, const char *, int, int,
-			   const char *, ... ) __attribute__ ( ( format( printf, 8, 9 ) ) );
+    int y;
 
-int grid_add_default( Grid *, const char * );
+    int width;
 
-int grid_addf_default( Grid *, const char *, ... )
-	__attribute__ ( ( format( printf, 2, 3 ) ) );
+};
 
-int grid_add_border( Grid *, Border *, const char * );
+enum {
+    BORDER_NONE = 0,
+    BORDER_LEFT = (1 << 0),
+    BORDER_RIGHT = (1 << 1),
+    BORDER_INLINE = (1 << 2)
+};
 
-int grid_addf_border( Grid *, Border *, const char *, ... )
-	__attribute__ ( ( format( printf, 3, 4 ) ) );
+Grid *new_grid(int, int);
 
-void grid_print( Grid *, Character * );
+void destroy_grid(Grid *);
 
-void grid_set_next_row( Grid *, int );
+void grid_init_border(Border *);
 
-#endif							/* 
-								 */
+int
+grid_add(Grid *, align_t, int, Border *, const char *, int, int,
+	 const char *);
+
+void
+grid_set(Grid *, int, int, align_t, int, Border *, const char *, int, int);
+
+int
+grid_addf(Grid *, align_t, int, Border *, const char *, int, int,
+	  const char *, ...) __attribute__ ((format(printf, 8, 9)));
+
+int grid_add_default(Grid *, const char *);
+
+int grid_addf_default(Grid *, const char *, ...)
+    __attribute__ ((format(printf, 2, 3)));
+
+int grid_add_border(Grid *, Border *, const char *);
+
+int grid_addf_border(Grid *, Border *, const char *, ...)
+    __attribute__ ((format(printf, 3, 4)));
+
+void grid_print(Grid *, Character *);
+
+void grid_set_next_row(Grid *, int);
+
+#endif				/* */

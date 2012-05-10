@@ -29,43 +29,41 @@ typedef struct Player Player;
 #include <muddyengine/connection.h>
 #include <time.h>
 
-struct Player
-{
-	Account *account;
-	Connection *conn;
-	const char *title;
-	Flag *explored;
-	Flag *channels;
-	const char *prompt;
-	const char *battlePrompt;
-	int condition[MAX_COND];
-	long experience;
-	long permHit;
-	long permMana;
-	long permMove;
-	time_t created;
+struct Player {
+    Account *account;
+    Connection *conn;
+    const char *title;
+    Flag *explored;
+    Flag *channels;
+    const char *prompt;
+    const char *battlePrompt;
+    int condition[MAX_COND];
+    long experience;
+    long permHit;
+    long permMana;
+    long permMove;
+    time_t created;
 };
 
-enum
-{
-	PLR_COLOR_OFF,
-	PLR_TICKS_OFF,
-	PLR_BRIEF,
-	PLR_HINTS,
-	PLR_AUTOMAP_OFF,
-	PLR_NOEMOTEVERBS
+enum {
+    PLR_COLOR_OFF,
+    PLR_TICKS_OFF,
+    PLR_BRIEF,
+    PLR_HINTS,
+    PLR_AUTOMAP_OFF,
+    PLR_NOEMOTEVERBS
 };
 
 extern Character *first_player;
-Player *new_player( Connection * );
-void destroy_player( Player * );
+Player *new_player(Connection *);
+void destroy_player(Player *);
 extern const Lookup plr_flags[];
-Character *load_player_by_id( Connection *, identifier_t );
-Character *player_lookup( const char * );
-Character *load_player_by_name( Connection *, const char * );
-int save_player( Character * );
-int delete_player( Character * );
-bool is_drunk( Character * );
-long exp_to_level( const Character * );
+Character *load_player_by_id(Connection *, identifier_t);
+Character *player_lookup(const char *);
+Character *load_player_by_name(Connection *, const char *);
+int save_player(Character *);
+int delete_player(Character *);
+bool is_drunk(Character *);
+long exp_to_level(const Character *);
 
-#endif							//  #ifndef PLAYER_H
+#endif				/* //  #ifndef PLAYER_H */

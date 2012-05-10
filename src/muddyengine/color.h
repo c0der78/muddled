@@ -25,18 +25,17 @@
 #include <string.h>
 #include <stdbool.h>
 
-struct color_t
-{
+struct color_t {
 
-	short attr;
+    short attr;
 
-	short value;
+    short value;
 
 };
 
-const char *make_color( struct color_t * );
+const char *make_color(struct color_t *);
 
-const char *convert_color_code( const char *, struct color_t * );
+const char *convert_color_code(const char *, struct color_t *);
 
 #define COLOR_CODE '~'
 #define BLACK 	30
@@ -51,4 +50,4 @@ const char *convert_color_code( const char *, struct color_t * );
 #define BOLD	1
 #define NORMAL	0
 #define BLINK	5
-#endif							//  #ifndef COLOR_H
+#endif				/* //  #ifndef COLOR_H */

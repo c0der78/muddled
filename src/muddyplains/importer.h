@@ -24,26 +24,26 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-const char *fread_word( FILE * );
-const char *fread_string( FILE * );
-const char *fread_string_eol( FILE * );
-char fread_letter( FILE * );
-long fread_number( FILE * );
-long fread_flag( FILE * );
-void fread_to_eol( FILE * );
-bool import_rom_area( FILE * );
-bool import_rom_olc_area( FILE * );
-bool import_rom_helps( FILE * );
-bool import_rom_objects( FILE * );
-bool import_rom_mobiles( FILE * );
-bool import_rom_rooms( FILE * );
-bool import_rom_specials( FILE * );
-bool import_rom_shops( FILE * );
-bool import_rom_socials( FILE * );
-bool import_rom_resets( FILE * );
-bool import_rom_area_list( const char *, FILE * );
-bool import_rom_file( FILE * );
+const char *fread_word(FILE *);
+const char *fread_string(FILE *);
+const char *fread_string_eol(FILE *);
+char fread_letter(FILE *);
+long fread_number(FILE *);
+long fread_flag(FILE *);
+void fread_to_eol(FILE *);
+bool import_rom_area(FILE *);
+bool import_rom_olc_area(FILE *);
+bool import_rom_helps(FILE *);
+bool import_rom_objects(FILE *);
+bool import_rom_mobiles(FILE *);
+bool import_rom_rooms(FILE *);
+bool import_rom_specials(FILE *);
+bool import_rom_shops(FILE *);
+bool import_rom_socials(FILE *);
+bool import_rom_resets(FILE *);
+bool import_rom_area_list(const char *, FILE *);
+bool import_rom_file(FILE *);
 
-void import_commit( bool );
+void import_commit(bool);
 
 #endif

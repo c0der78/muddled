@@ -27,28 +27,27 @@ typedef struct Class Class;
 #include <muddyengine/character.h>
 #include  <stdbool.h>
 
-struct Class
-{
-	identifier_t id;
-	const char *name;
-	const char *description;
-	bool fMana;
-	short thac0;
-	short thac32;
+struct Class {
+    identifier_t id;
+    const char *name;
+    const char *description;
+    bool fMana;
+    short thac0;
+    short thac32;
 };
 
 extern Class *class_table;
 extern int max_class;
-Class *new_class(  );
-void destroy_class( Class * );
+Class *new_class();
+void destroy_class(Class *);
 
-int load_classes(  );
-int class_count( const Character * );
-bool is_valid_class( int );
-int class_lookup( const char * );
-int get_class_by_id( identifier_t );
-bool has_class( Character *, int );
-const char *class_short( Character * );
-const char *class_who( Character * );
+int load_classes();
+int class_count(const Character *);
+bool is_valid_class(int);
+int class_lookup(const char *);
+int get_class_by_id(identifier_t);
+bool has_class(Character *, int);
+const char *class_short(Character *);
+const char *class_who(Character *);
 
-#endif							//  #ifndef CLASS_H
+#endif				/* //  #ifndef CLASS_H */

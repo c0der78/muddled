@@ -23,35 +23,34 @@
 #ifndef FIGHT_H
 #define FIGHT_H
 
-typedef enum
-{
-	DAM_BASH,
-	DAM_PIERCE,
-	DAM_SLASH,
-	DAM_ACID,
-	DAM_COLD,
-	DAM_AIR,
-	DAM_DISEASE,
-	DAM_EARTH,
-	DAM_ENERGY,
-	DAM_FIRE,
-	DAM_HOLY,
-	DAM_LIGHT,
-	DAM_SHADOW,
-	DAM_MENTAL,
-	DAM_ELECTRIC,
-	DAM_WATER,
-	DAM_POISON,
-	DAM_SONIC,
-	MAX_DAM
+typedef enum {
+    DAM_BASH,
+    DAM_PIERCE,
+    DAM_SLASH,
+    DAM_ACID,
+    DAM_COLD,
+    DAM_AIR,
+    DAM_DISEASE,
+    DAM_EARTH,
+    DAM_ENERGY,
+    DAM_FIRE,
+    DAM_HOLY,
+    DAM_LIGHT,
+    DAM_SHADOW,
+    DAM_MENTAL,
+    DAM_ELECTRIC,
+    DAM_WATER,
+    DAM_POISON,
+    DAM_SONIC,
+    MAX_DAM
 } dam_t;
 
 
 #define DAM_UNDEFINED 	-1
 
-void multi_hit( Character *, Character *, int, dam_t );
+void multi_hit(Character *, Character *, int, dam_t);
 
-bool damage( Character *, Character *, long, int, dam_t );
+bool damage(Character *, Character *, long, int, dam_t);
 
 extern const Lookup dam_types[];
-#endif							//  #ifndef FIGHT_H
+#endif				/* //  #ifndef FIGHT_H */

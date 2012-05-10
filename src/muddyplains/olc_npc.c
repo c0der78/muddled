@@ -36,244 +36,209 @@
 #include <muddyengine/log.h>
 #include <muddyengine/util.h>
 
-Editor *build_npc_editor( Character * npc )
+Editor *build_npc_editor(Character * npc)
 {
 
-	Editor *editor = new_editor(  );
+    Editor *editor = new_editor();
 
-	editor->data = npc;
+    editor->data = npc;
 
-	editor->edit = npc_editor;
+    editor->edit = npc_editor;
 
-	editor->show = npc_editor_menu;
+    editor->show = npc_editor_menu;
 
-	return editor;
+    return editor;
 
 }
 
-void npc_editor_menu( Client * conn )
+void npc_editor_menu(Client * conn)
 {
 
-	clear_screen( conn );
+    clear_screen(conn);
 
-	set_cursor( conn, 1, 1 );
+    set_cursor(conn, 1, 1);
 
-	Character *npc = ( Character * ) conn->editing->data;
+    Character *npc = (Character *) conn->editing->data;
 
-	conn->titlef( conn, "NonPlayer Editor - npc %d", npc->id );
+    conn->titlef(conn, "NonPlayer Editor - npc %d", npc->id);
 
-	character_editor_menu( conn, npc );
+    character_editor_menu(conn, npc);
 
-	writelnf( conn, "~YF) ~CShort Description: ~W%s~x", npc->npc->shortDescr );
+    writelnf(conn, "~YF) ~CShort Description: ~W%s~x",
+	     npc->npc->shortDescr);
 
-	writelnf( conn, "~YG) ~CLong Description: ~W%s~x", npc->npc->longDescr );
+    writelnf(conn, "~YG) ~CLong Description: ~W%s~x", npc->npc->longDescr);
 
-	writelnf( conn, "~YH) ~CPosition: ~W%s~x",
-			  position_table[npc->npc->startPosition].name );
+    writelnf(conn, "~YH) ~CPosition: ~W%s~x",
+	     position_table[npc->npc->startPosition].name);
 
-	writelnf( conn, "~YI) ~CFlags: ~W%s~x",
-			  format_flags( npc->flags, npc_flags ) );
+    writelnf(conn, "~YI) ~CFlags: ~W%s~x",
+	     format_flags(npc->flags, npc_flags));
 
-	writelnf( conn, "~YJ) ~CAlignment: ~W%d~x", npc->alignment );
+    writelnf(conn, "~YJ) ~CAlignment: ~W%d~x", npc->alignment);
 
 }
 
-void npc_edit_list( Client * conn, Area * area )
+void npc_edit_list(Client * conn, Area * area)
 {
 
-	int count = 0;
+    int count = 0;
 
-	for ( Character * vch = area->npcs; vch != 0; vch = vch->next_in_area )
-	{
+    for (Character * vch = area->npcs; vch != 0; vch = vch->next_in_area) {
 
-		writelnf( conn, "%2d) %-12.12s ", vch->id, vch->npc->shortDescr );
+	writelnf(conn, "%2d) %-12.12s ", vch->id, vch->npc->shortDescr);
 
-		if ( ++count % 4 == 0 )
+	if (++count % 4 == 0)
+	    writeln(conn, "");
 
-			writeln( conn, "" );
+    }
 
-	}
-
-	if ( count % 4 != 0 )
-
-		writeln( conn, "" );
+    if (count % 4 != 0)
+	writeln(conn, "");
 
 }
 
-void npc_editor( Client * conn, const char *argument )
+void npc_editor(Client * conn, const char *argument)
 {
 
-	char arg[100];
+    char arg[100];
 
-	argument = one_argument( argument, arg );
+    argument = one_argument(argument, arg);
 
-	if ( !str_prefix( arg, "show" ) )
-	{
+    if (!str_prefix(arg, "show")) {
 
-		conn->editing->show( conn );
+	conn->editing->show(conn);
 
-		return;
+	return;
 
-	}
+    }
+    if (!str_cmp(arg, "list")) {
 
-	if ( !str_cmp( arg, "list" ) )
-	{
+	npc_edit_list(conn, conn->account->playing->inRoom->area);
 
-		npc_edit_list( conn, conn->account->playing->inRoom->area );
+	return;
 
-		return;
+    }
+    Character *npc = (Character *) conn->editing->data;
 
-	}
+    if (!str_cmp(arg, "Q")) {
 
-	Character *npc = ( Character * ) conn->editing->data;
+	if (npc->inRoom == 0)
+	    destroy_char(npc);
 
-	if ( !str_cmp( arg, "Q" ) )
-	{
+	finish_editing(conn);
 
-		if ( npc->inRoom == 0 )
+	return;
 
-			destroy_char( npc );
+    }
+    if (!str_cmp(arg, "save")) {
 
-		finish_editing( conn );
+	save_npc(npc);
 
-		return;
+	writeln(conn, "~CNPC saved.~x");
 
-	}
+	return;
 
-	if ( !str_cmp( arg, "save" ) )
-	{
+    }
+    if (!str_cmp(arg, "delete")) {
 
-		save_npc( npc );
+	delete_npc(npc);
 
-		writeln( conn, "~CNPC saved.~x" );
+	writeln(conn, "~CNPC deleted.~x");
 
-		return;
+	extract_char(npc, true);
 
-	}
+	finish_editing(conn);
 
-	if ( !str_cmp( arg, "delete" ) )
-	{
+	return;
 
-		delete_npc( npc );
+    }
+    if (character_editor(conn, npc, arg, argument))
+	return;
 
-		writeln( conn, "~CNPC deleted.~x" );
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "short")) {
 
-		extract_char( npc, true );
+	if (!argument || !*argument) {
 
-		finish_editing( conn );
+	    writeln(conn, "~CYou must provide a short description.~x");
 
-		return;
-
-	}
-
-	if ( character_editor( conn, npc, arg, argument ) )
-
-		return;
-
-	if ( !str_cmp( arg, "F" ) || !str_cmp( arg, "short" ) )
-	{
-
-		if ( !argument || !*argument )
-		{
-
-			writeln( conn, "~CYou must provide a short description.~x" );
-
-			return;
-
-		}
-
-		free_str_dup( &npc->npc->shortDescr, argument );
-
-		conn->editing->show( conn );
-
-		return;
+	    return;
 
 	}
+	free_str_dup(&npc->npc->shortDescr, argument);
 
-	if ( !str_cmp( arg, "G" ) || !str_cmp( arg, "long" ) )
-	{
+	conn->editing->show(conn);
 
-		if ( !argument || !*argument )
-		{
+	return;
 
-			writeln( conn, "~CYou must provide a long description.~x" );
+    }
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "long")) {
 
-			return;
+	if (!argument || !*argument) {
 
-		}
+	    writeln(conn, "~CYou must provide a long description.~x");
 
-		free_str_dup( &npc->npc->longDescr, argument );
-
-		conn->editing->show( conn );
-
-		return;
+	    return;
 
 	}
+	free_str_dup(&npc->npc->longDescr, argument);
 
-	if ( !str_cmp( arg, "H" ) || !str_cmp( arg, "position" ) )
-	{
+	conn->editing->show(conn);
 
-		if ( !argument || !*argument || argument[0] == '?' )
-		{
+	return;
 
-			writelnf( conn, "~CValid positions are: ~W%s~x",
-					  lookup_names( position_table ) );
+    }
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "position")) {
 
-			return;
+	if (!argument || !*argument || argument[0] == '?') {
 
-		}
+	    writelnf(conn, "~CValid positions are: ~W%s~x",
+		     lookup_names(position_table));
 
-		long p = value_lookup( position_table, argument );
-
-		if ( p == -1 )
-		{
-
-			writeln( conn, "~CThat is not a valid position.~x" );
-
-			return;
-
-		}
-
-		npc->npc->startPosition = (position_t) p;
-
-		conn->editing->show( conn );
-
-		return;
+	    return;
 
 	}
+	long p = value_lookup(position_table, argument);
 
-	if ( !str_cmp( arg, "I" ) || !str_cmp( arg, "flags" ) )
-	{
+	if (p == -1) {
 
-		if ( edit_flag( "flags", conn, npc->flags, argument, npc_flags ) )
+	    writeln(conn, "~CThat is not a valid position.~x");
 
-			conn->editing->show( conn );
-
-		return;
+	    return;
 
 	}
+	npc->npc->startPosition = (position_t) p;
 
-	if ( !str_cmp( arg, "J" ) || !str_cmp( arg, "alignment" ) )
-	{
+	conn->editing->show(conn);
 
-		int a = atoi( argument );
+	return;
 
-		if ( a < -MAX_ALIGN || a > MAX_ALIGN )
-		{
+    }
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "flags")) {
 
-			writelnf( conn, "~CValue must be between %d and %d.~x",
-					  -MAX_ALIGN, MAX_ALIGN );
+	if (edit_flag("flags", conn, npc->flags, argument, npc_flags))
+	    conn->editing->show(conn);
 
-			return;
+	return;
 
-		}
+    }
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "alignment")) {
 
-		npc->alignment = a;
+	int a = atoi(argument);
 
-		conn->editing->show( conn );
+	if (a < -MAX_ALIGN || a > MAX_ALIGN) {
 
-		return;
+	    writelnf(conn, "~CValue must be between %d and %d.~x",
+		     -MAX_ALIGN, MAX_ALIGN);
+
+	    return;
 
 	}
+	npc->alignment = a;
 
+	conn->editing->show(conn);
+
+	return;
+
+    }
 }

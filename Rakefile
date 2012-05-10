@@ -1,11 +1,15 @@
 require 'rubygems' if RUBY_VERSION < '1.9'
 require 'rake'
 require 'rake/builder'
+require 'rake/clean'
 
 # create runtime directories
 directory 'var'
 directory 'var/run'
 directory 'var/log'
+
+
+CLEAN.include("*~", "*.bak")
 
 # call initialize tasks
 task :init => ['var', 'var/run', 'var/log']
@@ -14,6 +18,12 @@ task :doc do
     sh 'headerdoc2html -j -o html src/muddyengine/*.h'
 
     sh 'gatherheaderdoc html index.html'
+end
+
+task :indent do
+    FileList['src/*/*.c', 'src/*/*.h'].each do |src|
+      sh "indent -kr #{src}"
+    end
 end
 
 Rake::Builder.new do |builder|

@@ -32,265 +32,232 @@
 #include <muddyengine/string.h>
 #include <muddyengine/buffer.h>
 
-DOFUN( color )
+DOFUN(color)
 {
 
-	if ( ch->pc == 0 )
+    if (ch->pc == 0)
+	return;
 
-		return;
+    if (!is_set(ch->pc->account->flags, ACC_COLOR_OFF)) {
 
-	if ( !is_set( ch->pc->account->flags, ACC_COLOR_OFF ) )
-	{
+	set_bit(ch->pc->account->flags, ACC_COLOR_OFF);
 
-		set_bit( ch->pc->account->flags, ACC_COLOR_OFF );
+	writeln(ch, "Color off. *sigh*");
 
-		writeln( ch, "Color off. *sigh*" );
+    } else {
 
-	}
-	else
-	{
+	remove_bit(ch->pc->account->flags, ACC_COLOR_OFF);
 
-		remove_bit( ch->pc->account->flags, ACC_COLOR_OFF );
+	writeln(ch, "~?C~?o~?l~?o~?r ~?O~?n~?!~x");
 
-		writeln( ch, "~?C~?o~?l~?o~?r ~?O~?n~?!~x" );
-
-	}
+    }
 
 }
 
-DOFUN( save )
+DOFUN(save)
 {
 
-	if ( ch->pc == 0 )
+    if (ch->pc == 0)
+	return;
 
-		return;
+    if (!save_player(ch)) {
 
-	if ( !save_player( ch ) )
-	{
+	writeln(ch, "There was a problem saving this character.");
 
-		writeln( ch, "There was a problem saving this character." );
+    } else {
 
-	}
-	else
-	{
+	writeln(ch, "Character saved.");
 
-		writeln( ch, "Character saved." );
-
-	}
+    }
 
 }
 
-DOFUN( title )
+DOFUN(title)
 {
 
-	if ( !ch->pc )
+    if (!ch->pc)
+	return;
 
-		return;
+    free_str_dup(&ch->pc->title, argument);
 
-	free_str_dup( &ch->pc->title, argument );
+    if (!argument || !*argument) {
 
-	if ( !argument || !*argument )
-	{
+	writeln(ch, "Title cleared.");
 
-		writeln( ch, "Title cleared." );
+    } else {
 
-	}
-	else
-	{
+	writeln(ch, "Title set.");
 
-		writeln( ch, "Title set." );
-
-	}
+    }
 
 }
 
-DOFUN( autotick )
+DOFUN(autotick)
 {
 
-	if ( !ch->pc )
+    if (!ch->pc)
+	return;
 
-		return;
+    if (is_set(ch->pc->account->flags, PLR_TICKS_OFF)) {
 
-	if ( is_set( ch->pc->account->flags, PLR_TICKS_OFF ) )
-	{
+	remove_bit(ch->pc->account->flags, PLR_TICKS_OFF);
 
-		remove_bit( ch->pc->account->flags, PLR_TICKS_OFF );
+	writeln(ch, "You will now be notified of game ticks.");
 
-		writeln( ch, "You will now be notified of game ticks." );
+    } else {
 
-	}
-	else
-	{
+	set_bit(ch->pc->account->flags, PLR_TICKS_OFF);
 
-		set_bit( ch->pc->account->flags, PLR_TICKS_OFF );
+	writeln(ch, "You will no longer be notified of game ticks.");
 
-		writeln( ch, "You will no longer be notified of game ticks." );
-
-	}
+    }
 
 }
 
-DOFUN( brief )
+DOFUN(brief)
 {
 
-	if ( !ch->pc )
+    if (!ch->pc)
+	return;
 
-		return;
+    if (is_set(ch->pc->account->flags, PLR_BRIEF)) {
 
-	if ( is_set( ch->pc->account->flags, PLR_BRIEF ) )
-	{
+	remove_bit(ch->pc->account->flags, PLR_BRIEF);
 
-		remove_bit( ch->pc->account->flags, PLR_BRIEF );
+	writeln(ch, "You now see room descriptions.");
 
-		writeln( ch, "You now see room descriptions." );
+    } else {
 
-	}
-	else
-	{
+	set_bit(ch->pc->account->flags, PLR_BRIEF);
 
-		set_bit( ch->pc->account->flags, PLR_BRIEF );
+	writeln(ch, "You no longer see room descriptions.");
 
-		writeln( ch, "You no longer see room descriptions." );
-
-	}
+    }
 
 }
 
-DOFUN( timezone )
+DOFUN(timezone)
 {
 
-	if ( !ch->pc )
+    if (!ch->pc)
+	return;
 
-		return;
+    if (!*argument) {
 
-	if ( !*argument )
-	{
+	Buffer *buf = new_buf();
 
-		Buffer *buf = new_buf(  );
+	const char *line = fillstr("~w-~W-", scrwidth(ch));
 
-		const char *line = fillstr( "~w-~W-", scrwidth( ch ) );
+	writelnf(buf, "%-6s %-30s (%s)", "Name", "City/Zone Crosses",
+		 "Time");
 
-		writelnf( buf, "%-6s %-30s (%s)", "Name", "City/Zone Crosses", "Time" );
+	time_t current_time = time(0);
 
-		time_t current_time = time( 0 );
+	writelnf(buf, "%s~x", line);
 
-		writelnf( buf, "%s~x", line );
+	for (int i = 0; timezones[i].name != 0; i++) {
 
-		for ( int i = 0; timezones[i].name != 0; i++ )
-		{
-
-			writelnf( buf, "%-6s %-30s (%s)", timezones[i].name,
-					  timezones[i].zone, str_time( current_time, i, NULL ) );
-
-		}
-		writelnf( buf, "%s~x", line );
-
-		writelnf( buf, "Use '%s <name>' to set your timezone.", do_name );
-
-		ch->page( ch, buf_string( buf ) );
-
-		destroy_buf( buf );
-
-		return;
+	    writelnf(buf, "%-6s %-30s (%s)", timezones[i].name,
+		     timezones[i].zone, str_time(current_time, i, NULL));
 
 	}
+	writelnf(buf, "%s~x", line);
 
-	int i = timezone_lookup( argument );
+	writelnf(buf, "Use '%s <name>' to set your timezone.", do_name);
 
-	if ( i == -1 )
-	{
+	ch->page(ch, buf_string(buf));
 
-		writelnf( ch,
-				  "That time zone does not exists.  See '%s' for a list.",
-				  do_name );
+	destroy_buf(buf);
 
-		return;
+	return;
 
-	}
+    }
+    int i = timezone_lookup(argument);
 
-	ch->pc->account->timezone = i;
+    if (i == -1) {
 
-	writelnf( ch, "Your time zone is now %s %s (%s)", timezones[i].name,
-			  timezones[i].zone, str_time( time( 0 ), i, NULL ) );
+	writelnf(ch,
+		 "That time zone does not exists.  See '%s' for a list.",
+		 do_name);
+
+	return;
+
+    }
+    ch->pc->account->timezone = i;
+
+    writelnf(ch, "Your time zone is now %s %s (%s)", timezones[i].name,
+	     timezones[i].zone, str_time(time(0), i, NULL));
 
 }
 
-DOFUN( hints )
+DOFUN(hints)
 {
 
-	if ( !ch->pc )
-		return;
+    if (!ch->pc)
+	return;
 
-	if ( is_set( ch->pc->account->flags, PLR_HINTS ) )
-	{
+    if (is_set(ch->pc->account->flags, PLR_HINTS)) {
 
-		remove_bit( ch->pc->account->flags, PLR_HINTS );
+	remove_bit(ch->pc->account->flags, PLR_HINTS);
 
-		writeln( ch, "You no longer see hints." );
+	writeln(ch, "You no longer see hints.");
 
-	}
-	else
-	{
+    } else {
 
-		set_bit( ch->pc->account->flags, PLR_HINTS );
+	set_bit(ch->pc->account->flags, PLR_HINTS);
 
-		writeln( ch, "You now see hints." );
+	writeln(ch, "You now see hints.");
 
-	}
+    }
 
 }
 
-DOFUN( delete )
+DOFUN(delete)
 {
 
-	if ( !ch->pc )
-		return;
+    if (!ch->pc)
+	return;
 
-	char_from_room( ch );
+    char_from_room(ch);
 
-	UNLINK( first_character, Character, ch, next );
+    UNLINK(first_character, Character, ch, next);
 
-	UNLINK( first_player, Character, ch, next_player );
+    UNLINK(first_player, Character, ch, next_player);
 
-	client_delete_char( ch->pc->conn );
+    client_delete_char(ch->pc->conn);
 
 }
 
-DOFUN( automap )
+DOFUN(automap)
 {
 
-	if ( !ch->pc )
+    if (!ch->pc)
+	return;
 
-		return;
+    if (is_set(ch->pc->account->flags, PLR_AUTOMAP_OFF)) {
 
-	if ( is_set( ch->pc->account->flags, PLR_AUTOMAP_OFF ) )
-	{
+	remove_bit(ch->pc->account->flags, PLR_AUTOMAP_OFF);
 
-		remove_bit( ch->pc->account->flags, PLR_AUTOMAP_OFF );
+	writeln(ch, "You now see a map in room descriptions.");
 
-		writeln( ch, "You now see a map in room descriptions." );
+    } else {
 
-	}
-	else
-	{
+	set_bit(ch->pc->account->flags, PLR_AUTOMAP_OFF);
 
-		set_bit( ch->pc->account->flags, PLR_AUTOMAP_OFF );
+	writeln(ch, "You no longer see maps in room descriptions.");
 
-		writeln( ch, "You no longer see maps in room descriptions." );
-
-	}
+    }
 
 }
 
-DOFUN( prompt )
+DOFUN(prompt)
 {
 
-	if ( !ch->pc )
+    if (!ch->pc)
+	return;
 
-		return;
+    free_str_dup(&ch->pc->prompt, argument);
 
-	free_str_dup( &ch->pc->prompt, argument );
-
-	writeln( ch, "Prompt set." );
+    writeln(ch, "Prompt set.");
 
 }

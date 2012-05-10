@@ -21,11 +21,9 @@
 
 #ifdef IN_SPELL_TABLE
 #define SPELLFUN(spell)	{ spell, #spell },
-#else							/* 
-								 */
+#else				/* */
 #define SPELLFUN(spell)	SpellFun spell;
-#endif							/* 
-								 */
+#endif				/* */
 
-SPELLFUN( spell_magic_missile ) SPELLFUN( spell_energy_shield )
+SPELLFUN(spell_magic_missile) SPELLFUN(spell_energy_shield)
 #undef SPELLFUN

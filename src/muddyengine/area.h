@@ -18,15 +18,14 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-/*!
- * @header
- * Structure, methods and constants related to areas
- * @ignore __AREA_H_
+/*
+ * ! @header Structure, methods and constants related to areas @ignore
+ * __AREA_H_
  */
 #ifndef __AREA_H_
 #define __AREA_H_
 
-/*! @typedef Area */
+/* ! @typedef Area */
 typedef struct Area Area;
 
 #include <muddyengine/character.h>
@@ -34,114 +33,98 @@ typedef struct Area Area;
 #include <muddyengine/flag.h>
 #include <muddyengine/object.h>
 
-/*! 
- * @typedef Area
- * @abstract Represent an area in the world containing explorable content
- * @field id the unique identifier
- * @field name the name of the area
- * @field npcs a list of non player characters
- * @field rooms a list of rooms in the area
- * @field objects a list of objects in the area
- * @field flags flags affecting behaviour of the area
+/*
+ * ! @typedef Area @abstract Represent an area in the world containing
+ * explorable content @field id the unique identifier @field name the name of
+ * the area @field npcs a list of non player characters @field rooms a list
+ * of rooms in the area @field objects a list of objects in the area @field
+ * flags flags affecting behaviour of the area
  */
-struct Area
-{
-	identifier_t id;
-	Area *next;
-	const char *name;
-	Character *npcs;
-	Room *rooms;
-	Object *objects;
-	Flag *flags;
+struct Area {
+    identifier_t id;
+    Area *next;
+    const char *name;
+    Character *npcs;
+    Room *rooms;
+    Object *objects;
+    Flag *flags;
 };
 
-/*!
- * @enum Area Flags
- * @abstract flags for controlling areas
- * @constant AREA_NOEXPLORE do not record this area in exploring statistics
- * @constant AREA_CHANGED area is changed and needs to be saved
- * @discussion
+/*
+ * ! @enum Area Flags @abstract flags for controlling areas @constant
+ * AREA_NOEXPLORE do not record this area in exploring statistics @constant
+ * AREA_CHANGED area is changed and needs to be saved @discussion
  */
-enum
-{
-	AREA_NOEXPLORE,
-	AREA_CHANGED
+enum {
+    AREA_NOEXPLORE,
+    AREA_CHANGED
 };
 
-/*! @group Memory Management */
+/* ! @group Memory Management */
 
-/*! 
- * creates a new area
- * @return the newly allocate area
+/*
+ * ! creates a new area @return the newly allocate area
  */
-Area *new_area(  );
+Area *new_area();
 
-/*!
- * destroys an area
- * @param the allocated area to destroy
+/*
+ * ! destroys an area @param the allocated area to destroy
  */
-void destroy_area( Area * );
+void destroy_area(Area *);
 
-/*! @group Memory Management */
+/* ! @group Memory Management */
 
-/*! @group Data Management */
+/* ! @group Data Management */
 
-/*!
- * loads all areas
- * @return the number of area loaded
+/*
+ * ! loads all areas @return the number of area loaded
  */
-int load_areas(  );
+int load_areas();
 
-/*!
- * loads an area
- * @param id the id of the area to load
- * @return the area loaded
+/*
+ * ! loads an area @param id the id of the area to load @return the area
+ * loaded
  */
-Area *load_area( identifier_t );
+Area *load_area(identifier_t);
 
-/*!
- * saves an area, including the structure an area contains
- * @param area the area to save
- * @return 1 if successfull or zero
+/*
+ * ! saves an area, including the structure an area contains @param area the
+ * area to save @return 1 if successfull or zero
  */
-int save_area( Area * );
+int save_area(Area *);
 
-/*!
- * saves an area only
- * @param area the area to save
- * @return 1 if successful or zero
+/*
+ * ! saves an area only @param area the area to save @return 1 if successful
+ * or zero
  */
-int save_area_only( Area * );
+int save_area_only(Area *);
 
-/*! @group Data Management */
+/* ! @group Data Management */
 
-/*!
- * get a loaded area by id
- * @param id the area id
- * @return the area or 0
+/*
+ * ! get a loaded area by id @param id the area id @return the area or 0
  */
-Area *get_area_by_id( identifier_t );
+Area *get_area_by_id(identifier_t);
 
-/*!
- * get a loaded area by name
- * @param name the area name
- * @return the area or 0
+/*
+ * ! get a loaded area by name @param name the area name @return the area or
+ * 0
  */
-Area *area_lookup( const char * );
+Area *area_lookup(const char *);
 
-/*!
- * gets the default area.  Will create one if non-existant
- * @return the default area
+/*
+ * ! gets the default area.  Will create one if non-existant @return the
+ * default area
  */
-Area *get_default_area(  );
+Area *get_default_area();
 
-/*! @constant first_area the linked-list of loaded areas */
+/* ! @constant first_area the linked-list of loaded areas */
 extern Area *first_area;
 
-/*! @constants max_area the number of loaded areas */
+/* ! @constants max_area the number of loaded areas */
 extern int max_area;
 
-/*! @constants area_flags the table to convert area flags with strings */
+/* ! @constants area_flags the table to convert area flags with strings */
 extern const Lookup area_flags[];
 
-#endif							//  #ifndef AREA_H
+#endif				/* //  #ifndef AREA_H */

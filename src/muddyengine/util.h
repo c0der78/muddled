@@ -26,95 +26,97 @@
 #include <stdbool.h>
 #include <time.h>
 
-struct timezone_type
-{
+struct timezone_type {
 
-	const char *name;			/* Name of the time zone */
+    const char *name;		/* Name of the time zone */
 
-	const char *zone;			/* Cities or Zones in zone crossing */
+    const char *zone;		/* Cities or Zones in zone crossing */
 
-	int gmt_offset;				/* Difference in hours from Greenwich Mean Time */
+    int gmt_offset;		/* Difference in hours from Greenwich
+				 * Mean Time */
 
-	int dst_offset;				/* Day Light Savings Time offset */
+    int dst_offset;		/* Day Light Savings Time offset */
 
 };
 
-long number_bits( int );
+long number_bits(int);
 
-long number_range( long, long );
+long number_range(long, long);
 
-long number_fuzzy( long, int );
+long number_fuzzy(long, int);
 
-bool can_see( const Character *, const Character * );
+bool can_see(const Character *, const Character *);
 
-bool can_see_room( const Character *, const Room * );
+bool can_see_room(const Character *, const Room *);
 
-bool can_see_obj( const Character *, const Object * );
+bool can_see_obj(const Character *, const Object *);
 
-void char_from_room( Character * );
+void char_from_room(Character *);
 
-void char_to_room( Character *, Room * );
+void char_to_room(Character *, Room *);
 
-void obj_from_room( Object * );
+void obj_from_room(Object *);
 
-void obj_from_char( Object * );
+void obj_from_char(Object *);
 
-void obj_from_obj( Object * );
+void obj_from_obj(Object *);
 
-void equip_char( Character *, Object *, int );
+void equip_char(Character *, Object *, int);
 
-void obj_to_room( Object *, Room * );
+void obj_to_room(Object *, Room *);
 
-void obj_to_char( Object *, Character * );
+void obj_to_char(Object *, Character *);
 
-void obj_to_obj( Object *, Object * );
+void obj_to_obj(Object *, Object *);
 
-Character *get_char_room( Character *, const char * );
+Character *get_char_room(Character *, const char *);
 
-void actf( int, const Character *, const void *, const void *,
-		   const char *, ... ) __attribute__ ( ( format( printf, 5, 6 ) ) );
+void
+actf(int, const Character *, const void *, const void *,
+     const char *, ...) __attribute__ ((format(printf, 5, 6)));
 
-void act_pos( int, position_t, const Character *, const void *, const void *,
-			  const char * );
-void actf_pos( int, position_t, const Character *, const void *, const void *,
-			   const char *, ... ) __attribute__ ( ( format( printf, 6, 7 ) ) );
+void act_pos(int, position_t, const Character *, const void *,
+	     const void *, const char *);
+void actf_pos(int, position_t, const Character *, const void *,
+	      const void *, const char *, ...)
+    __attribute__ ((format(printf, 6, 7)));
 
-void act( int, const Character *, const void *, const void *, const char * );
+void act(int, const Character *, const void *, const void *, const char *);
 
-const char *chview( const Character *, const Character * );
+const char *chview(const Character *, const Character *);
 
-const char *objview( const Object *, const Character * );
+const char *objview(const Object *, const Character *);
 
-long dice( int, int );
+long dice(int, int);
 
 extern const struct timezone_type timezones[];
 
-int timezone_lookup( const char * );
+int timezone_lookup(const char *);
 
-const char *str_time( time_t, int, const char * );
+const char *str_time(time_t, int, const char *);
 
-void char_from_room( Character * );
+void char_from_room(Character *);
 
-int gold( money_t );
+int gold(money_t);
 
-int silver( money_t );
+int silver(money_t);
 
-Object *get_eq_char( Character *, int );
+Object *get_eq_char(Character *, int);
 
-void unequip_char( Character *, Object * );
+void unequip_char(Character *, Object *);
 
-int getCurrStat( const Character *, int );
+int getCurrStat(const Character *, int);
 
-int getMaxTrain( const Character * );
+int getMaxTrain(const Character *);
 
-int interpolate( int, int, int );
+int interpolate(int, int, int);
 
-Room *find_location( Character *, const char * );
+Room *find_location(Character *, const char *);
 
-double diminishing_returns( double, double );
+double diminishing_returns(double, double);
 
-double factorial( int );
+double factorial(int);
 
-double combination( int, int );
+double combination(int, int);
 
-#endif							//  #ifndef UTIL_H
+#endif				/* //  #ifndef UTIL_H */

@@ -21,8 +21,8 @@
 #ifndef LOG_H
 #define LOG_H
 
-void log_fun( const char *, int, const char *, ... )
-	__attribute__ ( ( format( printf, 3, 4 ) ) );
+void log_fun(const char *, int, const char *, ...)
+    __attribute__ ((format(printf, 3, 4)));
 
 /*
 void log_info(const char *, ...) __attribute__((format(printf, 1, 2)));
@@ -48,19 +48,18 @@ void log_bug(const char *, ...) __attribute__((format(printf, 1, 2)));
 #define log_trace(msg, ...)	log_fun(__FUNCTION__, LOG_TRACE, msg, ## __VA_ARGS__)
 #define log_bug(msg, ...)	log_fun(__FUNCTION__, LOG_BUG, msg, ## __VA_ARGS__)
 
-enum
-{
-	LOG_INFO,
-	LOG_ERR,
-	LOG_DEBUG,
-	LOG_WARN,
-	LOG_DATA,
-	LOG_TRACE,
-	LOG_BUG,
-	LOG_FILE
+enum {
+    LOG_INFO,
+    LOG_ERR,
+    LOG_DEBUG,
+    LOG_WARN,
+    LOG_DATA,
+    LOG_TRACE,
+    LOG_BUG,
+    LOG_FILE
 };
 
 #include <muddyengine/lookup.h>
 
 extern const Lookup logging_flags[];
-#endif							//  #ifndef LOG_H
+#endif				/* //  #ifndef LOG_H */

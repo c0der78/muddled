@@ -22,6 +22,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-void draw_map( Character *, const char * );
+void draw_map(Character *, const char *);
 
-#endif							//  #ifndef MAP_H
+#endif				/* //  #ifndef MAP_H */

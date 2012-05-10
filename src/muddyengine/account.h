@@ -55,21 +55,20 @@ typedef struct AccountForum AccountForum;
  * @field conn the network connection descriptor
  * @field playing the current player being played
  */
-struct Account
-{
-	identifier_t id;
-	const char *login;
-	const char *email;
-	const char *password;
-	AccountPlayer *players;
-	int timezone;
-	identifier_t autologinId;
-	Flag *flags;
-	Forum *forum;
-	Note *inProgress;
-	Connection *conn;
-	Character *playing;
-	AccountForum *forumData;
+struct Account {
+    identifier_t id;
+    const char *login;
+    const char *email;
+    const char *password;
+    AccountPlayer *players;
+    int timezone;
+    identifier_t autologinId;
+    Flag *flags;
+    Forum *forum;
+    Note *inProgress;
+    Connection *conn;
+    Character *playing;
+    AccountForum *forumData;
 };
 
 /*!
@@ -79,12 +78,11 @@ struct Account
  * @field name the character name
  * @field level the character level
  */
-struct AccountPlayer
-{
-	AccountPlayer *next;
-	identifier_t charId;
-	const char *name;
-	short level;
+struct AccountPlayer {
+    AccountPlayer *next;
+    identifier_t charId;
+    const char *name;
+    short level;
 };
 
 /*!
@@ -94,12 +92,11 @@ struct AccountPlayer
  * @field unsubscribed false if account is subscribed to the forum
  * @field draft any saved drafts of a note in the forum
  */
-struct AccountForum
-{
-	identifier_t id;
-	time_t lastNote;
-	bool unsubscribed;
-	const char *draft;
+struct AccountForum {
+    identifier_t id;
+    time_t lastNote;
+    bool unsubscribed;
+    const char *draft;
 };
 
 /*!
@@ -108,9 +105,8 @@ struct AccountForum
  * @constant ACC_COLOR_OFF controls whether the account connection display color text
  * @discussion
  */
-enum
-{
-	ACC_COLOR_OFF
+enum {
+    ACC_COLOR_OFF
 };
 
 /*!
@@ -125,22 +121,22 @@ extern const Lookup account_flags[];
  * creates a new account
  * @return a newly allocated account
  */
-Account *new_account( Connection * );
+Account *new_account(Connection *);
 /*!
  * create a account player link and performs initialization
  * @return a newly allocated account player link
  */
-AccountPlayer *new_account_player(  );
+AccountPlayer *new_account_player();
 /*!
  * performs cleanup and destroys a created account
  * @param account the allocated account to destroy
  */
-void destroy_account( Account * );
+void destroy_account(Account *);
 /*!
  * performs cleanup and destroys a created account player link
  * @param accountPlayer the allocated account player link to destroy
  */
-void destroy_account_player( AccountPlayer * );
+void destroy_account_player(AccountPlayer *);
 
 /*! @group Memory Management */
 
@@ -150,13 +146,13 @@ void destroy_account_player( AccountPlayer * );
  * loads the players for an account
  * @param account the allocated account to load players for
  */
-int load_account_players( Account * );
+int load_account_players(Account *);
 
 /*!
  * loads the forum data for an account
  * @param account the allocated account to load forum data for
  */
-int load_account_forums ( Account *);
+int load_account_forums(Account *);
 
 /*!
  * loads the account for the login
@@ -164,19 +160,19 @@ int load_account_forums ( Account *);
  * @param login the login id of the account to load
  * @return 1 if successfull otherwise 0
  */
-int load_account( Account *, const char * );
+int load_account(Account *, const char *);
 /*!
  * deletes an account record from saved data
  * @param account the account to delete
  * @return 1 if successfull otherwise 0
  */
-int delete_account( Account * );
+int delete_account(Account *);
 /*!
  * saves an account to records
  * @param account the account to save
  * @return 1 if successfull otherwise 0
  */
-int save_account( Account * );
+int save_account(Account *);
 
 /*! @group Data Management */
 

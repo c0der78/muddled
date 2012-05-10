@@ -34,236 +34,202 @@
 #include <muddyengine/macro.h>
 #include <muddyengine/util.h>
 
-Editor *build_player_editor( Character * player )
+Editor *build_player_editor(Character * player)
 {
 
-	Editor *editor = new_editor(  );
+    Editor *editor = new_editor();
 
-	editor->data = player;
+    editor->data = player;
 
-	editor->edit = player_editor;
+    editor->edit = player_editor;
 
-	editor->show = player_editor_menu;
+    editor->show = player_editor_menu;
 
-	return editor;
+    return editor;
 
 }
 
-void player_editor_menu( Client * conn )
+void player_editor_menu(Client * conn)
 {
 
-	clear_screen( conn );
+    clear_screen(conn);
 
-	set_cursor( conn, 1, 1 );
+    set_cursor(conn, 1, 1);
 
-	Character *player = ( Character * ) conn->editing->data;
+    Character *player = (Character *) conn->editing->data;
 
-	conn->titlef( conn, "Player Editor - player %d", player->id );
+    conn->titlef(conn, "Player Editor - player %d", player->id);
 
-	character_editor_menu( conn, player );
+    character_editor_menu(conn, player);
 
-	writelnf( conn, "~YG) ~CTitle: ~W%s~x", player->pc->title );
+    writelnf(conn, "~YG) ~CTitle: ~W%s~x", player->pc->title);
 
-	writelnf( conn, "~YH) ~CFlags: ~W%s~x",
-			  format_flags( player->flags, plr_flags ) );
+    writelnf(conn, "~YH) ~CFlags: ~W%s~x",
+	     format_flags(player->flags, plr_flags));
 
-	writelnf( conn, "~YI) ~CPrompt: ~W%s~x", player->pc->prompt );
+    writelnf(conn, "~YI) ~CPrompt: ~W%s~x", player->pc->prompt);
 
-	writelnf( conn, "~YJ) ~CAlignment: ~W%d~x", player->alignment );
+    writelnf(conn, "~YJ) ~CAlignment: ~W%d~x", player->alignment);
 
-	writelnf( conn,
-			  "~YK) ~CStats: ~WStr[%d] Int[%d] Wis[%d] Dex[%d] Con[%d] Luck[%d]~x",
-			  getCurrStat( player, STAT_STR ),
-			  getCurrStat( player,
-						   STAT_INT ),
-			  getCurrStat( player, STAT_WIS ), getCurrStat( player,
-															STAT_DEX ),
-			  getCurrStat( player, STAT_CON ), getCurrStat( player,
-															STAT_LUCK ) );
+    writelnf(conn,
+	     "~YK) ~CStats: ~WStr[%d] Int[%d] Wis[%d] Dex[%d] Con[%d] Luck[%d]~x",
+	     getCurrStat(player, STAT_STR),
+	     getCurrStat(player,
+			 STAT_INT),
+	     getCurrStat(player, STAT_WIS), getCurrStat(player,
+							STAT_DEX),
+	     getCurrStat(player, STAT_CON), getCurrStat(player,
+							STAT_LUCK));
 
 }
 
-void player_edit_list( Client * conn )
+void player_edit_list(Client * conn)
 {
 
-	int count = 0;
+    int count = 0;
 
-	for ( Character * vch = first_player; vch != 0; vch = vch->next_player )
-	{
+    for (Character * vch = first_player; vch != 0; vch = vch->next_player) {
 
-		writelnf( conn, "%2d) %-12.12s ", vch->id, vch->name );
+	writelnf(conn, "%2d) %-12.12s ", vch->id, vch->name);
 
-		if ( ++count % 4 == 0 )
+	if (++count % 4 == 0)
+	    writeln(conn, "");
 
-			writeln( conn, "" );
+    }
 
-	}
-
-	if ( count % 4 != 0 )
-
-		writeln( conn, "" );
+    if (count % 4 != 0)
+	writeln(conn, "");
 
 }
 
-void player_editor( Client * conn, const char *argument )
+void player_editor(Client * conn, const char *argument)
 {
 
-	char arg[100];
+    char arg[100];
 
-	argument = one_argument( argument, arg );
+    argument = one_argument(argument, arg);
 
-	if ( !str_prefix( arg, "show" ) )
-	{
+    if (!str_prefix(arg, "show")) {
 
-		conn->editing->show( conn );
+	conn->editing->show(conn);
 
-		return;
+	return;
 
-	}
+    }
+    if (!str_cmp(arg, "list")) {
 
-	if ( !str_cmp( arg, "list" ) )
-	{
+	player_edit_list(conn);
 
-		player_edit_list( conn );
+	return;
 
-		return;
+    }
+    Character *player = (Character *) conn->editing->data;
 
-	}
+    if (!str_cmp(arg, "Q")) {
 
-	Character *player = ( Character * ) conn->editing->data;
+	if (player->pc->conn == 0)
+	    destroy_char(player);
 
-	if ( !str_cmp( arg, "Q" ) )
-	{
+	finish_editing(conn);
 
-		if ( player->pc->conn == 0 )
+	return;
 
-			destroy_char( player );
+    }
+    if (!str_cmp(arg, "save")) {
 
-		finish_editing( conn );
+	save_player(player);
 
-		return;
+	writeln(conn, "~CPlayer saved.~x");
 
-	}
+	return;
 
-	if ( !str_cmp( arg, "save" ) )
-	{
+    }
+    if (character_editor(conn, player, arg, argument))
+	return;
 
-		save_player( player );
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "title")) {
 
-		writeln( conn, "~CPlayer saved.~x" );
+	if (!argument || !*argument) {
 
-		return;
+	    writeln(conn, "~CYou must provide a title.~x");
 
-	}
-
-	if ( character_editor( conn, player, arg, argument ) )
-
-		return;
-
-	if ( !str_cmp( arg, "G" ) || !str_cmp( arg, "title" ) )
-	{
-
-		if ( !argument || !*argument )
-		{
-
-			writeln( conn, "~CYou must provide a title.~x" );
-
-			return;
-
-		}
-
-		free_str_dup( &player->pc->title, argument );
-
-		conn->editing->show( conn );
-
-		return;
+	    return;
 
 	}
+	free_str_dup(&player->pc->title, argument);
 
-	if ( !str_cmp( arg, "H" ) || !str_cmp( arg, "flags" ) )
-	{
+	conn->editing->show(conn);
 
-		if ( edit_flag( "flags", conn, player->flags, argument, plr_flags ) )
+	return;
 
-			conn->editing->show( conn );
+    }
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "flags")) {
 
-		return;
+	if (edit_flag("flags", conn, player->flags, argument, plr_flags))
+	    conn->editing->show(conn);
 
-	}
+	return;
 
-	if ( !str_cmp( arg, "I" ) || !str_cmp( arg, "prompt" ) )
-	{
+    }
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "prompt")) {
 
-		free_str_dup( &player->pc->prompt, argument );
+	free_str_dup(&player->pc->prompt, argument);
 
-		conn->editing->show( conn );
+	conn->editing->show(conn);
 
-		return;
+	return;
 
-	}
+    }
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "alignment")) {
 
-	if ( !str_cmp( arg, "J" ) || !str_cmp( arg, "alignment" ) )
-	{
+	int a = atoi(argument);
 
-		int a = atoi( argument );
+	if (a < -MAX_ALIGN || a > MAX_ALIGN) {
 
-		if ( a < -MAX_ALIGN || a > MAX_ALIGN )
-		{
+	    writelnf(conn, "~CValue must be between %d and %d.~x",
+		     -MAX_ALIGN, MAX_ALIGN);
 
-			writelnf( conn, "~CValue must be between %d and %d.~x",
-					  -MAX_ALIGN, MAX_ALIGN );
-
-			return;
-
-		}
-
-		player->alignment = a;
-
-		conn->editing->show( conn );
-
-		return;
+	    return;
 
 	}
+	player->alignment = a;
 
-	if ( !str_cmp( arg, "K" ) || !str_cmp( arg, "stats" ) )
-	{
+	conn->editing->show(conn);
 
-		char type[BUF_SIZ];
+	return;
 
-		argument = one_argument( argument, type );
+    }
+    if (!str_cmp(arg, "K") || !str_cmp(arg, "stats")) {
 
-		long v = value_lookup( stat_table, type );
+	char type[BUF_SIZ];
 
-		if ( v == -1 )
+	argument = one_argument(argument, type);
 
-		{
+	long v = value_lookup(stat_table, type);
 
-			writelnf( conn, "~CValid stats are: %s~x",
-					  lookup_names( stat_table ) );
+	if (v == -1) {
 
-			return;
+	    writelnf(conn, "~CValid stats are: %s~x",
+		     lookup_names(stat_table));
 
-		}
-
-		int a = atoi( argument );
-
-		if ( a > getMaxTrain( player ) )
-
-		{
-
-			writelnf( conn, "Stat cannot be higher than %d for %s.",
-					  getMaxTrain( player ), player->name );
-
-			return;
-
-		}
-
-		player->stats[v] = a;
-
-		conn->editing->show( conn );
-
-		return;
+	    return;
 
 	}
+	int a = atoi(argument);
 
+	if (a > getMaxTrain(player)) {
+
+	    writelnf(conn, "Stat cannot be higher than %d for %s.",
+		     getMaxTrain(player), player->name);
+
+	    return;
+
+	}
+	player->stats[v] = a;
+
+	conn->editing->show(conn);
+
+	return;
+
+    }
 }

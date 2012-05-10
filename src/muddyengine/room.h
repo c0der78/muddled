@@ -31,53 +31,50 @@ typedef struct Room Room;
 #include <muddyengine/exit.h>
 #include <muddyengine/object.h>
 
-typedef enum
-{
-	SECT_INSIDE,
-	SECT_CITY,
-	SECT_FIELD,
-	SECT_FOREST,
-	SECT_HILLS,
-	SECT_MOUNTAIN,
-	SECT_WATER_SWIM,
-	SECT_WATER_NOSWIM,
-	SECT_AIR,
-	SECT_DESERT,
-	SECT_JUNGLE,
-	SECT_ROAD,
-	SECT_PATH,
-	SECT_CAVE,
-	SECT_SWAMP,
-	SECT_UNKNOWN,
-	SECT_MAX
+typedef enum {
+    SECT_INSIDE,
+    SECT_CITY,
+    SECT_FIELD,
+    SECT_FOREST,
+    SECT_HILLS,
+    SECT_MOUNTAIN,
+    SECT_WATER_SWIM,
+    SECT_WATER_NOSWIM,
+    SECT_AIR,
+    SECT_DESERT,
+    SECT_JUNGLE,
+    SECT_ROAD,
+    SECT_PATH,
+    SECT_CAVE,
+    SECT_SWAMP,
+    SECT_UNKNOWN,
+    SECT_MAX
 } sector_t;
 
 
-struct Room
-{
-	Room *next;
-	Room *next_in_area;
-	identifier_t id;
-	const char *name;
-	const char *description;
-	Character *characters;
-	hashmap extraDescr;
-	Area *area;
-	Exit *exits[MAX_DIR];
-	const char *reset;
-	Object *objects;
-	sector_t sector;
-	Flag *flags;
+struct Room {
+    Room *next;
+    Room *next_in_area;
+    identifier_t id;
+    const char *name;
+    const char *description;
+    Character *characters;
+    hashmap extraDescr;
+    Area *area;
+    Exit *exits[MAX_DIR];
+    const char *reset;
+    Object *objects;
+    sector_t sector;
+    Flag *flags;
 };
 
 
 
-enum
-{
-	ROOM_SAFE,
-	ROOM_NO_RECALL,
+enum {
+    ROOM_SAFE,
+    ROOM_NO_RECALL,
 
-	ROOM_NOEXPLORE
+    ROOM_NOEXPLORE
 };
 
 extern Room *room_hash[ID_HASH];
@@ -91,14 +88,14 @@ extern const Lookup room_flags[];
 
 #define DEFAULT_ROOM 1
 
-Room *new_room(  );
-void destroy_room( Room * );
-int load_rooms( Area * );
-Room *load_room( identifier_t );
-int save_room( Room * );
-int save_room_only( Room * );
-Room *room_lookup( const char * );
-Room *get_room_by_id( identifier_t );
-Room *get_default_room(  );
+Room *new_room();
+void destroy_room(Room *);
+int load_rooms(Area *);
+Room *load_room(identifier_t);
+int save_room(Room *);
+int save_room_only(Room *);
+Room *room_lookup(const char *);
+Room *get_room_by_id(identifier_t);
+Room *get_default_room();
 
-#endif							//  #ifndef ROOM_H
+#endif				/* //  #ifndef ROOM_H */

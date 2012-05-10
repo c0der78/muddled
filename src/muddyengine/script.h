@@ -23,7 +23,7 @@
 #define SCRIPT_H
 
 #include "config.h"
- 
+
 #ifdef HAVE_LUA
 
 #include <lua.h>
@@ -34,9 +34,9 @@ extern lua_State *lua_instance;
 
 #endif
 
-void init_lua(  );
+void init_lua();
 
-void close_lua(  );
+void close_lua();
 
 
-#endif							//  #ifndef SCRIPT_H
+#endif				/* //  #ifndef SCRIPT_H */

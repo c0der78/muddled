@@ -25,47 +25,42 @@
 
 typedef struct Channel Channel;
 
-typedef enum
-{
-	channel_global,
-	channel_admin
-}
-channel_t;
+typedef enum {
+    channel_global,
+    channel_admin
+} channel_t;
 
-typedef enum
-{
-	CHANNEL_NORMAL,
-	CHANNEL_SOCIAL,
-	CHANNEL_EMOTE,
-	CHANNEL_THINK,
-	CHANNEL_WHO
+typedef enum {
+    CHANNEL_NORMAL,
+    CHANNEL_SOCIAL,
+    CHANNEL_EMOTE,
+    CHANNEL_THINK,
+    CHANNEL_WHO
 } channel_arg_t;
 
 #include <muddyengine/character.h>
 
-struct Channel
-{
+struct Channel {
 
-	int *pgcn;
+    int *pgcn;
 
-	int bit;
+    int bit;
 
-	const char *name;
+    const char *name;
 
-	const char *description;
+    const char *description;
 
-	const char *format;
+    const char *format;
 
-	const char *color;
+    const char *color;
 
-	channel_t type;
+    channel_t type;
 
 };
 
-enum
-{
-	CHANNEL_CHAT,
-	CHANNEL_ADMIN
+enum {
+    CHANNEL_CHAT,
+    CHANNEL_ADMIN
 };
 
 extern int gcn_chat;
@@ -74,14 +69,14 @@ extern int gcn_admin;
 
 extern const Channel channel_table[];
 
-int interpret_channel( Character *, int gcn, const char * );
+int interpret_channel(Character *, int gcn, const char *);
 
-void initialize_channels(  );
+void initialize_channels();
 
-const char *say_verb( const char *, Character *, Character *, int );
+const char *say_verb(const char *, Character *, Character *, int);
 
 extern const Lookup channel_flags[];
-void announce( Character *, info_t, const char *, ... )
-	__attribute__ ( ( format( printf, 3, 4 ) ) );
+void announce(Character *, info_t, const char *, ...)
+    __attribute__ ((format(printf, 3, 4)));
 
-#endif							//  #ifndef CHANNEL_H
+#endif				/* //  #ifndef CHANNEL_H */

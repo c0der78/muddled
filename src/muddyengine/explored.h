@@ -22,18 +22,18 @@
 #ifndef EXPLORED_H
 #define EXPLORED_H
 
-int roomcount( Flag * );
+int roomcount(Flag *);
 
-void update_explored( Flag * );
+void update_explored(Flag *);
 
-int areacount( Flag *, Area * );
+int areacount(Flag *, Area *);
 
-int arearooms( Area * );
+int arearooms(Area *);
 
-const char *get_explored_rle( Flag * );
+const char *get_explored_rle(Flag *);
 
-void convert_explored_rle( Flag *, const char * );
+void convert_explored_rle(Flag *, const char *);
 
-bool is_explorable( Room * );
+bool is_explorable(Room *);
 
-#endif							//  #ifndef EXPLORED_H
+#endif				/* //  #ifndef EXPLORED_H */

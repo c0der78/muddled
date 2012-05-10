@@ -43,16 +43,16 @@
 #include <string.h>
 #include "client.h"
 
-ssize_t test_telopts( const Client * );
+ssize_t test_telopts(const Client *);
 
-ssize_t send_telopt( const Client *, unsigned char, unsigned char );
+ssize_t send_telopt(const Client *, unsigned char, unsigned char);
 
-void process_telnet( Client *, unsigned char *, size_t );
+void process_telnet(Client *, unsigned char *, size_t);
 
-void set_cursor( Client *, int, int );
+void set_cursor(Client *, int, int);
 
-void restore_cursor( Client * );
+void restore_cursor(Client *);
 
-void clear_screen( Client * );
+void clear_screen(Client *);
 
-#endif							//  #ifndef TELNET_H
+#endif				/* //  #ifndef TELNET_H */

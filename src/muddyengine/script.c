@@ -27,39 +27,39 @@
 
 lua_State *lua_instance = 0;
 
-void init_lua(  )
+void init_lua()
 {
 
-	lua_instance = lua_open(  );
+    lua_instance = lua_open();
 
-	luaopen_base( lua_instance );
+    luaopen_base(lua_instance);
 
-	luaopen_string( lua_instance );
+    luaopen_string(lua_instance);
 
 }
 
-void close_lua(  )
+void close_lua()
 {
 
-	if ( lua_instance != 0 )
-	{
+    if (lua_instance != 0) {
 
-		log_info( "closing lua" );
+	log_info("closing lua");
 
-		lua_close( lua_instance );
+	lua_close(lua_instance);
 
-		lua_instance = 0;
+	lua_instance = 0;
 
-	}
-
+    }
 }
 #else
 
-void init_lua() {
-		log_info("No lua scripting support");
+void init_lua()
+{
+    log_info("No lua scripting support");
 }
 
-void close_lua() {
+void close_lua()
+{
 
 }
 

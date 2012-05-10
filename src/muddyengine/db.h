@@ -46,24 +46,23 @@
 #define SQL_ARRAY 	SQL_CUSTOM
 #define SQL_LOOKUP	1003
 
-typedef struct field_map
-{
-	const char *name;
-	const void *value;
-	int type;
-	const void *arg1;
-	const void *arg2;
-	int flags;
+typedef struct field_map {
+    const char *name;
+    const void *value;
+    int type;
+    const void *arg1;
+    const void *arg2;
+    int flags;
 } field_map;
 
-typedef int ( *custom_sql_bind ) ( sql_stmt *, int, field_map * );
+typedef int (*custom_sql_bind) (sql_stmt *, int, field_map *);
 
 const char *tablenameid(const char *tablename);
-const char *escape_sql_str( const char * );
-int db_save_int_array( sql_stmt *, int, field_map* );
-void db_read_int_array( int, void *, sql_stmt *, int );
-int db_begin_transaction(  );
-int db_end_transaction(  );
+const char *escape_sql_str(const char *);
+int db_save_int_array(sql_stmt *, int, field_map *);
+void db_read_int_array(int, void *, sql_stmt *, int);
+int db_begin_transaction();
+int db_end_transaction();
 int sql_exec(const char *);
 sql *enginedb();
 int sql_errcode();
@@ -80,7 +79,7 @@ const char *sql_column_str(sql_stmt *, int);
 int sql_column_index(sql_stmt *, const char *);
 int sql_col_int(sql_stmt *, const char *);
 
-int db_save_lookup(sql_stmt *, int, field_map*);
+int db_save_lookup(sql_stmt *, int, field_map *);
 
 #define sql_step			sqlite3_step
 #define sql_finalize		sqlite3_finalize
@@ -110,11 +109,9 @@ int db_save_lookup(sql_stmt *, int, field_map*);
 #define sql_column_name		sqlite3_column_name
 #define sql_column_count 	sqlite3_column_count
 
-/*!
- * saves a record
- * @param table the dbvalues structure to save
- * @param tableName the name of the table
- * @param id the current id of the value
+/*
+ * ! saves a record @param table the dbvalues structure to save @param
+ * tableName the name of the table @param id the current id of the value
  * @return the identifier of the value
  */
 sql_int64 db_save(field_map *, const char *, sql_int64);
@@ -123,7 +120,7 @@ int field_map_int(field_map *);
 float field_map_float(field_map *);
 double field_map_double(field_map *);
 const char *field_map_str(field_map *);
-Flag * field_map_flag(field_map *);
+Flag *field_map_flag(field_map *);
 
 /*
 #define field(type, base, value, data) \
@@ -145,4 +142,4 @@ Flag * field_map_flag(field_map *);
 	*( (Flag **) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
 */
 
-#endif							//  #ifndef DB_H
+#endif				/* //  #ifndef DB_H */

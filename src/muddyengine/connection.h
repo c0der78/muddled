@@ -33,41 +33,40 @@ typedef struct Connection Connection;
  * To implement a connection, create a structure that has these fields in the same order,
  * adding additional fields afterwards.  Then you can cast your struct to a connection type.
  */
-struct Connection
-{
+struct Connection {
 
-	void ( *handler ) ( Connection *, const char * );
+    void (*handler) (Connection *, const char *);
 
-	void ( *writelnf ) ( Connection *, const char *, ... );
+    void (*writelnf) (Connection *, const char *, ...);
 
-	void ( *writeln ) ( Connection *, const char * );
+    void (*writeln) (Connection *, const char *);
 
-	void ( *writef ) ( Connection *, const char *, ... );
+    void (*writef) (Connection *, const char *, ...);
 
-	void ( *write ) ( Connection *, const char * );
+    void (*write) (Connection *, const char *);
 
-	void ( *page ) ( Connection *, const char * );
+    void (*page) (Connection *, const char *);
 
-	void ( *vwrite ) ( Connection *, const char *, va_list );
+    void (*vwrite) (Connection *, const char *, va_list);
 
-	void ( *titlef ) ( Connection *, const char *, ... );
+    void (*titlef) (Connection *, const char *, ...);
 
-	void ( *title ) ( Connection *, const char * );
+    void (*title) (Connection *, const char *);
 
-	void ( *vtitle ) ( Connection *, const char *, va_list );
+    void (*vtitle) (Connection *, const char *, va_list);
 
-	 bool( *is_playing ) ( Connection * );
+     bool(*is_playing) (Connection *);
 
-	short scrHeight;
+    short scrHeight;
 
-	short scrWidth;
+    short scrWidth;
 
-	const char *termType;
+    const char *termType;
 
-	const char *host;
+    const char *host;
 
-	Account *account;
+    Account *account;
 
 };
 
-#endif							//  #ifndef CONNECTION_H
+#endif				/* //  #ifndef CONNECTION_H */

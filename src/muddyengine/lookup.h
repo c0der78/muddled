@@ -27,22 +27,21 @@
 
 typedef struct Lookup Lookup;
 
-struct Lookup
-{
-	const char *name;
-	uintptr_t value;
+struct Lookup {
+    const char *name;
+    uintptr_t value;
 };
 
-int index_lookup( const Lookup *, const char * );
+int index_lookup(const Lookup *, const char *);
 
-uintptr_t value_lookup( const Lookup *, const char * );
+uintptr_t value_lookup(const Lookup *, const char *);
 
-const char *values_tostring( const Lookup *, uintptr_t * );
-void values_fromstring( const Lookup *, const char *, uintptr_t * );
+const char *values_tostring(const Lookup *, uintptr_t *);
+void values_fromstring(const Lookup *, const char *, uintptr_t *);
 
-const char *lookup_names( const Lookup * );
-const char *lookup_name( const Lookup *, uintptr_t );
+const char *lookup_names(const Lookup *);
+const char *lookup_name(const Lookup *, uintptr_t);
 
-void synchronize_tables(  );
+void synchronize_tables();
 
-#endif							//  #ifndef LOOKUP_H
+#endif				/* //  #ifndef LOOKUP_H */
