@@ -26,19 +26,19 @@ typedef struct Buffer Buffer;
 
 struct Buffer {
 
-    short state;		/* error state of the buffer */
+	short state;		/* error state of the buffer */
 
-    int size;			/* size in k */
+	int size;		/* size in k */
 
-    char *string;		/* buffer's string */
+	char *string;		/* buffer's string */
 
-     bool(*write) (Buffer *, const char *);
+	 bool(*write) (Buffer *, const char *);
 
-     bool(*writeln) (Buffer *, const char *);
+	 bool(*writeln) (Buffer *, const char *);
 
-     bool(*writef) (Buffer *, const char *, ...);
+	 bool(*writef) (Buffer *, const char *, ...);
 
-     bool(*writelnf) (Buffer *, const char *, ...);
+	 bool(*writelnf) (Buffer *, const char *, ...);
 
 };
 
@@ -62,4 +62,4 @@ void clear_buf(Buffer *);
 
 char *buf_string(Buffer *);
 
-#endif				/* //  #ifndef BUFFER_H */
+#endif				/* // #ifndef BUFFER_H */

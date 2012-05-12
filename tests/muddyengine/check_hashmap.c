@@ -19,98 +19,63 @@
  ******************************************************************************/
 #include <check.h>
 #include <stdlib.h>
-#include <muddyengine/flag.h>
-#include <muddyengine/lookup.h>
+#include <stdio.h>
+#include <muddyengine/hashmap.h>
 
-const Lookup test_flags[] = {
-	{ 1, "bit1" },
-	{ 25, "bit2" },
-	{ 50, "bit3" },
-	{ 75, "bit4" },
-	{ 100, "bit5" },
-	{ 0, 0 }
-};
+static int check = 6;
 
-
-START_TEST(test_set_bit)
+void hashmap_foreach(void *data)
 {
-	Flag *flags = new_flag();
-	
-	set_bit(flags, 10);
+	int d = *(int*) data;
 
-	fail_if(flags->size != (10/sizeof(int))+1, "flags size was not correct");
+	fail_if(d +1 != check);
+
+	check--;
+}
+START_TEST(test_foreach)
+{
+	hashmap *map = new_hashmap(0);
+
+	check = 6;
+
+	hm_insert(map, (void *) 5, 5);
+	hm_insert(map, (void *) 4, 4);
+	hm_insert(map, (void *) 3, 3);
 	
-	fail_unless(flags->bits[10/sizeof(int)] & (1 << (10 % sizeof(int))), "bit was not set");
-	
-	destroy_flags(flags);
-	
+	hm_foreach(map, hashmap_foreach);
+
+	destroy_hashmap(map);
 }
 END_TEST
 
-START_TEST(test_remove_bit)
+START_TEST(test_iterate)
 {
-	Flag *flags = new_flag();
-	
-	set_bit(flags, 100);
-	
-	fail_unless(is_set(flags, 100), "unable to set the bit");
-	
-	remove_bit(flags, 100);
-	
-	fail_unless(!is_set(flags, 100), "unable to remove the bit");
-	
-	destroy_flags(flags);
-}
-END_TEST
-	
-START_TEST(test_format_flags)
-{
-	Flag *flags = new_flag();
-	
-	set_bit(flags, 25);
-	set_bit(flags, 100);
-	set_bit(flags, 75);
-	
-	const char *expected = "bit2,bit4,bit5";
-	const char *result = format_flags(flags, test_flags);
-	
-	
-	fail_if(strcmp(result, expected), "flag string was not what was expected");
-	
-	destroy_flags(flags);
+	hashmap *map = new_hashmap(0);
+
+	hm_insert(map, (void *) 5, 5);
+	hm_insert(map, (void *) 4, 4);
+	hm_insert(map, (void *) 3, 3);
+
+	check = 5;
+
+	for(void * data = hm_start(map); hm_hasnext(map); data = hm_next(map))
+	{
+		fail_if(*(int*)data != check);
+
+		check--;
+	}
+	destroy_hashmap(map);
 }
 END_TEST
 
-
-START_TEST(test_parse_flags)
+Suite *hashmap_suite (void)
 {
-	char format[100];
-	
-	strcpy(format, "bit1,bit3,bit5");
-	
-	Flag *flags = new_flag();
-	
-	parse_flags(flags, format, test_flags);
-	
-	fail_if(!is_set(flags, 1), "bit 1 was not set");
-	fail_if(!is_set(flags, 50), "bit 3 was not set");
-	fail_if(!is_set(flags, 100), "bit 5 was not set");
-	
-	destroy_flags(flags);
-	
-}
-END_TEST
-
-Suite *flags_suite (void)
-{
-  Suite *s = suite_create ("Flags");
+  Suite *s = suite_create ("Hashmap");
 
   /* Core test case */
   TCase *tc_core = tcase_create ("Core");
-  tcase_add_test (tc_core, test_set_bit);
-  tcase_add_test (tc_core, test_remove_bit);
-  tcase_add_test(tc_core, test_format_flags);
-  tcase_add_test(tc_core, test_parse_flags);
+  tcase_add_test (tc_core, test_iterate);
+  tcase_add_test (tc_core, test_foreach);
   suite_add_tcase (s, tc_core);
   
   return s;

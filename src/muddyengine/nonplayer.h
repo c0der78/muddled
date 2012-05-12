@@ -22,9 +22,7 @@
 #ifndef NONPLAYER_H
 #define NONPLAYER_H
 
-
 typedef struct NPC NPC;
-
 
 #include <muddyengine/character.h>
 #include <muddyengine/area.h>
@@ -35,22 +33,22 @@ typedef struct NPC NPC;
 #define MAX_DICE			3
 
 struct NPC {
-    const char *shortDescr;
-    const char *longDescr;
-    position_t startPosition;
-    Area *area;
-    NPC *next_in_area;
-    int damage[MAX_DICE];
-    int mana[MAX_DICE];
-    int hit[MAX_DICE];
+	const char *shortDescr;
+	const char *longDescr;
+	position_t startPosition;
+	Area *area;
+	NPC *next_in_area;
+	int damage[MAX_DICE];
+	int mana[MAX_DICE];
+	int hit[MAX_DICE];
 };
 
 enum {
-    NPC_SENTINEL,
-    NPC_SCAVENGER,
-    NPC_AGGRESSIVE,
-    NPC_WIMPY,
-    NPC_STAY_AREA
+	NPC_SENTINEL,
+	NPC_SCAVENGER,
+	NPC_AGGRESSIVE,
+	NPC_WIMPY,
+	NPC_STAY_AREA
 };
 
 NPC *new_npc();
@@ -64,4 +62,4 @@ Character *get_npc_by_id(identifier_t);
 Character *npc_lookup(const char *);
 int delete_npc(Character *);
 
-#endif				/* //  #ifndef NONPLAYER_H */
+#endif				/* // #ifndef NONPLAYER_H */

@@ -30,4 +30,4 @@
 
 void update_handler();
 
-#endif				/* //  #ifndef UPDATE_H */
+#endif				/* // #ifndef UPDATE_H */

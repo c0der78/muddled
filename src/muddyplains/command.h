@@ -24,17 +24,16 @@
 #include <muddyengine/character.h>
 #include <muddyengine/lookup.h>
 
-
 typedef struct Command Command;
 
 typedef void DoFun(const char *, Character *, const char *);
 
 struct Command {
-    const char *name;
-    short level;
-    DoFun *dofun;
-    int category;
-    position_t position;
+	const char *name;
+	short level;
+	DoFun *dofun;
+	int category;
+	position_t position;
 };
 
 extern int max_command;
@@ -49,13 +48,13 @@ extern const Command cmd_table[];
 extern const Lookup command_types[];
 
 enum {
-    COMMAND_INFO = (1 << 0),
-    COMMAND_SETTINGS = (1 << 1),
-    COMMAND_ADMIN = (1 << 2),
-    COMMAND_MANIP = (1 << 3),
-    COMMAND_CONN = (1 << 4),
-    COMMAND_COMM = (1 << 5),
-    COMMAND_COMBAT = (1 << 6)
+	COMMAND_INFO = (1 << 0),
+	COMMAND_SETTINGS = (1 << 1),
+	COMMAND_ADMIN = (1 << 2),
+	COMMAND_MANIP = (1 << 3),
+	COMMAND_CONN = (1 << 4),
+	COMMAND_COMM = (1 << 5),
+	COMMAND_COMBAT = (1 << 6)
 };
 
 DoFun do_quit;
@@ -116,4 +115,4 @@ DoFun do_db;
 DoFun do_help;
 DoFun do_areas;
 
-#endif				/* //  #ifndef COMMAND_H */
+#endif				/* // #ifndef COMMAND_H */

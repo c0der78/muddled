@@ -25,7 +25,9 @@
 #ifndef __AREA_H_
 #define __AREA_H_
 
-/* ! @typedef Area */
+/*
+ * ! @typedef Area 
+ */
 typedef struct Area Area;
 
 #include <muddyengine/character.h>
@@ -41,13 +43,13 @@ typedef struct Area Area;
  * flags flags affecting behaviour of the area
  */
 struct Area {
-    identifier_t id;
-    Area *next;
-    const char *name;
-    Character *npcs;
-    Room *rooms;
-    Object *objects;
-    Flag *flags;
+	identifier_t id;
+	Area *next;
+	const char *name;
+	Character *npcs;
+	Room *rooms;
+	Object *objects;
+	Flag *flags;
 };
 
 /*
@@ -56,11 +58,13 @@ struct Area {
  * AREA_CHANGED area is changed and needs to be saved @discussion
  */
 enum {
-    AREA_NOEXPLORE,
-    AREA_CHANGED
+	AREA_NOEXPLORE,
+	AREA_CHANGED
 };
 
-/* ! @group Memory Management */
+/*
+ * ! @group Memory Management 
+ */
 
 /*
  * ! creates a new area @return the newly allocate area
@@ -72,9 +76,13 @@ Area *new_area();
  */
 void destroy_area(Area *);
 
-/* ! @group Memory Management */
+/*
+ * ! @group Memory Management 
+ */
 
-/* ! @group Data Management */
+/*
+ * ! @group Data Management 
+ */
 
 /*
  * ! loads all areas @return the number of area loaded
@@ -99,7 +107,9 @@ int save_area(Area *);
  */
 int save_area_only(Area *);
 
-/* ! @group Data Management */
+/*
+ * ! @group Data Management 
+ */
 
 /*
  * ! get a loaded area by id @param id the area id @return the area or 0
@@ -118,13 +128,19 @@ Area *area_lookup(const char *);
  */
 Area *get_default_area();
 
-/* ! @constant first_area the linked-list of loaded areas */
+/*
+ * ! @constant first_area the linked-list of loaded areas 
+ */
 extern Area *first_area;
 
-/* ! @constants max_area the number of loaded areas */
+/*
+ * ! @constants max_area the number of loaded areas 
+ */
 extern int max_area;
 
-/* ! @constants area_flags the table to convert area flags with strings */
+/*
+ * ! @constants area_flags the table to convert area flags with strings 
+ */
 extern const Lookup area_flags[];
 
-#endif				/* //  #ifndef AREA_H */
+#endif				/* // #ifndef AREA_H */

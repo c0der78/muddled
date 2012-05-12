@@ -26,12 +26,11 @@
 #include <stdarg.h>
 
 typedef enum {
-    ALIGN_LEFT,
-    ALIGN_CENTER,
-    ALIGN_RIGHT,
-    ALIGN_INDENT
+	ALIGN_LEFT,
+	ALIGN_CENTER,
+	ALIGN_RIGHT,
+	ALIGN_INDENT
 } align_t;
-
 
 const char *capitalize(const char *);
 char *trim(char *);

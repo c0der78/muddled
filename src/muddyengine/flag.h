@@ -22,7 +22,6 @@
 #ifndef FLAG_H
 #define FLAG_H
 
-
 typedef long long bit_t;
 typedef struct Flag Flag;
 
@@ -34,8 +33,8 @@ typedef struct Flag Flag;
  * ! A bitvector structure with unlimited number of bits
  */
 struct Flag {
-    int *bits;
-    size_t size;
+	int *bits;
+	size_t size;
 };
 
 Flag *new_flag();
@@ -76,4 +75,4 @@ int parse_flags(Flag *, const char *, const Lookup *);
  */
 int flag_toint(Flag *);
 
-#endif				/* //  #ifndef FLAG_H */
+#endif				/* // #ifndef FLAG_H */

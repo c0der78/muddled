@@ -24,4 +24,4 @@
 
 void draw_map(Character *, const char *);
 
-#endif				/* //  #ifndef MAP_H */
+#endif				/* // #ifndef MAP_H */

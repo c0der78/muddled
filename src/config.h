@@ -3,6 +3,6 @@
 
 #define LOG_DIR "var/log"
 
-#define SQLITE3_FILE "muddyplains.db3"
+#define SQLITE3_FILE "muddyplains"
 
 #define HAVE_LUA 1

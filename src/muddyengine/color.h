@@ -27,9 +27,9 @@
 
 struct color_t {
 
-    short attr;
+	short attr;
 
-    short value;
+	short value;
 
 };
 
@@ -50,4 +50,4 @@ const char *convert_color_code(const char *, struct color_t *);
 #define BOLD	1
 #define NORMAL	0
 #define BLINK	5
-#endif				/* //  #ifndef COLOR_H */
+#endif				/* // #ifndef COLOR_H */

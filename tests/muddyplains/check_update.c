@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <muddyengine/room.h>
 #include <muddyengine/string.h>
+#include <muddyengine/object.h>
 #include <muddyengine/lookup.h>
 
 void reset_room(Room *);

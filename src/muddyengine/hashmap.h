@@ -4,17 +4,18 @@
 
 #include <stdbool.h>
 #include <muddyengine/engine.h>
+#include <muddyengine/variant.h>
 
 typedef struct {
-    void *data;
-    int flags;
-    identifier_t key;
+	void *data;
+	int flags;
+	identifier_t key;
 } hEntry;
 
 /** Hashmap structure (forward declaration) */
 struct s_hashmap {
-    hEntry *table;
-    long size, count, pos;
+	hEntry *table;
+	long size, count, pos;
 };
 
 typedef struct s_hashmap hashmap;

@@ -42,670 +42,673 @@
 DOFUN(edit)
 {
 
-    char arg[100];
+	char arg[100];
 
-    Client *conn;
+	Client *conn;
 
-    if (!ch->pc || !ch->pc->conn)
-	return;
-
-    if (!argument || !*argument) {
-
-	cmd_syntax(ch, do_name, "room", "help", "social", "npc",
-		   "object", "area", "player", "skill", "engine", 0);
-
-	/*
-	   writeln(ch, "Syntax: %s room   [?]", name);
-	   writeln(ch, "        %s help   [?]", name);
-	   writeln(ch, "        %s npc    [?]", name);
-	   writeln(ch, "        %s object [?]", name);
-	   writeln(ch, "        %s area   [?]", name);
-	   writeln(ch, "        %s player [?]", name); */
-	return;
-
-    }
-    conn = (Client *) ch->pc->conn;
-
-    argument = one_argument(argument, arg);
-
-    if (!str_prefix(arg, "room")) {
+	if (!ch->pc || !ch->pc->conn)
+		return;
 
 	if (!argument || !*argument) {
 
-	    conn->editing = build_room_editor(ch->inRoom);
+		cmd_syntax(ch, do_name, "room", "help", "social", "npc",
+			   "object", "area", "player", "skill", "engine", 0);
 
-	    conn->editing->show(conn);
-
-	    return;
-
-	}
-	if (!str_prefix(argument, "create")) {
-
-	    Room *room = new_room();
-
-	    room->area = ch->inRoom->area;
-
-	    conn->editing = build_room_editor(room);
-
-	    conn->editing->show(conn);
-
-	    return;
+		/*
+		 * writeln(ch, "Syntax: %s room [?]", name); writeln(ch, " %s help 
+		 * [?]", name); writeln(ch, " %s npc [?]", name); writeln(ch, " %s 
+		 * object [?]", name); writeln(ch, " %s area [?]", name);
+		 * writeln(ch, " %s player [?]", name); 
+		 */
+		return;
 
 	}
-	if (!str_prefix(argument, "list")) {
+	conn = (Client *) ch->pc->conn;
 
-	    room_edit_list(conn, ch->inRoom->area);
+	argument = one_argument(argument, arg);
 
-	    return;
+	if (!str_prefix(arg, "room")) {
+
+		if (!argument || !*argument) {
+
+			conn->editing = build_room_editor(ch->inRoom);
+
+			conn->editing->show(conn);
+
+			return;
+
+		}
+		if (!str_prefix(argument, "create")) {
+
+			Room *room = new_room();
+
+			room->area = ch->inRoom->area;
+
+			conn->editing = build_room_editor(room);
+
+			conn->editing->show(conn);
+
+			return;
+
+		}
+		if (!str_prefix(argument, "list")) {
+
+			room_edit_list(conn, ch->inRoom->area);
+
+			return;
+
+		}
+		if (is_number(argument)) {
+
+			int id = atoi(argument);
+
+			Room *room = get_room_by_id(id);
+
+			if (room == 0) {
+
+				writeln(conn, "No such room!");
+
+				return;
+
+			}
+			conn->editing = build_room_editor(room);
+
+			conn->editing->show(conn);
+
+			return;
+
+		}
+		cmd_syntax(ch, do_name,
+			   "room		- edit the current room",
+			   "room create	- create a room for the current area",
+			   "room id#	- edit a specific room",
+			   "room list	- lists rooms in area", 0);
+
+		/*
+		 * writeln(conn, "Syntax: edit room - edit the current room");
+		 * writeln(conn, " edit room create - create a room for the
+		 * current area"); writeln(conn, " edit room id# - edit a specific 
+		 * room"); writeln(conn, " edit room list - lists rooms in area"); 
+		 */
+		return;
 
 	}
-	if (is_number(argument)) {
+	if (!str_prefix(arg, "help")) {
 
-	    int id = atoi(argument);
+		if (!argument || !*argument || argument[0] == '?') {
 
-	    Room *room = get_room_by_id(id);
+			cmd_syntax(ch, do_name,
+				   "help <keyword or id#> 	- edit a specific help",
+				   "help create	 	- create a help",
+				   "help list		- list helps", 0);
 
-	    if (room == 0) {
+			return;
 
-		writeln(conn, "No such room!");
+		}
+		Help *help;
+
+		if (!str_prefix(argument, "create")) {
+
+			help = new_help();
+
+			conn->editing = build_help_editor(help);
+
+			conn->editing->show(conn);
+
+			return;
+
+		}
+		if (!str_prefix(argument, "list")) {
+
+			help_edit_list(conn);
+
+		}
+		help = help_find(argument);
+
+		if (help == 0) {
+
+			writeln(conn, "No such help.");
+
+			return;
+
+		}
+		conn->editing = build_help_editor(help);
+
+		conn->editing->show(conn);
 
 		return;
 
-	    }
-	    conn->editing = build_room_editor(room);
-
-	    conn->editing->show(conn);
-
-	    return;
-
 	}
-	cmd_syntax(ch, do_name,
-		   "room		- edit the current room",
-		   "room create	- create a room for the current area",
-		   "room id#	- edit a specific room",
-		   "room list	- lists rooms in area", 0);
+	if (!str_prefix(arg, "social")) {
 
-	/*
-	   writeln(conn, "Syntax: edit room             - edit the current room");
-	   writeln(conn, "        edit room create      - create a room for the current area");
-	   writeln(conn, "           edit room id#      - edit a specific room");
-	   writeln(conn, "        edit room list        - lists rooms in area"); */
-	return;
+		if (!argument || !*argument || argument[0] == '?') {
 
-    }
-    if (!str_prefix(arg, "help")) {
+			cmd_syntax(ch, do_name,
+				   "social <keyword or id#> 	- edit a specific social",
+				   "social create	 	- create a social",
+				   "social list		- list socials", 0);
 
-	if (!argument || !*argument || argument[0] == '?') {
+			return;
 
-	    cmd_syntax(ch, do_name,
-		       "help <keyword or id#> 	- edit a specific help",
-		       "help create	 	- create a help",
-		       "help list		- list helps", 0);
+		}
+		Social *social;
 
-	    return;
+		if (!str_prefix(argument, "create")) {
 
-	}
-	Help *help;
+			social = new_social();
 
-	if (!str_prefix(argument, "create")) {
+			conn->editing = build_social_editor(social);
 
-	    help = new_help();
+			conn->editing->show(conn);
 
-	    conn->editing = build_help_editor(help);
+			return;
 
-	    conn->editing->show(conn);
+		}
+		if (!str_prefix(argument, "list")) {
 
-	    return;
+			social_edit_list(conn);
 
-	}
-	if (!str_prefix(argument, "list")) {
+		}
+		social = social_lookup(argument);
 
-	    help_edit_list(conn);
+		if (social == 0) {
 
-	}
-	help = help_find(argument);
+			writeln(conn, "No such social.");
 
-	if (help == 0) {
+			return;
 
-	    writeln(conn, "No such help.");
+		}
+		conn->editing = build_social_editor(social);
 
-	    return;
-
-	}
-	conn->editing = build_help_editor(help);
-
-	conn->editing->show(conn);
-
-	return;
-
-    }
-    if (!str_prefix(arg, "social")) {
-
-	if (!argument || !*argument || argument[0] == '?') {
-
-	    cmd_syntax(ch, do_name,
-		       "social <keyword or id#> 	- edit a specific social",
-		       "social create	 	- create a social",
-		       "social list		- list socials", 0);
-
-	    return;
-
-	}
-	Social *social;
-
-	if (!str_prefix(argument, "create")) {
-
-	    social = new_social();
-
-	    conn->editing = build_social_editor(social);
-
-	    conn->editing->show(conn);
-
-	    return;
-
-	}
-	if (!str_prefix(argument, "list")) {
-
-	    social_edit_list(conn);
-
-	}
-	social = social_lookup(argument);
-
-	if (social == 0) {
-
-	    writeln(conn, "No such social.");
-
-	    return;
-
-	}
-	conn->editing = build_social_editor(social);
-
-	conn->editing->show(conn);
-
-	return;
-
-    }
-    if (!str_prefix(arg, "skill")) {
-
-	if (!argument || !*argument || argument[0] == '?') {
-
-	    cmd_syntax(ch, do_name,
-		       "skill <name or id#> 	- edit a specific skill",
-		       "skill create	 	- create a skill",
-		       "skill list		- list skills", 0);
-
-	    return;
-
-	}
-	Skill *skill;
-
-	if (!str_prefix(argument, "create")) {
-
-	    skill = new_skill();
-
-	    conn->editing = build_skill_editor(skill);
-
-	    conn->editing->show(conn);
-
-	    return;
-
-	}
-	if (!str_prefix(argument, "list")) {
-
-	    skill_edit_list(conn);
-
-	}
-	skill = skill_lookup(argument);
-
-	if (skill == 0) {
-
-	    writeln(conn, "No such skill.");
-
-	    return;
-
-	}
-	conn->editing = build_skill_editor(skill);
-
-	conn->editing->show(conn);
-
-	return;
-
-    }
-    if (!str_prefix(arg, "player")) {
-
-	if (!argument || !*argument || argument[0] == '?') {
-
-	    cmd_syntax(ch, do_name,
-		       "player <keyword or id#> 	- edit a specific player",
-		       "player list			- list players",
-		       0);
-
-	    return;
-
-	}
-	Character *vch;
-
-	if (!str_prefix(argument, "list")) {
-
-	    player_edit_list(conn);
-
-	    return;
-
-	}
-	vch = player_lookup(argument);
-
-	if (vch == 0) {
-
-	    vch = load_player_by_name((Connection *) conn, argument);
-
-	    if (vch == 0) {
-
-		writeln(conn, "No such player.");
+		conn->editing->show(conn);
 
 		return;
 
-	    }
 	}
-	conn->editing = build_player_editor(vch);
+	if (!str_prefix(arg, "skill")) {
 
-	conn->editing->show(conn);
+		if (!argument || !*argument || argument[0] == '?') {
 
-	return;
+			cmd_syntax(ch, do_name,
+				   "skill <name or id#> 	- edit a specific skill",
+				   "skill create	 	- create a skill",
+				   "skill list		- list skills", 0);
 
-    }
-    if (!str_prefix(arg, "npc")) {
+			return;
 
-	if (!argument || !*argument || argument[0] == '?') {
+		}
+		Skill *skill;
 
-	    cmd_syntax(ch, do_name,
-		       "npc <keyword or id#> 	- edit a specific npc",
-		       "npc create	 	- create an npc",
-		       "npc list		- list npcs", 0);
+		if (!str_prefix(argument, "create")) {
 
-	    return;
+			skill = new_skill();
 
-	}
-	Character *vch;
+			conn->editing = build_skill_editor(skill);
 
-	if (!str_prefix(argument, "create")) {
+			conn->editing->show(conn);
 
-	    vch = new_char();
+			return;
 
-	    vch->npc = new_npc();
+		}
+		if (!str_prefix(argument, "list")) {
 
-	    conn->editing = build_npc_editor(vch);
+			skill_edit_list(conn);
 
-	    conn->editing->show(conn);
+		}
+		skill = skill_lookup(argument);
 
-	    return;
+		if (skill == 0) {
 
-	}
-	if (!str_prefix(argument, "list")) {
+			writeln(conn, "No such skill.");
 
-	    npc_edit_list(conn, ch->inRoom->area);
+			return;
 
-	    return;
+		}
+		conn->editing = build_skill_editor(skill);
 
-	}
-	vch = npc_lookup(argument);
+		conn->editing->show(conn);
 
-	if (vch == 0) {
-
-	    writeln(conn, "No such npc.");
-
-	    return;
+		return;
 
 	}
-	conn->editing = build_npc_editor(vch);
+	if (!str_prefix(arg, "player")) {
 
-	conn->editing->show(conn);
+		if (!argument || !*argument || argument[0] == '?') {
 
-	return;
+			cmd_syntax(ch, do_name,
+				   "player <keyword or id#> 	- edit a specific player",
+				   "player list			- list players",
+				   0);
 
-    }
-    if (!str_prefix(arg, "object")) {
+			return;
 
-	if (!argument || !*argument || argument[0] == '?') {
+		}
+		Character *vch;
 
-	    cmd_syntax(ch, do_name,
-		       "object <keyword or id#> - edit a specific object",
-		       "object create	 	 - create an object",
-		       "object list		 - list objects", 0);
+		if (!str_prefix(argument, "list")) {
 
-	    return;
+			player_edit_list(conn);
 
-	}
-	Object *obj;
+			return;
 
-	if (!str_prefix(argument, "create")) {
+		}
+		vch = player_lookup(argument);
 
-	    obj = new_object();
+		if (vch == 0) {
 
-	    conn->editing = build_object_editor(obj);
+			vch =
+			    load_player_by_name((Connection *) conn, argument);
 
-	    conn->editing->show(conn);
+			if (vch == 0) {
 
-	    return;
+				writeln(conn, "No such player.");
 
-	}
-	if (!str_prefix(argument, "list")) {
+				return;
 
-	    object_edit_list(conn, ch->inRoom->area);
+			}
+		}
+		conn->editing = build_player_editor(vch);
 
-	    return;
+		conn->editing->show(conn);
 
-	}
-	obj = object_lookup(argument);
-
-	if (obj == 0) {
-
-	    writeln(conn, "No such object.");
-
-	    return;
+		return;
 
 	}
-	conn->editing = build_object_editor(obj);
+	if (!str_prefix(arg, "npc")) {
 
-	conn->editing->show(conn);
+		if (!argument || !*argument || argument[0] == '?') {
 
-	return;
+			cmd_syntax(ch, do_name,
+				   "npc <keyword or id#> 	- edit a specific npc",
+				   "npc create	 	- create an npc",
+				   "npc list		- list npcs", 0);
 
-    }
-    if (!str_prefix(arg, "area")) {
+			return;
 
-	if (!argument || !*argument || argument[0] == '?') {
+		}
+		Character *vch;
 
-	    cmd_syntax(ch, do_name,
-		       "area <keyword or id#> 	- edit a specific area",
-		       "area create	 	- create an area",
-		       "area list		- list areas", 0);
+		if (!str_prefix(argument, "create")) {
 
-	    return;
+			vch = new_char();
+
+			vch->npc = new_npc();
+
+			conn->editing = build_npc_editor(vch);
+
+			conn->editing->show(conn);
+
+			return;
+
+		}
+		if (!str_prefix(argument, "list")) {
+
+			npc_edit_list(conn, ch->inRoom->area);
+
+			return;
+
+		}
+		vch = npc_lookup(argument);
+
+		if (vch == 0) {
+
+			writeln(conn, "No such npc.");
+
+			return;
+
+		}
+		conn->editing = build_npc_editor(vch);
+
+		conn->editing->show(conn);
+
+		return;
 
 	}
-	Area *area;
+	if (!str_prefix(arg, "object")) {
 
-	if (!str_prefix("create", argument)) {
+		if (!argument || !*argument || argument[0] == '?') {
 
-	    area = new_area();
+			cmd_syntax(ch, do_name,
+				   "object <keyword or id#> - edit a specific object",
+				   "object create	 	 - create an object",
+				   "object list		 - list objects", 0);
 
-	    conn->editing = build_area_editor(area);
+			return;
 
-	    conn->editing->show(conn);
+		}
+		Object *obj;
 
-	    return;
+		if (!str_prefix(argument, "create")) {
+
+			obj = new_object();
+
+			conn->editing = build_object_editor(obj);
+
+			conn->editing->show(conn);
+
+			return;
+
+		}
+		if (!str_prefix(argument, "list")) {
+
+			object_edit_list(conn, ch->inRoom->area);
+
+			return;
+
+		}
+		obj = object_lookup(argument);
+
+		if (obj == 0) {
+
+			writeln(conn, "No such object.");
+
+			return;
+
+		}
+		conn->editing = build_object_editor(obj);
+
+		conn->editing->show(conn);
+
+		return;
 
 	}
-	if (!str_prefix(argument, "list")) {
+	if (!str_prefix(arg, "area")) {
 
-	    area_edit_list(conn);
+		if (!argument || !*argument || argument[0] == '?') {
 
-	    return;
+			cmd_syntax(ch, do_name,
+				   "area <keyword or id#> 	- edit a specific area",
+				   "area create	 	- create an area",
+				   "area list		- list areas", 0);
+
+			return;
+
+		}
+		Area *area;
+
+		if (!str_prefix("create", argument)) {
+
+			area = new_area();
+
+			conn->editing = build_area_editor(area);
+
+			conn->editing->show(conn);
+
+			return;
+
+		}
+		if (!str_prefix(argument, "list")) {
+
+			area_edit_list(conn);
+
+			return;
+
+		}
+		area = area_lookup(argument);
+
+		if (area == 0) {
+
+			writeln(conn, "No such area.");
+
+			return;
+
+		}
+		conn->editing = build_area_editor(area);
+
+		conn->editing->show(conn);
+
+		return;
 
 	}
-	area = area_lookup(argument);
+	if (!str_prefix(arg, "engine")) {
 
-	if (area == 0) {
+		conn->editing = build_engine_editor(&engine_info);
 
-	    writeln(conn, "No such area.");
+		conn->editing->show(conn);
 
-	    return;
+		return;
 
 	}
-	conn->editing = build_area_editor(area);
-
-	conn->editing->show(conn);
-
-	return;
-
-    }
-    if (!str_prefix(arg, "engine")) {
-
-	conn->editing = build_engine_editor(&engine_info);
-
-	conn->editing->show(conn);
-
-	return;
-
-    }
-    do_edit(do_name, ch, str_empty);
+	do_edit(do_name, ch, str_empty);
 
 }
 
 DOFUN(shutdown)
 {
 
-    if (!is_implementor(ch)) {
+	if (!is_implementor(ch)) {
 
-	writeln(ch, "You do not have permission to do that.");
+		writeln(ch, "You do not have permission to do that.");
 
-	return;
+		return;
 
-    }
-    writeln(ch, "Shutting down server...");
+	}
+	writeln(ch, "Shutting down server...");
 
-    act_pos(TO_WORLD, POS_DEAD, ch, 0, 0, "$n has shutdown the server...");
+	act_pos(TO_WORLD, POS_DEAD, ch, 0, 0, "$n has shutdown the server...");
 
-    stop_server();
+	stop_server();
 
 }
 
 DOFUN(reboot)
 {
 
-    if (!is_implementor(ch)) {
+	if (!is_implementor(ch)) {
 
-	writeln(ch, "You do not have permission to do that.");
+		writeln(ch, "You do not have permission to do that.");
 
-	return;
+		return;
 
-    }
-    writeln(ch, "Rebooting server...");
+	}
+	writeln(ch, "Rebooting server...");
 
-    act_pos(TO_WORLD, POS_DEAD, ch, 0, 0, "$n has rebooted the server...");
+	act_pos(TO_WORLD, POS_DEAD, ch, 0, 0, "$n has rebooted the server...");
 
-    reboot_server();
+	reboot_server();
 
 }
 
 DOFUN(force)
 {
 
-    char arg[ARG_SIZ];
+	char arg[ARG_SIZ];
 
-    extern int pulse_tick;
+	extern int pulse_tick;
 
-    if (nullstr(argument)) {
+	if (nullstr(argument)) {
 
-	cmd_syntax(ch, do_name, "tick	- updates a game tick", 0);
+		cmd_syntax(ch, do_name, "tick	- updates a game tick", 0);
 
-	return;
+		return;
 
-    }
-    argument = one_argument(argument, arg);
+	}
+	argument = one_argument(argument, arg);
 
-    if (!str_cmp(arg, "tick")) {
+	if (!str_cmp(arg, "tick")) {
 
-	pulse_tick = 0;
+		pulse_tick = 0;
 
-	writeln(ch, "Game tick forced.");
+		writeln(ch, "Game tick forced.");
 
-	return;
+		return;
 
-    }
-    do_force(do_name, ch, "");
+	}
+	do_force(do_name, ch, "");
 
 }
 
 DOFUN(sockets)
 {
 
-    Buffer *buf = new_buf();
+	Buffer *buf = new_buf();
 
-    for (Client * c = first_client; c; c = c->next) {
+	for (Client * c = first_client; c; c = c->next) {
 
-	writelnf(buf, "~W%s~x - ~C%s~x (~G%s~x) ~B%s~x", getip(c),
-		 c->host, c->termType,
-		 c->account->playing ? c->account->
-		 playing->name : "Unknown");
+		writelnf(buf, "~W%s~x - ~C%s~x (~G%s~x) ~B%s~x", getip(c),
+			 c->host, c->termType,
+			 c->account->playing ? c->account->playing->
+			 name : "Unknown");
 
-    }
+	}
 
-    ch->page(ch, buf_string(buf));
+	ch->page(ch, buf_string(buf));
 
-    destroy_buf(buf);
+	destroy_buf(buf);
 
 }
 
 DOFUN(goto)
 {
 
-    Room *loc = find_location(ch, argument);
+	Room *loc = find_location(ch, argument);
 
-    if (loc == 0) {
+	if (loc == 0) {
 
-	writeln(ch, "Unable to find that location.");
+		writeln(ch, "Unable to find that location.");
 
-	return;
+		return;
 
-    }
-    act(TO_ROOM, ch, 0, 0, "$n dissappears in a swirling mist.");
+	}
+	act(TO_ROOM, ch, 0, 0, "$n dissappears in a swirling mist.");
 
-    char_from_room(ch);
+	char_from_room(ch);
 
-    char_to_room(ch, loc);
+	char_to_room(ch, loc);
 
-    act(TO_ROOM, ch, 0, 0, "$n appears in a swirling mist.");
+	act(TO_ROOM, ch, 0, 0, "$n appears in a swirling mist.");
 
-    do_look(str_empty, ch, str_empty);
+	do_look(str_empty, ch, str_empty);
 
 }
 
 DOFUN(import)
 {
 
-    if (nullstr(argument)) {
-
-	cmd_syntax(ch, do_name,
-		   "rom <filename>	- import a rom area file",
-		   "commit		    - commit an import", 0);
-
-	return;
-
-    }
-    char arg[ARG_SIZ];
-
-    argument = one_argument(argument, arg);
-
-    if (!str_cmp(arg, "rom")) {
-
 	if (nullstr(argument)) {
 
-	    writeln(ch, "Please specify a file to import.");
+		cmd_syntax(ch, do_name,
+			   "rom <filename>	- import a rom area file",
+			   "commit		    - commit an import", 0);
 
-	    return;
-
-	}
-	FILE *fp = fopen(argument, "r");
-
-	if (fp == 0) {
-
-	    writelnf(ch, "Could not open %s for reading.", argument);
-
-	    return;
+		return;
 
 	}
-	if (!str_suffix(".lst", argument)) {
+	char arg[ARG_SIZ];
 
-	    if (!import_rom_area_list(dirname((char *) argument), fp))
-		writeln(ch, "Could not import areas.");
+	argument = one_argument(argument, arg);
 
-	    else {
+	if (!str_cmp(arg, "rom")) {
 
-		writeln(ch, "Areas imported.");
+		if (nullstr(argument)) {
 
-	    }
+			writeln(ch, "Please specify a file to import.");
 
-	} else {
+			return;
 
-	    if (!import_rom_file(fp))
-		writeln(ch, "Could not import file.");
+		}
+		FILE *fp = fopen(argument, "r");
 
-	    else {
+		if (fp == 0) {
 
-		writeln(ch, "File imported.");
+			writelnf(ch, "Could not open %s for reading.",
+				 argument);
 
-	    }
+			return;
+
+		}
+		if (!str_suffix(".lst", argument)) {
+
+			if (!import_rom_area_list
+			    (dirname((char *)argument), fp))
+				writeln(ch, "Could not import areas.");
+
+			else {
+
+				writeln(ch, "Areas imported.");
+
+			}
+
+		} else {
+
+			if (!import_rom_file(fp))
+				writeln(ch, "Could not import file.");
+
+			else {
+
+				writeln(ch, "File imported.");
+
+			}
+
+		}
+
+		return;
 
 	}
-
-	return;
-
-    }
-    if (!str_cmp(arg, "commit")) {
-	import_commit(true);
-	writeln(ch, "Import committed.");
-	return;
-    }
-    do_import(do_name, ch, str_empty);
+	if (!str_cmp(arg, "commit")) {
+		import_commit(true);
+		writeln(ch, "Import committed.");
+		return;
+	}
+	do_import(do_name, ch, str_empty);
 
 }
 
 DOFUN(db)
 {
 
-    if (nullstr(argument)) {
-
-	cmd_syntax(ch, do_name, "save [type]	- saves to the database",
-		   0);
-
-	return;
-
-    }
-    char arg[ARG_SIZ];
-
-    argument = one_argument(argument, arg);
-
-    if (!str_cmp(arg, "save")) {
-
 	if (nullstr(argument)) {
 
-	    writeln(ch, "Valid types are: socials areas");
+		cmd_syntax(ch, do_name,
+			   "save [type]	- saves to the database", 0);
 
-	    return;
-
-	}
-	if (!str_prefix(argument, "socials")) {
-
-	    save_socials();
-
-	    writeln(ch, "Socials saved.");
-
-	    return;
-
-	} else if (!str_prefix(argument, "areas")) {
-
-	    for (Area * area = first_area; area; area = area->next) {
-
-		if (!is_set(area->flags, AREA_CHANGED))
-		    continue;
-
-		remove_bit(area->flags, AREA_CHANGED);
-
-		save_area(area);
-
-	    }
-
-	    writeln(ch, "Areas saved.");
-
-	    return;
+		return;
 
 	}
-	do_db(do_name, ch, arg);
+	char arg[ARG_SIZ];
 
-	return;
+	argument = one_argument(argument, arg);
 
-    }
-    do_db(do_name, ch, str_empty);
+	if (!str_cmp(arg, "save")) {
+
+		if (nullstr(argument)) {
+
+			writeln(ch, "Valid types are: socials areas");
+
+			return;
+
+		}
+		if (!str_prefix(argument, "socials")) {
+
+			save_socials();
+
+			writeln(ch, "Socials saved.");
+
+			return;
+
+		} else if (!str_prefix(argument, "areas")) {
+
+			for (Area * area = first_area; area; area = area->next) {
+
+				if (!is_set(area->flags, AREA_CHANGED))
+					continue;
+
+				remove_bit(area->flags, AREA_CHANGED);
+
+				save_area(area);
+
+			}
+
+			writeln(ch, "Areas saved.");
+
+			return;
+
+		}
+		do_db(do_name, ch, arg);
+
+		return;
+
+	}
+	do_db(do_name, ch, str_empty);
 
 }

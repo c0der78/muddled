@@ -18,7 +18,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include "command.h"
+#include "muddyplains/command.h"
 #include <stdlib.h>
 #include <stdarg.h>
 #include <muddyengine/character.h>
@@ -28,7 +28,7 @@
 #include <muddyengine/account.h>
 #include <muddyengine/engine.h>
 
-Character *tch = 0;
+static Character *tch = 0;
 
 void dummy_writeln(Connection *conn, const char *fmt)
 {

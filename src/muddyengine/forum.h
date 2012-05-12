@@ -31,42 +31,42 @@ typedef struct Note Note;
 #include <time.h>
 
 typedef enum {
-    DEF_NORMAL,
-    DEF_INCLUDE,
-    DEF_EXCLUDE,
-    DEF_READONLY
+	DEF_NORMAL,
+	DEF_INCLUDE,
+	DEF_EXCLUDE,
+	DEF_READONLY
 } forum_t;
 
 struct Forum {
-    identifier_t id;
-    const char *name;
-    const char *description;
-    short readLevel;
-    short writeLevel;
-    const char *defaultTo;
-    forum_t type;
-    int purgeDays;
-    Note *notes;
-    int flags;
+	identifier_t id;
+	const char *name;
+	const char *description;
+	short readLevel;
+	short writeLevel;
+	const char *defaultTo;
+	forum_t type;
+	int purgeDays;
+	Note *notes;
+	int flags;
 };
 
 struct Note {
-    Note *next;
-    identifier_t id;
-    const char *from;
-    time_t date;
-    const char *toList;
-    const char *subject;
-    const char *text;
-    time_t expire;
+	Note *next;
+	identifier_t id;
+	const char *from;
+	time_t date;
+	const char *toList;
+	const char *subject;
+	const char *text;
+	time_t expire;
 };
 
 extern Forum *forum_table;
 extern int max_forum;
 
 enum {
-    FORUM_CHANGED = (1 << 0),
-    FORUM_NOUNSUB = (1 << 1)
+	FORUM_CHANGED = (1 << 0),
+	FORUM_NOUNSUB = (1 << 1)
 };
 
 #define FORUM_ERROR -1
@@ -92,4 +92,4 @@ int load_forums();
 Note *last_note(Character *, Forum *);
 int delete_note(Forum *, Note *);
 
-#endif				/* //  #ifndef FORUM_H */
+#endif				/* // #ifndef FORUM_H */

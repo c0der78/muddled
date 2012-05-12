@@ -21,7 +21,6 @@
 #ifndef OLC_H
 #define OLC_H
 
-
 typedef struct OLC OLC;
 
 typedef struct Editor Editor;
@@ -34,7 +33,6 @@ typedef struct Editor Editor;
 #include <muddyengine/area.h>
 #include <muddyengine/skill.h>
 #include <muddyengine/social.h>
-
 
 void room_editor(Client *, const char *);
 void exit_editor(Client *, const char *);
@@ -93,18 +91,17 @@ void skill_edit_list(Client *);
 void social_edit_list(Client *);
 
 struct Editor {
-    void (*edit) (Client *, const char *);
-    void (*show) (Client *);
-    void *data;
-    Editor *next;
+	void (*edit) (Client *, const char *);
+	void (*show) (Client *);
+	void *data;
+	Editor *next;
 };
 
 #define EDIT_CHANGED 1
 #define EDIT_NOCHANGE 0
 #define EDIT_END -1
 int edit_text(Client *, const char **, const char *);
-int edit_flag(const char *, Client *, Flag *, const char *,
-	      const Lookup *);
+int edit_flag(const char *, Client *, Flag *, const char *, const Lookup *);
 int edit_string(const char *, Client *, const char **, const char *);
 
 Editor *new_editor();
@@ -114,4 +111,4 @@ void finish_editing(Client *);
 void olc_syntax(Client *, const char *, ...)
     __attribute__ ((format(printf, 2, 3)));
 
-#endif				/* //  #ifndef OLC_H */
+#endif				/* // #ifndef OLC_H */

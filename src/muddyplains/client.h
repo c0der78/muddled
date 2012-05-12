@@ -34,71 +34,71 @@ typedef struct Client Client;
 
 struct Client {
 
-    //the order of the function pointers is so we can cast
-    // to an interface in the library
-    void (*handler) (Client *, const char *);
+	// the order of the function pointers is so we can cast
+	// to an interface in the library
+	void (*handler) (Client *, const char *);
 
-    void (*writelnf) (Client *, const char *, ...);
+	void (*writelnf) (Client *, const char *, ...);
 
-    void (*writeln) (Client *, const char *);
+	void (*writeln) (Client *, const char *);
 
-    void (*writef) (Client *, const char *, ...);
+	void (*writef) (Client *, const char *, ...);
 
-    void (*write) (Client *, const char *);
+	void (*write) (Client *, const char *);
 
-    void (*page) (Client *, const char *);
+	void (*page) (Client *, const char *);
 
-    void (*vwrite) (Client *, const char *, va_list);
+	void (*vwrite) (Client *, const char *, va_list);
 
-    void (*titlef) (Client *, const char *, ...);
+	void (*titlef) (Client *, const char *, ...);
 
-    void (*title) (Client *, const char *);
+	void (*title) (Client *, const char *);
 
-    void (*vtitle) (Client *, const char *, va_list);
+	void (*vtitle) (Client *, const char *, va_list);
 
-     bool(*is_playing) (Client *);
+	 bool(*is_playing) (Client *);
 
-    short scrHeight;
+	short scrHeight;
 
-    short scrWidth;
+	short scrWidth;
 
-    const char *termType;
+	const char *termType;
 
-    const char *host;
+	const char *host;
 
-    Account *account;
+	Account *account;
 
-    Client *next;
+	Client *next;
 
-    int socket;
+	int socket;
 
-    struct sockaddr_in addr;
+	struct sockaddr_in addr;
 
-    char lastCommand[BUF_SIZ];
+	char lastCommand[BUF_SIZ];
 
-    unsigned char inbuf[4 * ARG_SIZ];
+	unsigned char inbuf[4 * ARG_SIZ];
 
-    char incomm[ARG_SIZ];
+	char incomm[ARG_SIZ];
 
-    char *outbuf;
+	char *outbuf;
 
-    int outsize;
+	int outsize;
 
-    size_t outtop;
+	size_t outtop;
 
-    bool fCommand;
+	bool fCommand;
 
-    short repeat;
+	short repeat;
 
-    short password_retries;
+	short password_retries;
 
-    char *showstr_head;
+	char *showstr_head;
 
-    const char *showstr_point;
+	const char *showstr_point;
 
-     bool(*readln) (Client *);
+	 bool(*readln) (Client *);
 
-    Editor *editing;
+	Editor *editing;
 
 };
 
@@ -140,4 +140,4 @@ bool process_output(Client *, bool);
 
 void bust_a_prompt(Client *);
 
-#endif				/* //  #ifndef CONNECTION_H */
+#endif				/* // #ifndef CONNECTION_H */

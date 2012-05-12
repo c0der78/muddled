@@ -18,66 +18,33 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
+#include <stdbool.h>
 #include <muddyengine/db.h>
-#include <muddyengine/string.h>
+#include <muddyengine/lookup.h>
+#include <muddyengine/object.h>
 
-void test_db_setup() {
-	init_sqlite3();
-}
 
-void test_db_teardown() {
-	close_sqlite3();
-}
-
-START_TEST(test_escape_db_str)
+START_TEST(test_obj_values)
 {
-	const char *str = "test'ing";
-	
-	const char *estr = escape_db_str(str);
-	
-	fail_unless(!str_cmp(estr, "test''ing"), "quotation was not escaped");
+	Object *obj = new_object();
+
+	vset_int(&obj->value[0], value_lookup(dam_types, "bash"));
+
+	dam_t value = vget_int(&obj->value[0]);
+
+	fail_if(value != DAM_BASH);
+
 }
 END_TEST
 
-START_TEST(test_get_rowid_in_transaction)
+
+Suite *object_suite (void)
 {
-	db_begin_transaction();
-
-	if ( sqlite3_exec( sqlite3_instance, "create table if not exists test(id integer primary key, value integer default null)", NULL, 0, 0 ) != SQLITE_OK )
-	{
-		fail( "could note create test table" );
-	}
-	
-	if ( sqlite3_exec( sqlite3_instance, "insert into test(value) values(5)", NULL, 0, 0) != SQLITE_OK)
-	{
-		fail( "could not insert to test table" );
-	}
-	
-	int id = sqlite3_last_insert_rowid( sqlite3_instance );
-
-	fail_if(id == 0);
-
-	sqlite3_exec( sqlite3_instance, "drop table if exists test", NULL, 0, 0);
-
-	db_end_transaction();
-}
-END_TEST
-
-Suite *database_suite ()
-{
-  Suite *s = suite_create ("Database");
-
-  /* Core test case */
-  TCase *tc_core = tcase_create ("Core");
-
-  tcase_add_checked_fixture(tc_core, test_db_setup, test_db_teardown);
-
-  tcase_add_test (tc_core, test_escape_db_str);
-
-  tcase_add_test (tc_core, test_get_rowid_in_transaction);
-
-  suite_add_tcase (s, tc_core);
-
+  Suite *s = suite_create ("Objects");
+  
+  TCase *tc_writing = tcase_create("Core");
+  tcase_add_test (tc_writing, test_obj_values);
+  suite_add_tcase(s, tc_writing);
 
   return s;
 }

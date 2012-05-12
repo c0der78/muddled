@@ -47,19 +47,19 @@
 #define SQL_LOOKUP	1003
 
 typedef struct field_map {
-    const char *name;
-    const void *value;
-    int type;
-    const void *arg1;
-    const void *arg2;
-    int flags;
+	const char *name;
+	const void *value;
+	int type;
+	const void *arg1;
+	const void *arg2;
+	int flags;
 } field_map;
 
-typedef int (*custom_sql_bind) (sql_stmt *, int, field_map *);
+typedef int (*custom_sql) (sql_stmt *, int, field_map *);
 
 const char *tablenameid(const char *tablename);
 const char *escape_sql_str(const char *);
-int db_save_int_array(sql_stmt *, int, field_map *);
+int db_save_int_array(sql_stmt *, int, const field_map *);
 void db_read_int_array(int, void *, sql_stmt *, int);
 int db_begin_transaction();
 int db_end_transaction();
@@ -70,10 +70,11 @@ const char *sql_errmsg();
 int db_last_insert_rowid();
 int sql_exec(const char *);
 void db_close();
-int db_open(const char *);
+int db_open(const char *, const char *);
 int sql_query(const char *, int, sql_stmt **);
 int sql_insert_query(field_map *, const char *);
 int sql_update_query(field_map *, const char *, sql_int64);
+int sql_select_query(field_map *, const char *, const char *);
 
 const char *sql_column_str(sql_stmt *, int);
 int sql_column_index(sql_stmt *, const char *);
@@ -100,6 +101,7 @@ int db_save_lookup(sql_stmt *, int, field_map *);
 #define sql_column_bytes 	sqlite3_column_bytes
 #define sql_column_bytes16 	sqlite3_column_bytes16
 #define sql_column_double 	sqlite3_column_double
+#define sql_column_float	sqlite3_column_double
 #define sql_column_int 		sqlite3_column_int
 #define sql_column_int64 	sqlite3_column_int64
 #define sql_column_text 	sqlite3_column_text
@@ -115,31 +117,32 @@ int db_save_lookup(sql_stmt *, int, field_map *);
  * @return the identifier of the value
  */
 sql_int64 db_save(field_map *, const char *, sql_int64);
-
-int field_map_int(field_map *);
-float field_map_float(field_map *);
-double field_map_double(field_map *);
-const char *field_map_str(field_map *);
-Flag *field_map_flag(field_map *);
+int db_load(field_map *, const char *, const char *, ...)
+    __attribute__ ((format(printf, 3, 4)));
+int field_map_int(const field_map *);
+float field_map_float(const field_map *);
+double field_map_double(const field_map *);
+const char *field_map_str(const field_map *);
+Flag *field_map_flag(const field_map *);
 
 /*
-#define field(type, base, value, data) \
-	*( (type *) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
+ * #define field(type, base, value, data) \ *( (type *) ( (size_t) (value) 
+ * - (size_t) (base) + (size_t) (data) ) )
+ * 
+ * #define field_int(base, value, data) \ *( (int *) ( (size_t) (value) -
+ * (size_t) (base) + (size_t) (data) ) )
+ * 
+ * #define field_int_array(base, value, data) \ *( (int **) ( (size_t)
+ * (value) - (size_t) (base) + (size_t) (data) ) )
+ * 
+ * #define field_str(base, value, data) \ *( (const char **) ( (size_t)
+ * (value) - (size_t) (base) + (size_t) (data) ) )
+ * 
+ * #define field_double(base, value, data) \ *( (double *) ( (size_t)
+ * (value) - (size_t) (base) + (size_t) (data) ) )
+ * 
+ * #define field_flag(base, value, data) \ *( (Flag **) ( (size_t) (value) 
+ * - (size_t) (base) + (size_t) (data) ) ) 
+ */
 
-#define field_int(base, value, data) \
-	*( (int *) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
-
-#define field_int_array(base, value, data) \
-	*( (int **) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
-
-#define field_str(base, value, data) \
-	*( (const char **) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
-
-#define field_double(base, value, data) \
-	*( (double *) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
-
-#define field_flag(base, value, data) \
-	*( (Flag **) ( (size_t) (value) - (size_t) (base) + (size_t) (data) ) )
-*/
-
-#endif				/* //  #ifndef DB_H */
+#endif				/* // #ifndef DB_H */

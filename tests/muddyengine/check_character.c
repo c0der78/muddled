@@ -28,7 +28,7 @@
 #include <muddyengine/player.h>
 #include <muddyengine/string.h>
 
-Character *tch = 0;
+static Character *tch = 0;
 char buffer[BUF_SIZ] = {0};
 
 

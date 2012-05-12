@@ -55,4 +55,4 @@ void restore_cursor(Client *);
 
 void clear_screen(Client *);
 
-#endif				/* //  #ifndef TELNET_H */
+#endif				/* // #ifndef TELNET_H */

@@ -45,4 +45,4 @@ void reboot_server();
 
 void server_import(const char *, const char *);
 
-#endif				/* //  #ifndef SERVER_H */
+#endif				/* // #ifndef SERVER_H */

@@ -38,5 +38,4 @@ void init_lua();
 
 void close_lua();
 
-
-#endif				/* //  #ifndef SCRIPT_H */
+#endif				/* // #ifndef SCRIPT_H */

@@ -19,8 +19,10 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef EXPLORED_H
-#define EXPLORED_H
+#ifndef __EXPLORED_H_
+#define __EXPLORED_H_
+
+#include <muddyengine/area.h>
 
 int roomcount(Flag *);
 
@@ -36,4 +38,4 @@ void convert_explored_rle(Flag *, const char *);
 
 bool is_explorable(Room *);
 
-#endif				/* //  #ifndef EXPLORED_H */
+#endif

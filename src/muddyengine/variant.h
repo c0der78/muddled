@@ -23,7 +23,7 @@
  * __VARIANT_H_
  */
 #ifndef __VARIANT_H_
-
+#define __VARIANT_H_
 
 /*
  * ! @enum Variable Types @abstract definitions for variable types @constant
@@ -33,13 +33,13 @@
  * variable @constant VAR_PTR a generic ptr varaible @discussion
  */
 enum {
-    VAR_CHAR,
-    VAR_SHORT,
-    VAR_INT,
-    VAR_LONG,
-    VAR_FLOAT,
-    VAR_DOUBLE,
-    VAR_PTR
+	VAR_CHAR,
+	VAR_SHORT,
+	VAR_INT,
+	VAR_LONG,
+	VAR_FLOAT,
+	VAR_DOUBLE,
+	VAR_PTR
 };
 
 /*
@@ -51,16 +51,16 @@ enum {
  * @field ptr_value the generic pointer value
  */
 typedef struct variant_t {
-    int type;
-    union {
-	char char_value;
-	short short_value;
-	int int_value;
-	long long_value;
-	float float_value;
-	double double_value;
-	const void *ptr_value;
-    };
+	int type;
+	union {
+		char char_value;
+		short short_value;
+		int int_value;
+		long long_value;
+		float float_value;
+		double double_value;
+		const void *ptr_value;
+	};
 } variant_t;
 
 /*
