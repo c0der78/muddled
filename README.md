@@ -18,12 +18,16 @@ see [documentation](http://c0der78.github.com/muddyplains/docs)
 I would like to see what other people could do with this.
 
 #### requirements
-* ruby with the rake-builder and daemon gems
-* lua
+* [rake](http://rake.ruby.org) (ruby)
+* the startup script requires the 'daemons' ruby gem
 * sqlite3
 
+#### optional
+* lua
+
 #### compiling
-* just run 'rake' or type 'rake -T' to see a list of specific builds
+* running 'rake' will compile and run unit tests
+* run 'rake -T' to see a list of specific builds
 * 'muddyplains' is the release build, 'muddyplainsd' is the debug build
 
 #### todo
