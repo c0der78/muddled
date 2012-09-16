@@ -15,9 +15,9 @@ CLEAN.include("*~", "*.bak")
 task :init => ['var', 'var/run', 'var/log']
 
 task :doc do
-    sh 'headerdoc2html -j -o html src/muddyengine/*.h'
+    sh 'headerdoc2html -o docs src/muddyengine/*.h'
 
-    sh 'gatherheaderdoc html index.html'
+    sh 'gatherheaderdoc docs index.html'
 end
 
 task :indent do

@@ -1,7 +1,9 @@
-muddyplains
+[muddyplains](http://c0der78.github.com/muddyplains)
 ===========
 
 a multi user dungeon in c99
+
+see [documentation](http://c0der78.github.com/muddyplains/docs)
 
 #### features
 * ANSI color
@@ -13,7 +15,7 @@ a multi user dungeon in c99
 * accounts, races, classes, skills, spells, forums, help system, etc
 
 #### purpose
-I would like to see this become a community learning mud, maybe an ongoing school project or something.
+I would like to see what other people could do with this.
 
 #### requirements
 * ruby with the rake-builder and daemon gems
