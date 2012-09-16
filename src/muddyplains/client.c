@@ -237,7 +237,7 @@ static bool write_to_socket(int desc, char *txt, size_t length)
 
 	size_t iStart;
 
-	size_t nWrite;
+	int nWrite;
 
 	size_t nBlock;
 

@@ -25,16 +25,16 @@
 #ifndef __ACCOUNT_H_
 #define __ACCOUNT_H_
 
-/*
- * ! @typedef Account 
+/*!
+ * @typedef Account 
  */
 typedef struct Account Account;
-/*
- * ! @typedef AccountPlayer 
+/*!
+ * @typedef AccountPlayer 
  */
 typedef struct AccountPlayer AccountPlayer;
-/*
- * ! @typedef AccountForum 
+/*!
+ * @typedef AccountForum 
  */
 typedef struct AccountForum AccountForum;
 
@@ -47,8 +47,8 @@ typedef struct AccountForum AccountForum;
 #include <muddyengine/connection.h>
 #include <time.h>
 
-/*
- * ! @typedef Account @abstract Represents a user account.  An account may 
+/*!
+ * @typedef Account @abstract Represents a user account.  An account may 
  * have multiple game characters. @author Ryan Jennings
  * <c0der78@gmail.com> @field login account id used to login @field email
  * email address for account @field password encrypted password for
@@ -77,8 +77,8 @@ struct Account {
 	AccountForum *forumData;
 };
 
-/*
- * ! @struct AccountPlayer @abstract a player associated with an account
+/*!
+ * @struct AccountPlayer @abstract a player associated with an account
  * @field charId the character id @field name the character name @field
  * level the character level 
  */
@@ -89,8 +89,8 @@ struct AccountPlayer {
 	short level;
 };
 
-/*
- * ! @struct AccountForum @abstract a forum associated with an account
+/*!
+ * @struct AccountForum @abstract a forum associated with an account
  * @field lastNote the last note read in the forum @field unsubscribed
  * false if account is subscribed to the forum @field draft any saved
  * drafts of a note in the forum 
@@ -103,8 +103,8 @@ struct AccountForum {
 	const char *draft;
 };
 
-/*
- * ! @enum Account Flags @abstract flags for controlling account behaviour
+/*!
+ * @enum Account Flags @abstract flags for controlling account behaviour
  * @constant ACC_COLOR_OFF controls whether the account connection display
  * color text @discussion 
  */
@@ -112,91 +112,91 @@ enum {
 	ACC_COLOR_OFF
 };
 
-/*
- * ! @const account_flags @abstract the table used for account flag /
+/*!
+ * @const account_flags @abstract the table used for account flag /
  * string conversion 
  */
 extern const Lookup account_flags[];
 
-/*
- * ! @group Memory Management 
+/*!
+ * @group Memory Management 
  */
 
-/*
- * ! creates a new account @return a newly allocated account 
+/*!
+ * creates a new account @return a newly allocated account 
  */
 Account *new_account(Connection *);
-/*
- * ! create a account player link and performs initialization @return a
+/*!
+ * create a account player link and performs initialization @return a
  * newly allocated account player link 
  */
 AccountPlayer *new_account_player();
-/*
- * ! performs cleanup and destroys a created account @param account the
+/*!
+ * performs cleanup and destroys a created account @param account the
  * allocated account to destroy 
  */
 void destroy_account(Account *);
-/*
- * ! performs cleanup and destroys a created account player link @param
+/*!
+ * performs cleanup and destroys a created account player link @param
  * accountPlayer the allocated account player link to destroy 
  */
 void destroy_account_player(AccountPlayer *);
 
-/*
- * ! @group Memory Management 
+/*!
+ * @group Memory Management 
  */
 
-/*
- * ! @group Data Management 
+/*!
+ * @group Data Management 
  */
 
-/*
- * ! loads the players for an account @param account the allocated account 
+/*!
+ * loads the players for an account @param account the allocated account 
  * to load players for 
  */
 int load_account_players(Account *);
 
-/*
- * ! loads the forum data for an account @param account the allocated
+/*!
+ * loads the forum data for an account @param account the allocated
  * account to load forum data for 
  */
 int load_account_forums(Account *);
 
-/*
- * ! loads the account for the login @param account the allocated account
+/*!
+ * loads the account for the login @param account the allocated account
  * to load into @param login the login id of the account to load @return 1 
  * if successfull otherwise 0 
  */
 int load_account(Account *, const char *);
-/*
- * ! deletes an account record from saved data @param account the account
+/*!
+ * deletes an account record from saved data @param account the account
  * to delete @return 1 if successfull otherwise 0 
  */
 int delete_account(Account *);
-/*
- * ! saves an account to records @param account the account to save
+/*!
+ * saves an account to records @param account the account to save
  * @return 1 if successfull otherwise 0 
  */
 int save_account(Account *);
 
-/*
- * ! @group Data Management 
+/*!
+ * @group Data Management 
  */
 
-/*
- * ! @param account the account to get value from @return the last read
+/*!
+ * @param account the account to get value from @return the last read
  * note for the current forum 
  */
 time_t account_forum_last_note(Account *);
 
-/*
- * ! @param account the account to get value from @return true if account
+/*!
+ * @param account the account to get value from @return true if account
  * is subscribed to current forum 
  */
 bool account_forum_is_subscribed(Account *);
 
-/*
- * ! sets the last note timestamp for the current forum @param account the 
+/*!
+ * sets the last note timestamp for the current forum @param account the 
  * account to set value for @param time the created time of the last note 
  */
 void account_forum_set_last_note(Account *, time_t);

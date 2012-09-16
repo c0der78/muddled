@@ -195,6 +195,7 @@ int load_account(Account * acc, const char *login)
 	load_account_forums(acc);
 
 	return 1;*/
+	return 0;
 }
 
 field_map *account_forum_fields(Account *acc, AccountForum *forum)

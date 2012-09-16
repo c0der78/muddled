@@ -112,8 +112,8 @@ int db_save_lookup(sql_stmt *, int, field_map *);
 #define sql_column_name		sqlite3_column_name
 #define sql_column_count 	sqlite3_column_count
 
-/*
- * ! saves a record @param table the dbvalues structure to save @param
+/*!
+ * saves a record @param table the dbvalues structure to save @param
  * tableName the name of the table @param id the current id of the value
  * @return the identifier of the value
  */

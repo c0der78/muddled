@@ -205,7 +205,6 @@ sql_int64 db_save(field_map * table, const char *tableName, sql_int64 id)
 	if (id == 0) {
 		if (sql_insert_query(table, tableName) != SQL_OK)
 			log_data("could not insert to %s", tableName);
-
 		return db_last_insert_rowid();
 	} else {
 		if (sql_update_query(table, tableName, id) != SQL_OK)

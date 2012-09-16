@@ -1221,7 +1221,7 @@ bool import_rom_objects(FILE * fp)
 		const char *item_type = fread_word(fp);
 
 		pObjIndex->type =
-		    (wear_type) value_lookup(object_types, item_type);
+		    (object_type) value_lookup(object_types, item_type);
 
 		rom_convert_obj_flags(pObjIndex->flags, fread_flag(fp));
 

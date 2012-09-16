@@ -17,15 +17,15 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-/*
- * ! @header Structure, methods and constants related to accounts @ignore
+/*!
+ * @header Structure, methods and constants related to accounts @ignore
  * __AFFECT_H_
  */
 #ifndef __AFFECT_H_
 #define __AFFECT_H_
 
-/*
- * ! @typedef Affect 
+/*!
+ * @typedef Affect 
  */
 typedef struct Affect Affect;
 
@@ -33,15 +33,15 @@ typedef struct Affect Affect;
 #include <muddyengine/engine.h>
 #include <stdbool.h>
 
-/*
- * ! @typedef affect_callback @param affect the affect being called from
+/*!
+ * @typedef affect_callback @param affect the affect being called from
  * @param affected the object being affected @param remove true if the affect
  * should be removed @param arg an extra argument if needed
  */
 typedef void affect_callback(Affect *, void *, bool);
 
-/*
- * ! @typedef Affect @abstract Represents an affect that can be applied to
+/*!
+ * @typedef Affect @abstract Represents an affect that can be applied to
  * things in the world @field type a skill id if the affect comes from a
  * skill @field level the level of the affect @field duration the current
  * duration of the affect @field perm_duration the duration when the affect
@@ -60,8 +60,8 @@ struct Affect {
 	affect_callback *callback;
 };
 
-/*
- * ! @enum Affect Flags @abstract @constant AFF_BLIND causes blindness
+/*!
+ * @enum Affect Flags @abstract @constant AFF_BLIND causes blindness
  * @constant AFF_INVISIBLE makes affected invisible @constant AFF_DETECT_EVIL
  * makes affected able to recognize evil @constant AFF_DETECT_INVIS makes
  * affected able to see invisible @constant AFF_DETECT_MAGIC makes affected
@@ -114,42 +114,42 @@ enum {
 	AFF_SLOW
 };
 
-/*
- * ! @group Memory Management 
+/*!
+ * @group Memory Management 
  */
 
-/*
- * ! creates a new affect @return the newly allocated affect
+/*!
+ * creates a new affect @return the newly allocated affect
  */
 Affect *new_affect();
 
-/*
- * ! destroys an affect @param affect the allocated affect to destroy
+/*!
+ * destroys an affect @param affect the allocated affect to destroy
  */
 void destroy_affect(Affect *);
 
-/*
- * ! @group Memory Management 
+/*!
+ * @group Memory Management 
  */
 
-/*
- * ! @group Data Management 
+/*!
+ * @group Data Management 
  */
 
-/*
- * ! allocates and loads an affect by id @param id the affect id to load
+/*!
+ * allocates and loads an affect by id @param id the affect id to load
  * @return the new allocated affect loaded from the id
  */
 Affect *load_affect_by_id(identifier_t);
 
-/*
- * ! saves an affect to records @param affect the affect to save @return 1 if
+/*!
+ * saves an affect to records @param affect the affect to save @return 1 if
  * successful, zero otherwise
  */
 int save_affect(Affect *);
 
-/*
- * ! @group Data Management 
+/*!
+ * @group Data Management 
  */
 
 void affect_to_char(Character *, Affect *);
@@ -158,17 +158,17 @@ void affect_remove(Character *, Affect *);
 const char *affect_name(Affect *);
 bool is_affected(Character *, identifier_t);
 
-/*
- * ! @constant affect_callbacks the table used to lookup affect callbacks 
+/*!
+ * @constant affect_callbacks the table used to lookup affect callbacks 
  */
 extern const Lookup affect_callbacks[];
-/*
- * ! @constant affect_flags flags used for affects 
+/*!
+ * @constant affect_flags flags used for affects 
  */
 extern const Lookup affect_flags[];
 
-/*
- * ! @group Callbacks 
+/*!
+ * @group Callbacks 
  */
 affect_callback affect_apply_resists;
 affect_callback affect_apply_str;
@@ -184,8 +184,8 @@ affect_callback affect_apply_move;
 affect_callback affect_apply_hit;
 affect_callback affect_apply_size;
 affect_callback affect_apply_align;
-/*
- * ! @group Callbacks 
+/*!
+ * @group Callbacks 
  */
 
 #endif

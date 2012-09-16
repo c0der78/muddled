@@ -26,6 +26,8 @@
 
 #ifdef HAVE_LUA
 
+#define lua_open()  luaL_newstate()
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>

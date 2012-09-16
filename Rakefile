@@ -1,102 +1,140 @@
-require 'rubygems' if RUBY_VERSION < '1.9'
-require 'rake'
-require 'rake/builder'
 require 'rake/clean'
 
-# create runtime directories
-directory 'var'
+# constants
+
+COMPILER = "clang"
+ARCHIVER = "ar rs"
+BIN = "bin"
+FLAGS = "-Wall -Werror -std=c99 -Wno-uninitialized -Isrc -DROOT_DIR=\"#{File.dirname(__FILE__)}\""
+LIB_NAME = "muddy"
+LIB_FLAGS = "-lsqlite3 -llua"
+LIB_FLAGS_TEST = "-lcheck"
+
+# binaries 
+
+EXE_RELEASE = "muddyplains"
+EXE_DEBUG = "muddyplainsd"
+EXE_LIB_TEST = "muddyengine_test"
+EXE_TEST = "muddyplains_test"
+LIB_RELEASE = "lib#{LIB_NAME}.a"
+LIB_DEBUG = "lib#{LIB_NAME}d.a"
+
+# output files
+
+OBJ_LIB_RELEASE = FileList['src/muddyengine/*.c'].gsub("src/muddyengine", 'var/build/release').ext('.o')
+OBJ_RELEASE = FileList['src/muddyplains/*.c', 'src/main.c'].gsub('src/muddyplains', 'var/build/release').gsub('src', 'var/build/release').ext('.o')
+OBJ_LIB_DEBUG = FileList['src/muddyengine/*.c'].gsub('src/muddyengine', 'var/build/debug').ext('.o')
+OBJ_DEBUG = FileList['src/muddyplains/*.c', 'src/main.c'].gsub('src/muddyplains', 'var/build/debug').gsub('src', 'var/build/debug').ext('.o')
+OBJ_LIB_TEST = FileList['tests/muddyengine/*.c'].gsub('tests/muddyengine', 'var/build/tests').ext('.o')
+OBJ_TEST = FileList['tests/muddyplains/*.c', 'src/muddyplains/*.c'].gsub('tests/muddyplains', 'var/build/tests').gsub('src/muddyplains', 'var/build/tests').ext('.o')
+# distribution
+
+DIST_HEADERS = FileList['src/muddyengine/*.h']
+
+DIST_LIBRARY = FileList["#{LIB_RELEASE}"]
+
+DIST_LIB_LOCATION = "/usr/local/lib"
+
+DIST_H_LOCATION = "/usr/local/include/muddyengine"
+
+
+# files
+
+file "#{LIB_RELEASE}" => OBJ_LIB_RELEASE
+file "#{LIB_DEBUG}" => OBJ_LIB_DEBUG
+file "#{EXE_RELEASE}" => OBJ_RELEASE
+file "#{EXE_DEBUG}" => OBJ_DEBUG
+file "#{EXE_LIB_TEST}" => OBJ_LIB_TEST
+file "#{EXE_TEST}" => OBJ_TEST
+
+# directories
+
+directory "#{BIN}"
 directory 'var/run'
 directory 'var/log'
+directory 'var/build/debug'
+directory 'var/build/release'
+directory 'var/build/tests'
 
+CLEAN.include('src/*.orig', 'src/engine/*.orig', 'tests/*.orig', 'var/build')
 
-CLEAN.include("*~", "*.bak")
+# tasks
 
 # call initialize tasks
-task :init => ['var', 'var/run', 'var/log']
+task :init => ["#{BIN}", 'var/build', 'var/run', 'var/log', 'var/build/debug', 'var/build/release', 'var/build/tests']
 
-task :doc do
-    sh 'headerdoc2html -o docs src/muddyengine/*.h'
-
-    sh 'gatherheaderdoc docs index.html'
-end
-
-task :indent do
-    FileList['src/*/*.c', 'src/*/*.h'].each do |src|
-      sh "indent -linux #{src}"
+desc "Format source code"
+task :format do
+    FileList['src/*/*.c', 'src/*/*.h', 'src/*.c', 'src/*.h', 'tests/*.c', 'tests/*.h'].each do |src|
+      sh "astyle #{src}"
     end
 end
 
-task :test => [:test_muddyengine, :test_muddyplains] do
-    sh "./test_muddyengine"
-    sh "./test_muddyplains"
+desc "Compiling release version"
+task :release => [:init, "#{LIB_RELEASE}", "#{EXE_RELEASE}"] do
+  sh "#{ARCHIVER} #{LIB_RELEASE} #{OBJ_LIB_RELEASE.join(" ")}"
+  sh "#{COMPILER} #{FLAGS} -L#{BIN} -l#{LIB_NAME} #{LIB_FLAGS} #{OBJ_RELEASE.join(" ")} -o #{BIN}/#{EXE_RELEASE}"
 end
 
-Rake::Builder.new do |builder|
-  builder.target               = 'muddyplainsd'
-  builder.target_type		       = :executable
-  builder.architecture         = 'x86_64'
-  builder.target_prerequisites = ['libmud.a']
-  builder.programming_language = 'c'
-  builder.objects_path 		     = 'debug'
-  builder.source_search_paths  = [ 'src/muddyplains', 'src/main.c' ]
-  builder.include_paths		     = [ 'src', 'src/muddyplains' ]
-  builder.library_dependencies = [ 'mud', 'sqlite3', 'lua' ]
-  builder.library_paths        = [ '.' ]
-  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-Werror','-Wno-uninitialized','-O0','-DDEBUG',"-DROOT_DIR=\"#{builder.rakefile_path}\""]
+desc "Compiling debug version"
+task :debug => [:init, "#{LIB_DEBUG}", "#{EXE_DEBUG}"] do
+  sh "#{ARCHIVER} #{LIB_DEBUG} #{OBJ_LIB_DEBUG.join(" ")}"
+  sh "#{COMPILER} #{FLAGS} -L#{BIN} -l#{LIB_NAME}d #{LIB_FLAGS} #{OBJ_DEBUG.join(" ")} -o #{BIN}/#{EXE_DEBUG}"
 end
 
-Rake::Builder.new do |builder|
-	builder.target               = 'libmud.a'
-  builder.target_type          = :static_library
-  builder.target_prerequisites = [:init]
-  builder.architecture         = 'x86_64'
-  builder.programming_language = 'c'
-  builder.objects_path         = 'debug/lib'
-  builder.source_search_paths  = [ 'src/muddyengine' ]
-  builder.include_paths        = [ 'src' ]
-  builder.library_dependencies = [ 'sqlite3', 'lua' ]
-  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-Werror','-Wno-uninitialized','-O0','-DDEBUG']
-
+desc "Running unit tests"
+task :test => [:init, "#{LIB_DEBUG}", "#{EXE_LIB_TEST}", "#{EXE_TEST}"] do 
+  sh "#{ARCHIVER} #{BIN}/#{LIB_DEBUG} #{OBJ_LIB_DEBUG.join(" ")}"
+  sh "#{COMPILER} #{FLAGS} -L#{BIN} -l#{LIB_NAME}d #{LIB_FLAGS_TEST} #{LIB_FLAGS} #{OBJ_LIB_TEST.join(" ")} -o #{BIN}/#{EXE_LIB_TEST}"
+  sh "#{COMPILER} #{FLAGS} -L#{BIN} -l#{LIB_NAME}d #{LIB_FLAGS_TEST} #{LIB_FLAGS} #{OBJ_TEST.join(" ")} -o #{BIN}/#{EXE_TEST}"
+  sh "#{BIN}/#{EXE_LIB_TEST}"
+  sh "#{BIN}/#{EXE_TEST}"
 end
 
-Rake::Builder.new do |builder|
-  builder.target               = 'muddyplains'
-  builder.target_type		       = :executable
-  builder.architecture         = 'x86_64'
-  builder.target_prerequisites = ['libmud.a']
-  builder.programming_language = 'c'
-  builder.objects_path 		     = 'release'
-  builder.source_search_paths  = [ 'src/muddyplains', 'src/main.c' ]
-  builder.include_paths		     = [ 'src', 'src/muddyplains' ]
-  builder.library_dependencies = [ 'mud', 'sqlite3', 'lua' ]
-  builder.library_paths        = [ '.' ]
-  builder.compilation_options  = ['-std=gnu99','-Wall','-Werror','-Wno-uninitialized','-O3',"-DROOT_DIR=\"#{builder.rakefile_path}\""]
+desc "Generating docs"
+task :docs do
+  sh "headerdoc2html -j -o doc #{LIB_HEADERS}"
+  sh "gatherheaderdoc doc index.html"
 end
 
-Rake::Builder.new do |builder|
-  builder.programming_language = 'c'
-  builder.target_type          = :executable
-  builder.architecture         = 'x86_64'
-  builder.target_prerequisites = [ 'libmud.a' ]
-  builder.task_namespace       = 'test'
-  builder.target               = 'test_muddyplains'
-  builder.source_search_paths  = [ 'tests/muddyplains', 'src/muddyplains' ]
-  builder.objects_path         = 'tests'
-  builder.library_dependencies = [ 'check', 'mud', 'sqlite3', 'lua' ]
-  builder.library_paths        = [ '.' ]
-  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-I src','-Werror','-Wno-uninitialized','-O0','-DDEBUG',"-DROOT_DIR=\"#{builder.rakefile_path}\""]
+desc "Compiling debug version and running tests"
+task :default => [:test] 
+
+# rules
+
+rule '.o' => '%{var/build/debug,src/muddyengine}X.c' do |target|
+  sh "#{COMPILER} #{FLAGS} -O0 -g -DDEBUG -c -o #{target.name} #{target.source}"
+end
+rule '.o' => '%{var/build/debug,src/muddyplains}X.c' do |target|
+  sh "#{COMPILER} #{FLAGS} -O0 -g -DDEBUG -c -o #{target.name} #{target.source}"
 end
 
-Rake::Builder.new do |builder|
-  builder.programming_language = 'c'
-  builder.target_type          = :executable
-  builder.architecture         = 'x86_64'
-  builder.target_prerequisites = [ 'libmud.a' ]
-  builder.task_namespace       = 'test'
-  builder.target               = 'test_muddyengine'
-  builder.source_search_paths  = [ 'tests/muddyengine' ]
-  builder.objects_path         = 'tests'
-  builder.library_dependencies = [ 'check', 'mud', 'sqlite3', 'lua' ]
-  builder.library_paths        = [ '.' ]
-  builder.compilation_options  = ['-std=gnu99','-ggdb3','-Wall','-I src','-Werror','-Wno-uninitialized','-O0','-DDEBUG',"-DROOT_DIR=\"#{builder.rakefile_path}\""]
+rule '.o' => '%{var/build/debug,src}X.cpp' do |target|
+  sh "#{COMPILER} #{FLAGS} -O0 -g -DDEBUG -c -o #{target.name} #{target.source}"
 end
+
+rule '.o' => '%{var/build/release,src/muddyengine}X.c' do |target| 
+  sh "#{COMPILER} #{FLAGS} -O3 -c -o #{target.name} #{target.source}"
+end
+
+rule '.o' => '%{var/build/release,src/muddyplains}X.c' do |target| 
+  sh "#{COMPILER} #{FLAGS} -O3 -c -o #{target.name} #{target.source}"
+end
+
+rule '.o' => '%{var/build/release,src}X.cpp' do |target| 
+  sh "#{COMPILER} #{FLAGS} -O3 -c -o #{target.name} #{target.source}"
+end
+
+rule '.o' => '%{var/build/tests,src/muddyplains}X.c' do |target|
+  sh "#{COMPILER} #{FLAGS} -c -g -o #{target.name} #{target.source}"
+end
+
+rule '.o' => '%{var/build/tests,tests/muddyengine}X.c' do |target|
+  sh "#{COMPILER} #{FLAGS} -c -g -o #{target.name} #{target.source}"
+end
+
+rule '.o' => '%{var/build/tests,tests/muddyplains}X.c' do |target|
+  sh "#{COMPILER} #{FLAGS} -c -g -o #{target.name} #{target.source}"
+end
+
+

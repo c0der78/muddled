@@ -23,6 +23,7 @@
 #include <muddyengine/macro.h>
 #include <muddyengine/engine.h>
 #include <muddyengine/util.h>
+#include <muddyengine/log.h>
 #include <inttypes.h>
 
 #define DBNAME "test"
@@ -87,6 +88,7 @@ START_TEST(test_field_map)
 
 	struct test T;
 
+	T.id = 0;
 	T.name = str_dup("testA");
 	T.value = number_percent();
 
@@ -96,11 +98,9 @@ START_TEST(test_field_map)
 		{0}
 	};
 
-	fail_if(T.value != field_map_int(&table[1]));
+	fail_if(T.value != fm_int(&table[1]));
 
-	db_save(table, DBNAME, T.id);
-
-	T.id = db_last_insert_rowid();
+	T.id = db_save(table, DBNAME, T.id);
 
 	int check = number_percent();
 
@@ -112,7 +112,7 @@ START_TEST(test_field_map)
 		fail("could not update saved data entry");
 	}
 
-	db_load(table, DBNAME, T.id);
+	db_load_by_id(table, DBNAME, T.id);
 
 	fail_if(T.value != check);
 
