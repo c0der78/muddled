@@ -1,0 +1,640 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/1998/REC-html40-19980424/loose.dtd">
+<html>
+<head>
+<title>Structure,</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="HeaderDoc">
+<meta name="xcode-display" content="render">
+<style><!--
+.toc_contents_text {
+    padding-left: 1em;
+    text-indent: -1em;
+}
+
+ul.tocSubEntryList li.tocSubEntry {
+    list-style: none;
+}
+
+#colorbox {
+		display: none;
+}
+.spec_sheet_line {
+		margin-bottom: 1px;
+}
+.collapsible {
+		display: none;
+}
+.toc_leadspace {
+		width: 10; min-width: 10;
+}
+.disclosure_triangle_td {
+		width: 14; min-width: 14;
+		font-size: 10px;
+		vertical-align: middle;
+}
+.specbox td {
+		font-size: 13px;
+}
+.specbox td a {
+		font-size: 13px;
+}
+.specbox td code {
+		font-size: 13px;
+}
+.specbox td tt {
+		font-size: 13px;
+}
+.specbox td pre {
+		font-size: 13px;
+}
+.specbox a {
+		font-size: 12px;
+}
+.disclosure_triangle_td a:hover {
+		text-decoration: none;
+}
+.disclosure_triangle_td a:hover {
+		text-decoration: none;
+}
+.hd_toc_box {
+		padding-top: 10px;
+		padding-right: 15px;
+}.tocSeparator {
+		margin-top: 15px;
+		padding-bottom: 0px;
+		margin-bottom: 0px;
+}
+.tocSubEntryList {
+		margin-left: 0px;
+		padding-left: 40px;
+		padding-top: 0px;
+		margin-top: 2px;
+		padding-bottom: 0px;
+		margin-bottom: 8px;
+}
+.hd_toc_heading_table {
+		margin-top: 2px;
+		margin-bottom: 2px;
+}
+.hd_toc_entry_table {
+		margin-top: 2px;
+		margin-bottom: 2px;
+}
+.tocSubEntry {
+		margin-left: 0px;
+		padding-left: 0px;
+		margin-top: 0px;
+		margin-bottom: 1px;
+}
+.tocSubEntry a {
+		font-size: 10pt;
+}
+.tocSubheading {
+		padding-left: 14px;
+		margin-left: 0px;
+		margin-top: 5px;
+		padding-top: 0px;
+		font-size: 16px;
+		color: #808080;
+}
+
+#tocMenu {
+		border-right: 1px solid #c0c0c0;
+		background-color: #f4f4ff;
+		top:0px;
+		left:0px;
+		width:230px;
+		height:100%;
+}
+#bodyContents {
+		width: auto;
+		padding-left: 15px;
+}
+--></style>
+<script language="JavaScript" type="text/javascript"><!--
+function getNewHTTPObject()
+{
+        var xmlhttp;
+
+        /** Special IE only code ... */
+        /*@cc_on
+          @if (@_jscript_version >= 5)
+              try
+              {
+                  xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');
+              }
+              catch (e)
+              {
+                  try
+                  {
+                      xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+                  }
+                  catch (E)
+                  {
+                      xmlhttp = false;
+                  }
+             }
+          @else
+             xmlhttp = false;
+        @end @*/
+
+        /** Every other browser on the planet */
+        if (!xmlhttp && typeof XMLHttpRequest != 'undefined')
+        {
+            try
+            {
+                xmlhttp = new XMLHttpRequest();
+            }
+            catch (e)
+            {
+                xmlhttp = false;
+            }
+        }
+
+        return xmlhttp;
+}
+
+function hidetoc() {
+	var toc = document.getElementById('tocMenu');
+	var src = toc.getAttribute('src');
+	var xhr = getNewHTTPObject();
+	xhr.open('GET', src, true);
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState == 4) {
+			var toc = document.getElementById('tocMenu');
+			toc.innerHTML = xhr.responseText;
+		}
+	}
+	xhr.send(null);
+	var origURL = parent.document.URL;
+	var contentURL = origURL.substring(origURL.indexOf('?')+1, origURL.length);
+	if (contentURL.length == origURL.length) {
+		jumpPos = origURL.substring(origURL.indexOf('#')+1, origURL.length);
+	}
+	if (contentURL == "hidetoc") {
+		var body = document.getElementById('bodyContents');
+		if (toc && body) {
+			toc.style.display = 'none';
+			body.style.marginLeft = '0px';
+		}
+	}
+}
+
+function disclosure_triangle(elt) {
+   var linkelt = elt;
+   while (elt && elt.tagName != 'TABLE') { elt = elt.parentNode;}
+   if (!elt) { return; }
+   while (elt && elt.tagName != 'DIV') { elt = elt.nextSibling;}
+   if (!elt) { return; }
+   if (parseInt(linkelt.getAttribute('state'))) {
+      // It's open.  Close it
+      linkelt.innerHTML = '&#x25B7;';
+      linkelt.setAttribute('state', 0);
+      linkelt.setAttribute('class', 'closed_disclosure_triangle');
+      elt.style.display = 'none';
+   } else {
+      // It's closed.  Open it
+      linkelt.innerHTML = '&#x25BC;';
+      linkelt.setAttribute('state', 1);
+      linkelt.setAttribute('class', 'open_disclosure_triangle');
+      elt.style.display = 'block';
+   }
+}
+--></script><style type="text/css"><!--.char {background: #ffffff; color:#0000ff;}.comment {background:#ffffff; color:#236e25}.function {background:#ffffff; color:#000000;}.keyword {background:#ffffff; color:#761550;}.number {background: #ffffff; color:#0000ff;}.param {background:#ffffff; color:#000000;}.preprocessor {background:#ffffff; color:#236e25}.string {background: #ffffff; color:#891315;}.template {background:#ffffff; color:#761550;}.type {background:#ffffff; color:#761550;}.var {background:#ffffff; color:#000000;}div {font-size: 10pt; text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #000000;}td {font-size: 10pt; text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #000000;}span.hd_tocAccessSpace { display: block; font-size: 1px; height: 3px; min-height: 3px; }span.hd_tocGroupSpace { display: block; font-size: 1px; height: 3px; min-height: 3px; }span.hd_tocGroup { display: block; font-weight: bold; font-size: 10pt; text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #000000; margin-left: 0px; padding-left: 40px; }span.hd_tocGroup + span.hd_tocAccess { padding-top: 5px; }td.toc_contents_text {font-size: 11pt; text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #000000; }li.tocSubEntry {font-size: 11pt; text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #000000;}p {font-size: 10pt; text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #000000;}a:link {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #36c;}a:visited {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #36c;}a:visited:hover {text-decoration: underline; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #36c;}a:active {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #36c;}a:hover {text-decoration: underline; font-family: lucida grande, geneva, helvetica, arial, sans-serif; color: #36c;}h2.h2tight { margin-top: 0px; padding-top: 0px; }h1 { margin-top: 13px; padding-top: 0px; }h4 {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: tiny; font-weight: bold;}h5 {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: 10.1pt; font-weight: bold;}pre {text-decoration: none; font-family: Courier, Consolas, monospace; color: #666; font-size: 10pt;}pre a { font-family: Courier, Consolas, monospace; color: #666;font-size: 10pt;}pre a:link { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}pre a:visited { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}pre a:visited:hover { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}pre a:active { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}pre a:hover { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}code {text-decoration: none; font-family: Courier, Consolas, monospace; color: #666;font-size: 10pt;}code a { font-family: Courier, Consolas, monospace; color: #666;font-size: 10pt;}code a:link { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}code a:visited { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}code a:visited:hover { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}code a:active { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}code a:hover { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}tt {text-decoration: none; font-family: Courier, Consolas, monospace; color: #666;font-size: 10pt;}tt a { font-family: Courier, Consolas, monospace; color: #666;font-size: 10pt;}tt a:link { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}tt a:visited { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}tt a:visited:hover { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}tt a:active { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}tt a:hover { font-family: Courier, Consolas, monospace; color: #36c;font-size: 10pt;}body  {text-decoration: none; font-family: Courier, Consolas, monospace; color: #666;font-size: 10pt; padding-left: 0px; padding-top: 0px; margin-left: 0px; margin-top: 0px; border: none; }#hd_outermost_table { margin-left: 0px; border-spacing: 0px; margin-top: 0px; padding-left: 0px; padding-top: 0px; border: none; }#hd_outermost_table > tr { border-spacing: 0px; margin-left: 0px; margin-top: 0px; padding-left: 0px; padding-top: 0px; border: none; }#hd_outermost_table > tr > td { border-spacing: 0px; margin-left: 0px; margin-top: 0px; }#hd_outermost_table > tbody > tr { border-spacing: 0px; margin-left: 0px; margin-top: 0px; padding-left: 0px; padding-top: 0px; border: none; }#hd_outermost_table > tbody > tr > td { border-spacing: 0px; margin-left: 0px; margin-top: 0px; padding-top: 3px; }.afterName { display: none; }.list_indent { margin-left: 40px; }.declaration_indent { margin-left: 40px; margin-top: 0px; margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px; min-height: 12px; vertical-align: middle; }.declaration_indent pre { margin-top: 20px; padding-top: 0px; margin-bottom: 20px; padding-bottom: 0px; }.gapBeforeFooter { display: none; }hr { height: 0px; min-height: 0px; border-top: none; border-left: none; border-right: none; border-bottom: 1px solid #909090;}hr.afterHeader { display: none }.param_group_indent { margin-left: 25px; }.param_indent { margin-left: 40px; margin-top: 0px; padding-top: 0px; }.param_indent dl { margin-top: 4px; padding-top: 0px; }dl dd > p:first-child { margin-top: 2px; padding-top: 0px; }.param_indent dl dd > p:first-child { margin-top: 2px; padding-top: 0px; }.group_indent { margin-left: 40px; }.group_desc_indent { margin-left: 20px; }.warning_indent { margin-left: 40px; }.important_indent { margin-left: 40px; }.note_indent { margin-left: 40px; }h3 {       color: #3C4C6C;}.tight {       margin-top: 2px; margin-bottom: 0px;       padding-top: 0px; padding-bottom: 0px;}h3 a {       color: #3C4C6C;	font-size: 16px;	font-style: normal;	font-variant: normal;	font-weight: bold;	height: 0px;	line-height: normal;}.hd_tocAccess { display: block; margin-left: 40px; font-style: italic; font-size: 10px; font-weight: normal; color: #303030; }.tocSubheading { margin-bottom: 4px; }--></style>
+</head>
+<body bgcolor="#ffffff" onload="hidetoc();">
+<!-- headerDoc=Header;  uid=//apple_ref/doc/header/affect.h;   name=Structure, -->
+<a name="//apple_ref/doc/header/affect.h"></a>
+<table id="hd_outermost_table" height="100%" width="100%"><tr>
+<td valign="top" id="tocMenu" src="toc.html"></td>
+<td id="bodyContents" valign="top">
+<a name="top"></a>
+<h1><a name="Structure,">Structure,</a></h1>
+<div class="spec_sheet_info_box"><table cellspacing="0" class="specbox"><tr>
+<td scope="row"><b>Includes:</b></td>
+<td><div style="margin-bottom:1px"><div class="content_text">
+<!-- a logicalPath="//apple_ref/doc/header/character.h" machineGenerated="true" -->&lt;muddyengine/character.h&gt;<!-- /a --><br><a machinegenerated="true" href="../engine_h/index.html#//apple_ref/doc/header/engine.h" logicalPath="//apple_ref/doc/header/engine.h" target="_top">&lt;muddyengine/engine.h&gt;</a><br><!-- a logicalPath="//apple_ref/doc/header/stdbool.h" machineGenerated="true" -->&lt;stdbool.h&gt;<!-- /a -->
+</div></div></td>
+</tr></table></div>
+<h2>Introduction</h2>
+<!-- begin discussion --><!-- headerDoc=discussion;uid=//apple_ref/doc/header/affect.h;name=start --><p>methods and constants related to accounts</p>
+<!-- headerDoc=discussion;uid=//apple_ref/doc/header/affect.h;name=end --><!-- end discussion -->
+<hr class="afterClassOrHeaderInfo">
+<br><a name="HeaderDoc_groups"><h2 class="h2tight">Groups</h2></a>
+
+<h3>Callbacks</h3>
+<div class="group_desc_indent">
+</div>
+<p>&nbsp;</p>
+<h3>Data Management</h3>
+<div class="group_desc_indent">
+</div>
+<h4>Group members:</h4>
+<div class="group_indent">
+<dl>
+<dt><tt><a machinegenerated="true" href="index.html#//apple_ref/c/data/affect_callbacks" logicalPath="//apple_ref/c/data/affect_callbacks" target="_top">affect_callbacks</a></tt></dt>
+<dd></dd>
+<dt><tt><a machinegenerated="true" href="index.html#//apple_ref/c/data/affect_flags" logicalPath="//apple_ref/c/data/affect_flags" target="_top">affect_flags</a></tt></dt>
+<dd></dd>
+<dt><tt><a machinegenerated="true" href="index.html#//apple_ref/c/func/load_affect_by_id" logicalPath="//apple_ref/c/func/load_affect_by_id" target="_top">load_affect_by_id</a></tt></dt>
+<dd></dd>
+<dt><tt><a machinegenerated="true" href="index.html#//apple_ref/c/func/save_affect" logicalPath="//apple_ref/c/func/save_affect" target="_top">save_affect</a></tt></dt>
+<dd></dd>
+</dl>
+</div>
+<p>&nbsp;</p>
+<h3>Memory Management</h3>
+<div class="group_desc_indent">
+</div>
+<h4>Group members:</h4>
+<div class="group_indent">
+<dl>
+<dt><tt><a machinegenerated="true" href="index.html#//apple_ref/c/func/destroy_affect" logicalPath="//apple_ref/c/func/destroy_affect" target="_top">destroy_affect</a></tt></dt>
+<dd></dd>
+<dt><tt><a machinegenerated="true" href="index.html#//apple_ref/c/func/new_affect" logicalPath="//apple_ref/c/func/new_affect" target="_top">new_affect</a></tt></dt>
+<dd></dd>
+</dl>
+</div>
+<hr class="afterGroupHeading">
+<a name="HeaderDoc_functions"></a>
+<h2 class="h2tight">Functions</h2>
+<dl>
+<dt><tt><a href="index.html#//apple_ref/c/func/destroy_affect" target="_top">destroy_affect</a></tt></dt>
+<dd></dd>
+<dt><tt><a href="index.html#//apple_ref/c/func/load_affect_by_id" target="_top">load_affect_by_id</a></tt></dt>
+<dd></dd>
+<dt><tt><a href="index.html#//apple_ref/c/func/new_affect" target="_top">new_affect</a></tt></dt>
+<dd></dd>
+<dt><tt><a href="index.html#//apple_ref/c/func/save_affect" target="_top">save_affect</a></tt></dt>
+<dd></dd>
+</dl>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=func;  uid=//apple_ref/c/func/destroy_affect;   name=destroy_affect --><a name="//apple_ref/c/func/destroy_affect"></a>
+<h3><a name="destroy_affect">destroy_affect</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/func/destroy_affect;name=start --><!-- a logicalPath="//apple_ref/c/cl/void //apple_ref/c/tdef/void //apple_ref/c/tag/void //apple_ref/c/struct/void //apple_ref/c/intf/void //apple_ref/doc/anysymbol/void" machineGenerated="true" --><span class="type">void</span><!-- /a --> <a machinegenerated="true" href="index.html#//apple_ref/c/func/destroy_affect" logicalPath="//apple_ref/c/instm/destroy_affect //apple_ref/c/clm/destroy_affect //apple_ref/c/intfcm/destroy_affect //apple_ref/c/intfm/destroy_affect //apple_ref/c/func/destroy_affect" target="_top"><span class="function">destroy_affect</span></a>(
+    <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> <span class="type">*</span>);  <!-- headerDoc=declaration;uid=//apple_ref/c/func/destroy_affect;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Parameters</font></h5>
+<div class="param_indent">
+<dl>
+<dt>
+<!-- headerDoc=functionparam;  uid=//apple_ref/doc/functionparam/destroy_affect/affect;   name=affect -->
+<a name="//apple_ref/doc/functionparam/destroy_affect/affect"></a>
+<code>affect</code>
+</dt>
+<dd><p>the allocated affect to destroy</p></dd>
+</dl>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Discussion</font></h5>
+<!-- begin discussion --><!-- headerDoc=discussion;uid=//apple_ref/c/func/destroy_affect;name=start --><p>destroys an affect <!-- headerDoc=discussion;uid=//apple_ref/c/func/destroy_affect;name=end --><!-- end discussion -->
+</p>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=func;  uid=//apple_ref/c/func/load_affect_by_id;   name=load_affect_by_id --><a name="//apple_ref/c/func/load_affect_by_id"></a>
+<h3><a name="load_affect_by_id">load_affect_by_id</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/func/load_affect_by_id;name=start --><a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> <span class="type">*</span><a machinegenerated="true" href="index.html#//apple_ref/c/func/load_affect_by_id" logicalPath="//apple_ref/c/instm/load_affect_by_id //apple_ref/c/clm/load_affect_by_id //apple_ref/c/intfcm/load_affect_by_id //apple_ref/c/intfm/load_affect_by_id //apple_ref/c/func/load_affect_by_id" target="_top"><span class="function">load_affect_by_id</span></a>(
+    <span class="param">identifier_t</span>);  <!-- headerDoc=declaration;uid=//apple_ref/c/func/load_affect_by_id;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Parameters</font></h5>
+<div class="param_indent">
+<dl>
+<dt>
+<!-- headerDoc=functionparam;  uid=//apple_ref/doc/functionparam/load_affect_by_id/id;   name=id -->
+<a name="//apple_ref/doc/functionparam/load_affect_by_id/id"></a>
+<code>id</code>
+</dt>
+<dd><p>the affect id to load</p></dd>
+</dl>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Return Value</font></h5>
+<p><!-- begin return value --></p>
+<p>the new allocated affect loaded from the id
+
+<!-- end return value --></p>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Discussion</font></h5>
+<!-- begin discussion --><!-- headerDoc=discussion;uid=//apple_ref/c/func/load_affect_by_id;name=start --><p>allocates and loads an affect by id <!-- headerDoc=discussion;uid=//apple_ref/c/func/load_affect_by_id;name=end --><!-- end discussion -->
+</p>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=func;  uid=//apple_ref/c/func/new_affect;   name=new_affect --><a name="//apple_ref/c/func/new_affect"></a>
+<h3><a name="new_affect">new_affect</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/func/new_affect;name=start --><a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> <span class="type">*</span><a machinegenerated="true" href="index.html#//apple_ref/c/func/new_affect" logicalPath="//apple_ref/c/instm/new_affect //apple_ref/c/clm/new_affect //apple_ref/c/intfcm/new_affect //apple_ref/c/intfm/new_affect //apple_ref/c/func/new_affect" target="_top"><span class="function">new_affect</span></a>();  <!-- headerDoc=declaration;uid=//apple_ref/c/func/new_affect;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Return Value</font></h5>
+<p><!-- begin return value --></p>
+<p>the newly allocated affect
+
+<!-- end return value --></p>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Discussion</font></h5>
+<!-- begin discussion --><!-- headerDoc=discussion;uid=//apple_ref/c/func/new_affect;name=start --><p>creates a new affect <!-- headerDoc=discussion;uid=//apple_ref/c/func/new_affect;name=end --><!-- end discussion -->
+</p>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=func;  uid=//apple_ref/c/func/save_affect;   name=save_affect --><a name="//apple_ref/c/func/save_affect"></a>
+<h3><a name="save_affect">save_affect</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/func/save_affect;name=start --><!-- a logicalPath="//apple_ref/c/cl/int //apple_ref/c/tdef/int //apple_ref/c/tag/int //apple_ref/c/struct/int //apple_ref/c/intf/int //apple_ref/doc/anysymbol/int" machineGenerated="true" --><span class="type">int</span><!-- /a --> <a machinegenerated="true" href="index.html#//apple_ref/c/func/save_affect" logicalPath="//apple_ref/c/instm/save_affect //apple_ref/c/clm/save_affect //apple_ref/c/intfcm/save_affect //apple_ref/c/intfm/save_affect //apple_ref/c/func/save_affect" target="_top"><span class="function">save_affect</span></a>(
+    <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> <span class="type">*</span>);  <!-- headerDoc=declaration;uid=//apple_ref/c/func/save_affect;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Parameters</font></h5>
+<div class="param_indent">
+<dl>
+<dt>
+<!-- headerDoc=functionparam;  uid=//apple_ref/doc/functionparam/save_affect/affect;   name=affect -->
+<a name="//apple_ref/doc/functionparam/save_affect/affect"></a>
+<code>affect</code>
+</dt>
+<dd><p>the affect to save</p></dd>
+</dl>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Return Value</font></h5>
+<p><!-- begin return value --></p>
+<p>1 if
+successful, zero otherwise
+
+<!-- end return value --></p>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Discussion</font></h5>
+<!-- begin discussion --><!-- headerDoc=discussion;uid=//apple_ref/c/func/save_affect;name=start --><p>saves an affect to records <!-- headerDoc=discussion;uid=//apple_ref/c/func/save_affect;name=end --><!-- end discussion -->
+</p>
+<hr class="betweenSections">
+<a name="HeaderDoc_constants"></a>
+<h2 class="h2tight">Constants</h2>
+<dl>
+<dt><tt><a href="index.html#//apple_ref/c/data/affect_callbacks" target="_top">affect_callbacks</a></tt></dt>
+<dd></dd>
+<dt><tt><a href="index.html#//apple_ref/c/data/affect_flags" target="_top">affect_flags</a></tt></dt>
+<dd></dd>
+</dl>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=data;  uid=//apple_ref/c/data/affect_callbacks;   name=affect_callbacks --><a name="//apple_ref/c/data/affect_callbacks"></a>
+<h3><a name="affect_callbacks">affect_callbacks</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/data/affect_callbacks;name=start --><span class="keyword">extern</span> <span class="keyword">const</span> <!-- a logicalPath="//apple_ref/c/cl/Lookup //apple_ref/c/tdef/Lookup //apple_ref/c/tag/Lookup //apple_ref/c/struct/Lookup //apple_ref/c/intf/Lookup //apple_ref/doc/anysymbol/Lookup" machineGenerated="true" --><span class="type">Lookup</span><!-- /a --> <a machinegenerated="true" href="index.html#//apple_ref/c/data/affect_callbacks" logicalPath="//apple_ref/c/cl/affect_callbacks //apple_ref/c/tdef/affect_callbacks //apple_ref/c/tag/affect_callbacks //apple_ref/c/struct/affect_callbacks //apple_ref/c/intf/affect_callbacks //apple_ref/doc/anysymbol/affect_callbacks" target="_top"><span class="type">affect_callbacks</span></a>[];  <!-- headerDoc=declaration;uid=//apple_ref/c/data/affect_callbacks;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Discussion</font></h5>
+<!-- begin discussion --><!-- headerDoc=discussion;uid=//apple_ref/c/data/affect_callbacks;name=start --><p>the table used to lookup affect callbacks</p>
+<!-- headerDoc=discussion;uid=//apple_ref/c/data/affect_callbacks;name=end --><!-- end discussion -->
+<hr class="betweenAPIEntries">
+<!-- headerDoc=data;  uid=//apple_ref/c/data/affect_flags;   name=affect_flags --><a name="//apple_ref/c/data/affect_flags"></a>
+<h3><a name="affect_flags">affect_flags</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/data/affect_flags;name=start --><span class="keyword">extern</span> <span class="keyword">const</span> <!-- a logicalPath="//apple_ref/c/cl/Lookup //apple_ref/c/tdef/Lookup //apple_ref/c/tag/Lookup //apple_ref/c/struct/Lookup //apple_ref/c/intf/Lookup //apple_ref/doc/anysymbol/Lookup" machineGenerated="true" --><span class="type">Lookup</span><!-- /a --> <a machinegenerated="true" href="index.html#//apple_ref/c/data/affect_flags" logicalPath="//apple_ref/c/cl/affect_flags //apple_ref/c/tdef/affect_flags //apple_ref/c/tag/affect_flags //apple_ref/c/struct/affect_flags //apple_ref/c/intf/affect_flags //apple_ref/doc/anysymbol/affect_flags" target="_top"><span class="type">affect_flags</span></a>[];  <!-- headerDoc=declaration;uid=//apple_ref/c/data/affect_flags;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Discussion</font></h5>
+<!-- begin discussion --><!-- headerDoc=discussion;uid=//apple_ref/c/data/affect_flags;name=start --><p>flags used for affects</p>
+<!-- headerDoc=discussion;uid=//apple_ref/c/data/affect_flags;name=end --><!-- end discussion -->
+<hr class="betweenSections">
+<a name="HeaderDoc_datatypes"></a>
+<h2 class="h2tight">Typedefs</h2>
+<dl>
+<dt><tt><a href="index.html#//apple_ref/c/tdef/Affect" target="_top">Affect</a></tt></dt>
+<dd></dd>
+<dt><tt><a href="index.html#//apple_ref/c/tdef/affect_callback" target="_top">affect_callback</a></tt></dt>
+<dd></dd>
+</dl>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=tdef;  uid=//apple_ref/c/tdef/Affect;   name=Affect --><a name="//apple_ref/c/tdef/Affect"></a>
+<h3><a name="Affect">Affect</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/tdef/Affect;name=start --><span class="keyword">typedef</span> <span class="keyword">struct</span> <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> <!-- a logicalPath="//apple_ref/c/econst/Affect //apple_ref/c/data/Affect //apple_ref/c/clconst/Affect " machineGenerated="true" --><span class="var">Affect</span><!-- /a -->;  <!-- headerDoc=declaration;uid=//apple_ref/c/tdef/Affect;name=end --></pre>
+</div>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=tdef;  uid=//apple_ref/c/tdef/affect_callback;   name=affect_callback --><a name="//apple_ref/c/tdef/affect_callback"></a>
+<h3><a name="affect_callback">affect_callback</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/tdef/affect_callback;name=start --><span class="keyword">typedef</span> <!-- a logicalPath="//apple_ref/c/cl/void //apple_ref/c/tdef/void //apple_ref/c/tag/void //apple_ref/c/struct/void //apple_ref/c/intf/void //apple_ref/doc/anysymbol/void" machineGenerated="true" --><span class="type">void</span><!-- /a --> <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/affect_callback" logicalPath="//apple_ref/c/instm/affect_callback //apple_ref/c/clm/affect_callback //apple_ref/c/intfcm/affect_callback //apple_ref/c/intfm/affect_callback //apple_ref/c/func/affect_callback //apple_ref/c/ftmplt/affect_callback //apple_ref/c/defn/affect_callback //apple_ref/c/macro/affect_callback //apple_ref/doc/anysymbol/affect_callback" target="_top"><span class="function">affect_callback</span></a>(
+    <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> <span class="type">*</span>,
+    <!-- a logicalPath="//apple_ref/c/cl/void //apple_ref/c/tdef/void //apple_ref/c/tag/void //apple_ref/c/struct/void //apple_ref/c/intf/void //apple_ref/doc/anysymbol/void" machineGenerated="true" --><span class="type">void</span><!-- /a --> <span class="type">*</span>,
+    <span class="param">bool</span>);  <!-- headerDoc=declaration;uid=//apple_ref/c/tdef/affect_callback;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Parameters</font></h5>
+<div class="param_indent">
+<dl>
+<dt>
+<!-- headerDoc=typedeffield;  uid=//apple_ref/doc/typedeffield/affect_callback/affect;   name=affect -->
+<a name="//apple_ref/doc/typedeffield/affect_callback/affect"></a>
+<code>affect</code>
+</dt>
+<dd><p>the affect being called from</p></dd>
+<dt>
+<!-- headerDoc=typedeffield;  uid=//apple_ref/doc/typedeffield/affect_callback/affected;   name=affected -->
+<a name="//apple_ref/doc/typedeffield/affect_callback/affected"></a>
+<code>affected</code>
+</dt>
+<dd><p>the object being affected</p></dd>
+<dt>
+<!-- headerDoc=typedeffield;  uid=//apple_ref/doc/typedeffield/affect_callback/remove;   name=remove -->
+<a name="//apple_ref/doc/typedeffield/affect_callback/remove"></a>
+<code>remove</code>
+</dt>
+<dd><p>true if the affect
+should be removed</p></dd>
+<dt>
+<!-- headerDoc=typedeffield;  uid=//apple_ref/doc/typedeffield/affect_callback/arg;   name=arg -->
+<a name="//apple_ref/doc/typedeffield/affect_callback/arg"></a>
+<code>arg</code>
+</dt>
+<dd><p>an extra argument if needed</p></dd>
+</dl>
+</div>
+<hr class="betweenSections">
+<a name="HeaderDoc_structs"></a>
+<h2 class="h2tight">Structs&nbsp;and&nbsp;Unions</h2>
+<dl>
+<dt><tt><a href="index.html#//apple_ref/c/tag/Affect" target="_top">Affect</a></tt></dt>
+<dd><p>Represents an affect that can be applied to
+things in the world </p></dd>
+</dl>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=tag;  uid=//apple_ref/c/tag/Affect;   name=Affect --><a name="//apple_ref/c/tag/Affect"></a>
+<h3><a name="Affect">Affect</a></h3>
+<hr class="afterName">
+<p><!-- headerDoc=abstract;uid=//apple_ref/c/tag/Affect;name=start --><!-- begin abstract --></p>
+<p>Represents an affect that can be applied to
+things in the world <!-- end abstract --><!-- headerDoc=abstract;uid=//apple_ref/c/tag/Affect;name=end --></p>
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/c/tag/Affect;name=start --><span class="keyword">struct</span> <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> { 
+    <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/Affect" logicalPath="//apple_ref/c/cl/Affect //apple_ref/c/tdef/Affect" target="_top"><span class="type">Affect</span></a> <span class="type">*</span><!-- a logicalPath="//apple_ref/c/econst/next //apple_ref/c/data/next //apple_ref/c/clconst/next " machineGenerated="true" --><span class="var">next</span><!-- /a -->; 
+    <a machinegenerated="true" href="../engine_h/index.html#//apple_ref/c/tdef/identifier_t" logicalPath="//apple_ref/c/cl/identifier_t //apple_ref/c/tdef/identifier_t" target="_top"><span class="type">identifier_t</span></a> <!-- a logicalPath="//apple_ref/c/econst/id //apple_ref/c/data/id //apple_ref/c/clconst/id " machineGenerated="true" --><span class="var">id</span><!-- /a -->; 
+    <!-- a logicalPath="//apple_ref/c/cl/int //apple_ref/c/tdef/int //apple_ref/c/tag/int //apple_ref/c/struct/int //apple_ref/c/intf/int //apple_ref/doc/anysymbol/int" machineGenerated="true" --><span class="type">int</span><!-- /a --> <!-- a logicalPath="//apple_ref/c/econst/from //apple_ref/c/data/from //apple_ref/c/clconst/from " machineGenerated="true" --><span class="var">from</span><!-- /a -->; 
+    <!-- a logicalPath="//apple_ref/c/cl/int //apple_ref/c/tdef/int //apple_ref/c/tag/int //apple_ref/c/struct/int //apple_ref/c/intf/int //apple_ref/doc/anysymbol/int" machineGenerated="true" --><span class="type">int</span><!-- /a --> <!-- a logicalPath="//apple_ref/c/econst/level //apple_ref/c/data/level //apple_ref/c/clconst/level " machineGenerated="true" --><span class="var">level</span><!-- /a -->; 
+    <!-- a logicalPath="//apple_ref/c/cl/int //apple_ref/c/tdef/int //apple_ref/c/tag/int //apple_ref/c/struct/int //apple_ref/c/intf/int //apple_ref/doc/anysymbol/int" machineGenerated="true" --><span class="type">int</span><!-- /a --> <!-- a logicalPath="//apple_ref/c/econst/duration //apple_ref/c/data/duration //apple_ref/c/clconst/duration " machineGenerated="true" --><span class="var">duration</span><!-- /a -->; 
+    <!-- a logicalPath="//apple_ref/c/cl/int //apple_ref/c/tdef/int //apple_ref/c/tag/int //apple_ref/c/struct/int //apple_ref/c/intf/int //apple_ref/doc/anysymbol/int" machineGenerated="true" --><span class="type">int</span><!-- /a --> <!-- a logicalPath="//apple_ref/c/econst/perm_duration //apple_ref/c/data/perm_duration //apple_ref/c/clconst/perm_duration " machineGenerated="true" --><span class="var">perm_duration</span><!-- /a -->; 
+    <!-- a logicalPath="//apple_ref/c/cl/int //apple_ref/c/tdef/int //apple_ref/c/tag/int //apple_ref/c/struct/int //apple_ref/c/intf/int //apple_ref/doc/anysymbol/int" machineGenerated="true" --><span class="type">int</span><!-- /a --> <!-- a logicalPath="//apple_ref/c/econst/modifier //apple_ref/c/data/modifier //apple_ref/c/clconst/modifier " machineGenerated="true" --><span class="var">modifier</span><!-- /a -->; 
+    <a machinegenerated="true" href="../flag_h/index.html#//apple_ref/c/tag/Flag" logicalPath="//apple_ref/c/cl/Flag //apple_ref/c/tdef/Flag //apple_ref/c/tag/Flag" target="_top"><span class="type">Flag</span></a> <span class="type">*</span><!-- a logicalPath="//apple_ref/c/econst/flags //apple_ref/c/data/flags //apple_ref/c/clconst/flags " machineGenerated="true" --><span class="var">flags</span><!-- /a -->; 
+    <a machinegenerated="true" href="index.html#//apple_ref/c/tdef/affect_callback" logicalPath="//apple_ref/c/cl/affect_callback //apple_ref/c/tdef/affect_callback" target="_top"><span class="type">affect_callback</span></a> <span class="type">*</span><!-- a logicalPath="//apple_ref/c/econst/callback //apple_ref/c/data/callback //apple_ref/c/clconst/callback " machineGenerated="true" --><span class="var">callback</span><!-- /a -->; 
+};  <!-- headerDoc=declaration;uid=//apple_ref/c/tag/Affect;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Fields</font></h5>
+<div class="param_indent">
+<dl>
+<dt>
+<!-- headerDoc=structfield;  uid=//apple_ref/doc/structfield/Affect/type;   name=type -->
+<a name="//apple_ref/doc/structfield/Affect/type"></a>
+<code>type</code>
+</dt>
+<dd><p>a skill id if the affect comes from a
+skill</p></dd>
+<dt>
+<!-- headerDoc=structfield;  uid=//apple_ref/doc/structfield/Affect/level;   name=level -->
+<a name="//apple_ref/doc/structfield/Affect/level"></a>
+<code>level</code>
+</dt>
+<dd><p>the level of the affect</p></dd>
+<dt>
+<!-- headerDoc=structfield;  uid=//apple_ref/doc/structfield/Affect/duration;   name=duration -->
+<a name="//apple_ref/doc/structfield/Affect/duration"></a>
+<code>duration</code>
+</dt>
+<dd><p>the current
+duration of the affect</p></dd>
+<dt>
+<!-- headerDoc=structfield;  uid=//apple_ref/doc/structfield/Affect/perm_duration;   name=perm_duration -->
+<a name="//apple_ref/doc/structfield/Affect/perm_duration"></a>
+<code>perm_duration</code>
+</dt>
+<dd><p>the duration when the affect
+was first created</p></dd>
+<dt>
+<!-- headerDoc=structfield;  uid=//apple_ref/doc/structfield/Affect/modifier;   name=modifier -->
+<a name="//apple_ref/doc/structfield/Affect/modifier"></a>
+<code>modifier</code>
+</dt>
+<dd><p>the modifier value of the affect</p></dd>
+<dt>
+<!-- headerDoc=structfield;  uid=//apple_ref/doc/structfield/Affect/callback;   name=callback -->
+<a name="//apple_ref/doc/structfield/Affect/callback"></a>
+<code>callback</code>
+</dt>
+<dd><p>the callback method when the affect is applied</p></dd>
+</dl>
+</div>
+<hr class="betweenSections">
+<a name="HeaderDoc_enums"></a>
+<h2 class="h2tight">Enumerated Types</h2>
+<dl>
+<dt><tt><a href="index.html#//apple_ref/doc/title:tag/AffectFlags" target="_top">Affect Flags</a></tt></dt>
+<dd></dd>
+</dl>
+<hr class="betweenAPIEntries">
+<!-- headerDoc=title:tag;  uid=//apple_ref/doc/title:tag/AffectFlags;   name=Affect Flags --><a name="//apple_ref/doc/title:tag/AffectFlags"></a>
+<h3><a name="AffectFlags">Affect Flags</a></h3>
+<hr class="afterName">
+<div class="declaration_indent">
+<pre><!-- headerDoc=declaration;uid=//apple_ref/doc/title:tag/AffectFlags;name=start --><span class="keyword">enum</span> { 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_BLIND //apple_ref/c/data/AFF_BLIND //apple_ref/c/clconst/AFF_BLIND " machineGenerated="true" --><span class="var">AFF_BLIND</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_INVISIBLE //apple_ref/c/data/AFF_INVISIBLE //apple_ref/c/clconst/AFF_INVISIBLE " machineGenerated="true" --><span class="var">AFF_INVISIBLE</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_DETECT_EVIL //apple_ref/c/data/AFF_DETECT_EVIL //apple_ref/c/clconst/AFF_DETECT_EVIL " machineGenerated="true" --><span class="var">AFF_DETECT_EVIL</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_DETECT_INVIS //apple_ref/c/data/AFF_DETECT_INVIS //apple_ref/c/clconst/AFF_DETECT_INVIS " machineGenerated="true" --><span class="var">AFF_DETECT_INVIS</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_DETECT_MAGIC //apple_ref/c/data/AFF_DETECT_MAGIC //apple_ref/c/clconst/AFF_DETECT_MAGIC " machineGenerated="true" --><span class="var">AFF_DETECT_MAGIC</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_DETECT_HIDDEN //apple_ref/c/data/AFF_DETECT_HIDDEN //apple_ref/c/clconst/AFF_DETECT_HIDDEN " machineGenerated="true" --><span class="var">AFF_DETECT_HIDDEN</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_DETECT_GOOD //apple_ref/c/data/AFF_DETECT_GOOD //apple_ref/c/clconst/AFF_DETECT_GOOD " machineGenerated="true" --><span class="var">AFF_DETECT_GOOD</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_SANCTUARY //apple_ref/c/data/AFF_SANCTUARY //apple_ref/c/clconst/AFF_SANCTUARY " machineGenerated="true" --><span class="var">AFF_SANCTUARY</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_FAERIE_FIRE //apple_ref/c/data/AFF_FAERIE_FIRE //apple_ref/c/clconst/AFF_FAERIE_FIRE " machineGenerated="true" --><span class="var">AFF_FAERIE_FIRE</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_INFRARED //apple_ref/c/data/AFF_INFRARED //apple_ref/c/clconst/AFF_INFRARED " machineGenerated="true" --><span class="var">AFF_INFRARED</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_CURSE //apple_ref/c/data/AFF_CURSE //apple_ref/c/clconst/AFF_CURSE " machineGenerated="true" --><span class="var">AFF_CURSE</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_POISON //apple_ref/c/data/AFF_POISON //apple_ref/c/clconst/AFF_POISON " machineGenerated="true" --><span class="var">AFF_POISON</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_PROTECT_EVIL //apple_ref/c/data/AFF_PROTECT_EVIL //apple_ref/c/clconst/AFF_PROTECT_EVIL " machineGenerated="true" --><span class="var">AFF_PROTECT_EVIL</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_PROTECT_GOOD //apple_ref/c/data/AFF_PROTECT_GOOD //apple_ref/c/clconst/AFF_PROTECT_GOOD " machineGenerated="true" --><span class="var">AFF_PROTECT_GOOD</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_SNEAK //apple_ref/c/data/AFF_SNEAK //apple_ref/c/clconst/AFF_SNEAK " machineGenerated="true" --><span class="var">AFF_SNEAK</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_HIDE //apple_ref/c/data/AFF_HIDE //apple_ref/c/clconst/AFF_HIDE " machineGenerated="true" --><span class="var">AFF_HIDE</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_SLEEP //apple_ref/c/data/AFF_SLEEP //apple_ref/c/clconst/AFF_SLEEP " machineGenerated="true" --><span class="var">AFF_SLEEP</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_CHARM //apple_ref/c/data/AFF_CHARM //apple_ref/c/clconst/AFF_CHARM " machineGenerated="true" --><span class="var">AFF_CHARM</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_FLYING //apple_ref/c/data/AFF_FLYING //apple_ref/c/clconst/AFF_FLYING " machineGenerated="true" --><span class="var">AFF_FLYING</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_PASS_DOOR //apple_ref/c/data/AFF_PASS_DOOR //apple_ref/c/clconst/AFF_PASS_DOOR " machineGenerated="true" --><span class="var">AFF_PASS_DOOR</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_HASTE //apple_ref/c/data/AFF_HASTE //apple_ref/c/clconst/AFF_HASTE " machineGenerated="true" --><span class="var">AFF_HASTE</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_CALM //apple_ref/c/data/AFF_CALM //apple_ref/c/clconst/AFF_CALM " machineGenerated="true" --><span class="var">AFF_CALM</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_PLAGUE //apple_ref/c/data/AFF_PLAGUE //apple_ref/c/clconst/AFF_PLAGUE " machineGenerated="true" --><span class="var">AFF_PLAGUE</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_WEAKEN //apple_ref/c/data/AFF_WEAKEN //apple_ref/c/clconst/AFF_WEAKEN " machineGenerated="true" --><span class="var">AFF_WEAKEN</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_DARK_VISION //apple_ref/c/data/AFF_DARK_VISION //apple_ref/c/clconst/AFF_DARK_VISION " machineGenerated="true" --><span class="var">AFF_DARK_VISION</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_BERSERK //apple_ref/c/data/AFF_BERSERK //apple_ref/c/clconst/AFF_BERSERK " machineGenerated="true" --><span class="var">AFF_BERSERK</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_REGENERATION //apple_ref/c/data/AFF_REGENERATION //apple_ref/c/clconst/AFF_REGENERATION " machineGenerated="true" --><span class="var">AFF_REGENERATION</span><!-- /a -->, 
+    <!-- a logicalPath="//apple_ref/c/econst/AFF_SLOW //apple_ref/c/data/AFF_SLOW //apple_ref/c/clconst/AFF_SLOW " machineGenerated="true" --><span class="var">AFF_SLOW</span><!-- /a --> 
+};  <!-- headerDoc=declaration;uid=//apple_ref/doc/title:tag/AffectFlags;name=end --></pre>
+</div>
+<h5 class="tight"><font face="Lucida Grande,Helvetica,Arial">Constants</font></h5>
+<div class="param_indent">
+<dl>
+<dt><a name="//apple_ref/doc/title:econst/AFF_BLIND"><code>AFF_BLIND</code></a></dt>
+<dd><p>causes blindness</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_INVISIBLE"><code>AFF_INVISIBLE</code></a></dt>
+<dd><p>makes affected invisible</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_DETECT_EVIL"><code>AFF_DETECT_EVIL</code></a></dt>
+<dd><p>makes affected able to recognize evil</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_DETECT_INVIS"><code>AFF_DETECT_INVIS</code></a></dt>
+<dd><p>makes
+affected able to see invisible</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_DETECT_MAGIC"><code>AFF_DETECT_MAGIC</code></a></dt>
+<dd><p>makes affected
+able to detect magic</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_DETECT_HIDDEN"><code>AFF_DETECT_HIDDEN</code></a></dt>
+<dd><p>makes affected able to
+see hidden things</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_DETECT_GOOD"><code>AFF_DETECT_GOOD</code></a></dt>
+<dd><p>makes affected able to
+recognize good</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_SANCTUARY"><code>AFF_SANCTUARY</code></a></dt>
+<dd><p>applies a protective barrier to the
+affected</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_FAERIE_FIRE"><code>AFF_FAERIE_FIRE</code></a></dt>
+<dd><p>causes weakness aura around affected</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_INFRARED"><code>AFF_INFRARED</code></a></dt>
+<dd><p>allows affected to see in the dark</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_CURSE"><code>AFF_CURSE</code></a></dt>
+<dd><p>affected is cursed</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_POISION"><code>AFF_POISION</code></a></dt>
+<dd><p>affected is poisoned</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_PROTECT_EVIL"><code>AFF_PROTECT_EVIL</code></a></dt>
+<dd><p>affected is protected from evil</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_PROTECT_GOOD"><code>AFF_PROTECT_GOOD</code></a></dt>
+<dd><p>affected is protected from good</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_SNEAK"><code>AFF_SNEAK</code></a></dt>
+<dd><p>affected is sneaking</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_HIDE"><code>AFF_HIDE</code></a></dt>
+<dd><p>affected is hiding</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_SLEEP"><code>AFF_SLEEP</code></a></dt>
+<dd><p>affected is sleeping</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_CHARM"><code>AFF_CHARM</code></a></dt>
+<dd><p>affected is charmed</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_FLYING"><code>AFF_FLYING</code></a></dt>
+<dd><p>affected is flying</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_PASS_DOOR"><code>AFF_PASS_DOOR</code></a></dt>
+<dd><p>affected
+is able to pass through doors</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_HASTE"><code>AFF_HASTE</code></a></dt>
+<dd><p>affected is moving
+hastily</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_CALM"><code>AFF_CALM</code></a></dt>
+<dd><p>affected is calmed</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_PLAGUE"><code>AFF_PLAGUE</code></a></dt>
+<dd><p>affected by the plague</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_WEAKEN"><code>AFF_WEAKEN</code></a></dt>
+<dd><p>affected is weakened</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_DARK_VISION"><code>AFF_DARK_VISION</code></a></dt>
+<dd><p>affected can see in the dark</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_BERSERK"><code>AFF_BERSERK</code></a></dt>
+<dd><p>affected by rage</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_REGENERATION"><code>AFF_REGENERATION</code></a></dt>
+<dd><p>affected heals more quickly</p></dd>
+<dt><a name="//apple_ref/doc/title:econst/AFF_SLOW"><code>AFF_SLOW</code></a></dt>
+<dd><p>affected is moving slowly</p></dd>
+</dl>
+</div>
+<p class="gapBeforeFooter">&nbsp;</p>
+<hr class="afterFooter">
+<div class="hd_copyright_and_timestamp">
+<p class="hd_timestamp">Last Updated: Sunday, September 16, 2012
+</p>
+</div>
+</td>
+</tr></table>
+</body>
+</html>
