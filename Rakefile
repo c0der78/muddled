@@ -93,8 +93,8 @@ end
 
 desc "Generating docs"
 task :docs do
-  sh "headerdoc2html -j -o doc #{LIB_HEADERS}"
-  sh "gatherheaderdoc doc index.html"
+  sh "headerdoc2html -j -o docs #{DIST_HEADERS}"
+  sh "gatherheaderdoc docs index.html"
 end
 
 desc "Compiling debug version and running tests"
