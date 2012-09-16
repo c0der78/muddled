@@ -28,7 +28,7 @@
 
     <div class="container">
       <section id="main_content">
-        <h1>view <a href="docs">source documentation</a></h1>
+        <h2>view <a href="docs">source documentation</a></h2>
 
 <p>a multi user dungeon in c99</p>
 
@@ -49,13 +49,22 @@
 <h4>requirements</h4>
 
 <ul>
-<li>ruby with the rake-builder and daemon gems</li>
-<li>lua</li>
+<li>[rake](http://rake.ruby.org) (ruby)</li>
+<li>the startup script requires the 'daemon' ruby gem
 <li>sqlite3</li>
-</ul><h4>compiling</h4>
+</ul>
+
+<h4>optional</h4>
+<ul>
+
+<li>lua</li>
+</ul>
+
+<h4>compiling</h4>
 
 <ul>
-<li>just run 'rake' or type 'rake -T' to see a list of specific builds</li>
+<li>running 'rake' will compile and run all unit tests</li>
+<li>run 'rake -T' to see a list of specific builds</li>
 <li>'muddyplains' is the release build, 'muddyplainsd' is the debug build</li>
 </ul><h4>todo</h4>
 
