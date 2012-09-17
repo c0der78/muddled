@@ -28,14 +28,14 @@
 
 struct timezone_type {
 
-	const char *name;	/* Name of the time zone */
+    const char *name;	/* Name of the time zone */
 
-	const char *zone;	/* Cities or Zones in zone crossing */
+    const char *zone;	/* Cities or Zones in zone crossing */
 
-	int gmt_offset;		/* Difference in hours from Greenwich Mean 
+    int gmt_offset;		/* Difference in hours from Greenwich Mean
 				 * Time */
 
-	int dst_offset;		/* Day Light Savings Time offset */
+    int dst_offset;		/* Day Light Savings Time offset */
 
 };
 
@@ -80,10 +80,10 @@ actf(int, const Character *, const void *, const void *,
      const char *, ...) __attribute__ ((format(printf, 5, 6)));
 
 void act_pos(int, position_t, const Character *, const void *,
-	     const void *, const char *);
+             const void *, const char *);
 void actf_pos(int, position_t, const Character *, const void *,
-	      const void *, const char *, ...)
-    __attribute__ ((format(printf, 6, 7)));
+              const void *, const char *, ...)
+__attribute__ ((format(printf, 6, 7)));
 
 void act(int, const Character *, const void *, const void *, const char *);
 

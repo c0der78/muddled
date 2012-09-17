@@ -30,261 +30,261 @@
 Editor *build_social_editor(Social * social)
 {
 
-	Editor *editor = new_editor();
+    Editor *editor = new_editor();
 
-	editor->data = social;
+    editor->data = social;
 
-	editor->edit = social_editor;
+    editor->edit = social_editor;
 
-	editor->show = social_editor_menu;
+    editor->show = social_editor_menu;
 
-	return editor;
+    return editor;
 
 }
 
 void social_editor_menu(Client * conn)
 {
 
-	clear_screen(conn);
+    clear_screen(conn);
 
-	set_cursor(conn, 1, 1);
+    set_cursor(conn, 1, 1);
 
-	conn->title(conn, "Social Editor");
+    conn->title(conn, "Social Editor");
 
-	Social *social = (Social *) conn->editing->data;
+    Social *social = (Social *) conn->editing->data;
 
-	writelnf(conn, "   ~CId: ~W%d", social->id);
+    writelnf(conn, "   ~CId: ~W%d", social->id);
 
-	writelnf(conn, "~YA) ~CName: ~W%s~x", social->name);
+    writelnf(conn, "~YA) ~CName: ~W%s~x", social->name);
 
-	writelnf(conn, "~YB) ~CCharNoArg: ~W%s~x", social->charNoArg);
+    writelnf(conn, "~YB) ~CCharNoArg: ~W%s~x", social->charNoArg);
 
-	writelnf(conn, "~YC) ~COthersNoArg: ~W%s~x", social->othersNoArg);
+    writelnf(conn, "~YC) ~COthersNoArg: ~W%s~x", social->othersNoArg);
 
-	writelnf(conn, "~YD) ~CCharFound: ~W%s~x", social->charFound);
+    writelnf(conn, "~YD) ~CCharFound: ~W%s~x", social->charFound);
 
-	writelnf(conn, "~YE) ~COthersFound: ~W%s~x", social->othersFound);
+    writelnf(conn, "~YE) ~COthersFound: ~W%s~x", social->othersFound);
 
-	writelnf(conn, "~YF) ~CVictFound: ~W%s~x", social->victFound);
+    writelnf(conn, "~YF) ~CVictFound: ~W%s~x", social->victFound);
 
-	writelnf(conn, "~YG) ~CCharNotFound: ~W%s~x", social->charNotFound);
+    writelnf(conn, "~YG) ~CCharNotFound: ~W%s~x", social->charNotFound);
 
-	writelnf(conn, "~YH) ~CCharAuto: ~W%s~x", social->charAuto);
+    writelnf(conn, "~YH) ~CCharAuto: ~W%s~x", social->charAuto);
 
-	writelnf(conn, "~YI) ~COthersAuto: ~W%s~x", social->othersAuto);
+    writelnf(conn, "~YI) ~COthersAuto: ~W%s~x", social->othersAuto);
 
-	writelnf(conn, "~YJ) ~CCharObjFound: ~W%s~x", social->charObjFound);
+    writelnf(conn, "~YJ) ~CCharObjFound: ~W%s~x", social->charObjFound);
 
-	writelnf(conn, "~YK) ~COthersObjFound: ~W%s~x", social->othersObjFound);
+    writelnf(conn, "~YK) ~COthersObjFound: ~W%s~x", social->othersObjFound);
 
-	writelnf(conn, "~YL) ~CMin Position: ~W%s~x",
-		 position_table[social->minPosition].name);
+    writelnf(conn, "~YL) ~CMin Position: ~W%s~x",
+             position_table[social->minPosition].name);
 
 }
 
 void social_edit_list(Client * conn)
 {
 
-	int count = 0;
+    int count = 0;
 
-	for (Social * social = first_social; social != 0; social = social->next) {
+    for (Social * social = first_social; social != 0; social = social->next) {
 
-		writef(conn, "%2d) %-12.12s ", social->id, social->name);
+        writef(conn, "%2d) %-12.12s ", social->id, social->name);
 
-		if (++count % 4 == 0)
-			writeln(conn, "");
+        if (++count % 4 == 0)
+            writeln(conn, "");
 
-	}
+    }
 
-	if (count % 4 != 0)
-		writeln(conn, "");
+    if (count % 4 != 0)
+        writeln(conn, "");
 
 }
 
 void social_editor(Client * conn, const char *argument)
 {
 
-	char arg[100];
+    char arg[100];
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (nullstr(arg) || arg[0] == '?') {
+    if (nullstr(arg) || arg[0] == '?') {
 
-		olc_syntax(conn, 0);
+        olc_syntax(conn, 0);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "Q") || !str_cmp(arg, "quit")) {
+    }
+    if (!str_cmp(arg, "Q") || !str_cmp(arg, "quit")) {
 
-		finish_editing(conn);
+        finish_editing(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_prefix(arg, "show")) {
+    }
+    if (!str_prefix(arg, "show")) {
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	Social *social = (Social *) conn->editing->data;
+    }
+    Social *social = (Social *) conn->editing->data;
 
-	if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save")) {
 
-		save_social(social);
+        save_social(social);
 
-		writeln(conn, "~CSocial saved.~x");
+        writeln(conn, "~CSocial saved.~x");
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "list")) {
+    }
+    if (!str_cmp(arg, "list")) {
 
-		social_edit_list(conn);
+        social_edit_list(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
+    }
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
 
-		free_str(social->name);
+        free_str(social->name);
 
-		social->name = str_dup(argument);
+        social->name = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "B") || !str_cmp(arg, "charnoarg")) {
+    }
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "charnoarg")) {
 
-		free_str(social->charNoArg);
+        free_str(social->charNoArg);
 
-		social->charNoArg = str_dup(argument);
+        social->charNoArg = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "C") || !str_cmp(arg, "othersnoarg")) {
+    }
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "othersnoarg")) {
 
-		free_str(social->othersNoArg);
+        free_str(social->othersNoArg);
 
-		social->othersNoArg = str_dup(argument);
+        social->othersNoArg = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "D") || !str_cmp(arg, "charfound")) {
+    }
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "charfound")) {
 
-		free_str(social->charFound);
+        free_str(social->charFound);
 
-		social->charFound = str_dup(argument);
+        social->charFound = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "E") || !str_cmp(arg, "othersfound")) {
+    }
+    if (!str_cmp(arg, "E") || !str_cmp(arg, "othersfound")) {
 
-		free_str(social->othersFound);
+        free_str(social->othersFound);
 
-		social->othersFound = str_dup(argument);
+        social->othersFound = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "F") || !str_cmp(arg, "victfound")) {
+    }
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "victfound")) {
 
-		free_str(social->name);
+        free_str(social->name);
 
-		social->name = str_dup(argument);
+        social->name = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "G") || !str_cmp(arg, "charnotfound")) {
+    }
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "charnotfound")) {
 
-		free_str(social->charNotFound);
+        free_str(social->charNotFound);
 
-		social->charNotFound = str_dup(argument);
+        social->charNotFound = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "H") || !str_cmp(arg, "charauto")) {
+    }
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "charauto")) {
 
-		free_str(social->charAuto);
+        free_str(social->charAuto);
 
-		social->charAuto = str_dup(argument);
+        social->charAuto = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "I") || !str_cmp(arg, "othersAuto")) {
+    }
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "othersAuto")) {
 
-		free_str(social->othersAuto);
+        free_str(social->othersAuto);
 
-		social->othersAuto = str_dup(argument);
+        social->othersAuto = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "J") || !str_cmp(arg, "charobjfound")) {
+    }
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "charobjfound")) {
 
-		free_str(social->charObjFound);
+        free_str(social->charObjFound);
 
-		social->charObjFound = str_dup(argument);
+        social->charObjFound = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "K") || !str_cmp(arg, "othersobjfound")) {
+    }
+    if (!str_cmp(arg, "K") || !str_cmp(arg, "othersobjfound")) {
 
-		free_str(social->othersObjFound);
+        free_str(social->othersObjFound);
 
-		social->othersObjFound = str_dup(argument);
+        social->othersObjFound = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "L") || !str_cmp(arg, "minposition")) {
+    }
+    if (!str_cmp(arg, "L") || !str_cmp(arg, "minposition")) {
 
-		long val = value_lookup(position_table, argument);
+        long val = value_lookup(position_table, argument);
 
-		if (val == -1) {
+        if (val == -1) {
 
-			writelnf(conn, "~CValid positions are: ~W%s~x",
-				 lookup_names(position_table));
+            writelnf(conn, "~CValid positions are: ~W%s~x",
+                     lookup_names(position_table));
 
-			return;
+            return;
 
-		}
-		social->minPosition = (position_t) val;
+        }
+        social->minPosition = (position_t) val;
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
+    }
 }

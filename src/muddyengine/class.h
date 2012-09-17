@@ -28,12 +28,12 @@ typedef struct Class Class;
 #include  <stdbool.h>
 
 struct Class {
-	identifier_t id;
-	const char *name;
-	const char *description;
-	bool fMana;
-	short thac0;
-	short thac32;
+    identifier_t id;
+    const char *name;
+    const char *description;
+    bool fMana;
+    short thac0;
+    short thac32;
 };
 
 extern Class *class_table;

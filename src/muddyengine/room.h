@@ -32,46 +32,46 @@ typedef struct Room Room;
 #include <muddyengine/object.h>
 
 typedef enum {
-	SECT_INSIDE,
-	SECT_CITY,
-	SECT_FIELD,
-	SECT_FOREST,
-	SECT_HILLS,
-	SECT_MOUNTAIN,
-	SECT_WATER_SWIM,
-	SECT_WATER_NOSWIM,
-	SECT_AIR,
-	SECT_DESERT,
-	SECT_JUNGLE,
-	SECT_ROAD,
-	SECT_PATH,
-	SECT_CAVE,
-	SECT_SWAMP,
-	SECT_UNKNOWN,
-	SECT_MAX
+    SECT_INSIDE,
+    SECT_CITY,
+    SECT_FIELD,
+    SECT_FOREST,
+    SECT_HILLS,
+    SECT_MOUNTAIN,
+    SECT_WATER_SWIM,
+    SECT_WATER_NOSWIM,
+    SECT_AIR,
+    SECT_DESERT,
+    SECT_JUNGLE,
+    SECT_ROAD,
+    SECT_PATH,
+    SECT_CAVE,
+    SECT_SWAMP,
+    SECT_UNKNOWN,
+    SECT_MAX
 } sector_t;
 
 struct Room {
-	Room *next;
-	Room *next_in_area;
-	identifier_t id;
-	const char *name;
-	const char *description;
-	Character *characters;
-	hashmap extraDescr;
-	Area *area;
-	Exit *exits[MAX_DIR];
-	const char *reset;
-	Object *objects;
-	sector_t sector;
-	Flag *flags;
+    Room *next;
+    Room *next_in_area;
+    identifier_t id;
+    const char *name;
+    const char *description;
+    Character *characters;
+    hashmap extraDescr;
+    Area *area;
+    Exit *exits[MAX_DIR];
+    const char *reset;
+    Object *objects;
+    sector_t sector;
+    Flag *flags;
 };
 
 enum {
-	ROOM_SAFE,
-	ROOM_NO_RECALL,
+    ROOM_SAFE,
+    ROOM_NO_RECALL,
 
-	ROOM_NOEXPLORE
+    ROOM_NOEXPLORE
 };
 
 extern Room *room_hash[ID_HASH];

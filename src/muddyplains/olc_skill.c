@@ -31,397 +31,397 @@
 Editor *build_skill_editor(Skill * skill)
 {
 
-	Editor *editor = new_editor();
+    Editor *editor = new_editor();
 
-	editor->data = skill;
+    editor->data = skill;
 
-	editor->edit = skill_editor;
+    editor->edit = skill_editor;
 
-	editor->show = skill_editor_menu;
+    editor->show = skill_editor_menu;
 
-	return editor;
+    return editor;
 
 }
 
 void skill_editor_menu(Client * conn)
 {
 
-	clear_screen(conn);
+    clear_screen(conn);
 
-	set_cursor(conn, 1, 1);
+    set_cursor(conn, 1, 1);
 
-	conn->title(conn, "Skill Editor");
+    conn->title(conn, "Skill Editor");
 
-	Skill *skill = (Skill *) conn->editing->data;
+    Skill *skill = (Skill *) conn->editing->data;
 
-	writelnf(conn, "   ~CId: ~W%d", skill->id);
+    writelnf(conn, "   ~CId: ~W%d", skill->id);
 
-	writelnf(conn, "~YA) ~CName: ~W%s~x", skill->name);
+    writelnf(conn, "~YA) ~CName: ~W%s~x", skill->name);
 
-	writelnf(conn, "~YB) ~CDamage: ~W%s~x", skill->damage);
+    writelnf(conn, "~YB) ~CDamage: ~W%s~x", skill->damage);
 
-	writelnf(conn, "~YC) ~CMsgOff: ~W%s~x", skill->msgOff);
+    writelnf(conn, "~YC) ~CMsgOff: ~W%s~x", skill->msgOff);
 
-	writelnf(conn, "~YD) ~CMsgObj: ~W%s~x", skill->msgObj);
+    writelnf(conn, "~YD) ~CMsgObj: ~W%s~x", skill->msgObj);
 
-	writelnf(conn, "~YE) ~CWait: ~W%d~x", skill->wait);
+    writelnf(conn, "~YE) ~CWait: ~W%d~x", skill->wait);
 
-	writelnf(conn, "~YF) ~CMana: ~W%d~x", skill->mana);
+    writelnf(conn, "~YF) ~CMana: ~W%d~x", skill->mana);
 
-	writelnf(conn, "~YG) ~CCost: ~W%.2f~x", skill->cost);
+    writelnf(conn, "~YG) ~CCost: ~W%.2f~x", skill->cost);
 
-	const char *spfun = spellfun_name(skill->spellfun);
+    const char *spfun = spellfun_name(skill->spellfun);
 
-	writelnf(conn, "~YH) ~CSpell: ~W%s~x", spfun ? spfun : "None");
+    writelnf(conn, "~YH) ~CSpell: ~W%s~x", spfun ? spfun : "None");
 
-	const char *gsname = gsn_name(skill->pgsn);
+    const char *gsname = gsn_name(skill->pgsn);
 
-	writelnf(conn, "~YI) ~CGSN: ~W%s~x", gsname ? gsname : "None");
+    writelnf(conn, "~YI) ~CGSN: ~W%s~x", gsname ? gsname : "None");
 
-	writelnf(conn, "~YJ) ~CMinPos: ~W%s~x",
-		 position_table[skill->minPos].name);
+    writelnf(conn, "~YJ) ~CMinPos: ~W%s~x",
+             position_table[skill->minPos].name);
 
-	writelnf(conn, "~YK) ~CFlags: ~W%s~x",
-		 format_flags(&skill->flags, skill_flags));
+    writelnf(conn, "~YK) ~CFlags: ~W%s~x",
+             format_flags(&skill->flags, skill_flags));
 
-	write(conn, "~YL) ~CLevels: ~W");
+    write(conn, "~YL) ~CLevels: ~W");
 
-	for (int i = 0; i < max_class; i++) {
+    for (int i = 0; i < max_class; i++) {
 
-		writef(conn, "%s [%d] ", class_table[i].name, skill->levels[i]);
+        writef(conn, "%s [%d] ", class_table[i].name, skill->levels[i]);
 
-	}
+    }
 
-	writeln(conn, "");
+    writeln(conn, "");
 
 }
 
 void skill_edit_list(Client * conn)
 {
 
-	int count = 0;
+    int count = 0;
 
-	for (int i = 0; i < max_skill; i++) {
+    for (int i = 0; i < max_skill; i++) {
 
-		writef(conn, "%2d) %-12.12s ", skill_table[i].id,
-		       skill_table[i].name);
+        writef(conn, "%2d) %-12.12s ", skill_table[i].id,
+               skill_table[i].name);
 
-		if (++count % 4 == 0)
-			writeln(conn, "");
+        if (++count % 4 == 0)
+            writeln(conn, "");
 
-	}
+    }
 
-	if (count % 4 != 0)
-		writeln(conn, "");
+    if (count % 4 != 0)
+        writeln(conn, "");
 
 }
 
 void skill_editor(Client * conn, const char *argument)
 {
 
-	char arg[100];
+    char arg[100];
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q")) {
 
-		finish_editing(conn);
+        finish_editing(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_prefix(arg, "show")) {
+    }
+    if (!str_prefix(arg, "show")) {
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	Skill *skill = (Skill *) conn->editing->data;
+    }
+    Skill *skill = (Skill *) conn->editing->data;
 
-	if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save")) {
 
-		save_skill(skill);
+        save_skill(skill);
 
-		writeln(conn, "~CSkill saved.~x");
+        writeln(conn, "~CSkill saved.~x");
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "list")) {
+    }
+    if (!str_cmp(arg, "list")) {
 
-		skill_edit_list(conn);
+        skill_edit_list(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
+    }
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
 
-		if (nullstr(argument)) {
+        if (nullstr(argument)) {
 
-			writeln(conn, "~CChange skill name to what?~x");
+            writeln(conn, "~CChange skill name to what?~x");
 
-			return;
+            return;
 
-		}
-		free_str(skill->name);
+        }
+        free_str(skill->name);
 
-		skill->name = str_dup(argument);
+        skill->name = str_dup(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "B") || !str_cmp(arg, "damage")) {
+    }
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "damage")) {
 
-		if (nullstr(argument)) {
+        if (nullstr(argument)) {
 
-			free_str(skill->damage);
+            free_str(skill->damage);
 
-			skill->damage = str_empty;
+            skill->damage = str_empty;
 
-		} else {
+        } else {
 
-			free_str(skill->name);
+            free_str(skill->name);
 
-			skill->damage = str_dup(argument);
+            skill->damage = str_dup(argument);
 
-		}
+        }
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "C") || !str_cmp(arg, "msgOff")) {
+    }
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "msgOff")) {
 
-		if (nullstr(argument)) {
+        if (nullstr(argument)) {
 
-			free_str(skill->msgOff);
+            free_str(skill->msgOff);
 
-			skill->msgOff = str_empty;
+            skill->msgOff = str_empty;
 
-		} else {
+        } else {
 
-			free_str(skill->msgOff);
+            free_str(skill->msgOff);
 
-			skill->msgOff = str_dup(argument);
+            skill->msgOff = str_dup(argument);
 
-		}
+        }
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "D") || !str_cmp(arg, "msgObj")) {
+    }
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "msgObj")) {
 
-		if (nullstr(argument)) {
+        if (nullstr(argument)) {
 
-			free_str(skill->msgObj);
+            free_str(skill->msgObj);
 
-			skill->msgObj = str_empty;
+            skill->msgObj = str_empty;
 
-		} else {
+        } else {
 
-			free_str(skill->msgObj);
+            free_str(skill->msgObj);
 
-			skill->msgObj = str_dup(argument);
+            skill->msgObj = str_dup(argument);
 
-		}
+        }
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "F") || !str_cmp(arg, "mana")) {
+    }
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "mana")) {
 
-		if (!is_number(argument)) {
+        if (!is_number(argument)) {
 
-			writeln(conn, "~CThat is not a number.~x");
+            writeln(conn, "~CThat is not a number.~x");
 
-			return;
+            return;
 
-		}
-		skill->mana = atoi(argument);
+        }
+        skill->mana = atoi(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-	}
-	if (!str_cmp(arg, "E") || !str_cmp(arg, "wait")) {
+    }
+    if (!str_cmp(arg, "E") || !str_cmp(arg, "wait")) {
 
-		if (!is_number(argument)) {
+        if (!is_number(argument)) {
 
-			writeln(conn, "~CThat is not a number.~x");
+            writeln(conn, "~CThat is not a number.~x");
 
-			return;
+            return;
 
-		}
-		skill->mana = atoi(argument);
+        }
+        skill->mana = atoi(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "G") || !str_cmp(arg, "cost")) {
+    }
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "cost")) {
 
-		if (!is_number(argument)) {
+        if (!is_number(argument)) {
 
-			writeln(conn, "~CThat is not a number.~x");
+            writeln(conn, "~CThat is not a number.~x");
 
-			return;
+            return;
 
-		}
-		skill->mana = (float)atof(argument);
+        }
+        skill->mana = (float)atof(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "H") || !str_cmp(arg, "spell")) {
+    }
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "spell")) {
 
-		if (nullstr(argument)) {
+        if (nullstr(argument)) {
 
-			skill->spellfun = 0;
+            skill->spellfun = 0;
 
-		} else {
+        } else {
 
-			skill->spellfun = spellfun_lookup(argument);
+            skill->spellfun = spellfun_lookup(argument);
 
-			if (skill->spellfun == 0) {
+            if (skill->spellfun == 0) {
 
-				writeln(conn, "~CValid spells are:~x");
+                writeln(conn, "~CValid spells are:~x");
 
-				int i;
+                int i;
 
-				for (i = 0; spellfun_table[i].name != 0; i++) {
+                for (i = 0; spellfun_table[i].name != 0; i++) {
 
-					writef(conn, "%-10s ",
-					       spellfun_table[i].name);
+                    writef(conn, "%-10s ",
+                           spellfun_table[i].name);
 
-					if (i % 4 == 0)
-						writeln(conn, "");
+                    if (i % 4 == 0)
+                        writeln(conn, "");
 
-				}
+                }
 
-				if (i % 4 != 0)
-					writeln(conn, "");
+                if (i % 4 != 0)
+                    writeln(conn, "");
 
-				return;
+                return;
 
-			}
-		}
+            }
+        }
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "I") || !str_cmp(arg, "gsn")) {
+    }
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "gsn")) {
 
-		if (nullstr(argument)) {
+        if (nullstr(argument)) {
 
-			skill->pgsn = 0;
+            skill->pgsn = 0;
 
-			conn->editing->show(conn);
+            conn->editing->show(conn);
 
-			return;
+            return;
 
-		}
-		skill->pgsn = gsn_lookup(argument);
+        }
+        skill->pgsn = gsn_lookup(argument);
 
-		if (skill->pgsn == 0) {
+        if (skill->pgsn == 0) {
 
-			writeln(conn, "~CValid gsns are:~x");
+            writeln(conn, "~CValid gsns are:~x");
 
-			int i;
+            int i;
 
-			for (i = 0; gsn_table[i].name != 0; i++) {
+            for (i = 0; gsn_table[i].name != 0; i++) {
 
-				writef(conn, "%-10s ", gsn_table[i].name);
+                writef(conn, "%-10s ", gsn_table[i].name);
 
-				if (i % 4 == 0)
-					writeln(conn, "");
+                if (i % 4 == 0)
+                    writeln(conn, "");
 
-			}
+            }
 
-			if (i % 4 != 0)
-				writeln(conn, "");
+            if (i % 4 != 0)
+                writeln(conn, "");
 
-			return;
+            return;
 
-		}
-		conn->editing->show(conn);
+        }
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "J") || !str_cmp(arg, "minpos")) {
+    }
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "minpos")) {
 
-		long pos = value_lookup(position_table, argument);
+        long pos = value_lookup(position_table, argument);
 
-		if (pos == -1) {
+        if (pos == -1) {
 
-			writelnf(conn, "~CValid positions are: ~W%s~x",
-				 lookup_names(position_table));
+            writelnf(conn, "~CValid positions are: ~W%s~x",
+                     lookup_names(position_table));
 
-			return;
+            return;
 
-		}
-		skill->minPos = (position_t) pos;
+        }
+        skill->minPos = (position_t) pos;
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "K") || !str_cmp(arg, "flags")) {
+    }
+    if (!str_cmp(arg, "K") || !str_cmp(arg, "flags")) {
 
-		if (edit_flag
-		    ("flags", conn, &skill->flags, argument, skill_flags))
-			conn->editing->show(conn);
+        if (edit_flag
+                ("flags", conn, &skill->flags, argument, skill_flags))
+            conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "L") || !str_cmp(arg, "levels")) {
+    }
+    if (!str_cmp(arg, "L") || !str_cmp(arg, "levels")) {
 
-		char name[BUF_SIZ];
+        char name[BUF_SIZ];
 
-		argument = one_argument(argument, name);
+        argument = one_argument(argument, name);
 
-		int c = class_lookup(name);
+        int c = class_lookup(name);
 
-		if (c == -1) {
+        if (c == -1) {
 
-			writeln(conn, "~CValid classes are:~W");
+            writeln(conn, "~CValid classes are:~W");
 
-			for (int i = 0; i < max_class; i++) {
+            for (int i = 0; i < max_class; i++) {
 
-				writef(conn, "%s ", class_table[i].name);
+                writef(conn, "%s ", class_table[i].name);
 
-			}
-			writeln(conn, "~x");
+            }
+            writeln(conn, "~x");
 
-			return;
+            return;
 
-		}
-		if (!is_number(argument)) {
+        }
+        if (!is_number(argument)) {
 
-			writeln(conn, "~CThat is not a valid level.~x");
+            writeln(conn, "~CThat is not a valid level.~x");
 
-			return;
+            return;
 
-		}
-		skill->levels[c] = atoi(argument);
+        }
+        skill->levels[c] = atoi(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
+    }
 }

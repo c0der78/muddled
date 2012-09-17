@@ -25,34 +25,34 @@
 typedef struct Exit Exit;
 
 typedef enum {
-	DIR_NORTH,
-	DIR_EAST,
-	DIR_SOUTH,
-	DIR_WEST,
-	DIR_UP,
-	DIR_DOWN,
-	MAX_DIR
+    DIR_NORTH,
+    DIR_EAST,
+    DIR_SOUTH,
+    DIR_WEST,
+    DIR_UP,
+    DIR_DOWN,
+    MAX_DIR
 } direction_t;
 
 #include <muddyengine/room.h>
 
 struct Exit {
-	Exit *next;
-	identifier_t id;
-	union {
-		Room *toRoom;
-		identifier_t toRoomId;
-	};
-	Room *fromRoom;
-	Flag *flags;
-	Flag *status;
-	identifier_t key;
+    Exit *next;
+    identifier_t id;
+    union {
+        Room *toRoom;
+        identifier_t toRoomId;
+    };
+    Room *fromRoom;
+    Flag *flags;
+    Flag *status;
+    identifier_t key;
 };
 
 enum {
-	EXIT_ISDOOR,
-	EXIT_CLOSED,
-	EXIT_LOCKED
+    EXIT_ISDOOR,
+    EXIT_CLOSED,
+    EXIT_LOCKED
 };
 
 Exit *new_exit();

@@ -31,214 +31,214 @@
 #define BASE_BUF 	1024
 
 /*
- * valid states 
+ * valid states
  */
 enum buf_t {
-	BUFFER_SAFE,
-	BUFFER_OVERFLOW
+    BUFFER_SAFE,
+    BUFFER_OVERFLOW
 };
 
 /*
- * buffer sizes 
+ * buffer sizes
  */
 const int buf_size[MAX_BUF_LIST] = {
-	16, 32, 64, 128, 256, 1024, 2048, 4096, 8192, 16384
+    16, 32, 64, 128, 256, 1024, 2048, 4096, 8192, 16384
 };
 
 /*
- * local procedure for finding the next acceptable size 
+ * local procedure for finding the next acceptable size
  */
 
 /*
- * -1 indicates out-of-boundary error 
+ * -1 indicates out-of-boundary error
  */
 static int get_size(int val)
 {
 
-	int i;
+    int i;
 
-	for (i = 0; i < MAX_BUF_LIST; i++)
-		if (buf_size[i] >= val) {
+    for (i = 0; i < MAX_BUF_LIST; i++)
+        if (buf_size[i] >= val) {
 
-			return buf_size[i];
+            return buf_size[i];
 
-		}
-	return -1;
+        }
+    return -1;
 
 }
 
 Buffer *new_buf()
 {
 
-	Buffer *buffer = (Buffer *) alloc_mem(1, sizeof(Buffer));
+    Buffer *buffer = (Buffer *) alloc_mem(1, sizeof(Buffer));
 
-	buffer->state = BUFFER_SAFE;
+    buffer->state = BUFFER_SAFE;
 
-	buffer->size = get_size(BASE_BUF);
+    buffer->size = get_size(BASE_BUF);
 
-	buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
+    buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
 
-	buffer->string[0] = '\0';
+    buffer->string[0] = '\0';
 
-	buffer->write = buf_add;
+    buffer->write = buf_add;
 
-	buffer->writeln = buf_addln;
+    buffer->writeln = buf_addln;
 
-	buffer->writef = buf_addf;
+    buffer->writef = buf_addf;
 
-	buffer->writelnf = buf_addlnf;
+    buffer->writelnf = buf_addlnf;
 
-	return buffer;
+    return buffer;
 
 }
 
 Buffer *new_buf_size(int size)
 {
 
-	Buffer *buffer = (Buffer *) alloc_mem(1, sizeof(Buffer));
+    Buffer *buffer = (Buffer *) alloc_mem(1, sizeof(Buffer));
 
-	buffer->state = BUFFER_SAFE;
+    buffer->state = BUFFER_SAFE;
 
-	buffer->size = get_size(size);
+    buffer->size = get_size(size);
 
-	if (buffer->size == -1) {
+    if (buffer->size == -1) {
 
-		log_error("new_buf: buffer size %d too large.", size);
+        log_error("new_buf: buffer size %d too large.", size);
 
-		abort();
+        abort();
 
-		// abort();
-	}
-	buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
+        // abort();
+    }
+    buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
 
-	buffer->string[0] = '\0';
+    buffer->string[0] = '\0';
 
-	return buffer;
+    return buffer;
 
 }
 
 void destroy_buf(Buffer * buffer)
 {
 
-	free_mem(buffer->string);
+    free_mem(buffer->string);
 
-	free_mem(buffer);
+    free_mem(buffer);
 
 }
 
 bool buf_addf(Buffer * buffer, const char *fmt, ...)
 {
 
-	char buf[OUT_SIZ];
+    char buf[OUT_SIZ];
 
-	va_list args;
+    va_list args;
 
-	va_start(args, fmt);
+    va_start(args, fmt);
 
-	vsnprintf(buf, sizeof(buf), fmt, args);
+    vsnprintf(buf, sizeof(buf), fmt, args);
 
-	va_end(args);
+    va_end(args);
 
-	return buf_add(buffer, buf);
+    return buf_add(buffer, buf);
 
 }
 
 bool buf_addlnf(Buffer * buffer, const char *fmt, ...)
 {
 
-	char buf[OUT_SIZ];
+    char buf[OUT_SIZ];
 
-	va_list args;
+    va_list args;
 
-	va_start(args, fmt);
+    va_start(args, fmt);
 
-	vsnprintf(buf, sizeof(buf) - 3, fmt, args);
+    vsnprintf(buf, sizeof(buf) - 3, fmt, args);
 
-	va_end(args);
+    va_end(args);
 
-	strcat(buf, "\n\r");
+    strcat(buf, "\n\r");
 
-	return buf_add(buffer, buf);
+    return buf_add(buffer, buf);
 
 }
 
 bool buf_addln(Buffer * buffer, const char *string)
 {
 
-	return buf_add(buffer, string) && buf_add(buffer, "\n\r");
+    return buf_add(buffer, string) && buf_add(buffer, "\n\r");
 
 }
 
 bool buf_add_len(Buffer * buffer, const char *string, size_t str_len)
 {
 
-	size_t len;
+    size_t len;
 
-	char *oldstr;
+    char *oldstr;
 
-	int oldsize;
+    int oldsize;
 
-	oldstr = buffer->string;
+    oldstr = buffer->string;
 
-	oldsize = buffer->size;
+    oldsize = buffer->size;
 
-	if (buffer->state == BUFFER_OVERFLOW)	/* don't waste time on bad
+    if (buffer->state == BUFFER_OVERFLOW)	/* don't waste time on bad
 						 * * strings! */
-		return false;
+        return false;
 
-	len = strlen(buffer->string) + str_len + 1;
+    len = strlen(buffer->string) + str_len + 1;
 
-	while (len >= buffer->size) {	/* increase the buffer size */
+    while (len >= buffer->size) {	/* increase the buffer size */
 
-		buffer->size = get_size(buffer->size + 1);
+        buffer->size = get_size(buffer->size + 1);
 
-		if (buffer->size == -1) {	/* overflow */
+        if (buffer->size == -1) {	/* overflow */
 
-			buffer->size = oldsize;
+            buffer->size = oldsize;
 
-			buffer->state = BUFFER_OVERFLOW;
+            buffer->state = BUFFER_OVERFLOW;
 
-			log_warn("buffer overflow past size %d", buffer->size);
+            log_warn("buffer overflow past size %d", buffer->size);
 
-			return false;
+            return false;
 
-		}
-	}
+        }
+    }
 
-	if (buffer->size != oldsize) {
+    if (buffer->size != oldsize) {
 
-		buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
+        buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
 
-		strcpy(buffer->string, oldstr);
+        strcpy(buffer->string, oldstr);
 
-		free_mem(oldstr);
+        free_mem(oldstr);
 
-	}
-	strncat(buffer->string, string, str_len);
+    }
+    strncat(buffer->string, string, str_len);
 
-	return true;
+    return true;
 
 }
 
 bool buf_add(Buffer * buffer, const char *string)
 {
 
-	return buf_add_len(buffer, string, strlen(string));
+    return buf_add_len(buffer, string, strlen(string));
 
 }
 
 void clear_buf(Buffer * buffer)
 {
 
-	buffer->string[0] = '\0';
+    buffer->string[0] = '\0';
 
-	buffer->state = BUFFER_SAFE;
+    buffer->state = BUFFER_SAFE;
 
 }
 
 char *buf_string(Buffer * buffer)
 {
 
-	return buffer->string;
+    return buffer->string;
 
 }

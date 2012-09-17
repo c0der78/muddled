@@ -22,25 +22,25 @@
 #define LOG_H
 
 void log_fun(const char *, int, const char *, ...)
-    __attribute__ ((format(printf, 3, 4)));
+__attribute__ ((format(printf, 3, 4)));
 
 /*
  * void log_info(const char *, ...) __attribute__((format(printf, 1, 2)));
- * 
+ *
  * void log_error(const char *, ...) __attribute__((format(printf, 1,
  * 2)));
- * 
+ *
  * void log_debug(const char *, ...) __attribute__((format(printf, 1,
  * 2)));
- * 
+ *
  * void log_warn(const char *, ...) __attribute__((format(printf, 1, 2)));
- * 
+ *
  * void log_data(const char *, ...) __attribute__((format(printf, 1, 2)));
- * 
+ *
  * void log_trace(const char *, ...) __attribute__((format(printf, 1,
  * 2)));
- * 
- * void log_bug(const char *, ...) __attribute__((format(printf, 1, 2))); 
+ *
+ * void log_bug(const char *, ...) __attribute__((format(printf, 1, 2)));
  */
 
 #define log_info(msg, ...)	log_fun(__FUNCTION__, LOG_INFO, msg, ## __VA_ARGS__)
@@ -52,14 +52,14 @@ void log_fun(const char *, int, const char *, ...)
 #define log_bug(msg, ...)	log_fun(__FUNCTION__, LOG_BUG, msg, ## __VA_ARGS__)
 
 enum {
-	LOG_INFO,
-	LOG_ERR,
-	LOG_DEBUG,
-	LOG_WARN,
-	LOG_DATA,
-	LOG_TRACE,
-	LOG_BUG,
-	LOG_FILE
+    LOG_INFO,
+    LOG_ERR,
+    LOG_DEBUG,
+    LOG_WARN,
+    LOG_DATA,
+    LOG_TRACE,
+    LOG_BUG,
+    LOG_FILE
 };
 
 #include <muddyengine/lookup.h>

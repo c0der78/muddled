@@ -72,13 +72,13 @@ end
 
 desc "Compiling release version"
 task :release => [:init, "#{LIB_RELEASE}", "#{EXE_RELEASE}"] do
-  sh "#{ARCHIVER} #{LIB_RELEASE} #{OBJ_LIB_RELEASE.join(" ")}"
+  sh "#{ARCHIVER} #{BIN}/#{LIB_RELEASE} #{OBJ_LIB_RELEASE.join(" ")}"
   sh "#{COMPILER} #{FLAGS} -L#{BIN} -l#{LIB_NAME} #{LIB_FLAGS} #{OBJ_RELEASE.join(" ")} -o #{BIN}/#{EXE_RELEASE}"
 end
 
 desc "Compiling debug version"
 task :debug => [:init, "#{LIB_DEBUG}", "#{EXE_DEBUG}"] do
-  sh "#{ARCHIVER} #{LIB_DEBUG} #{OBJ_LIB_DEBUG.join(" ")}"
+  sh "#{ARCHIVER} #{BIN}/#{LIB_DEBUG} #{OBJ_LIB_DEBUG.join(" ")}"
   sh "#{COMPILER} #{FLAGS} -L#{BIN} -l#{LIB_NAME}d #{LIB_FLAGS} #{OBJ_DEBUG.join(" ")} -o #{BIN}/#{EXE_DEBUG}"
 end
 
@@ -109,7 +109,7 @@ rule '.o' => '%{var/build/debug,src/muddyplains}X.c' do |target|
   sh "#{COMPILER} #{FLAGS} -O0 -g -DDEBUG -c -o #{target.name} #{target.source}"
 end
 
-rule '.o' => '%{var/build/debug,src}X.cpp' do |target|
+rule '.o' => '%{var/build/debug,src}X.c' do |target|
   sh "#{COMPILER} #{FLAGS} -O0 -g -DDEBUG -c -o #{target.name} #{target.source}"
 end
 
@@ -121,7 +121,7 @@ rule '.o' => '%{var/build/release,src/muddyplains}X.c' do |target|
   sh "#{COMPILER} #{FLAGS} -O3 -c -o #{target.name} #{target.source}"
 end
 
-rule '.o' => '%{var/build/release,src}X.cpp' do |target| 
+rule '.o' => '%{var/build/release,src}X.c' do |target| 
   sh "#{COMPILER} #{FLAGS} -O3 -c -o #{target.name} #{target.source}"
 end
 

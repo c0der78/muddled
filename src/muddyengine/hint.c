@@ -36,143 +36,143 @@ int max_hint = 0;
 Hint *new_hint()
 {
 
-	Hint *hint = (Hint *) alloc_mem(1, sizeof(Hint));
+    Hint *hint = (Hint *) alloc_mem(1, sizeof(Hint));
 
-	hint->text = str_empty;
+    hint->text = str_empty;
 
-	return hint;
+    return hint;
 
 }
 
 void destroy_hint(Hint * hint)
 {
 
-	free_str(hint->text);
+    free_str(hint->text);
 
-	free_mem(hint);
+    free_mem(hint);
 
 }
 
 int load_hints()
 {
 
-	char buf[400];
+    char buf[400];
 
-	sql_stmt *stmt;
+    sql_stmt *stmt;
 
-	int total = 0;
+    int total = 0;
 
-	int len = sprintf(buf, "select count(*) from hint");
+    int len = sprintf(buf, "select count(*) from hint");
 
-	if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK) {
 
-		log_data("could not prepare statement");
+        log_data("could not prepare statement");
 
-		return 0;
+        return 0;
 
-	}
-	if (sql_step(stmt) == SQL_DONE) {
+    }
+    if (sql_step(stmt) == SQL_DONE) {
 
-		log_data("could not count hints");
+        log_data("could not count hints");
 
-		return 0;
+        return 0;
 
-	}
-	max_hint = sql_column_int(stmt, 0);
+    }
+    max_hint = sql_column_int(stmt, 0);
 
-	if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK) {
 
-		log_data("could not finalize statement");
+        log_data("could not finalize statement");
 
-	}
-	hint_table = (Hint *) alloc_mem(max_hint, sizeof(Hint));
+    }
+    hint_table = (Hint *) alloc_mem(max_hint, sizeof(Hint));
 
-	len = sprintf(buf, "select * from hint");
+    len = sprintf(buf, "select * from hint");
 
-	if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK) {
 
-		log_data("could not prepare statement");
+        log_data("could not prepare statement");
 
-		return 0;
+        return 0;
 
-	}
-	while (sql_step(stmt) != SQL_DONE) {
+    }
+    while (sql_step(stmt) != SQL_DONE) {
 
-		int count = sql_column_count(stmt);
+        int count = sql_column_count(stmt);
 
-		for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
 
-			const char *colname = sql_column_name(stmt, i);
+            const char *colname = sql_column_name(stmt, i);
 
-			if (!str_cmp(colname, "text")) {
+            if (!str_cmp(colname, "text")) {
 
-				hint_table[total].text =
-				    str_dup(sql_column_str(stmt, i));
+                hint_table[total].text =
+                    str_dup(sql_column_str(stmt, i));
 
-			} else if (!str_cmp(colname, "hintId")) {
+            } else if (!str_cmp(colname, "hintId")) {
 
-				hint_table[total].id = sql_column_int(stmt, i);
+                hint_table[total].id = sql_column_int(stmt, i);
 
-			} else if (!str_cmp(colname, "level")) {
+            } else if (!str_cmp(colname, "level")) {
 
-				hint_table[total].level =
-				    sql_column_int(stmt, i);
+                hint_table[total].level =
+                    sql_column_int(stmt, i);
 
-			} else {
+            } else {
 
-				log_warn("unknown hint column '%s'", colname);
+                log_warn("unknown hint column '%s'", colname);
 
-			}
+            }
 
-		}
+        }
 
-		total++;
+        total++;
 
-	}
+    }
 
-	if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK) {
 
-		log_data("could not finalize statement");
+        log_data("could not finalize statement");
 
-	}
-	if (total != max_hint) {
+    }
+    if (total != max_hint) {
 
-		log_warn("counted hints did not match number read");
+        log_warn("counted hints did not match number read");
 
-	}
-	return total;
+    }
+    return total;
 
 }
 
 int save_hint(Hint * hint)
 {
-	field_map hint_values[] = {
-		{"text", &hint->text, SQL_TEXT},
-		{"level", &hint->level, SQL_INT},
-		{0}
-	};
+    field_map hint_values[] = {
+        {"text", &hint->text, SQL_TEXT},
+        {"level", &hint->level, SQL_INT},
+        {0}
+    };
 
-	if (hint->id == 0) {
-		if (sql_insert_query(hint_values, "hint") != SQL_OK) {
+    if (hint->id == 0) {
+        if (sql_insert_query(hint_values, "hint") != SQL_OK) {
 
-			log_data("could not insert hint");
+            log_data("could not insert hint");
 
-			return 0;
+            return 0;
 
-		}
-		hint->id = db_last_insert_rowid();
+        }
+        hint->id = db_last_insert_rowid();
 
-	} else {
+    } else {
 
-		if (sql_update_query(hint_values, "hint", hint->id) != SQL_OK) {
+        if (sql_update_query(hint_values, "hint", hint->id) != SQL_OK) {
 
-			log_data("could not update hint");
+            log_data("could not update hint");
 
-			return 0;
+            return 0;
 
-		}
-	}
+        }
+    }
 
-	return 1;
+    return 1;
 
 }

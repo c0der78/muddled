@@ -33,22 +33,22 @@ typedef struct NPC NPC;
 #define MAX_DICE			3
 
 struct NPC {
-	const char *shortDescr;
-	const char *longDescr;
-	position_t startPosition;
-	Area *area;
-	NPC *next_in_area;
-	int damage[MAX_DICE];
-	int mana[MAX_DICE];
-	int hit[MAX_DICE];
+    const char *shortDescr;
+    const char *longDescr;
+    position_t startPosition;
+    Area *area;
+    NPC *next_in_area;
+    int damage[MAX_DICE];
+    int mana[MAX_DICE];
+    int hit[MAX_DICE];
 };
 
 enum {
-	NPC_SENTINEL,
-	NPC_SCAVENGER,
-	NPC_AGGRESSIVE,
-	NPC_WIMPY,
-	NPC_STAY_AREA
+    NPC_SENTINEL,
+    NPC_SCAVENGER,
+    NPC_AGGRESSIVE,
+    NPC_WIMPY,
+    NPC_STAY_AREA
 };
 
 NPC *new_npc();

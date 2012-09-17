@@ -32,97 +32,97 @@ typedef struct Object Object;
 #define MAX_OBJ_VAL	4
 
 typedef enum {
-	WEAPON_EXOTIC,
-	WEAPON_SWORD,
-	WEAPON_DAGGER,
-	WEAPON_SPEAR,
-	WEAPON_MACE,
-	WEAPON_AXE,
-	WEAPON_FLAIL,
-	WEAPON_WHIP,
-	WEAPON_POLEARM,
-	WEAPON_LONGRANGE
+    WEAPON_EXOTIC,
+    WEAPON_SWORD,
+    WEAPON_DAGGER,
+    WEAPON_SPEAR,
+    WEAPON_MACE,
+    WEAPON_AXE,
+    WEAPON_FLAIL,
+    WEAPON_WHIP,
+    WEAPON_POLEARM,
+    WEAPON_LONGRANGE
 } weapon_type;
 
 typedef enum {
-	OBJ_LIGHT,
-	OBJ_SCROLL,
-	OBJ_WAND,
-	OBJ_STAFF,
-	OBJ_WEAPON,
-	OBJ_TREASURE,
-	OBJ_ARMOR,
-	OBJ_POTION,
-	OBJ_FURNITURE,
-	OBJ_TRASH,
-	OBJ_CONTAINER,
-	OBJ_DRINK_CON,
-	OBJ_KEY,
-	OBJ_FOOD,
-	OBJ_MONEY,
-	OBJ_BOAT,
-	OBJ_CORPSE_NPC,
-	OBJ_CORPSE_PC,
-	OBJ_FOUNTAIN,
-	OBJ_PILL,
-	OBJ_PORTAL,
-	OBJ_WARP_STONE,
-	OBJ_ROOM_KEY,
-	OBJ_JEWELRY
+    OBJ_LIGHT,
+    OBJ_SCROLL,
+    OBJ_WAND,
+    OBJ_STAFF,
+    OBJ_WEAPON,
+    OBJ_TREASURE,
+    OBJ_ARMOR,
+    OBJ_POTION,
+    OBJ_FURNITURE,
+    OBJ_TRASH,
+    OBJ_CONTAINER,
+    OBJ_DRINK_CON,
+    OBJ_KEY,
+    OBJ_FOOD,
+    OBJ_MONEY,
+    OBJ_BOAT,
+    OBJ_CORPSE_NPC,
+    OBJ_CORPSE_PC,
+    OBJ_FOUNTAIN,
+    OBJ_PILL,
+    OBJ_PORTAL,
+    OBJ_WARP_STONE,
+    OBJ_ROOM_KEY,
+    OBJ_JEWELRY
 } object_type;
 
 typedef enum {
-	WEAR_NONE,
-	WEAR_HEAD,
-	WEAR_NECK,
-	WEAR_EYES,
-	WEAR_SHOULDERS,
-	WEAR_BACK,
-	WEAR_ARMS,
-	WEAR_HANDS,
-	WEAR_WRIST,
-	WEAR_WRIST_2,
-	WEAR_FINGER,
-	WEAR_FINGER_2,
-	WEAR_TORSO,
-	WEAR_WAIST,
-	WEAR_LEGS,
-	WEAR_FEET,
-	WEAR_ABOUT,
-	WEAR_WIELD,
-	WEAR_DUAL,
-	WEAR_SHIELD,
-	WEAR_LIGHT,
-	WEAR_HOLD,
-	WEAR_FLOAT,
-	MAX_WEAR
+    WEAR_NONE,
+    WEAR_HEAD,
+    WEAR_NECK,
+    WEAR_EYES,
+    WEAR_SHOULDERS,
+    WEAR_BACK,
+    WEAR_ARMS,
+    WEAR_HANDS,
+    WEAR_WRIST,
+    WEAR_WRIST_2,
+    WEAR_FINGER,
+    WEAR_FINGER_2,
+    WEAR_TORSO,
+    WEAR_WAIST,
+    WEAR_LEGS,
+    WEAR_FEET,
+    WEAR_ABOUT,
+    WEAR_WIELD,
+    WEAR_DUAL,
+    WEAR_SHIELD,
+    WEAR_LIGHT,
+    WEAR_HOLD,
+    WEAR_FLOAT,
+    MAX_WEAR
 } wear_type;
 
 struct Object {
-	Object *next;
-	Object *next_in_area;
-	Object *next_content;
-	Object *contains;
-	Object *inObj;
-	Affect *affects;
-	hashmap extraDescr;
-	Character *carriedBy;
-	Room *inRoom;
-	identifier_t id;
-	Area *area;
-	const char *name;
-	const char *shortDescr;
-	const char *longDescr;
-	const char *description;
-	float weight;
-	float condition;
-	money_t cost;
-	wear_type wearLoc;
-	wear_type wearFlags;
-	Flag *flags;
-	object_type type;
-	short level;
-	variant_t value[MAX_OBJ_VAL];
+    Object *next;
+    Object *next_in_area;
+    Object *next_content;
+    Object *contains;
+    Object *inObj;
+    Affect *affects;
+    hashmap extraDescr;
+    Character *carriedBy;
+    Room *inRoom;
+    identifier_t id;
+    Area *area;
+    const char *name;
+    const char *shortDescr;
+    const char *longDescr;
+    const char *description;
+    float weight;
+    float condition;
+    money_t cost;
+    wear_type wearLoc;
+    wear_type wearFlags;
+    Flag *flags;
+    object_type type;
+    short level;
+    variant_t value[MAX_OBJ_VAL];
 };
 
 extern Object *first_object;
@@ -152,48 +152,48 @@ int wear_type_to_flag(int);
 bool can_wear(Object *, wear_type);
 
 enum {
-	WEAPON_FLAMING,
-	WEAPON_FROST,
-	WEAPON_VAMPIRIC,
-	WEAPON_SHARP,
-	WEAPON_VORPAL,
-	WEAPON_TWO_HANDS,
-	WEAPON_SHOCKING,
-	WEAPON_POISON
+    WEAPON_FLAMING,
+    WEAPON_FROST,
+    WEAPON_VAMPIRIC,
+    WEAPON_SHARP,
+    WEAPON_VORPAL,
+    WEAPON_TWO_HANDS,
+    WEAPON_SHOCKING,
+    WEAPON_POISON
 };
 
 enum {
-	CONT_CLOSEABLE,
-	CONT_PICKPROOF,
-	CONT_CLOSED,
-	CONT_LOCKED,
-	CONT_PUT_ON
+    CONT_CLOSEABLE,
+    CONT_PICKPROOF,
+    CONT_CLOSED,
+    CONT_LOCKED,
+    CONT_PUT_ON
 };
 
 enum {
-	ITEM_GLOW,
-	ITEM_HUM,
-	ITEM_DARK,
-	ITEM_EVIL,
-	ITEM_INVIS,
-	ITEM_MAGIC,
-	ITEM_NODROP,
-	ITEM_BLESS,
-	ITEM_ANTI_GOOD,
-	ITEM_ANTI_EVIL,
-	ITEM_ANTI_NEUTRAL,
-	ITEM_NOREMOVE,
-	ITEM_INVENTORY,
-	ITEM_NOPURGE,
-	ITEM_ROT_DEATH,
-	ITEM_MELT_DROP,
-	ITEM_BURN_PROOF
+    ITEM_GLOW,
+    ITEM_HUM,
+    ITEM_DARK,
+    ITEM_EVIL,
+    ITEM_INVIS,
+    ITEM_MAGIC,
+    ITEM_NODROP,
+    ITEM_BLESS,
+    ITEM_ANTI_GOOD,
+    ITEM_ANTI_EVIL,
+    ITEM_ANTI_NEUTRAL,
+    ITEM_NOREMOVE,
+    ITEM_INVENTORY,
+    ITEM_NOPURGE,
+    ITEM_ROT_DEATH,
+    ITEM_MELT_DROP,
+    ITEM_BURN_PROOF
 };
 typedef struct {
-	wear_type loc;
-	wear_type flags;
-	const char *display;
-	 bool(*canUse) (Character *);
+    wear_type loc;
+    wear_type flags;
+    const char *display;
+    bool(*canUse) (Character *);
 } wear_table_type;
 
 extern const wear_table_type wear_table[];

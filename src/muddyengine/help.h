@@ -25,23 +25,23 @@
 typedef struct Help Help;
 
 typedef enum {
-	HELP_UNKNOWN,
-	HELP_INFO,
-	HELP_COMMUNICATION,
+    HELP_UNKNOWN,
+    HELP_INFO,
+    HELP_COMMUNICATION,
 } help_category;
 
 #include <muddyengine/lookup.h>
 #include <muddyengine/engine.h>
 
 struct Help {
-	identifier_t id;
-	const char *keywords;
-	const char *syntax;
-	const char *text;
-	Help *related;
-	help_category category;
-	Help *next;
-	Help *next_related;
+    identifier_t id;
+    const char *keywords;
+    const char *syntax;
+    const char *text;
+    Help *related;
+    help_category category;
+    Help *next;
+    Help *next_related;
 };
 
 Help *new_help();

@@ -28,20 +28,20 @@ typedef struct Social Social;
 #include <muddyengine/character.h>
 
 struct Social {
-	identifier_t id;
-	Social *next;
-	position_t minPosition;
-	const char *name;
-	const char *charNoArg;
-	const char *othersNoArg;
-	const char *charFound;
-	const char *othersFound;
-	const char *victFound;
-	const char *charNotFound;
-	const char *charAuto;
-	const char *othersAuto;
-	const char *charObjFound;
-	const char *othersObjFound;
+    identifier_t id;
+    Social *next;
+    position_t minPosition;
+    const char *name;
+    const char *charNoArg;
+    const char *othersNoArg;
+    const char *charFound;
+    const char *othersFound;
+    const char *victFound;
+    const char *charNotFound;
+    const char *charAuto;
+    const char *othersAuto;
+    const char *charObjFound;
+    const char *othersObjFound;
 };
 
 extern Social *first_social;

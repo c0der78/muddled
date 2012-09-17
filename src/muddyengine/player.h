@@ -30,28 +30,28 @@ typedef struct Player Player;
 #include <time.h>
 
 struct Player {
-	Account *account;
-	Connection *conn;
-	const char *title;
-	Flag *explored;
-	Flag *channels;
-	const char *prompt;
-	const char *battlePrompt;
-	int condition[MAX_COND];
-	long experience;
-	long permHit;
-	long permMana;
-	long permMove;
-	time_t created;
+    Account *account;
+    Connection *conn;
+    const char *title;
+    Flag *explored;
+    Flag *channels;
+    const char *prompt;
+    const char *battlePrompt;
+    int condition[MAX_COND];
+    long experience;
+    long permHit;
+    long permMana;
+    long permMove;
+    time_t created;
 };
 
 enum {
-	PLR_COLOR_OFF,
-	PLR_TICKS_OFF,
-	PLR_BRIEF,
-	PLR_HINTS,
-	PLR_AUTOMAP_OFF,
-	PLR_NOEMOTEVERBS
+    PLR_COLOR_OFF,
+    PLR_TICKS_OFF,
+    PLR_BRIEF,
+    PLR_HINTS,
+    PLR_AUTOMAP_OFF,
+    PLR_NOEMOTEVERBS
 };
 
 extern Character *first_player;

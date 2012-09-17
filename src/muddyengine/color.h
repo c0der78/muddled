@@ -27,9 +27,9 @@
 
 struct color_t {
 
-	short attr;
+    short attr;
 
-	short value;
+    short value;
 
 };
 

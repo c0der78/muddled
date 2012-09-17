@@ -68,52 +68,52 @@ extern const float exp_table[EXP_TABLE_SIZ];
 typedef sql_int64 identifier_t;
 
 typedef enum {
-	STAT_STR,
-	STAT_INT,
-	STAT_WIS,
-	STAT_DEX,
-	STAT_CON,
-	STAT_LUCK,
-	MAX_STAT,
-	MAX_STAT_VALUE = 500
+    STAT_STR,
+    STAT_INT,
+    STAT_WIS,
+    STAT_DEX,
+    STAT_CON,
+    STAT_LUCK,
+    MAX_STAT,
+    MAX_STAT_VALUE = 500
 } stat_t;
 
 enum {
-	TO_CHAR = (1 << 0),
-	TO_ROOM = (1 << 1),
-	TO_VICT = (1 << 2),
-	TO_NOTVICT = (1 << 3),
-	TO_WORLD = (1 << 4)
+    TO_CHAR = (1 << 0),
+    TO_ROOM = (1 << 1),
+    TO_VICT = (1 << 2),
+    TO_NOTVICT = (1 << 3),
+    TO_WORLD = (1 << 4)
 };
 
 enum {
-	ENGINE_OFF
+    ENGINE_OFF
 };
 
 typedef enum {
-	INFO_ALL,
-	INFO_NOTE,
-	INFO_LEVEL,
-	INFO_DEATH,
-	INFO_JOIN,
-	INFO_LEAVE,
+    INFO_ALL,
+    INFO_NOTE,
+    INFO_LEVEL,
+    INFO_DEATH,
+    INFO_JOIN,
+    INFO_LEAVE,
 
-	/*
-	 * Use the info all as a private bit for other info types. Info all
-	 * shouldn't be private so its safe to use.
-	 */
-	INFO_PRIVATE = (1 << INFO_ALL)
+    /*
+     * Use the info all as a private bit for other info types. Info all
+     * shouldn't be private so its safe to use.
+     */
+    INFO_PRIVATE = (1 << INFO_ALL)
 } info_t;
 
 struct Engine {
-	identifier_t id;
-	const char *name;
-	const char *root_path;
-	Flag *flags;
-	int total_logins;
-	int logins;
-	Flag *logging;
-	sql *db;
+    identifier_t id;
+    const char *name;
+    const char *root_path;
+    Flag *flags;
+    int total_logins;
+    int logins;
+    Flag *logging;
+    sql *db;
 };
 
 extern Engine engine_info;

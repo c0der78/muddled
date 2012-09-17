@@ -33,8 +33,8 @@ typedef struct Flag Flag;
  * A bitvector structure with unlimited number of bits
  */
 struct Flag {
-	int *bits;
-	size_t size;
+    int *bits;
+    size_t size;
 };
 
 Flag *new_flag();

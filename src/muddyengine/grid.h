@@ -35,65 +35,65 @@ typedef struct border Border;
 
 struct border {
 
-	char color[4];
+    char color[4];
 
-	char vertical;
+    char vertical;
 
-	char horizontal;
+    char horizontal;
 
-	int flags;
+    int flags;
 
 };
 
 struct gridcell {
 
-	char value[BUF_SIZ];
+    char value[BUF_SIZ];
 
-	int span;
+    int span;
 
-	int left_margin;
+    int left_margin;
 
-	int right_margin;
+    int right_margin;
 
-	int align;
+    int align;
 
-	Border border;
+    Border border;
 
-	char color[4];
+    char color[4];
 
 };
 
 struct gridrow {
 
-	int columns;
+    int columns;
 
-	int columnsize;
+    int columnsize;
 
-	struct gridcell *cells;
+    struct gridcell *cells;
 
 };
 
 struct grid {
 
-	struct gridrow *rows;
+    struct gridrow *rows;
 
-	int rowcount;
+    int rowcount;
 
-	int defaultcolumns;
+    int defaultcolumns;
 
-	int x;
+    int x;
 
-	int y;
+    int y;
 
-	int width;
+    int width;
 
 };
 
 enum {
-	BORDER_NONE = 0,
-	BORDER_LEFT = (1 << 0),
-	BORDER_RIGHT = (1 << 1),
-	BORDER_INLINE = (1 << 2)
+    BORDER_NONE = 0,
+    BORDER_LEFT = (1 << 0),
+    BORDER_RIGHT = (1 << 1),
+    BORDER_INLINE = (1 << 2)
 };
 
 Grid *new_grid(int, int);
@@ -104,27 +104,27 @@ void grid_init_border(Border *);
 
 int
 
- grid_add(Grid *, align_t, int, Border *, const char *, int, int, const char *);
+grid_add(Grid *, align_t, int, Border *, const char *, int, int, const char *);
 
 void
 
- grid_set(Grid *, int, int, align_t, int, Border *, const char *, int, int);
+grid_set(Grid *, int, int, align_t, int, Border *, const char *, int, int);
 
 int
 
 
 grid_addf(Grid *, align_t, int, Border *, const char *, int, int,
-	  const char *, ...) __attribute__ ((format(printf, 8, 9)));
+          const char *, ...) __attribute__ ((format(printf, 8, 9)));
 
 int grid_add_default(Grid *, const char *);
 
 int grid_addf_default(Grid *, const char *, ...)
-    __attribute__ ((format(printf, 2, 3)));
+__attribute__ ((format(printf, 2, 3)));
 
 int grid_add_border(Grid *, Border *, const char *);
 
 int grid_addf_border(Grid *, Border *, const char *, ...)
-    __attribute__ ((format(printf, 3, 4)));
+__attribute__ ((format(printf, 3, 4)));
 
 void grid_print(Grid *, Character *);
 

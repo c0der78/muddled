@@ -5,4 +5,4 @@ require 'daemons'
 
 suffix = ENV['DEBUG'] ? 'd' : ''
 
-Daemons.run("muddyplains#{suffix}")
+Daemons.run("bin/muddyplains#{suffix}")

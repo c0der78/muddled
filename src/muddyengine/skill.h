@@ -32,29 +32,29 @@ typedef void SpellFun(int, Character *);
 #include <muddyengine/flag.h>
 
 struct Skill {
-	identifier_t id;
-	const char *name;
-	int *levels;
-	money_t cost;
-	position_t minPos;
-	SpellFun *spellfun;
-	int *pgsn;
-	int mana;
-	int wait;
-	const char *damage;
-	const char *msgOff;
-	const char *msgObj;
-	Flag flags;
+    identifier_t id;
+    const char *name;
+    int *levels;
+    money_t cost;
+    position_t minPos;
+    SpellFun *spellfun;
+    int *pgsn;
+    int mana;
+    int wait;
+    const char *damage;
+    const char *msgOff;
+    const char *msgObj;
+    Flag flags;
 };
 
 struct gsn_type {
-	int *pgsn;
-	const char *name;
+    int *pgsn;
+    const char *name;
 };
 
 struct spellfun_type {
-	SpellFun *fun;
-	const char *name;
+    SpellFun *fun;
+    const char *name;
 };
 
 Skill *new_skill();

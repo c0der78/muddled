@@ -27,8 +27,8 @@
 typedef struct Lookup Lookup;
 
 struct Lookup {
-	const char *name;
-	uintptr_t value;
+    const char *name;
+    uintptr_t value;
 };
 
 int index_lookup(const Lookup *, const char *);

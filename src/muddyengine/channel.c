@@ -40,546 +40,549 @@ int gcn_chat = 0;
 int gcn_admin = 0;
 
 const Lookup channel_flags[] = {
-	{"chat", CHANNEL_CHAT},
-	{"admin", CHANNEL_ADMIN},
-	{0, 0}
+    {"chat", CHANNEL_CHAT},
+    {"admin", CHANNEL_ADMIN},
+    {0, 0}
 };
 
 const Channel channel_table[] = {
-	{&gcn_chat, CHANNEL_CHAT, "chat",
-	 "A global channel for open communication.",
-	 "~m[~MChat~m]", "~M",
-	 channel_global},
-	{&gcn_admin,
-	 CHANNEL_ADMIN,
-	 "admin",
-	 "A channel for administrators.",
-	 "~c[~CAdmin~c]",
-	 "~C",
-	 channel_admin},
+    {   &gcn_chat, CHANNEL_CHAT, "chat",
+        "A global channel for open communication.",
+        "~m[~MChat~m]", "~M",
+        channel_global
+    },
+    {   &gcn_admin,
+        CHANNEL_ADMIN,
+        "admin",
+        "A channel for administrators.",
+        "~c[~CAdmin~c]",
+        "~C",
+        channel_admin
+    },
 
-	{0, 0,
-	 0}
+    {   0, 0,
+        0
+    }
 };
 
 void initialize_channels()
 {
 
-	for (int i = 0; channel_table[i].name != 0; i++)
-		(*channel_table[i].pgcn) = i;
+    for (int i = 0; channel_table[i].name != 0; i++)
+        (*channel_table[i].pgcn) = i;
 
 }
 
 bool
 channel_viewable(const Character * ch, const Character * victim,
-		 const Channel * chan)
+                 const Channel * chan)
 {
 
-	switch (chan->type) {
+    switch (chan->type) {
 
-	case channel_global:
+    case channel_global:
 
-		return true;
+        return true;
 
-	case channel_admin:
+    case channel_admin:
 
-		return is_immortal(victim);
+        return is_immortal(victim);
 
-	default:
+    default:
 
-		return false;
+        return false;
 
-	}
+    }
 
 }
 
 const char *format_channel(const Channel * chan, const Character * ch)
 {
 
-	static char buf[OUT_SIZ];
+    static char buf[OUT_SIZ];
 
-	switch (chan->type) {
+    switch (chan->type) {
 
-	default:
+    default:
 
-		strcpy(buf, chan->format);
+        strcpy(buf, chan->format);
 
-		break;
+        break;
 
-	}
+    }
 
-	strcat(buf, chan->color);
+    strcat(buf, chan->color);
 
-	return buf;
+    return buf;
 
 }
 
 const Channel *channel_lookup(const char *arg)
 {
 
-	if (nullstr(arg))
-		return 0;
+    if (nullstr(arg))
+        return 0;
 
-	for (int i = 0; channel_table[i].name != 0; i++)
-		if (!str_prefix(arg, channel_table[i].name))
-			return &channel_table[i];
+    for (int i = 0; channel_table[i].name != 0; i++)
+        if (!str_prefix(arg, channel_table[i].name))
+            return &channel_table[i];
 
-	return 0;
+    return 0;
 
 }
 
 char is_eye(char eye)
 {
 
-	char eyes[] = { ':', ';', '=', 0 };
+    char eyes[] = { ':', ';', '=', 0 };
 
-	for (int i = 0; eyes[i] != 0; i++)
-		if (eyes[i] == eye)
-			return eyes[i];
+    for (int i = 0; eyes[i] != 0; i++)
+        if (eyes[i] == eye)
+            return eyes[i];
 
-	return 0;
+    return 0;
 
 }
 
 char is_nose(char nose)
 {
 
-	char noses[] = { '-', '\'', 'o', '~', '^', 0 };
+    char noses[] = { '-', '\'', 'o', '~', '^', 0 };
 
-	for (int i = 0; noses[i] != 0; i++)
-		if (noses[i] == nose)
-			return noses[i];
+    for (int i = 0; noses[i] != 0; i++)
+        if (noses[i] == nose)
+            return noses[i];
 
-	return 0;
+    return 0;
 
 }
 
 const char *say_verb(const char *word, Character * ch, Character * viewer,
-		     int S)
+                     int S)
 {
 
-	size_t len = strlen(word), i, j;
+    size_t len = strlen(word), i, j;
 
 #define sm(a, b, c) return S == 0 ? a : S == 1 ? b : c
 
-	if ((viewer && viewer->pc
-	     && is_set(viewer->flags, PLR_NOEMOTEVERBS)) || len < 3)
-		sm("say", "says", "said");
+    if ((viewer && viewer->pc
+            && is_set(viewer->flags, PLR_NOEMOTEVERBS)) || len < 3)
+        sm("say", "says", "said");
 
-	if (ch) {
+    if (ch) {
 
-		if (is_drunk(ch))
-			sm("slur", "slurs", "slured");
+        if (is_drunk(ch))
+            sm("slur", "slurs", "slured");
 
-		/*
-		 * else if (ch && IS_DEAD(ch)) sm("wail", "wails", "wailed");
-		 */
-	}
-	j = i = len - 2;
+        /*
+         * else if (ch && IS_DEAD(ch)) sm("wail", "wails", "wailed");
+         */
+    }
+    j = i = len - 2;
 
-	if (is_nose(word[i]))
-		i = len - 3;
+    if (is_nose(word[i]))
+        i = len - 3;
 
-	if (is_eye(word[i])) {
+    if (is_eye(word[i])) {
 
-		switch (word[len - 1]) {
+        switch (word[len - 1]) {
 
-		case ')':
+        case ')':
 
-			if (word[i] != ';')
-				sm("smile", "smiles", "smiled");
+            if (word[i] != ';')
+                sm("smile", "smiles", "smiled");
 
-			else
-				sm("leer", "leers", "leered");
+            else
+                sm("leer", "leers", "leered");
 
-		case '}':
+        case '}':
 
-		case ']':
+        case ']':
 
-		case '>':
+        case '>':
 
-			sm("grin", "grins", "grinned");
+            sm("grin", "grins", "grinned");
 
-		case '(':
+        case '(':
 
-		case '{':
+        case '{':
 
-		case '[':
+        case '[':
 
-		case '<':
+        case '<':
 
-			if (word[j] == '\'')
-				sm("sob", "sobs", "sobbed");
+            if (word[j] == '\'')
+                sm("sob", "sobs", "sobbed");
 
-			else
-				sm("sulk", "sulks", "sulked");
+            else
+                sm("sulk", "sulks", "sulked");
 
-		case '|':
+        case '|':
 
-		case '/':
+        case '/':
 
-		case '\\':
+        case '\\':
 
-			sm("stare", "stares", "stared");
+            sm("stare", "stares", "stared");
 
-		case 'P':
+        case 'P':
 
-		case 'p':
+        case 'p':
 
-			sm("smirk", "smirks", "smirked");
+            sm("smirk", "smirks", "smirked");
 
-		case 'o':
+        case 'o':
 
-		case 'O':
+        case 'O':
 
-			sm("sing", "sings", "sung");
+            sm("sing", "sings", "sung");
 
-		case '$':
+        case '$':
 
-			sm("blush", "blushes", "blushed");
+            sm("blush", "blushes", "blushed");
 
-		case 's':
+        case 's':
 
-		case 'S':
+        case 'S':
 
-			sm("blab", "blabs", "blabbed");
+            sm("blab", "blabs", "blabbed");
 
-		case 'D':
+        case 'D':
 
-			sm("beam", "beams", "beamed");
+            sm("beam", "beams", "beamed");
 
-		case '@':
+        case '@':
 
-			sm("shout", "shouts", "shouted");
+            sm("shout", "shouts", "shouted");
 
-		}
+        }
 
-	} else {
+    } else {
 
-		switch (word[len - 1]) {
+        switch (word[len - 1]) {
 
-		case '!':
+        case '!':
 
-			if (word[len - 2] != '!')
-				sm("exclaim", "exclaims", "exclaimed");
+            if (word[len - 2] != '!')
+                sm("exclaim", "exclaims", "exclaimed");
 
-			else
-				sm("scream", "screams", "screamed");
+            else
+                sm("scream", "screams", "screamed");
 
-		case '?':
+        case '?':
 
-			if (word[len - 2] == '!')
-				sm("boggle", "boggles", "boggled");
+            if (word[len - 2] == '!')
+                sm("boggle", "boggles", "boggled");
 
-			else if (word[len - 2] != '?')
-				sm("ask", "asks", "asked");
+            else if (word[len - 2] != '?')
+                sm("ask", "asks", "asked");
 
-			else
-				sm("demand", "demands", "demanded");
+            else
+                sm("demand", "demands", "demanded");
 
-		case '.':
+        case '.':
 
-			if (word[len - 2] == '.' && word[len - 3] == '.')
-				sm("mutter", "mutters", "muttered");
+            if (word[len - 2] == '.' && word[len - 3] == '.')
+                sm("mutter", "mutters", "muttered");
 
-			break;
+            break;
 
-		}
+        }
 
-	}
+    }
 
-	sm("say", "says", "said");
+    sm("say", "says", "said");
 
 }
 
 const char *get_chan_soc_string(Character * ch, Character * victim,
-				Character * vch, Object * obj, Social * soc)
+                                Character * vch, Object * obj, Social * soc)
 {
-	if (!victim && !obj) {
-		if (ch == vch)
-			return soc->charNoArg;
-		else
-			return soc->othersNoArg;
-	} else if (obj && !victim) {
-		if (ch == vch)
-			return soc->charObjFound;
-		else
-			return soc->othersObjFound;
-	} else {
-		if (victim == ch) {
-			if (vch == ch)
-				return soc->charAuto;
-			else
-				return soc->othersAuto;
-		} else {
-			if (victim == vch)
-				return soc->victFound;
-			else if (ch == vch)
-				return soc->charFound;
-			else
-				return soc->othersFound;
-		}
-	}
+    if (!victim && !obj) {
+        if (ch == vch)
+            return soc->charNoArg;
+        else
+            return soc->othersNoArg;
+    } else if (obj && !victim) {
+        if (ch == vch)
+            return soc->charObjFound;
+        else
+            return soc->othersObjFound;
+    } else {
+        if (victim == ch) {
+            if (vch == ch)
+                return soc->charAuto;
+            else
+                return soc->othersAuto;
+        } else {
+            if (victim == vch)
+                return soc->victFound;
+            else if (ch == vch)
+                return soc->charFound;
+            else
+                return soc->othersFound;
+        }
+    }
 }
 
 void
 channel_social(Character * ch, Character * victim, Object * obj,
-	       Social * soc, const Channel * chan)
+               Social * soc, const Channel * chan)
 {
-	Character *pch;
-	const char *type;
+    Character *pch;
+    const char *type;
 
-	type = format_channel(chan, ch);
+    type = format_channel(chan, ch);
 
-	for (pch = first_player; pch; pch = pch->next_player) {
-		if (pch == ch || pch == victim
-		    || channel_viewable(ch, pch, chan)) {
-			/*
-			 * const char *string = get_chan_soc_string(ch,
-			 * victim, pch, obj, soc);
-			 *
-			 * if (d->connected == CON_PLAYING) { const char *msg;
-			 *
-			 * if (fRand) msg = FORMATF("%s %s (%s){x", type,
-			 * string, soc->getName()); else msg = FORMATF("%s
-			 * %s{x", type, string);
-			 *
-			 * perform_act(msg, ch, obj, victim, false, vch, true,
-			 * true); } update_last_data(ch, vch, chan,
-			 * perform_act_string(string, ch, obj, victim,
-			 * false), CHANNEL_SOCIAL);
-			 */
-		}
-	}
+    for (pch = first_player; pch; pch = pch->next_player) {
+        if (pch == ch || pch == victim
+                || channel_viewable(ch, pch, chan)) {
+            /*
+             * const char *string = get_chan_soc_string(ch,
+             * victim, pch, obj, soc);
+             *
+             * if (d->connected == CON_PLAYING) { const char *msg;
+             *
+             * if (fRand) msg = FORMATF("%s %s (%s){x", type,
+             * string, soc->getName()); else msg = FORMATF("%s
+             * %s{x", type, string);
+             *
+             * perform_act(msg, ch, obj, victim, false, vch, true,
+             * true); } update_last_data(ch, vch, chan,
+             * perform_act_string(string, ch, obj, victim,
+             * false), CHANNEL_SOCIAL);
+             */
+        }
+    }
 }
 
 int interpret_channel(Character * ch, int gcn, const char *argument)
 {
 
-	const Channel *chan = &channel_table[gcn];
-	const char *arg_left;
-	char command[ARG_SIZ];
-	channel_arg_t arg_type = CHANNEL_NORMAL;
+    const Channel *chan = &channel_table[gcn];
+    const char *arg_left;
+    char command[ARG_SIZ];
+    channel_arg_t arg_type = CHANNEL_NORMAL;
 
-	if (chan == 0)
-		return 0;
+    if (chan == 0)
+        return 0;
 
-	if (nullstr(argument)) {
+    if (nullstr(argument)) {
 
-		if (!ch->pc)
-			return 1;
+        if (!ch->pc)
+            return 1;
 
-		if (is_set(ch->pc->channels, chan->bit)) {
+        if (is_set(ch->pc->channels, chan->bit)) {
 
-			remove_bit(ch->pc->channels, chan->bit);
+            remove_bit(ch->pc->channels, chan->bit);
 
-			writelnf(ch, "%s channel off.", capitalize(chan->name));
+            writelnf(ch, "%s channel off.", capitalize(chan->name));
 
-		} else {
+        } else {
 
-			set_bit(ch->pc->channels, chan->bit);
+            set_bit(ch->pc->channels, chan->bit);
 
-			writelnf(ch, "%s channel on.", capitalize(chan->name));
+            writelnf(ch, "%s channel on.", capitalize(chan->name));
 
-		}
+        }
 
-		return 1;
+        return 1;
 
-	}
-	arg_left = one_argument(argument, command);
+    }
+    arg_left = one_argument(argument, command);
 
-	const char *format = format_channel(chan, ch);
+    const char *format = format_channel(chan, ch);
 
-	if (command[0] == '+') {
-		Character *victim;
-		Object *obj;
-		Social *soc;
-		char argx[ARG_SIZ];
+    if (command[0] == '+') {
+        Character *victim;
+        Object *obj;
+        Social *soc;
+        char argx[ARG_SIZ];
 
-		arg_left = one_argument(arg_left, command);
+        arg_left = one_argument(arg_left, command);
 
-		if (nullstr(command)) {
-			writelnf(ch,
-				 "{W%s + <social> is used for channel based socials.{x",
-				 chan->name);
-			return 1;
-		}
-		soc = social_lookup(command);
+        if (nullstr(command)) {
+            writelnf(ch,
+                     "{W%s + <social> is used for channel based socials.{x",
+                     chan->name);
+            return 1;
+        }
+        soc = social_lookup(command);
 
-		if (!soc) {
-			writeln(ch, "{WWhat kind of social is that?!?!{x");
-			return 1;
-		}
-		one_argument(arg_left, argx);
-		victim = 0;
-		if (nullstr(argx)) {
-			channel_social(ch, 0, 0, soc, chan);
-		} else if ((victim = get_char_world(ch, argx)) == 0) {
-			if (!nullstr(soc->othersObjFound)
-			    && ch->inRoom
-			    &&
-			    ((obj = get_obj_list(ch, argx, ch->inRoom->objects))
-			     || (obj = get_obj_carry(ch, argx, ch)))) {
-				channel_social(ch, 0, obj, soc, chan);
-			} else {
-				writeln(ch, "They aren't here.");
-			}
-		} else if (victim) {
-			if (victim != ch && !channel_viewable(ch, victim, chan)) {
-				writeln(ch, "They can't use that channel.");
+        if (!soc) {
+            writeln(ch, "{WWhat kind of social is that?!?!{x");
+            return 1;
+        }
+        one_argument(arg_left, argx);
+        victim = 0;
+        if (nullstr(argx)) {
+            channel_social(ch, 0, 0, soc, chan);
+        } else if ((victim = get_char_world(ch, argx)) == 0) {
+            if (!nullstr(soc->othersObjFound)
+                    && ch->inRoom
+                    &&
+                    ((obj = get_obj_list(ch, argx, ch->inRoom->objects))
+                     || (obj = get_obj_carry(ch, argx, ch)))) {
+                channel_social(ch, 0, obj, soc, chan);
+            } else {
+                writeln(ch, "They aren't here.");
+            }
+        } else if (victim) {
+            if (victim != ch && !channel_viewable(ch, victim, chan)) {
+                writeln(ch, "They can't use that channel.");
 
-			} else
-				channel_social(ch, victim, NULL, soc, chan);
-		}
-		return 1;
-	} else if (command[0] == '!') {
-		if (nullstr(argument)) {
-			writelnf(ch, "Syntax: %s ! <argument>", chan->name);
-			return 1;
-		}
-		arg_type = CHANNEL_EMOTE;
-		writelnf(ch, "%s %s %s{x", format, ch->name, argument);
-	} else if (command[0] == '@') {
-		if (nullstr(argument)) {
-			writelnf(ch, "Syntax: %s @ <argument>", chan->name);
-			return 1;
-		}
-		arg_type = CHANNEL_THINK;
-		writelnf(ch, "%s %s . o O ( %s ){x", format, ch->name,
-			 argument);
-	} else if (is_exact_name(command, "-who -w -wholist")
-		   && nullstr(argument)) {
-		arg_type = CHANNEL_WHO;
-		writelnf(ch, "{WPlayers on %s{x", format);
-		writeln(ch, "{C-------------------{x");
-	} else if (is_exact_name(command, "-h -help") && nullstr(argument)) {
-		writelnf(ch, "Syntax: %s <message>          - send a message",
-			 chan->name);
-		if (chan->bit)
-			writelnf(ch,
-				 "      : %s                    - toggle channel on/off",
-				 chan->name);
-		writelnf(ch,
-			 "      : %s -hist              - display channel history",
-			 chan->name);
-		writelnf(ch,
-			 "      : %s -who               - display who is on channel",
-			 chan->name);
-		writelnf(ch,
-			 "      : %s ! <emote>          - send an emote over channel",
-			 chan->name);
-		writelnf(ch,
-			 "      : %s + <social> [args]  - do a social over channel",
-			 chan->name);
-		writelnf(ch,
-			 "      : %s @ <message>        - enclose a message in 'thought bubbles'",
-			 chan->name);
-		writelnf(ch, "      : %s -help              - this message",
-			 chan->name);
-		return 1;
-	} else {
+            } else
+                channel_social(ch, victim, NULL, soc, chan);
+        }
+        return 1;
+    } else if (command[0] == '!') {
+        if (nullstr(argument)) {
+            writelnf(ch, "Syntax: %s ! <argument>", chan->name);
+            return 1;
+        }
+        arg_type = CHANNEL_EMOTE;
+        writelnf(ch, "%s %s %s{x", format, ch->name, argument);
+    } else if (command[0] == '@') {
+        if (nullstr(argument)) {
+            writelnf(ch, "Syntax: %s @ <argument>", chan->name);
+            return 1;
+        }
+        arg_type = CHANNEL_THINK;
+        writelnf(ch, "%s %s . o O ( %s ){x", format, ch->name,
+                 argument);
+    } else if (is_exact_name(command, "-who -w -wholist")
+               && nullstr(argument)) {
+        arg_type = CHANNEL_WHO;
+        writelnf(ch, "{WPlayers on %s{x", format);
+        writeln(ch, "{C-------------------{x");
+    } else if (is_exact_name(command, "-h -help") && nullstr(argument)) {
+        writelnf(ch, "Syntax: %s <message>          - send a message",
+                 chan->name);
+        if (chan->bit)
+            writelnf(ch,
+                     "      : %s                    - toggle channel on/off",
+                     chan->name);
+        writelnf(ch,
+                 "      : %s -hist              - display channel history",
+                 chan->name);
+        writelnf(ch,
+                 "      : %s -who               - display who is on channel",
+                 chan->name);
+        writelnf(ch,
+                 "      : %s ! <emote>          - send an emote over channel",
+                 chan->name);
+        writelnf(ch,
+                 "      : %s + <social> [args]  - do a social over channel",
+                 chan->name);
+        writelnf(ch,
+                 "      : %s @ <message>        - enclose a message in 'thought bubbles'",
+                 chan->name);
+        writelnf(ch, "      : %s -help              - this message",
+                 chan->name);
+        return 1;
+    } else {
 
-		writelnf(ch, "%s You %s '%s'~x", format,
-			 say_verb(argument, ch, 0, 0), argument);
+        writelnf(ch, "%s You %s '%s'~x", format,
+                 say_verb(argument, ch, 0, 0), argument);
 
-		for (Character * pch = first_player; pch != 0;
-		     pch = pch->next_player) {
+        for (Character * pch = first_player; pch != 0;
+                pch = pch->next_player) {
 
-			if (ch == pch || !channel_viewable(ch, pch, chan))
-				continue;
+            if (ch == pch || !channel_viewable(ch, pch, chan))
+                continue;
 
-			switch (arg_type) {
-			case CHANNEL_NORMAL:
-				writelnf(pch, "%s %s %s '%s'~x", format,
-					 chview(ch, pch), say_verb(argument, ch,
-								   pch, 1),
-					 argument);
-				break;
-			default:
-				break;
-			}
+            switch (arg_type) {
+            case CHANNEL_NORMAL:
+                writelnf(pch, "%s %s %s '%s'~x", format,
+                         chview(ch, pch), say_verb(argument, ch,
+                                                   pch, 1),
+                         argument);
+                break;
+            default:
+                break;
+            }
 
-		}
+        }
 
-	}
-	return 1;
+    }
+    return 1;
 
 }
 
 void announce(Character * ch, info_t type, const char *message, ...)
 {
 
-	char buf[BUF_SIZ], buf2[BUF_SIZ];
+    char buf[BUF_SIZ], buf2[BUF_SIZ];
 
-	const char *iType;
+    const char *iType;
 
-	bool Private = false;
+    bool Private = false;
 
-	va_list args;
+    va_list args;
 
-	if (nullstr(message))
-		return;
+    if (nullstr(message))
+        return;
 
-	va_start(args, message);
+    va_start(args, message);
 
-	vsnprintf(buf2, sizeof(buf2), message, args);
+    vsnprintf(buf2, sizeof(buf2), message, args);
 
-	va_end(args);
+    va_end(args);
 
-	if (ch && (type & INFO_PRIVATE)) {
+    if (ch && (type & INFO_PRIVATE)) {
 
-		Private = true;
+        Private = true;
 
-		type &= ~INFO_PRIVATE;
+        type &= ~INFO_PRIVATE;
 
-		if (ch == 0) {
+        if (ch == 0) {
 
-			log_bug("null ch in private announce");
+            log_bug("null ch in private announce");
 
-			return;
+            return;
 
-		}
-	}
-	switch (type) {
+        }
+    }
+    switch (type) {
 
-	default:
+    default:
 
-		iType = "~RINFO";
-		break;
+        iType = "~RINFO";
+        break;
 
-	}
+    }
 
-	sprintf(buf, "%s~W:~x %s~x", iType, buf2);
+    sprintf(buf, "%s~W:~x %s~x", iType, buf2);
 
-	for (Character * p = first_player; p; p = p->next_player) {
+    for (Character * p = first_player; p; p = p->next_player) {
 
-		if (!p->pc->conn->is_playing(ch->pc->conn))
-			continue;
+        if (!p->pc->conn->is_playing(ch->pc->conn))
+            continue;
 
-		if (Private && ch != p)
-			continue;
+        if (Private && ch != p)
+            continue;
 
-		switch (type) {
+        switch (type) {
 
-		case INFO_NOTE:
+        case INFO_NOTE:
 
-			if (ch && !is_note_to(p, ch->pc->account->inProgress))
-				continue;
+            if (ch && !is_note_to(p, ch->pc->account->inProgress))
+                continue;
 
-			break;
+            break;
 
-		default:
+        default:
 
-			break;
+            break;
 
-		}
+        }
 
-		if (ch == NULL)
-			writeln(p, buf);
+        if (ch == NULL)
+            writeln(p, buf);
 
-		else
-			act_pos(TO_VICT, POS_DEAD, ch, 0, p, buf);
+        else
+            act_pos(TO_VICT, POS_DEAD, ch, 0, p, buf);
 
-	}
+    }
 
 }

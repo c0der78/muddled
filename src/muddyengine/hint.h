@@ -26,9 +26,9 @@ typedef struct Hint Hint;
 #include <muddyengine/engine.h>
 
 struct Hint {
-	identifier_t id;
-	const char *text;
-	short level;
+    identifier_t id;
+    const char *text;
+    short level;
 };
 
 extern Hint *hint_table;

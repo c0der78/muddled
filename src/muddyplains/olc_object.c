@@ -37,260 +37,260 @@
 Editor *build_object_editor(Object * object)
 {
 
-	Editor *editor = new_editor();
+    Editor *editor = new_editor();
 
-	editor->data = object;
+    editor->data = object;
 
-	editor->edit = object_editor;
+    editor->edit = object_editor;
 
-	editor->show = object_editor_menu;
+    editor->show = object_editor_menu;
 
-	return editor;
+    return editor;
 
 }
 
 void object_editor_menu(Client * conn)
 {
 
-	clear_screen(conn);
+    clear_screen(conn);
 
-	set_cursor(conn, 1, 1);
+    set_cursor(conn, 1, 1);
 
-	Object *object = (Object *) conn->editing->data;
+    Object *object = (Object *) conn->editing->data;
 
-	conn->titlef(conn, "Object Editor - object %d", object->id);
+    conn->titlef(conn, "Object Editor - object %d", object->id);
 
-	writelnf(conn, "~C   Id: ~W%d", object->id);
+    writelnf(conn, "~C   Id: ~W%d", object->id);
 
-	writelnf(conn, "~YA) ~CType: ~W%s~x", object_types[object->type].name);
+    writelnf(conn, "~YA) ~CType: ~W%s~x", object_types[object->type].name);
 
-	writelnf(conn, "~YB) ~CName: ~W%s~x", object->name);
+    writelnf(conn, "~YB) ~CName: ~W%s~x", object->name);
 
-	writelnf(conn, "~YC) ~CShort Description: ~W%s~x", object->shortDescr);
+    writelnf(conn, "~YC) ~CShort Description: ~W%s~x", object->shortDescr);
 
-	writelnf(conn, "~YD) ~CLong Description: ~W%s~x", object->longDescr);
+    writelnf(conn, "~YD) ~CLong Description: ~W%s~x", object->longDescr);
 
-	string_editor_preview(conn, "~YE) ~CDescription", object->description);
+    string_editor_preview(conn, "~YE) ~CDescription", object->description);
 
-	writelnf(conn, "~YF) ~CWeight: ~W%.1f~x", object->weight);
+    writelnf(conn, "~YF) ~CWeight: ~W%.1f~x", object->weight);
 
-	writelnf(conn, "~YG) ~CCondition: ~W%.1f~x", object->condition);
+    writelnf(conn, "~YG) ~CCondition: ~W%.1f~x", object->condition);
 
-	writelnf(conn, "~YH) ~CWear Loc: ~W%s~x",
-		 lookup_name(wear_flags, object->wearFlags));
+    writelnf(conn, "~YH) ~CWear Loc: ~W%s~x",
+             lookup_name(wear_flags, object->wearFlags));
 
 }
 
 void object_edit_list(Client * conn, Area * area)
 {
 
-	int count = 0;
+    int count = 0;
 
-	for (Object * obj = area->objects; obj != 0; obj = obj->next_in_area) {
+    for (Object * obj = area->objects; obj != 0; obj = obj->next_in_area) {
 
-		writelnf(conn, "%2d) %-12.12s ", obj->id, obj->shortDescr);
+        writelnf(conn, "%2d) %-12.12s ", obj->id, obj->shortDescr);
 
-		if (++count % 4 == 0)
-			writeln(conn, "");
+        if (++count % 4 == 0)
+            writeln(conn, "");
 
-	}
+    }
 
-	if (count % 4 != 0)
-		writeln(conn, "");
+    if (count % 4 != 0)
+        writeln(conn, "");
 
 }
 
 void object_editor(Client * conn, const char *argument)
 {
 
-	char arg[100];
+    char arg[100];
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show")) {
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "Q")) {
+    }
+    if (!str_cmp(arg, "Q")) {
 
-		finish_editing(conn);
+        finish_editing(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "list")) {
+    }
+    if (!str_cmp(arg, "list")) {
 
-		object_edit_list(conn, conn->account->playing->inRoom->area);
+        object_edit_list(conn, conn->account->playing->inRoom->area);
 
-		return;
+        return;
 
-	}
-	Object *object = (Object *) conn->editing->data;
+    }
+    Object *object = (Object *) conn->editing->data;
 
-	if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save")) {
 
-		save_object(object);
+        save_object(object);
 
-		writeln(conn, "~CNPC saved.~x");
+        writeln(conn, "~CNPC saved.~x");
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "delete")) {
+    }
+    if (!str_cmp(arg, "delete")) {
 
-		delete_object(object);
+        delete_object(object);
 
-		extract_obj(object);
+        extract_obj(object);
 
-		finish_editing(conn);
+        finish_editing(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "A") || !str_cmp(arg, "type")) {
+    }
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "type")) {
 
-		long type = value_lookup(object_types, argument);
+        long type = value_lookup(object_types, argument);
 
-		if (type == -1) {
+        if (type == -1) {
 
-			writelnf(conn, "~CValid types are: ~W%s~x",
-				 lookup_names(object_types));
+            writelnf(conn, "~CValid types are: ~W%s~x",
+                     lookup_names(object_types));
 
-			return;
+            return;
 
-		}
-		object->type = (object_type) type;
+        }
+        object->type = (object_type) type;
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "B") || !str_cmp(arg, "name")) {
+    }
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "name")) {
 
-		if (!argument || !*argument) {
+        if (!argument || !*argument) {
 
-			writeln(conn, "~CYou must provide a name to set.~x");
+            writeln(conn, "~CYou must provide a name to set.~x");
 
-			return;
+            return;
 
-		}
-		free_str_dup(&object->name, argument);
+        }
+        free_str_dup(&object->name, argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "D") || !str_cmp(arg, "description")) {
+    }
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "description")) {
 
-		Editor *editor = build_string_editor(&object->description);
+        Editor *editor = build_string_editor(&object->description);
 
-		editor->next = conn->editing;
+        editor->next = conn->editing;
 
-		conn->editing = editor;
+        conn->editing = editor;
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "C") || !str_cmp(arg, "short")) {
+    }
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "short")) {
 
-		if (!argument || !*argument) {
+        if (!argument || !*argument) {
 
-			writeln(conn,
-				"~CYou must provide a short description.~x");
+            writeln(conn,
+                    "~CYou must provide a short description.~x");
 
-			return;
+            return;
 
-		}
-		free_str_dup(&object->shortDescr, argument);
+        }
+        free_str_dup(&object->shortDescr, argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "D") || !str_cmp(arg, "long")) {
+    }
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "long")) {
 
-		if (!argument || !*argument) {
+        if (!argument || !*argument) {
 
-			writeln(conn,
-				"~CYou must provide a long description.~x");
+            writeln(conn,
+                    "~CYou must provide a long description.~x");
 
-			return;
+            return;
 
-		}
-		free_str_dup(&object->longDescr, argument);
+        }
+        free_str_dup(&object->longDescr, argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "F") || !str_cmp(arg, "weight")) {
+    }
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "weight")) {
 
-		if (!argument || !*argument || is_number(argument) != 2) {
+        if (!argument || !*argument || is_number(argument) != 2) {
 
-			writeln(conn, "~CYou must specify a decimal number.~x");
+            writeln(conn, "~CYou must specify a decimal number.~x");
 
-			return;
+            return;
 
-		}
-		object->weight = (float)atof(argument);
+        }
+        object->weight = (float)atof(argument);
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "G") || !str_cmp(arg, "condition")) {
+    }
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "condition")) {
 
-		if (!argument || !*argument || is_number(argument) != 2) {
+        if (!argument || !*argument || is_number(argument) != 2) {
 
-			writeln(conn, "~CYou must specify a decimal number.~x");
+            writeln(conn, "~CYou must specify a decimal number.~x");
 
-			return;
+            return;
 
-		}
-		float cond = (float)atof(argument);
+        }
+        float cond = (float)atof(argument);
 
-		if (cond < 0.0 || cond > 100.0) {
+        if (cond < 0.0 || cond > 100.0) {
 
-			writeln(conn,
-				"~CValid ranges for condition is 0.0 to 100.0.~x");
+            writeln(conn,
+                    "~CValid ranges for condition is 0.0 to 100.0.~x");
 
-			return;
+            return;
 
-		}
-		object->condition = cond;
+        }
+        object->condition = cond;
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
-	if (!str_cmp(arg, "H") || !str_cmp(arg, "wearloc")) {
+    }
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "wearloc")) {
 
-		long loc = value_lookup(wear_flags, argument);
+        long loc = value_lookup(wear_flags, argument);
 
-		if (loc == -1) {
+        if (loc == -1) {
 
-			writelnf(conn, "~CValid locations are: ~W%s~x",
-				 lookup_names(wear_flags));
+            writelnf(conn, "~CValid locations are: ~W%s~x",
+                     lookup_names(wear_flags));
 
-			return;
+            return;
 
-		}
-		object->wearFlags = (wear_type) loc;
+        }
+        object->wearFlags = (wear_type) loc;
 
-		conn->editing->show(conn);
+        conn->editing->show(conn);
 
-		return;
+        return;
 
-	}
+    }
 }

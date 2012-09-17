@@ -91,10 +91,10 @@ void skill_edit_list(Client *);
 void social_edit_list(Client *);
 
 struct Editor {
-	void (*edit) (Client *, const char *);
-	void (*show) (Client *);
-	void *data;
-	Editor *next;
+    void (*edit) (Client *, const char *);
+    void (*show) (Client *);
+    void *data;
+    Editor *next;
 };
 
 #define EDIT_CHANGED 1
@@ -109,6 +109,6 @@ void destroy_editor(Editor *);
 void finish_editing(Client *);
 
 void olc_syntax(Client *, const char *, ...)
-    __attribute__ ((format(printf, 2, 3)));
+__attribute__ ((format(printf, 2, 3)));
 
 #endif				/* // #ifndef OLC_H */

@@ -27,17 +27,17 @@ typedef struct Race Race;
 #include <muddyengine/engine.h>
 
 struct Race {
-	identifier_t id;
-	Race *next;
-	const char *name;
-	const char *description;
-	Flag *flags;
-	int stats[MAX_STAT];
-	int statMods[MAX_STAT];
+    identifier_t id;
+    Race *next;
+    const char *name;
+    const char *description;
+    Flag *flags;
+    int stats[MAX_STAT];
+    int statMods[MAX_STAT];
 };
 
 enum {
-	RACE_PC
+    RACE_PC
 };
 
 extern Race *first_race;

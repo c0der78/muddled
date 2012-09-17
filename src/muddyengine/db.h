@@ -47,12 +47,12 @@
 #define SQL_LOOKUP	1003
 
 typedef struct field_map {
-	const char *name;
-	const void *value;
-	int type;
-	const void *arg1;
-	const void *arg2;
-	int flags;
+    const char *name;
+    const void *value;
+    int type;
+    const void *arg1;
+    const void *arg2;
+    int flags;
 } field_map;
 
 typedef int (*custom_field_t) (sql_stmt *, int, const field_map *);

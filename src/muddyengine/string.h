@@ -26,19 +26,19 @@
 #include <stdarg.h>
 
 typedef enum {
-	ALIGN_LEFT,
-	ALIGN_CENTER,
-	ALIGN_RIGHT,
-	ALIGN_INDENT
+    ALIGN_LEFT,
+    ALIGN_CENTER,
+    ALIGN_RIGHT,
+    ALIGN_INDENT
 } align_t;
 
 const char *capitalize(const char *);
 char *trim(char *);
 bool nullstr(const char *);
 const char *align_string(align_t, int, const char *, const char *,
-			 const char *);
+                         const char *);
 const char *valign_string(align_t, int, const char *, const char *,
-			  const char *, va_list);
+                          const char *, va_list);
 bool str_suffix(const char *, const char *);
 bool str_infix(const char *, const char *);
 bool str_prefix(const char *, const char *);
@@ -75,6 +75,6 @@ long multi_argument(const char *, char *);
 extern const char str_empty[];
 int strpos(const char *, int);
 const char *formatf(const char *, ...)
-    __attribute__ ((format(printf, 1, 2)));
+__attribute__ ((format(printf, 1, 2)));
 
 #endif

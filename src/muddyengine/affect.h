@@ -25,7 +25,7 @@
 #define __AFFECT_H_
 
 /*!
- * @typedef Affect 
+ * @typedef Affect
  */
 typedef struct Affect Affect;
 
@@ -49,15 +49,15 @@ typedef void affect_callback(Affect *, void *, bool);
  * callback the callback method when the affect is applied
  */
 struct Affect {
-	Affect *next;
-	identifier_t id;
-	int from;
-	int level;
-	int duration;
-	int perm_duration;
-	int modifier;
-	Flag *flags;
-	affect_callback *callback;
+    Affect *next;
+    identifier_t id;
+    int from;
+    int level;
+    int duration;
+    int perm_duration;
+    int modifier;
+    Flag *flags;
+    affect_callback *callback;
 };
 
 /*!
@@ -84,38 +84,38 @@ struct Affect {
  * @constant AFF_SLOW affected is moving slowly @discussion
  */
 enum {
-	AFF_BLIND,
-	AFF_INVISIBLE,
-	AFF_DETECT_EVIL,
-	AFF_DETECT_INVIS,
-	AFF_DETECT_MAGIC,
-	AFF_DETECT_HIDDEN,
-	AFF_DETECT_GOOD,
-	AFF_SANCTUARY,
-	AFF_FAERIE_FIRE,
-	AFF_INFRARED,
-	AFF_CURSE,
-	AFF_POISON,
-	AFF_PROTECT_EVIL,
-	AFF_PROTECT_GOOD,
-	AFF_SNEAK,
-	AFF_HIDE,
-	AFF_SLEEP,
-	AFF_CHARM,
-	AFF_FLYING,
-	AFF_PASS_DOOR,
-	AFF_HASTE,
-	AFF_CALM,
-	AFF_PLAGUE,
-	AFF_WEAKEN,
-	AFF_DARK_VISION,
-	AFF_BERSERK,
-	AFF_REGENERATION,
-	AFF_SLOW
+    AFF_BLIND,
+    AFF_INVISIBLE,
+    AFF_DETECT_EVIL,
+    AFF_DETECT_INVIS,
+    AFF_DETECT_MAGIC,
+    AFF_DETECT_HIDDEN,
+    AFF_DETECT_GOOD,
+    AFF_SANCTUARY,
+    AFF_FAERIE_FIRE,
+    AFF_INFRARED,
+    AFF_CURSE,
+    AFF_POISON,
+    AFF_PROTECT_EVIL,
+    AFF_PROTECT_GOOD,
+    AFF_SNEAK,
+    AFF_HIDE,
+    AFF_SLEEP,
+    AFF_CHARM,
+    AFF_FLYING,
+    AFF_PASS_DOOR,
+    AFF_HASTE,
+    AFF_CALM,
+    AFF_PLAGUE,
+    AFF_WEAKEN,
+    AFF_DARK_VISION,
+    AFF_BERSERK,
+    AFF_REGENERATION,
+    AFF_SLOW
 };
 
 /*!
- * @group Memory Management 
+ * @group Memory Management
  */
 
 /*!
@@ -129,11 +129,11 @@ Affect *new_affect();
 void destroy_affect(Affect *);
 
 /*!
- * @group Memory Management 
+ * @group Memory Management
  */
 
 /*!
- * @group Data Management 
+ * @group Data Management
  */
 
 /*!
@@ -149,7 +149,7 @@ Affect *load_affect_by_id(identifier_t);
 int save_affect(Affect *);
 
 /*!
- * @group Data Management 
+ * @group Data Management
  */
 
 void affect_to_char(Character *, Affect *);
@@ -159,16 +159,16 @@ const char *affect_name(Affect *);
 bool is_affected(Character *, identifier_t);
 
 /*!
- * @constant affect_callbacks the table used to lookup affect callbacks 
+ * @constant affect_callbacks the table used to lookup affect callbacks
  */
 extern const Lookup affect_callbacks[];
 /*!
- * @constant affect_flags flags used for affects 
+ * @constant affect_flags flags used for affects
  */
 extern const Lookup affect_flags[];
 
 /*!
- * @group Callbacks 
+ * @group Callbacks
  */
 affect_callback affect_apply_resists;
 affect_callback affect_apply_str;
@@ -185,7 +185,7 @@ affect_callback affect_apply_hit;
 affect_callback affect_apply_size;
 affect_callback affect_apply_align;
 /*!
- * @group Callbacks 
+ * @group Callbacks
  */
 
 #endif

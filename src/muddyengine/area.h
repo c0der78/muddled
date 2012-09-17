@@ -26,7 +26,7 @@
 #define __AREA_H_
 
 /*!
- * @typedef Area 
+ * @typedef Area
  */
 typedef struct Area Area;
 
@@ -43,13 +43,13 @@ typedef struct Area Area;
  * flags flags affecting behaviour of the area
  */
 struct Area {
-	identifier_t id;
-	Area *next;
-	const char *name;
-	Character *npcs;
-	Room *rooms;
-	Object *objects;
-	Flag *flags;
+    identifier_t id;
+    Area *next;
+    const char *name;
+    Character *npcs;
+    Room *rooms;
+    Object *objects;
+    Flag *flags;
 };
 
 /*!
@@ -58,12 +58,12 @@ struct Area {
  * AREA_CHANGED area is changed and needs to be saved @discussion
  */
 enum {
-	AREA_NOEXPLORE,
-	AREA_CHANGED
+    AREA_NOEXPLORE,
+    AREA_CHANGED
 };
 
 /*!
- * @group Memory Management 
+ * @group Memory Management
  */
 
 /*!
@@ -77,11 +77,11 @@ Area *new_area();
 void destroy_area(Area *);
 
 /*!
- * @group Memory Management 
+ * @group Memory Management
  */
 
 /*!
- * @group Data Management 
+ * @group Data Management
  */
 
 /*!
@@ -108,7 +108,7 @@ int save_area(Area *);
 int save_area_only(Area *);
 
 /*!
- * @group Data Management 
+ * @group Data Management
  */
 
 /*!
@@ -129,17 +129,17 @@ Area *area_lookup(const char *);
 Area *get_default_area();
 
 /*!
- * @constant first_area the linked-list of loaded areas 
+ * @constant first_area the linked-list of loaded areas
  */
 extern Area *first_area;
 
 /*!
- * @constants max_area the number of loaded areas 
+ * @constants max_area the number of loaded areas
  */
 extern int max_area;
 
 /*!
- * @constants area_flags the table to convert area flags with strings 
+ * @constants area_flags the table to convert area flags with strings
  */
 extern const Lookup area_flags[];
 
