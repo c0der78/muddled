@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -49,7 +49,8 @@ static void resize_bits(Flag * flags, size_t size)
 
     flags->size = size + 1;
     flags->bits = (int *)realloc(flags->bits, flags->size * sizeof(bit_t));
-    if (flags->bits == 0) {
+    if (flags->bits == 0)
+    {
         log_error("unable to resize bit field");
         flags->size = 0;
         return;
@@ -80,7 +81,8 @@ Flag *set_bit(Flag * flags, bit_t bit)
 {
     size_t pos = (size_t) (bit / sizeof(bit_t));
 
-    if (pos >= flags->size) {
+    if (pos >= flags->size)
+    {
         resize_bits(flags, pos);
     }
     flags->bits[pos] |= (1 << (bit % sizeof(bit_t)));
@@ -91,10 +93,12 @@ Flag *set_bit(Flag * flags, bit_t bit)
 Flag *set_flags(Flag * flags, Flag * val)
 {
 
-    if (val->size > flags->size) {
+    if (val->size > flags->size)
+    {
         resize_bits(flags, val->size - 1);
     }
-    for (int i = 0; i < val->size; i++) {
+    for (int i = 0; i < val->size; i++)
+    {
         flags->bits[i] |= val->bits[i];
     }
 
@@ -115,7 +119,8 @@ Flag *remove_bit(Flag * flags, bit_t bit)
 
 Flag *remove_flags(Flag * flags, Flag * val)
 {
-    for (int i = 0; i < val->size; i++) {
+    for (int i = 0; i < val->size; i++)
+    {
         if (i >= flags->size)
             break;
 
@@ -129,7 +134,8 @@ Flag *toggle_bit(Flag * flags, bit_t bit)
 {
     size_t pos = (size_t) (bit / sizeof(bit_t));
 
-    if (pos >= flags->size) {
+    if (pos >= flags->size)
+    {
         resize_bits(flags, pos);
     }
     flags->bits[pos] ^= (1 << (bit % sizeof(bit_t)));
@@ -139,10 +145,12 @@ Flag *toggle_bit(Flag * flags, bit_t bit)
 
 Flag *toggle_flags(Flag * flags, Flag * val)
 {
-    if (val->size > flags->size) {
+    if (val->size > flags->size)
+    {
         resize_bits(flags, val->size - 1);
     }
-    for (int i = 0; i < val->size; i++) {
+    for (int i = 0; i < val->size; i++)
+    {
         flags->bits[i] ^= val->bits[i];
     }
 
@@ -169,7 +177,8 @@ bool is_set(Flag * flags, bit_t bit)
 
 bool is_empty(Flag * flag)
 {
-    if (flag->size == 0) {
+    if (flag->size == 0)
+    {
         return true;
     }
     bool empty = true;
@@ -184,8 +193,10 @@ bool flags_set(Flag * flags, Flag * val)
 {
     bool isset = true;
 
-    for (int i = 0; i < val->size; i++) {
-        if (i >= flags->size) {
+    for (int i = 0; i < val->size; i++)
+    {
+        if (i >= flags->size)
+        {
             if (val->bits[i] != 0)
                 return false;
 
@@ -201,8 +212,10 @@ int parse_flags_toggle(Flag * flags, const char *arglist, const Lookup * table)
 {
     int res = 0;
 
-    for (const Lookup * t = table; t->name != 0; t++) {
-        if (is_name(t->name, arglist)) {
+    for (const Lookup * t = table; t->name != 0; t++)
+    {
+        if (is_name(t->name, arglist))
+        {
             toggle_bit(flags, t->value);
             res++;
         }
@@ -215,10 +228,12 @@ int parse_flags(Flag * flags, const char *format, const Lookup * table)
     const char *name = strtok((char *)format, ",");
     int res = 0;
 
-    while (name != 0) {
+    while (name != 0)
+    {
         long f = value_lookup(table, name);
 
-        if (f != -1) {
+        if (f != -1)
+        {
             set_bit(flags, f);
             res++;
         }
@@ -237,7 +252,8 @@ const char *format_flags(Flag * flags, const Lookup * table)
 
     *res = 0;
 
-    for (const Lookup * t = table; t->name != 0; t++) {
+    for (const Lookup * t = table; t->name != 0; t++)
+    {
         if (!is_set(flags, t->value))
             continue;
 
@@ -245,9 +261,12 @@ const char *format_flags(Flag * flags, const Lookup * table)
         strcat(res, ",");
     }
 
-    if (res[0] != 0) {
+    if (res[0] != 0)
+    {
         res[strlen(res) - 1] = 0;
-    } else {
+    }
+    else
+    {
         strcpy(res, "None");
     }
 

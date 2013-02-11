@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -40,18 +40,21 @@ Engine engine_info;
 time_t current_time;
 
 const char *weekdays[] =
-{   "Muday", "Aberday", "Dikuday", "Circleday", "Mercday",
+{
+    "Muday", "Aberday", "Dikuday", "Circleday", "Mercday",
     "Smaugday", "Romday"
 };
 
 const char *months[] =
-{   "Dragon", "Sword", "Dagger", "Centaur", "Sea", "Shield",
+{
+    "Dragon", "Sword", "Dagger", "Centaur", "Sea", "Shield",
     "Mountain", "Sun", "Moon", "Wolf", "Griffon", "Horse"
 };
 
 const char *seasons[] = { "Darkness", "Life", "Light", "Leaves" };
 
-const float exp_table[EXP_TABLE_SIZ] = {
+const float exp_table[EXP_TABLE_SIZ] =
+{
     5.9f,
     5.9f,
     5.9f,
@@ -75,7 +78,8 @@ const float exp_table[EXP_TABLE_SIZ] = {
     7.2f
 };
 
-const Lookup stat_table[] = {
+const Lookup stat_table[] =
+{
     {"strength", STAT_STR},
     {"intelligence", STAT_INT},
     {"wisdom", STAT_WIS},
@@ -85,7 +89,8 @@ const Lookup stat_table[] = {
     {0, 0}
 };
 
-const Lookup engine_flags[] = {
+const Lookup engine_flags[] =
+{
     {0, 0}
 };
 
@@ -117,10 +122,12 @@ FILE *engine_open_file(const char *filepath, const char *perm)
     return fopen(buf, perm);
 }
 
-field_map *engine_field_map(Engine *info) {
+field_map *engine_field_map(Engine *info)
+{
     static field_map *table = 0;
 
-    field_map engine_values[] = {
+    field_map engine_values[] =
+    {
         {"engineId", &info->id, SQL_INT},
         {"name", &info->name, SQL_TEXT},
         {"logins", &info->total_logins, SQL_INT},
@@ -128,7 +135,8 @@ field_map *engine_field_map(Engine *info) {
         {"logging", &info->logging, SQL_FLAG, logging_flags},
         {0}
     };
-    if(table == 0) {
+    if(table == 0)
+    {
         table = alloc_mem(sizeof(engine_values)/sizeof(engine_values[0]), sizeof(engine_values[0]));
     }
     memcpy(table, engine_values, sizeof(engine_values));
@@ -146,7 +154,8 @@ int load_engine(const char *root_path)
     engine_info.logging = new_flag();
     engine_info.root_path = str_dup(root_path);
 
-    if (db_open(SQLITE3_FILE, root_path)) {
+    if (db_open(SQLITE3_FILE, root_path))
+    {
         log_data("Can't open database");
         db_close();
         exit(EXIT_FAILURE);
@@ -164,7 +173,8 @@ int load_engine(const char *root_path)
     	{0, 0, 0}
     };*/
 
-    if (!db_load_by_id(engine_field_map(&engine_info), "engine", 1)) {
+    if (!db_load_by_id(engine_field_map(&engine_info), "engine", 1))
+    {
         log_data("could not load engine info");
         return 0;
     }/*

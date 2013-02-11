@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -42,21 +42,24 @@ int max_skill = 0;
 #include <muddyengine/gsn.h>
 #undef DEFINE_GSNS
 
-const struct gsn_type gsn_table[] = {
+const struct gsn_type gsn_table[] =
+{
 #define IN_GSN_TABLE
 #include <muddyengine/gsn.h>
 #undef IN_GSN_TABLE
     {0, 0}
 };
 
-const struct spellfun_type spellfun_table[] = {
+const struct spellfun_type spellfun_table[] =
+{
 #define IN_SPELL_TABLE
 #include <muddyengine/spellfun.h>
 #undef IN_SPELL_TABLE
     {0, 0}
 };
 
-const Lookup skill_flags[] = {
+const Lookup skill_flags[] =
+{
     {0, 0}
 };
 
@@ -175,7 +178,8 @@ int load_skill_levels(Skill * skill)
         sprintf(buf, "select * from skill_level where skillId=%" PRId64,
                 skill->id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
@@ -184,7 +188,8 @@ int load_skill_levels(Skill * skill)
     }
     skill->levels = (int *)alloc_mem(max_class, sizeof(int));
 
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
 
         int count = sql_column_count(stmt);
 
@@ -194,25 +199,33 @@ int load_skill_levels(Skill * skill)
 
         int index;
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
 
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "skillId")) {
+            if (!str_cmp(colname, "skillId"))
+            {
 
                 if (sql_column_int(stmt, i) != skill->id)
                     log_error
                     ("load_skill_levels: sql returned invalid skill");
 
-            } else if (!str_cmp(colname, "classId")) {
+            }
+            else if (!str_cmp(colname, "classId"))
+            {
 
                 classId = sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "level")) {
+            }
+            else if (!str_cmp(colname, "level"))
+            {
 
                 level = sql_column_int(stmt, i);
 
-            } else {
+            }
+            else
+            {
 
                 log_error("unknown skill level column '%s'",
                           colname);
@@ -232,7 +245,8 @@ int load_skill_levels(Skill * skill)
 
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("unable to finalize skill sql statement");
     }
     return total;
@@ -257,14 +271,16 @@ int load_skills()
 
     int len = sprintf(buf, "select count(*) from skill");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
         return 0;
 
     }
-    if (sql_step(stmt) == SQL_DONE) {
+    if (sql_step(stmt) == SQL_DONE)
+    {
 
         log_data("could not count skills");
 
@@ -273,7 +289,8 @@ int load_skills()
     }
     max_skill = sql_column_int(stmt, 0);
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
 
         log_data("could not finalize statement");
 
@@ -282,77 +299,103 @@ int load_skills()
 
     len = sprintf(buf, "select * from skill");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
         return 0;
 
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
 
         int count = sql_column_count(stmt);
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
 
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "name")) {
+            if (!str_cmp(colname, "name"))
+            {
 
                 skill_table[total].name =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "skillId")) {
+            }
+            else if (!str_cmp(colname, "skillId"))
+            {
 
                 skill_table[total].id = sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "msgOff")) {
+            }
+            else if (!str_cmp(colname, "msgOff"))
+            {
 
                 skill_table[total].msgOff =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "msgObj")) {
+            }
+            else if (!str_cmp(colname, "msgObj"))
+            {
 
                 skill_table[total].msgObj =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "mana")) {
+            }
+            else if (!str_cmp(colname, "mana"))
+            {
 
                 skill_table[total].mana =
                     sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "wait")) {
+            }
+            else if (!str_cmp(colname, "wait"))
+            {
 
                 skill_table[total].wait =
                     sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "cost")) {
+            }
+            else if (!str_cmp(colname, "cost"))
+            {
 
                 skill_table[total].cost =
                     sqlite3_column_double(stmt, i);
 
-            } else if (!str_cmp(colname, "damage")) {
+            }
+            else if (!str_cmp(colname, "damage"))
+            {
 
                 skill_table[total].damage =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "flags")) {
+            }
+            else if (!str_cmp(colname, "flags"))
+            {
 
                 parse_flags(&skill_table[total].flags,
                             sql_column_str(stmt, i),
                             skill_flags);
 
-            } else if (!str_cmp(colname, "minPos")) {
+            }
+            else if (!str_cmp(colname, "minPos"))
+            {
 
                 skill_table[total].minPos =
                     sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "spell")) {
+            }
+            else if (!str_cmp(colname, "spell"))
+            {
 
                 skill_table[total].spellfun =
                     spellfun_lookup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "gsn")) {
+            }
+            else if (!str_cmp(colname, "gsn"))
+            {
 
                 skill_table[total].pgsn =
                     gsn_lookup(sql_column_str(stmt, i));
@@ -360,7 +403,9 @@ int load_skills()
                 if (skill_table[total].pgsn != 0)
                     *skill_table[total].pgsn = total;
 
-            } else {
+            }
+            else
+            {
 
                 log_warn("unknown skill column '%s'", colname);
 
@@ -374,12 +419,14 @@ int load_skills()
 
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
 
         log_data("could not finalize statement");
 
     }
-    if (total != max_skill) {
+    if (total != max_skill)
+    {
 
         log_warn("counted skills did not match number read");
 
@@ -408,7 +455,8 @@ static int save_skillspell(sql_stmt * stmt, int index, field_map * table)
 
 int save_skill(Skill * skill)
 {
-    field_map skill_values[] = {
+    field_map skill_values[] =
+    {
         {"name", &skill->name, SQL_TEXT},
         {"damage", &skill->damage, SQL_TEXT},
         {"msgOff", &skill->msgOff, SQL_TEXT},
@@ -423,16 +471,21 @@ int save_skill(Skill * skill)
         {0}
     };
 
-    if (skill->id == 0) {
-        if (sql_insert_query(skill_values, "skill") != SQL_OK) {
+    if (skill->id == 0)
+    {
+        if (sql_insert_query(skill_values, "skill") != SQL_OK)
+        {
             log_data("could not insert skill");
             return 0;
         }
         skill->id = db_last_insert_rowid();
 
-    } else {
+    }
+    else
+    {
         if (sql_update_query(skill_values, "skill", skill->id) !=
-                SQL_OK) {
+                SQL_OK)
+        {
             log_data("could not update skill");
             return 0;
         }
@@ -452,7 +505,8 @@ SPELL(magic_missile)
 SPELL(energy_shield)
 {
 
-    if (is_affected(ch, sn)) {
+    if (is_affected(ch, sn))
+    {
 
         writeln(ch, "You already surrounded with an energy shield.");
 

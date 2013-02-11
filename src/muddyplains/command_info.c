@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -60,7 +60,8 @@ int compare_commands(const void *a, const void *b)
 
 DOFUN(commands)
 {
-    if (!str_prefix(argument, "help")) {
+    if (!str_prefix(argument, "help"))
+    {
         writelnf(ch, "%s all 		- list all commands", do_name);
 
         for (const Lookup * t = command_types; t->name != 0; t++)
@@ -86,7 +87,8 @@ DOFUN(commands)
 
     int len = scrwidth(ch) / 5 - 1;
 
-    for (int i = 0; i < max_command; i++) {
+    for (int i = 0; i < max_command; i++)
+    {
 
         if (cmdlist[i].level > ch->level)
             continue;
@@ -97,7 +99,8 @@ DOFUN(commands)
 
         writef(ch, "%-*s ", len, cmdlist[i].name);
 
-        if (++count % 5 == 0) {
+        if (++count % 5 == 0)
+        {
 
             writeln(ch, str_empty);
 
@@ -125,12 +128,14 @@ void show_char_to_char_1(Character * victim, Character * ch)
 
     bool found;
 
-    if (can_see(victim, ch)) {
+    if (can_see(victim, ch))
+    {
 
         if (ch == victim)
             act(TO_ROOM, ch, 0, 0, "$n looks at $mself.");
 
-        else {
+        else
+        {
 
             act(TO_VICT, ch, 0, victim, "$n looks at you.");
 
@@ -139,11 +144,14 @@ void show_char_to_char_1(Character * victim, Character * ch)
         }
 
     }
-    if (!nullstr(victim->description)) {
+    if (!nullstr(victim->description))
+    {
 
         writeln(ch, victim->description);
 
-    } else {
+    }
+    else
+    {
 
         act(TO_CHAR, ch, 0, victim,
             "You see nothing special about $M.");
@@ -188,14 +196,17 @@ void show_char_to_char_1(Character * victim, Character * ch)
 
     found = false;
 
-    for (iWear = 0; wear_table[iWear].display != 0; iWear++) {
+    for (iWear = 0; wear_table[iWear].display != 0; iWear++)
+    {
 
         if ((obj =
                     get_eq_char(victim,
                                 wear_table[iWear].loc)) !=
-                NULL && can_see_obj(ch, obj)) {
+                NULL && can_see_obj(ch, obj))
+        {
 
-            if (!found) {
+            if (!found)
+            {
 
                 writeln(ch, "");
 
@@ -213,7 +224,8 @@ void show_char_to_char_1(Character * victim, Character * ch)
         }
     }
 
-    if (victim != ch && is_immortal(ch)) {
+    if (victim != ch && is_immortal(ch))
+    {
 
         writeln(ch, "");
 
@@ -229,9 +241,11 @@ void show_char_to_char_1(Character * victim, Character * ch)
 DOFUN(look)
 {
 
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
-        if (ch->inRoom == 0) {
+        if (ch->inRoom == 0)
+        {
 
             log_warn("character with no room");
 
@@ -240,7 +254,8 @@ DOFUN(look)
         }
         writelnf(ch, "~G%s~x", ch->inRoom->name);
 
-        if (!ch->pc || !is_set(ch->pc->account->flags, PLR_BRIEF)) {
+        if (!ch->pc || !is_set(ch->pc->account->flags, PLR_BRIEF))
+        {
 
             if (!ch->pc
                     || is_set(ch->pc->account->flags, PLR_AUTOMAP_OFF))
@@ -254,7 +269,8 @@ DOFUN(look)
 
         char buf[100] = { 0 };
 
-        for (const Lookup * t = direction_table; t->name != 0; t++) {
+        for (const Lookup * t = direction_table; t->name != 0; t++)
+        {
 
             if (ch->inRoom->exits[t->value] == 0)
                 continue;
@@ -276,16 +292,20 @@ DOFUN(look)
         writeln(ch, "~x");
 
         for (Character * rch = ch->inRoom->characters; rch != 0;
-                rch = rch->next_in_room) {
+                rch = rch->next_in_room)
+        {
 
             if (rch == ch)
                 continue;
 
-            if (!rch->npc) {
+            if (!rch->npc)
+            {
 
                 writelnf(ch, "~M%s is here.~x", rch->name);
 
-            } else {
+            }
+            else
+            {
 
                 writelnf(ch, "~M%s~x", rch->npc->longDescr);
 
@@ -294,7 +314,8 @@ DOFUN(look)
         }
 
         for (Object * obj = ch->inRoom->objects; obj != 0;
-                obj = obj->next_content) {
+                obj = obj->next_content)
+        {
 
             writelnf(ch, "~Y%s~x", obj->longDescr);
 
@@ -305,7 +326,8 @@ DOFUN(look)
     }
     Character *victim;
 
-    if ((victim = get_char_room(ch, argument)) != NULL) {
+    if ((victim = get_char_room(ch, argument)) != NULL)
+    {
 
         show_char_to_char_1(victim, ch);
 
@@ -333,7 +355,8 @@ DOFUN(time)
         writelnf(ch, "Last reboot was on %s.",
                  str_time(last_reboot, ch->pc->account->timezone, 0));
 
-    if (startup_time != 0) {
+    if (startup_time != 0)
+    {
 
         writelnf(ch, "Startup time was %s.",
                  str_time(startup_time, ch->pc->account->timezone, 0));
@@ -351,7 +374,8 @@ DOFUN(who)
 
     Buffer *buffer = new_buf();
 
-    for (Character * wch = first_player; wch != 0; wch = wch->next_player) {
+    for (Character * wch = first_player; wch != 0; wch = wch->next_player)
+    {
 
         writelnf(buffer, "~W[~Y%02d ~R%3.3s ~B%3.3s~W] %s %s",
                  wch->level, capitalize(wch->race->name),
@@ -443,7 +467,8 @@ DOFUN(score)
 
     grid_addf_default(grid, "~CSilver: ~W%d~x", silver(ch->gold));
 
-    if (ch->pc) {
+    if (ch->pc)
+    {
 
         grid_addf_border(grid, &right, "~CTerminal: ~W%s",
                          nullstr(ch->pc->conn->
@@ -461,7 +486,8 @@ DOFUN(score)
 
     grid_addf_border(grid, &right, "~CAlignment: ~W%d", ch->alignment);
 
-    if (!is_immortal(ch)) {
+    if (!is_immortal(ch))
+    {
 
         grid_addf_border(grid, &left, "~CExp: ~W%ld",
                          ch->pc->experience);
@@ -491,7 +517,8 @@ DOFUN(map)
 
 }
 
-struct area_index {
+struct area_index
+{
 
     Area *area;
 
@@ -526,7 +553,8 @@ DOFUN(explored)
     if (!ch || !ch->pc)
         return;
 
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
         rcnt = roomcount(ch->pc->explored);
 
@@ -558,7 +586,9 @@ DOFUN(explored)
                  "\n\rSee '%s list' to view all area percentages.~x",
                  do_name);
 
-    } else if (is_exact_name(argument, "reset")) {
+    }
+    else if (is_exact_name(argument, "reset"))
+    {
 
         destroy_flags(ch->pc->explored);
 
@@ -566,7 +596,9 @@ DOFUN(explored)
 
         writeln(ch, "Your explored rooms were set to 0.");
 
-    } else if (!str_prefix(argument, "list")) {
+    }
+    else if (!str_prefix(argument, "list"))
+    {
 
         Buffer *output = new_buf();
 
@@ -574,7 +606,8 @@ DOFUN(explored)
             (struct area_index *)alloc_mem(max_area,
                                            sizeof(struct area_index));
 
-        for (pArea = first_area; pArea != 0; pArea = pArea->next) {
+        for (pArea = first_area; pArea != 0; pArea = pArea->next)
+        {
 
             /*
              * if (!check_area(ch, pArea, false, false))
@@ -599,7 +632,8 @@ DOFUN(explored)
         qsort(list, i, sizeof(struct area_index),
               compare_area_explored);
 
-        for (c = 0; c < i; c++) {
+        for (c = 0; c < i; c++)
+        {
 
             pArea = list[c].area;
 
@@ -616,7 +650,9 @@ DOFUN(explored)
 
         destroy_buf(output);
 
-    } else {
+    }
+    else
+    {
 
         cmd_syntax(ch, do_name, "       - show current area and world.",
                    "list   - list percentages for all areas.",
@@ -638,9 +674,11 @@ DOFUN(inventory)
 DOFUN(equipment)
 {
 
-    for (int i = 1; wear_table[i].display != 0; i++) {
+    for (int i = 1; wear_table[i].display != 0; i++)
+    {
 
-        if (wear_table[i].canUse && !(*wear_table[i].canUse) (ch)) {
+        if (wear_table[i].canUse && !(*wear_table[i].canUse) (ch))
+        {
 
             continue;
 
@@ -651,11 +689,14 @@ DOFUN(equipment)
                align_string(ALIGN_CENTER, 22, 0, 0,
                             wear_table[i].display));
 
-        if (obj) {
+        if (obj)
+        {
 
             format_obj_to_char(obj, ch, true);
 
-        } else {
+        }
+        else
+        {
 
             writeln(ch, "Nothing");
 
@@ -682,15 +723,18 @@ DOFUN(affects)
     // Object * obj;
     // int iWear;
 
-    if (ch->affects) {
+    if (ch->affects)
+    {
 
         writeln(buffer, "You are affected by the following spells:");
 
         paf_last = NULL;
 
-        for (paf = ch->affects; paf; paf = paf->next) {
+        for (paf = ch->affects; paf; paf = paf->next)
+        {
 
-            if (paf_last != NULL && paf->from == paf_last->from) {
+            if (paf_last != NULL && paf->from == paf_last->from)
+            {
 
                 if (ch->level >= 20)
                     write(buffer,
@@ -699,7 +743,9 @@ DOFUN(affects)
                 else
                     continue;
 
-            } else {
+            }
+            else
+            {
 
                 writef(buffer, "Spell: ~c%-19s~x",
                        valid_skill(paf->from)
@@ -708,7 +754,8 @@ DOFUN(affects)
 
             }
 
-            if (ch->level >= 20) {
+            if (ch->level >= 20)
+            {
 
                 writef(buffer, ": modifies %s by %d ",
                        affect_name(paf), paf->modifier);
@@ -777,7 +824,8 @@ DOFUN(affects)
      * obj->getShortDesc()); buf4 = one_argument(buf4, buf2); } } } } }
      * found = true; if (print) buffer.println(NULL); } }
      */
-    if (!found) {
+    if (!found)
+    {
 
         writeln(buffer, "You are not affected by any spells.");
 
@@ -797,7 +845,8 @@ DOFUN(resists)
 
     writelnf(buf, "~c%s~x", fillstr("-", 19));
 
-    for (int i = 0; i < MAX_DAM; i++) {
+    for (int i = 0; i < MAX_DAM; i++)
+    {
 
         writelnf(buf, "~C%-12s  ~W%3d~x", capitalize(dam_types[i].name),
                  ch->resists[dam_types[i].value]);
@@ -813,7 +862,8 @@ DOFUN(resists)
 DOFUN(socials)
 {
 
-    if (first_social == 0) {
+    if (first_social == 0)
+    {
 
         writeln(ch, "No socials found.");
 
@@ -822,7 +872,8 @@ DOFUN(socials)
     }
     Grid *grid = new_grid(scrwidth(ch), 5);
 
-    for (Social * s = first_social; s; s = s->next) {
+    for (Social * s = first_social; s; s = s->next)
+    {
 
         grid_add_default(grid, s->name);
 
@@ -838,7 +889,8 @@ DOFUN(areas)
 {
     Grid *grid = new_grid(scrwidth(ch), 2);
 
-    for (Area * a = first_area; a; a = a->next) {
+    for (Area * a = first_area; a; a = a->next)
+    {
         grid_add_default(grid, a->name);
     }
 
@@ -850,7 +902,8 @@ DOFUN(areas)
 DOFUN(help)
 {
 
-    if (first_help == 0) {
+    if (first_help == 0)
+    {
 
         writeln(ch, "No help found.");
 
@@ -859,7 +912,8 @@ DOFUN(help)
     }
     Help *help = help_match(argument);
 
-    if (help == 0) {
+    if (help == 0)
+    {
 
         writelnf(ch, "No help found for '%s'.", argument);
 

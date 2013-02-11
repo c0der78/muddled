@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -33,7 +33,8 @@ const char *greeting = 0;
 
 Help *first_help = 0;
 
-const Lookup help_categories[] = {
+const Lookup help_categories[] =
+{
     {"unknown", HELP_UNKNOWN},
     {"information", HELP_INFO},
     {"communication", HELP_COMMUNICATION},
@@ -75,37 +76,48 @@ void destroy_help(Help * help)
 int load_help_column(Help * help, sql_stmt * stmt, const char *colname, int i)
 {
 
-    if (!str_cmp(colname, "keywords")) {
+    if (!str_cmp(colname, "keywords"))
+    {
 
         help->keywords = str_dup(sql_column_str(stmt, i));
 
         return 1;
 
-    } else if (!str_cmp(colname, "syntax")) {
+    }
+    else if (!str_cmp(colname, "syntax"))
+    {
 
         help->syntax = str_dup(sql_column_str(stmt, i));
 
         return 1;
 
-    } else if (!str_cmp(colname, "text")) {
+    }
+    else if (!str_cmp(colname, "text"))
+    {
 
         help->text = str_dup(sql_column_str(stmt, i));
 
         return 1;
 
-    } else if (!str_cmp(colname, "helpId")) {
+    }
+    else if (!str_cmp(colname, "helpId"))
+    {
 
         help->id = sql_column_int64(stmt, i);
 
         return 1;
 
-    } else if (!str_cmp(colname, "category")) {
+    }
+    else if (!str_cmp(colname, "category"))
+    {
 
         help->category = sql_column_int(stmt, i);
 
         return 1;
 
-    } else {
+    }
+    else
+    {
         log_warn("unknown help column '%s'", colname);
 
     }
@@ -117,7 +129,8 @@ int load_help_column(Help * help, sql_stmt * stmt, const char *colname, int i)
 int load_related_helps()
 {
 
-    for (Help * help = first_help; help; help = help->next) {
+    for (Help * help = first_help; help; help = help->next)
+    {
 
         char buf[400];
 
@@ -128,20 +141,24 @@ int load_related_helps()
                           PRId64,
                           help->id);
 
-        if (sql_query(buf, len, &stmt) != SQL_OK) {
+        if (sql_query(buf, len, &stmt) != SQL_OK)
+        {
 
             log_data("could not prepare statement");
 
             return 0;
 
         }
-        while (sql_step(stmt) != SQL_DONE) {
+        while (sql_step(stmt) != SQL_DONE)
+        {
 
             int related = sql_column_int(stmt, 1);
 
-            for (Help * rel = first_help; help; help = help->next) {
+            for (Help * rel = first_help; help; help = help->next)
+            {
 
-                if (rel->id == related) {
+                if (rel->id == related)
+                {
 
                     LINK(help->related, rel, next_related);
 
@@ -152,7 +169,8 @@ int load_related_helps()
 
         }
 
-        if (sql_finalize(stmt) != SQL_OK) {
+        if (sql_finalize(stmt) != SQL_OK)
+        {
 
             log_data("could not finalize statement");
 
@@ -174,20 +192,23 @@ int load_helps()
 
     int len = sprintf(buf, "select * from help");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
         return 0;
 
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
 
         int count = sql_column_count(stmt);
 
         Help *help = new_help();
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
 
             const char *colname = sql_column_name(stmt, i);
 
@@ -195,7 +216,8 @@ int load_helps()
 
         }
 
-        if (is_name("greeting", help->keywords)) {
+        if (is_name("greeting", help->keywords))
+        {
 
             greeting = help->text;
 
@@ -206,7 +228,8 @@ int load_helps()
 
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
 
         log_data("could not finalize statement");
 
@@ -219,7 +242,8 @@ int load_helps()
 
 int save_help(Help * help)
 {
-    field_map help_values[] = {
+    field_map help_values[] =
+    {
         {"keywords", &help->keywords, SQL_TEXT},
         {"text", &help->text, SQL_TEXT},
         {"related", &help->related, SQL_TEXT},
@@ -227,15 +251,20 @@ int save_help(Help * help)
         {0}
     };
 
-    if (help->id == 0) {
-        if (sql_insert_query(help_values, "help") != SQL_OK) {
+    if (help->id == 0)
+    {
+        if (sql_insert_query(help_values, "help") != SQL_OK)
+        {
             log_data("could not insert help");
             return 0;
         }
         help->id = db_last_insert_rowid();
 
-    } else {
-        if (sql_update_query(help_values, "help", help->id) != SQL_OK) {
+    }
+    else
+    {
+        if (sql_update_query(help_values, "help", help->id) != SQL_OK)
+        {
 
             log_data("could not update help");
 
@@ -253,7 +282,8 @@ Help *help_find(const char *keyword)
 
     int id = atoi(keyword);
 
-    for (Help * help = first_help; help != 0; help = help->next) {
+    for (Help * help = first_help; help != 0; help = help->next)
+    {
 
         if ((id != 0 && id == help->id)
                 || is_name(keyword, help->keywords))
@@ -268,12 +298,14 @@ Help *help_find(const char *keyword)
 Help *help_match(const char *keyword)
 {
 
-    for (Help * help = first_help; help != 0; help = help->next) {
+    for (Help * help = first_help; help != 0; help = help->next)
+    {
         char arg[BUF_SIZ];
 
         const char *key = one_argument(help->keywords, arg);
 
-        do {
+        do
+        {
             if (match(arg, keyword))
                 return help;
 
@@ -292,7 +324,8 @@ const char *help_related_string(Help * help)
 
     static char buf[BUF_SIZ] = { 0 };
 
-    for (Help * rel = help->related; rel; rel = rel->next_related) {
+    for (Help * rel = help->related; rel; rel = rel->next_related)
+    {
 
         strcat(buf, ", ");
 

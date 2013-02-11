@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -49,18 +49,21 @@ time_t last_reboot = 0;
 
 void initialize_server()
 {
-    if (!server_rebooting) {
+    if (!server_rebooting)
+    {
         static struct sockaddr_in sa_zero;
         struct sockaddr_in sa;
         int x = 1;
 
-        if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        {
             log_error("init_socket: socket");
             exit(-1);
         }
         if (setsockopt
                 (server_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&x,
-                 sizeof(x)) < 0) {
+                 sizeof(x)) < 0)
+        {
             log_error("Init_socket: SO_REUSEADDR");
             close(server_socket);
             exit(-1);
@@ -74,7 +77,8 @@ void initialize_server()
 
             if (setsockopt
                     (server_socket, SOL_SOCKET, SO_DONTLINGER,
-                     (char *)&ld, sizeof(ld)) < 0) {
+                     (char *)&ld, sizeof(ld)) < 0)
+            {
                 log_error("init_socket: SO_DONTLINGER");
                 close(server_socket);
                 exit(-1);
@@ -87,36 +91,46 @@ void initialize_server()
         sa.sin_port = htons(server_port);
         sa.sin_addr.s_addr = INADDR_ANY;
 
-        if (bind(server_socket, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
+        if (bind(server_socket, (struct sockaddr *)&sa, sizeof(sa)) < 0)
+        {
             log_error("init socket: bind");
             close(server_socket);
             exit(-1);
         }
-        if (listen(server_socket, 5) < 0) {
+        if (listen(server_socket, 5) < 0)
+        {
             log_error("init socket: listen");
             close(server_socket);
             exit(-1);
         }
-    } else {
+    }
+    else
+    {
         char buf[ARG_SIZ];
 
         FILE *fp = engine_open_file(REBOOT_FILE, "r");
 
         last_reboot = time(0);
 
-        if (fp == 0) {
+        if (fp == 0)
+        {
             log_error("Could not open file %s for reading",
                       REBOOT_FILE);
-        } else {
+        }
+        else
+        {
             log_trace("parsing reboot file");
-            if (fgets(buf, sizeof(buf), fp) != NULL) {
-                if (sscanf(buf, "%ld\n", &startup_time) != 1) {
+            if (fgets(buf, sizeof(buf), fp) != NULL)
+            {
+                if (sscanf(buf, "%ld\n", &startup_time) != 1)
+                {
                     log_error
                     ("reboot: could not get startup time");
                 }
             }
             socklen_t size = sizeof(struct sockaddr);
-            while (fgets(buf, sizeof(buf), fp) != NULL) {
+            while (fgets(buf, sizeof(buf), fp) != NULL)
+            {
                 Client *conn = new_client();
                 char name[100];
                 char account[100];
@@ -129,7 +143,8 @@ void initialize_server()
                 if (sscanf
                         (buf, "%d %d %d %[^'~']~ %[^'~']~ %s\n",
                          &conn->socket, &width, &height, account,
-                         name, term) != 6) {
+                         name, term) != 6)
+                {
                     log_error
                     ("could not scan line for reboot");
                     destroy_client(conn);
@@ -142,10 +157,13 @@ void initialize_server()
                 if (getpeername
                         (conn->socket,
                          (struct sockaddr *)&conn->addr,
-                         &size) < 0) {
+                         &size) < 0)
+                {
                     log_error("getpeername");
                     conn->host = str_dup("(unknown)");
-                } else {
+                }
+                else
+                {
                     from =
                         gethostbyaddr((char *)&conn->addr.
                                       sin_addr,
@@ -158,7 +176,8 @@ void initialize_server()
                     log_info("new client: %s", conn->host);
                 }
 
-                if (!load_account(conn->account, account)) {
+                if (!load_account(conn->account, account))
+                {
                     log_error("could not reload account %s",
                               account);
                     destroy_client(conn);
@@ -166,8 +185,10 @@ void initialize_server()
                 }
                 for (AccountPlayer * ch =
                             conn->account->players; ch != 0;
-                        ch = ch->next) {
-                    if (!str_cmp(ch->name, name)) {
+                        ch = ch->next)
+                {
+                    if (!str_cmp(ch->name, name))
+                    {
                         log_info("reloaded %s", name);
                         conn->account->playing =
                             load_player_by_id((Connection *) conn, ch->charId);
@@ -175,11 +196,14 @@ void initialize_server()
                     }
                 }
 
-                if (conn->account->playing == 0) {
+                if (conn->account->playing == 0)
+                {
                     log_error("could not reload player %s",
                               name);
                     destroy_client(conn);
-                } else {
+                }
+                else
+                {
                     LINK(first_client, conn, next);
                     test_telopts(conn);
 
@@ -208,7 +232,8 @@ void game_loop(int control)
     /*
      * Main loop
      */
-    while (server_socket != -1) {
+    while (server_socket != -1)
+    {
         fd_set in_set;
         fd_set out_set;
         fd_set exc_set;
@@ -223,7 +248,8 @@ void game_loop(int control)
         FD_ZERO(&exc_set);
         FD_SET(control, &in_set);
         maxdesc = control;
-        for (c = first_client; c; c = c->next) {
+        for (c = first_client; c; c = c->next)
+        {
             maxdesc = UMAX(maxdesc, c->socket);
             FD_SET(c->socket, &in_set);
             FD_SET(c->socket, &out_set);
@@ -231,22 +257,26 @@ void game_loop(int control)
         }
 
         if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time)
-                < 0) {
+                < 0)
+        {
             log_error("select: poll");
             exit(1);
         }
         /*
          * New connection?
          */
-        if (FD_ISSET(control, &in_set)) {
+        if (FD_ISSET(control, &in_set))
+        {
             initialize_client(control);
         }
         /*
          * Kick out the freaky folks.
          */
-        for (c = first_client; c; c = c_next) {
+        for (c = first_client; c; c = c_next)
+        {
             c_next = c->next;
-            if (FD_ISSET(c->socket, &exc_set) || c->handler == 0) {
+            if (FD_ISSET(c->socket, &exc_set) || c->handler == 0)
+            {
                 FD_CLR(c->socket, &in_set);
                 FD_CLR(c->socket, &out_set);
                 if (client_is_playing(c))
@@ -259,13 +289,16 @@ void game_loop(int control)
         /*
          * Process input.
          */
-        for (c = first_client; c; c = c_next) {
+        for (c = first_client; c; c = c_next)
+        {
             c_next = c->next;
 
             c->fCommand = false;
 
-            if (FD_ISSET(c->socket, &in_set)) {
-                if (!c->readln(c)) {
+            if (FD_ISSET(c->socket, &in_set))
+            {
+                if (!c->readln(c))
+                {
                     FD_CLR(c->socket, &out_set);
                     if (client_is_playing(c))
                         save_player(c->account->
@@ -283,7 +316,8 @@ void game_loop(int control)
              * --d->character->wait; continue; }
              */
 
-            if (parse_input_buffer(c) && c->handler) {
+            if (parse_input_buffer(c) && c->handler)
+            {
                 c->fCommand = true;
                 // stop_idling(c->character);
 
@@ -301,12 +335,15 @@ void game_loop(int control)
         /*
          * Output.
          */
-        for (c = first_client; c; c = c_next) {
+        for (c = first_client; c; c = c_next)
+        {
             c_next = c->next;
 
             if ((c->fCommand || c->outtop > 0)
-                    && FD_ISSET(c->socket, &out_set)) {
-                if (!process_output(c, true)) {
+                    && FD_ISSET(c->socket, &out_set))
+            {
+                if (!process_output(c, true))
+                {
                     if (client_is_playing(c))
                         save_player(c->account->
                                     playing);
@@ -333,23 +370,27 @@ void game_loop(int control)
             secDelta =
                 (suseconds_t) (last_time.tv_sec - now_time.tv_sec);
 
-            while (usecDelta < 0) {
+            while (usecDelta < 0)
+            {
                 usecDelta += 1000000;
                 secDelta -= 1;
             }
 
-            while (usecDelta >= 1000000) {
+            while (usecDelta >= 1000000)
+            {
                 usecDelta -= 1000000;
                 secDelta += 1;
             }
 
-            if (secDelta > 0 || (secDelta == 0 && usecDelta > 0)) {
+            if (secDelta > 0 || (secDelta == 0 && usecDelta > 0))
+            {
                 struct timeval stall_time;
 
                 stall_time.tv_usec = usecDelta;
                 stall_time.tv_sec = secDelta;
                 if (select(0, NULL, NULL, NULL, &stall_time) <
-                        0) {
+                        0)
+                {
                     perror("Game_loop: select: stall");
                     exit(1);
                 }
@@ -372,14 +413,16 @@ void run_server()
 
 void stop_server()
 {
-    if (server_socket != -1) {
+    if (server_socket != -1)
+    {
         log_info("shutting down server");
         close(server_socket);
         server_socket = -1;
     }
     FILE *fp = engine_open_file(LOG_DIR "/shutdown.log", "w+");
 
-    if (fp) {
+    if (fp)
+    {
         fputs(ctime(&current_time), fp);
 
         fclose(fp);
@@ -394,13 +437,15 @@ void reboot_server()
 
     char arg2[50];
 
-    if (fp == 0) {
+    if (fp == 0)
+    {
         log_error("Could not open file %s", REBOOT_FILE);
         return;
     }
     fprintf(fp, "%ld\n", startup_time);
 
-    for (Client * conn = first_client; conn != 0; conn = conn->next) {
+    for (Client * conn = first_client; conn != 0; conn = conn->next)
+    {
 
         if (client_is_playing(conn))
             save_player(conn->account->playing);

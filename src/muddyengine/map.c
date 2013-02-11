@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -40,9 +40,10 @@ char lcolor[3];
 #define    MAPY      8
 #define    BOUNDARY(x, y) (((x) < 0) || ((y) < 0) || ((x) > (MAPX * 2)) || ((y) > (MAPY * 2)))
 
-typedef struct Map Map;
+typedef struct map Map;
 
-struct Map {
+struct map
+{
 
     char symbol;
 
@@ -54,7 +55,8 @@ struct Map {
 
 Map automap[(MAPX * 2) + 1][(MAPY * 2) + 1];
 
-const struct sector_symbol_t {
+const struct sector_symbol_t
+{
 
     sector_t sector;
 
@@ -62,7 +64,8 @@ const struct sector_symbol_t {
 
     char symbol;
 
-} sector_symbols[] = {
+} sector_symbols[] =
+{
 
     {
         SECT_INSIDE, "~w", 'o'
@@ -104,7 +107,8 @@ const struct sector_symbol_t {
 void get_exit_dir(direction_t dir, int *x, int *y, int xorig, int yorig)
 {
 
-    switch (dir) {
+    switch (dir)
+    {
 
     case DIR_NORTH:
 
@@ -184,7 +188,8 @@ void map_exits(int depth, Character * ch, Room * pRoom, int x, int y)
     if (depth >= MAXDEPTH)
         return;
 
-    for (door = 0; door < MAX_DIR; door++) {
+    for (door = 0; door < MAX_DIR; door++)
+    {
 
         if ((pExit = pRoom->exits[door]) == NULL)
             continue;
@@ -220,7 +225,8 @@ void map_exits(int depth, Character * ch, Room * pRoom, int x, int y)
 
         if ((depth < MAXDEPTH)
                 && ((automap[roomx][roomy].pRoom == pExit->toRoom)
-                    || (automap[roomx][roomy].pRoom == NULL))) {
+                    || (automap[roomx][roomy].pRoom == NULL)))
+        {
 
             map_exits(depth + 1, ch, pExit->toRoom, roomx, roomy);
 
@@ -249,7 +255,8 @@ char *erase_new_lines(const char *desc)
 
     temp[0] = 0;
 
-    for (m = 0; desc[m] != 0; m++) {
+    for (m = 0; desc[m] != 0; m++)
+    {
 
         if (desc[m] == '\n' || desc[m] == '\r')
             temp[m] = '\x14';
@@ -261,13 +268,16 @@ char *erase_new_lines(const char *desc)
 
     temp[m] = 0;
 
-    for (m = 0; temp[m] != 0; m++) {
+    for (m = 0; temp[m] != 0; m++)
+    {
 
-        if (temp[m] == '\x14') {
+        if (temp[m] == '\x14')
+        {
 
             buf[l++] = ' ';
 
-            do {
+            do
+            {
 
                 m++;
 
@@ -297,9 +307,11 @@ unsigned int get_line_len(const char *desc, unsigned int max_len)
 
     l = 0;
 
-    for (m = 0; desc[m] != 0; m++) {
+    for (m = 0; desc[m] != 0; m++)
+    {
 
-        if (desc[m] == COLOR_CODE) {
+        if (desc[m] == COLOR_CODE)
+        {
 
             int k = m + 1;
 
@@ -312,7 +324,8 @@ unsigned int get_line_len(const char *desc, unsigned int max_len)
 
             m += k;
 
-        } else if (++l == max_len)
+        }
+        else if (++l == max_len)
             break;
 
     }
@@ -346,13 +359,16 @@ void show_map(Character * ch, const char *text, bool smallMap)
 
     int maplen = maxlen - 15;
 
-    if (smallMap) {
+    if (smallMap)
+    {
 
         m = 4;
 
         n = 5;
 
-    } else {
+    }
+    else
+    {
 
         m = 0;
 
@@ -368,13 +384,17 @@ void show_map(Character * ch, const char *text, bool smallMap)
 
     strcpy(lcolor, "~x");
 
-    if (smallMap) {
+    if (smallMap)
+    {
 
-        if (!ch->pc || !is_explorable(ch->inRoom)) {
+        if (!ch->pc || !is_explorable(ch->inRoom))
+        {
 
             sprintf(buf, "~R+-----------+%s ", lcolor);
 
-        } else {
+        }
+        else
+        {
 
             int rcnt =
                 areacount(ch->pc->explored, ch->inRoom->area);
@@ -387,17 +407,21 @@ void show_map(Character * ch, const char *text, bool smallMap)
                     lcolor);
 
         }
-        if (!alldesc) {
+        if (!alldesc)
+        {
 
             pos = get_line_len(p, maplen);
 
-            if (pos > 0) {
+            if (pos > 0)
+            {
 
                 strncat(buf, p, pos);
 
                 p += pos;
 
-            } else {
+            }
+            else
+            {
 
                 strcat(buf, p);
 
@@ -409,7 +433,8 @@ void show_map(Character * ch, const char *text, bool smallMap)
         strcat(buf, "\n\r");
 
     }
-    for (y = m; y <= (MAPY * 2) - m; y++) {
+    for (y = m; y <= (MAPY * 2) - m; y++)
+    {
 
         if (smallMap)
             strcat(buf, "~R|");
@@ -417,15 +442,18 @@ void show_map(Character * ch, const char *text, bool smallMap)
         else
             strcat(buf, "~D");
 
-        for (x = n; x <= (MAPX * 2) - n; x++) {
+        for (x = n; x <= (MAPX * 2) - n; x++)
+        {
 
-            if (automap[x][y].pRoom) {
+            if (automap[x][y].pRoom)
+            {
 
                 if (automap[x][y].symbol ==
                         sector_symbols[automap[x][y].pRoom->sector].
                         symbol && ch->pc
                         && is_set(ch->pc->explored,
-                                  automap[x][y].pRoom->id)) {
+                                  automap[x][y].pRoom->id))
+                {
 
                     if (automap[x][y].pRoom->exits[DIR_UP]
                             && automap[x][y].pRoom->
@@ -460,7 +488,9 @@ void show_map(Character * ch, const char *text, bool smallMap)
                             '.' ? automap[x][y].
                             symbol : ' ');
 
-            } else {
+            }
+            else
+            {
 
                 if (!smallMap)
                     strcat(buf, " ~D.");
@@ -472,9 +502,11 @@ void show_map(Character * ch, const char *text, bool smallMap)
 
         }
 
-        if (!smallMap) {
+        if (!smallMap)
+        {
 
-            switch (y) {
+            switch (y)
+            {
 
             case 0:
 
@@ -569,21 +601,27 @@ void show_map(Character * ch, const char *text, bool smallMap)
 
             }
 
-        } else {
+        }
+        else
+        {
 
             sprintf(buf + strlen(buf), "~R|%s ", lcolor);
 
-            if (!alldesc) {
+            if (!alldesc)
+            {
 
                 pos = get_line_len(p, maplen);
 
-                if (pos > 0) {
+                if (pos > 0)
+                {
 
                     strncat(buf, p, pos);
 
                     p += pos;
 
-                } else {
+                }
+                else
+                {
 
                     strcat(buf, p);
 
@@ -602,21 +640,26 @@ void show_map(Character * ch, const char *text, bool smallMap)
         writelnf(ch, "%s\n\r%s%s", fillstr(NULL, scrwidth(ch)), buf,
                  fillstr(NULL, scrwidth(ch)));
 
-    else {
+    else
+    {
 
         sprintf(buf + strlen(buf), "~R+-----------+%s ", lcolor);
 
-        if (!alldesc) {
+        if (!alldesc)
+        {
 
             pos = get_line_len(p, maplen);
 
-            if (pos > 0) {
+            if (pos > 0)
+            {
 
                 strncat(buf, p, pos);
 
                 p += pos;
 
-            } else {
+            }
+            else
+            {
 
                 strcat(buf, p);
 
@@ -627,19 +670,24 @@ void show_map(Character * ch, const char *text, bool smallMap)
         }
         strcat(buf, "\n\r");
 
-        if (!alldesc) {
+        if (!alldesc)
+        {
 
-            do {
+            do
+            {
 
                 pos = get_line_len(p, maxlen);
 
-                if (pos > 0) {
+                if (pos > 0)
+                {
 
                     strncat(buf, p, pos);
 
                     p += pos;
 
-                } else {
+                }
+                else
+                {
 
                     strcat(buf, p);
 
@@ -668,13 +716,16 @@ void draw_map(Character * ch, const char *desc)
 
     bool smallMap;
 
-    if (nullstr(desc)) {
+    if (nullstr(desc))
+    {
 
         smallMap = false;
 
         buf = desc;
 
-    } else {
+    }
+    else
+    {
 
         smallMap = true;
 
@@ -682,9 +733,11 @@ void draw_map(Character * ch, const char *desc)
 
     }
 
-    for (y = 0; y <= MAPY * 2; y++) {
+    for (y = 0; y <= MAPY * 2; y++)
+    {
 
-        for (x = 0; x <= MAPX * 2; x++) {
+        for (x = 0; x <= MAPX * 2; x++)
+        {
 
             clear_coord(x, y);
 

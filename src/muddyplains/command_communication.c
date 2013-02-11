@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -38,7 +38,8 @@
 DOFUN(say)
 {
 
-    if (!argument || !*argument) {
+    if (!argument || !*argument)
+    {
 
         writeln(ch, "Say what?");
 
@@ -88,7 +89,8 @@ void connection_note_text(Client *, const char *);
 void connection_note_finish(Client * conn, const char *argument)
 {
 
-    switch (toupper((int)argument[0])) {
+    switch (toupper((int)argument[0]))
+    {
 
     case 'C':
 
@@ -159,7 +161,8 @@ void connection_note_text(Client * conn, const char *argument)
         edit_text((Client *) conn, &conn->account->inProgress->text,
                   argument);
 
-    switch (action) {
+    switch (action)
+    {
 
     case EDIT_END:
 
@@ -194,11 +197,14 @@ void connection_note_expire(Client * conn, const char *argument)
 
     int days;
 
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
         days = conn->account->forum->purgeDays;
 
-    } else if (!is_number(argument)) {
+    }
+    else if (!is_number(argument))
+    {
 
         writeln(conn, "Write the number of days!");
 
@@ -206,11 +212,14 @@ void connection_note_expire(Client * conn, const char *argument)
 
         return;
 
-    } else {
+    }
+    else
+    {
 
         days = atoi(argument);
 
-        if (days <= 0) {
+        if (days <= 0)
+        {
 
             writeln(conn,
                     "This is a positive MUD. Use positive numbers only! :)");
@@ -242,22 +251,28 @@ void connection_note_subject(Client * conn, const char *argument)
 
     strcpy(buf, argument);
 
-    if (!buf[0]) {
+    if (!buf[0])
+    {
 
         writeln(conn, "Please find a meaningful subject!");
 
         write(conn, "~YSubject~x: ");
 
-    } else if (strlen(buf) > 60) {
+    }
+    else if (strlen(buf) > 60)
+    {
 
         writeln(conn,
                 "No, no. This is just the Subject. You're note writing the note yet. Twit.");
 
-    } else {
+    }
+    else
+    {
 
         conn->account->inProgress->subject = str_dup(buf);
 
-        if (is_immortal(conn->account->playing)) {
+        if (is_immortal(conn->account->playing))
+        {
 
             writeln(conn, "");
 
@@ -272,7 +287,9 @@ void connection_note_subject(Client * conn, const char *argument)
 
             conn->handler = connection_note_expire;
 
-        } else {
+        }
+        else
+        {
 
             conn->account->inProgress->expire =
                 current_time +
@@ -299,13 +316,15 @@ void connection_note_to(Client * conn, const char *argument)
 
     strcpy(buf, argument);
 
-    switch (conn->account->forum->type) {
+    switch (conn->account->forum->type)
+    {
 
     default:
 
     case DEF_NORMAL:
 
-        if (!buf[0]) {
+        if (!buf[0])
+        {
 
             conn->account->inProgress->toList =
                 str_dup(conn->account->forum->defaultTo);
@@ -313,7 +332,9 @@ void connection_note_to(Client * conn, const char *argument)
             writelnf(conn, "Assumed default recipient: ~W%s~x",
                      conn->account->inProgress->toList);
 
-        } else {
+        }
+        else
+        {
 
             conn->account->inProgress->toList = str_dup(buf);
 
@@ -323,7 +344,8 @@ void connection_note_to(Client * conn, const char *argument)
 
     case DEF_INCLUDE:
 
-        if (!is_exact_name(conn->account->forum->defaultTo, buf)) {
+        if (!is_exact_name(conn->account->forum->defaultTo, buf))
+        {
 
             strcat(buf, " ");
 
@@ -340,7 +362,9 @@ void connection_note_to(Client * conn, const char *argument)
             writelnf(conn, "~YNew To~x :  %s",
                      conn->account->inProgress->toList);
 
-        } else {
+        }
+        else
+        {
 
             conn->account->inProgress->toList = str_dup(buf);
 
@@ -350,7 +374,8 @@ void connection_note_to(Client * conn, const char *argument)
 
     case DEF_EXCLUDE:
 
-        if (is_exact_name(conn->account->forum->defaultTo, buf)) {
+        if (is_exact_name(conn->account->forum->defaultTo, buf))
+        {
 
             writelnf(conn,
                      "You are not allowed to send notes to %s on this forum. Try again.",
@@ -360,7 +385,9 @@ void connection_note_to(Client * conn, const char *argument)
 
             return;
 
-        } else {
+        }
+        else
+        {
 
             conn->account->inProgress->toList = str_dup(buf);
 
@@ -384,7 +411,8 @@ void note_write(Character * ch, const char *argument)
     if (!ch->pc)
         return;
 
-    if (ch->level < 2) {
+    if (ch->level < 2)
+    {
 
         writeln(ch, "You can't seem to write a note.");
 
@@ -394,7 +422,8 @@ void note_write(Character * ch, const char *argument)
     Client *conn = (Client *) ch->pc->conn;
 
     if (ch->level < conn->account->forum->writeLevel
-            || conn->account->forum->type == DEF_READONLY) {
+            || conn->account->forum->type == DEF_READONLY)
+    {
 
         writeln(ch, "You cannot post notes on this forum.");
 
@@ -402,7 +431,8 @@ void note_write(Character * ch, const char *argument)
 
     }
     if (conn->account->inProgress
-            && nullstr(conn->account->inProgress->text)) {
+            && nullstr(conn->account->inProgress->text))
+    {
 
         writeln(ch,
                 "Note in progress cancelled because you did not manage to"
@@ -413,7 +443,8 @@ void note_write(Character * ch, const char *argument)
         conn->account->inProgress = NULL;
 
     }
-    if (!conn->account->inProgress) {
+    if (!conn->account->inProgress)
+    {
 
         conn->account->inProgress = new_note();
 
@@ -440,9 +471,11 @@ void note_write(Character * ch, const char *argument)
 
     writeln(ch, "");
 
-    if (nullstr(conn->account->inProgress->text)) {
+    if (nullstr(conn->account->inProgress->text))
+    {
 
-        switch (ch->pc->conn->account->forum->type) {
+        switch (ch->pc->conn->account->forum->type)
+        {
 
         default:
 
@@ -478,7 +511,9 @@ void note_write(Character * ch, const char *argument)
 
         conn->handler = connection_note_to;
 
-    } else {
+    }
+    else
+    {
 
         writeln(ch, "");
 
@@ -514,14 +549,16 @@ void note_read(Character * ch, const char *argument)
 
     time_t last_note = account_forum_last_note(ch->pc->account);
 
-    if (!str_cmp(argument, "again")) {
+    if (!str_cmp(argument, "again"))
+    {
 
         count = 1;
 
         Note *lastRead = 0;
 
         for (p = ch->pc->conn->account->forum->notes; p;
-                p = p->next, count++) {
+                p = p->next, count++)
+        {
 
             if (p->date > last_note)
                 break;
@@ -533,17 +570,22 @@ void note_read(Character * ch, const char *argument)
 
         }
 
-        if (p == 0) {
+        if (p == 0)
+        {
 
             writeln(ch, "No note found.");
 
-        } else {
+        }
+        else
+        {
 
             show_note_to_char(ch, p, count);
 
         }
 
-    } else if (is_number(argument)) {
+    }
+    else if (is_number(argument))
+    {
 
         number = atoi(argument);
 
@@ -551,11 +593,14 @@ void note_read(Character * ch, const char *argument)
             if (++count == number)
                 break;
 
-        if (p == 0 || !is_note_to(ch, p)) {
+        if (p == 0 || !is_note_to(ch, p))
+        {
 
             writeln(ch, "No such note.");
 
-        } else {
+        }
+        else
+        {
 
             show_note_to_char(ch, p, count);
 
@@ -563,14 +608,18 @@ void note_read(Character * ch, const char *argument)
 
         }
 
-    } else {
+    }
+    else
+    {
 
         count = 1;
 
         for (p = ch->pc->conn->account->forum->notes; p;
-                p = p->next, count++) {
+                p = p->next, count++)
+        {
 
-            if ((p->date > last_note) && is_note_to(ch, p)) {
+            if ((p->date > last_note) && is_note_to(ch, p))
+            {
 
                 show_note_to_char(ch, p, count);
 
@@ -595,14 +644,17 @@ void note_read(Character * ch, const char *argument)
 void note_remove(Character * ch, const char *argument)
 {
 
-    if (!str_cmp(argument, "all") && is_immortal(ch)) {
+    if (!str_cmp(argument, "all") && is_immortal(ch))
+    {
 
         for (Note * p_next, *p = ch->pc->account->forum->notes; p;
-                p = p_next) {
+                p = p_next)
+        {
 
             p_next = p->next;
 
-            if (str_cmp(ch->name, p->from)) {
+            if (str_cmp(ch->name, p->from))
+            {
 
                 continue;
 
@@ -613,11 +665,14 @@ void note_remove(Character * ch, const char *argument)
 
         writeln(ch, "ALL Notes removed!");
 
-    } else {
+    }
+    else
+    {
 
         Note *p;
 
-        if (!is_number(argument)) {
+        if (!is_number(argument))
+        {
 
             writeln(ch, "Remove which note?");
 
@@ -626,14 +681,16 @@ void note_remove(Character * ch, const char *argument)
         }
         p = find_note(ch, ch->pc->account->forum, atoi(argument));
 
-        if (!p) {
+        if (!p)
+        {
 
             writeln(ch, "No such note.");
 
             return;
 
         }
-        if (str_cmp(ch->name, p->from) && !is_immortal(ch)) {
+        if (str_cmp(ch->name, p->from) && !is_immortal(ch))
+        {
 
             writeln(ch,
                     "You are not authorized to remove this note.");
@@ -662,7 +719,8 @@ void note_list(Character * ch, const char *argument)
 
     Grid *grid = new_grid(scrwidth(ch), 2);
 
-    if (is_number(argument)) {
+    if (is_number(argument))
+    {
 
         show = atoi(argument);
 
@@ -682,15 +740,18 @@ void note_list(Character * ch, const char *argument)
 
     last_note = account_forum_last_note(ch->pc->account);
 
-    for (p = ch->pc->account->forum->notes; p; p = p->next) {
+    for (p = ch->pc->account->forum->notes; p; p = p->next)
+    {
 
         num++;
 
-        if (is_note_to(ch, p)) {
+        if (is_note_to(ch, p))
+        {
 
             has_shown++;
 
-            if (!show || ((count - show) < has_shown)) {
+            if (!show || ((count - show) < has_shown))
+            {
 
                 grid_addf(grid, ALIGN_LEFT, 1, 0, 0, 0, 0,
                           "~W%3d~x>~B%c~Y%-12.12s~Y %s~x ", num,
@@ -701,7 +762,8 @@ void note_list(Character * ch, const char *argument)
         }
     }
 
-    if (has_shown == 0) {
+    if (has_shown == 0)
+    {
 
         grid_add(grid, ALIGN_LEFT, 2, 0, 0, 0, 0,
                  "~rNo notes on forum.~x");
@@ -718,7 +780,8 @@ void note_catchup(Character * ch, const char *argument)
 
     Note *p;
 
-    if (is_name("all", argument)) {
+    if (is_name("all", argument))
+    {
 
         int i, c = 0;
 
@@ -726,7 +789,8 @@ void note_catchup(Character * ch, const char *argument)
 
         Note *p;
 
-        for (i = 0; i < max_forum; i++) {
+        for (i = 0; i < max_forum; i++)
+        {
 
             forum = &forum_table[i];
 
@@ -743,7 +807,8 @@ void note_catchup(Character * ch, const char *argument)
              */
             for (p = forum->notes; p && p->next; p = p->next) ;
 
-            if (!p) {
+            if (!p)
+            {
 
                 account_forum_set_last_note(ch->pc->account,
                                             p->date);
@@ -769,11 +834,14 @@ void note_catchup(Character * ch, const char *argument)
      */
     for (p = ch->pc->account->forum->notes; p && p->next; p = p->next) ;
 
-    if (!p) {
+    if (!p)
+    {
 
         writeln(ch, "Alas, there are no notes in that forum.");
 
-    } else {
+    }
+    else
+    {
 
         account_forum_set_last_note(ch->pc->account, p->date);
 
@@ -789,7 +857,8 @@ void note_purge(Character * ch, const char *argument)
     if (!is_immortal(ch))
         return;
 
-    for (int i = 0; i < max_forum; i++) {
+    for (int i = 0; i < max_forum; i++)
+    {
 
         check_notes(&forum_table[i]);
 
@@ -818,35 +887,50 @@ DOFUN(note)
 
     argument = one_argument(argument, arg);
 
-    if (nullstr(arg) || !str_prefix(arg, "read")) {
+    if (nullstr(arg) || !str_prefix(arg, "read"))
+    {
 
         note_read(ch, argument);
 
-    } else if (!str_prefix(arg, "write")) {
+    }
+    else if (!str_prefix(arg, "write"))
+    {
 
         note_write(ch, argument);
 
-    } else if (!str_prefix(arg, "list")) {
+    }
+    else if (!str_prefix(arg, "list"))
+    {
 
         note_list(ch, argument);
 
-    } else if (!str_prefix(arg, "remove")) {
+    }
+    else if (!str_prefix(arg, "remove"))
+    {
 
         note_remove(ch, argument);
 
-    } else if (!str_prefix(arg, "catchup")) {
+    }
+    else if (!str_prefix(arg, "catchup"))
+    {
 
         note_catchup(ch, argument);
 
-    } else if (!str_prefix(arg, "reset")) {
+    }
+    else if (!str_prefix(arg, "reset"))
+    {
 
         note_reset(ch, argument);
 
-    } else if (!str_prefix(arg, "check")) {
+    }
+    else if (!str_prefix(arg, "check"))
+    {
 
         note_check(ch);
 
-    } else {
+    }
+    else
+    {
 
         writelnf(ch,
                  "Syntax: %s read [again]                - read all notes 1 forum at a time.",
@@ -897,7 +981,8 @@ DOFUN(subscribe)
     if (!ch->pc)
         return;
 
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
         count = 1;
 
@@ -905,7 +990,8 @@ DOFUN(subscribe)
 
         writeln(ch, "~R=== ============ ========== ===========~x");
 
-        for (i = 0; i < max_forum; i++) {
+        for (i = 0; i < max_forum; i++)
+        {
 
             if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR)
                 continue;
@@ -924,7 +1010,8 @@ DOFUN(subscribe)
         return;
 
     }
-    if (is_number(argument)) {
+    if (is_number(argument))
+    {
 
         count = 0;
 
@@ -935,7 +1022,9 @@ DOFUN(subscribe)
                 if (++count == number)
                     break;
 
-    } else {
+    }
+    else
+    {
 
         for (i = 0; i < max_forum; i++)
             if (!str_prefix(argument, forum_table[i].name))
@@ -943,35 +1032,41 @@ DOFUN(subscribe)
 
     }
 
-    if (i == max_forum) {
+    if (i == max_forum)
+    {
 
         writeln(ch, "No such forum.");
 
         return;
 
     }
-    if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR) {
+    if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR)
+    {
 
         writeln(ch, "No such forum.");
 
         return;
 
     }
-    if (forum_table[i].flags & FORUM_NOUNSUB) {
+    if (forum_table[i].flags & FORUM_NOUNSUB)
+    {
 
         writeln(ch, "You cannot un-subscribe from that forum.");
 
         return;
 
     }
-    if (!is_subscribed(ch->pc->account, i)) {
+    if (!is_subscribed(ch->pc->account, i))
+    {
 
         set_subscribed(ch->pc->account, i);
 
         writelnf(ch, "You are now subscribed to the ~W%s~x forum.",
                  forum_table[i].name);
 
-    } else {
+    }
+    else
+    {
 
         remove_subscribed(ch->pc->account, i);
 
@@ -993,19 +1088,24 @@ DOFUN(forum)
     if (!ch->pc)
         return;
 
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
         show_forum(ch, false);
 
         return;
 
-    } else if (!str_cmp(argument, "all")) {
+    }
+    else if (!str_cmp(argument, "all"))
+    {
 
         show_forum(ch, true);
 
         return;
 
-    } else if (is_immortal(ch) && !str_cmp(argument, "save")) {
+    }
+    else if (is_immortal(ch) && !str_cmp(argument, "save"))
+    {
 
         save_forums();
 
@@ -1014,7 +1114,8 @@ DOFUN(forum)
         return;
 
     }
-    if (is_number(argument)) {
+    if (is_number(argument))
+    {
 
         count = 0;
 
@@ -1025,7 +1126,9 @@ DOFUN(forum)
                 if (++count == number)
                     break;
 
-    } else {
+    }
+    else
+    {
 
         for (i = 0; i < max_forum; i++)
             if (!str_prefix(argument, forum_table[i].name))
@@ -1033,14 +1136,16 @@ DOFUN(forum)
 
     }
 
-    if (i == max_forum) {
+    if (i == max_forum)
+    {
 
         writeln(ch, "No such forum.");
 
         return;
 
     }
-    if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR) {
+    if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR)
+    {
 
         writeln(ch, "No such forum.");
 
@@ -1064,7 +1169,8 @@ DOFUN(forum)
 DOFUN(think)
 {
 
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
         writeln(ch, "Think what?");
 
@@ -1088,21 +1194,24 @@ DOFUN(whisper)
 
     argument = one_argument(argument, arg);
 
-    if (nullstr(arg)) {
+    if (nullstr(arg))
+    {
 
         writeln(ch, "Whisper to who?");
 
         return;
 
     }
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
         writeln(ch, "Whisper what?");
 
         return;
 
     }
-    if ((victim = get_char_room(ch, arg)) == NULL) {
+    if ((victim = get_char_room(ch, arg)) == NULL)
+    {
 
         writeln(ch, "They aren't here.");
 
@@ -1123,7 +1232,8 @@ DOFUN(whisper)
 DOFUN(shout)
 {
 
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
 
         writeln(ch, "Shout what?");
 
@@ -1133,9 +1243,11 @@ DOFUN(shout)
     act(TO_CHAR, ch, argument, 0, "~wYou shout '~W$t~w'~x");
 
     for (Character * victim = first_player; victim;
-            victim = victim->next_player) {
+            victim = victim->next_player)
+    {
 
-        if (victim != ch && victim->inRoom->area == ch->inRoom->area) {
+        if (victim != ch && victim->inRoom->area == ch->inRoom->area)
+        {
 
             act(TO_VICT, ch, argument, victim,
                 "~w$n~w shouts '~W$t~w'~x");

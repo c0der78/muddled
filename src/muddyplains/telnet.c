@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -92,9 +92,11 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
 
     size_t iac_sb_index;
 
-    while (!finished && buf[i] == IAC) {
+    while (!finished && buf[i] == IAC)
+    {
 
-        switch (buf[i + 1]) {
+        switch (buf[i + 1])
+        {
 
         case IAC:
 
@@ -104,7 +106,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
 
         case DO:
 
-            switch (buf[i + 2]) {
+            switch (buf[i + 2])
+            {
 
             case '\0':
 
@@ -128,7 +131,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
 
         case DONT:
 
-            switch (buf[i + 2]) {
+            switch (buf[i + 2])
+            {
 
             case '\0':
 
@@ -152,7 +156,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
 
         case WILL:
 
-            switch (buf[i + 2]) {
+            switch (buf[i + 2])
+            {
 
             case '\0':
 
@@ -186,7 +191,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
 
         case WONT:
 
-            switch (buf[i + 2]) {
+            switch (buf[i + 2])
+            {
 
             case '\0':
 
@@ -216,7 +222,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
             // format:
             // IAC SB TELOPT_TTYPE IS...IAC SE
             if (buf[i] == TELOPT_TTYPE && buf[i + 1] == IS
-                    && buf[i + 2] != '\0') {
+                    && buf[i + 2] != '\0')
+            {
 
                 // we have the starting of the terminal name, see RFC 930
                 i += 2;
@@ -227,9 +234,11 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                 // scan till we find the IAC SE terminating the terminal
                 // name
                 while (!(buf[i] == '\0' && buf[i + 1] == '\0')
-                        && buf[i] != SE) {
+                        && buf[i] != SE)
+                {
 
-                    if (buf[i] < 0x1F) {
+                    if (buf[i] < 0x1F)
+                    {
 
                         buf[i] = '?';
                         // replace any control characters
@@ -239,7 +248,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                 }
 
                 // at this point we have either a double NUL or an SE
-                if (buf[i] == '\0' && buf[i + 1] == '\0') {
+                if (buf[i] == '\0' && buf[i + 1] == '\0')
+                {
 
                     // if we find a double NUL we have reached the end of
                     // the input
@@ -248,7 +258,9 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                     // starting IAC SB
                     finished = true;
 
-                } else {
+                }
+                else
+                {
 
                     /*
                      * we know we have an SE within
@@ -258,7 +270,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                      * TELOPT_TTYPE IS...IAC SE
                      */
 
-                    if (buf[i - 1] != IAC) {
+                    if (buf[i - 1] != IAC)
+                    {
 
                         /*
                          * there is no IAC directly
@@ -282,7 +295,9 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                          * gobble and ignore the
                          * sequence.
                          */
-                    } else {
+                    }
+                    else
+                    {
 
                         /*
                          * we have IAC SB
@@ -296,9 +311,11 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
 
                         for (size_t j =
                                     term_type_starts; buf[j];
-                                j++) {
+                                j++)
+                        {
 
-                            if (buf[j] > 0x7f) {
+                            if (buf[j] > 0x7f)
+                            {
 
                                 buf[j] = '?';
 
@@ -324,7 +341,9 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                      * skip over the SE
                      */
                 }
-            } else if (buf[i] == TELOPT_NAWS) {
+            }
+            else if (buf[i] == TELOPT_NAWS)
+            {
 
                 i += 1;
 
@@ -338,7 +357,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                  * the terminal name
                  */
                 while (!(buf[i] == '\0' && buf[i + 1] == '\0')
-                        && buf[i] != SE) {
+                        && buf[i] != SE)
+                {
 
                     i++;
                     /*
@@ -351,7 +371,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                  * at this point we have either a double NUL
                  * or an SE
                  */
-                if (buf[i] == '\0' && buf[i + 1] == '\0') {
+                if (buf[i] == '\0' && buf[i + 1] == '\0')
+                {
 
                     /*
                      * if we find a double NUL we have
@@ -363,7 +384,9 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
 								 * starting IAC SB */
                     finished = true;
 
-                } else {
+                }
+                else
+                {
 
                     /*
                      * we know we have an SE within
@@ -373,7 +396,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                      * TELOPT_TTYPE IS...IAC SE
                      */
 
-                    if (buf[i - 1] != IAC) {
+                    if (buf[i - 1] != IAC)
+                    {
 
                         /*
                          * there is no IAC directly
@@ -397,7 +421,9 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                          * gobble and ignore the
                          * sequence.
                          */
-                    } else {
+                    }
+                    else
+                    {
 
                         /*
                          * we have IAC SB
@@ -439,7 +465,9 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                     i++;
 
                 }
-            } else {
+            }
+            else
+            {
 
                 /*
                  * non supported IAC SB option, or we dont
@@ -448,7 +476,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                  * the end of buffer
                  */
                 while (!(buf[i] == '\0' && buf[i + 1] == '\0')
-                        && buf[i] != SE) {
+                        && buf[i] != SE)
+                {
 
                     i++;
                     /*
@@ -457,7 +486,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                      */
                 }
 
-                if (buf[i] == SE) {
+                if (buf[i] == SE)
+                {
 
                     i++;
 
@@ -465,7 +495,9 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                      * suboptions_chk(this,
                      * iac_sb_index);
                      */
-                } else {
+                }
+                else
+                {
 
                     /*
                      * if we find a double NUL we have
@@ -491,11 +523,14 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
              * we dont know how to handle it, assume it is IAC
              * something something // so skip 3 characters
              */
-            if (buf[i + 2] == '\0') {
+            if (buf[i + 2] == '\0')
+            {
 
                 finished = true;
 
-            } else {
+            }
+            else
+            {
 
                 log_warn("ignoring IAC %d %d", buf[i + 1],
                          buf[i + 2]);

@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -55,7 +55,8 @@ void reset_room(Room * room)
     Character *lastNPC = 0;
     Object *lastOBJ = 0;
 
-    while (str && *str != 0) {
+    while (str && *str != 0)
+    {
         str = get_line(str, buf);
 
         char *tmp;
@@ -66,10 +67,12 @@ void reset_room(Room * room)
 
         tmp = trim(tmp);
 
-        if (!str_cmp("npc", tmp)) {
+        if (!str_cmp("npc", tmp))
+        {
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
-                    || (lastNPC = load_npc(id)) == 0) {
+                    || (lastNPC = load_npc(id)) == 0)
+            {
                 log_error("npc reset - could not load npc %"
                           PRId64 " (room %" PRId64 ")", id,
                           room->id);
@@ -77,7 +80,8 @@ void reset_room(Room * room)
             }
             int max = 1;
 
-            if ((tmp = strtok(0, delims)) != 0) {
+            if ((tmp = strtok(0, delims)) != 0)
+            {
                 max = atoi(tmp);
             }
             int count = 0;
@@ -94,10 +98,12 @@ void reset_room(Room * room)
 
             continue;
         }
-        if (!str_cmp("obj", tmp)) {
+        if (!str_cmp("obj", tmp))
+        {
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
-                    || (lastOBJ = load_object(id)) == 0) {
+                    || (lastOBJ = load_object(id)) == 0)
+            {
                 log_error("obj reset - could not load obj %"
                           PRId64 " (room %" PRId64 ")", id,
                           room->id);
@@ -105,7 +111,8 @@ void reset_room(Room * room)
             }
             int max = 1;
 
-            if ((tmp = strtok(0, delims)) != 0) {
+            if ((tmp = strtok(0, delims)) != 0)
+            {
                 max = atoi(tmp);
             }
             int count = 0;
@@ -121,15 +128,18 @@ void reset_room(Room * room)
             obj_to_room(lastOBJ, room);
             continue;
         }
-        if (!str_cmp("give", tmp)) {
-            if (lastNPC == 0) {
+        if (!str_cmp("give", tmp))
+        {
+            if (lastNPC == 0)
+            {
                 log_error("give reset - no last npc (room %"
                           PRId64 ")", room->id);
                 continue;
             }
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
-                    || (lastOBJ = load_object(id)) == 0) {
+                    || (lastOBJ = load_object(id)) == 0)
+            {
                 log_error("give reset - could not load obj %"
                           PRId64 " (room %" PRId64 ")", id,
                           room->id);
@@ -137,7 +147,8 @@ void reset_room(Room * room)
             }
             int max = 1;
 
-            if ((tmp = strtok(0, delims)) != 0) {
+            if ((tmp = strtok(0, delims)) != 0)
+            {
                 max = atoi(tmp);
             }
             int count = 0;
@@ -153,15 +164,18 @@ void reset_room(Room * room)
             obj_to_char(lastOBJ, lastNPC);
             continue;
         }
-        if (!str_cmp("equip", tmp)) {
-            if (lastNPC == 0) {
+        if (!str_cmp("equip", tmp))
+        {
+            if (lastNPC == 0)
+            {
                 log_error("equip reset - no last npc (room %"
                           PRId64 ")", room->id);
                 continue;
             }
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
-                    || (lastOBJ = load_object(id)) == 0) {
+                    || (lastOBJ = load_object(id)) == 0)
+            {
                 log_error("equip_reset - could not load obj %"
                           PRId64 " (room %" PRId64 ")", id,
                           room->id);
@@ -169,21 +183,26 @@ void reset_room(Room * room)
             }
             obj_to_char(lastOBJ, lastNPC);
 
-            if ((tmp = strtok(0, delims)) != 0) {
+            if ((tmp = strtok(0, delims)) != 0)
+            {
                 one_argument(tmp, buf);
 
                 wear_type type =
                     (wear_type) value_lookup(wear_types, buf);
 
                 equip_char(lastNPC, lastOBJ, type);
-            } else {
+            }
+            else
+            {
                 wear_obj(lastNPC, lastOBJ, false);
             }
 
             continue;
         }
-        if (!str_cmp("put", tmp)) {
-            if (lastOBJ == 0) {
+        if (!str_cmp("put", tmp))
+        {
+            if (lastOBJ == 0)
+            {
                 log_error("put reset - no last obj (room %"
                           PRId64 ")", room->id);
                 continue;
@@ -192,7 +211,8 @@ void reset_room(Room * room)
 
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
-                    || (obj = load_object(id)) == 0) {
+                    || (obj = load_object(id)) == 0)
+            {
                 log_error("put reset - could not load obj %"
                           PRId64 " ( room %" PRId64 ")", id,
                           room->id);
@@ -200,7 +220,8 @@ void reset_room(Room * room)
             }
             int max = 1;
 
-            if ((tmp = strtok(0, delims)) != 0) {
+            if ((tmp = strtok(0, delims)) != 0)
+            {
                 max = atoi(tmp);
             }
             obj_to_obj(obj, lastOBJ);
@@ -211,14 +232,16 @@ void reset_room(Room * room)
 
 void reset_area(Area * area)
 {
-    for (Room * room = area->rooms; room != 0; room = room->next_in_area) {
+    for (Room * room = area->rooms; room != 0; room = room->next_in_area)
+    {
         reset_room(room);
     }
 }
 
 void area_update()
 {
-    for (Area * area = first_area; area != 0; area = area->next) {
+    for (Area * area = first_area; area != 0; area = area->next)
+    {
         reset_area(area);
     }
 
@@ -232,12 +255,14 @@ long hit_gain(Character * ch)
     if (ch->inRoom == NULL)
         return 0;
 
-    if (!ch->pc) {
+    if (!ch->pc)
+    {
         gain = 10 + ch->level;
         // if (IS_AFFECTED(ch, AFF_REGENERATION))
         // gain *= 2;
 
-        switch (ch->position) {
+        switch (ch->position)
+        {
         default:
             gain /= 2;
             break;
@@ -251,7 +276,9 @@ long hit_gain(Character * ch)
             break;
         }
 
-    } else {
+    }
+    else
+    {
         gain = UMAX(3, getCurrStat(ch, STAT_CON) - 3 + ch->level);
         // gain += bonus(ch) * 2;
         /*
@@ -262,7 +289,8 @@ long hit_gain(Character * ch)
          * }
          */
 
-        switch (ch->position) {
+        switch (ch->position)
+        {
         default:
             gain /= 4;
             break;
@@ -311,9 +339,11 @@ long mana_gain(Character * ch)
     if (ch->inRoom == NULL)
         return 0;
 
-    if (!ch->pc) {
+    if (!ch->pc)
+    {
         gain = 10 + ch->level;
-        switch (ch->position) {
+        switch (ch->position)
+        {
         default:
             gain /= 2;
             break;
@@ -326,7 +356,9 @@ long mana_gain(Character * ch)
             gain /= 3;
             break;
         }
-    } else {
+    }
+    else
+    {
         gain =
             (getCurrStat(ch, STAT_WIS) + getCurrStat(ch, STAT_INT) +
              ch->level);
@@ -338,7 +370,8 @@ long mana_gain(Character * ch)
          * gsn_meditation, true, 8); } if (!has_spells(ch)) gain /=
          * 2;
          */
-        switch (ch->position) {
+        switch (ch->position)
+        {
         default:
             gain /= 4;
             break;
@@ -387,12 +420,16 @@ long move_gain(Character * ch)
     if (ch->inRoom == NULL)
         return 0;
 
-    if (!ch->pc) {
+    if (!ch->pc)
+    {
         gain = ch->level;
-    } else {
+    }
+    else
+    {
         gain = UMAX(15, ch->level + getCurrStat(ch, STAT_DEX));
 
-        switch (ch->position) {
+        switch (ch->position)
+        {
         case POS_SLEEPING:
             gain += getCurrStat(ch, STAT_DEX);
             break;
@@ -440,7 +477,8 @@ void gain_condition(Character * ch, int iCond, int value)
         return;
 
     if (iCond == COND_THIRST && value < 0 && ch->inRoom
-            && ch->inRoom->sector == SECT_DESERT) {
+            && ch->inRoom->sector == SECT_DESERT)
+    {
         value *= 2;
         writeln(ch, "You feel the ~Ydesert ~Rheat~x...");
     }
@@ -450,13 +488,17 @@ void gain_condition(Character * ch, int iCond, int value)
     ch->pc->condition[iCond] =
         URANGE(iCond == COND_DRUNK ? 0 : -50, condition + value, 75);
 
-    if ((condition = ch->pc->condition[iCond]) <= 0) {
-        switch (iCond) {
+    if ((condition = ch->pc->condition[iCond]) <= 0)
+    {
+        switch (iCond)
+        {
         case COND_HUNGER:
-            if (condition < -42 && value < 0) {
+            if (condition < -42 && value < 0)
+            {
                 writeln(ch, "You are starving!");
                 act(TO_ROOM, ch, 0, 0, "$n is starving!");
-            } else if (condition < -30)
+            }
+            else if (condition < -30)
                 writeln(ch, "You are dying of starvation.");
             else if (condition < -20)
                 writeln(ch, "You are extremely hungry.");
@@ -470,11 +512,13 @@ void gain_condition(Character * ch, int iCond, int value)
             break;
 
         case COND_THIRST:
-            if (condition < -40 && value < 0) {
+            if (condition < -40 && value < 0)
+            {
                 writeln(ch, "You are dying of thirst!");
                 act(TO_ROOM, ch, 0, 0,
                     "$n is dying of thirst!");
-            } else if (condition < -30)
+            }
+            else if (condition < -30)
                 writeln(ch, "You are dying of dehydration.");
             else if (condition < -20)
                 writeln(ch, "You are extremely dehydrated.");
@@ -497,13 +541,17 @@ void gain_condition(Character * ch, int iCond, int value)
 
 void character_update()
 {
-    for (Character * ch = first_character; ch != 0; ch = ch->next) {
-        if (ch->pc) {
+    for (Character * ch = first_character; ch != 0; ch = ch->next)
+    {
+        if (ch->pc)
+        {
             Client *conn = (Client *) ch->pc->conn;
 
             if (!is_set(ch->pc->account->flags, PLR_TICKS_OFF)
-                    && conn->editing == 0 && client_is_playing(conn)) {
-                char *const mesg[] = {
+                    && conn->editing == 0 && client_is_playing(conn))
+            {
+                char *const mesg[] =
+                {
                     "TICK", "TOCK"
                 };
                 if (number_range(0, 100) < 50)
@@ -519,7 +567,8 @@ void character_update()
                                   5 ? 0 : 1]);
             }
         }
-        if (ch->position < POS_STUNNED) {
+        if (ch->position < POS_STUNNED)
+        {
 
             if (ch->hit < ch->maxHit)
                 ch->hit += hit_gain(ch);
@@ -541,19 +590,25 @@ void character_update()
         gain_condition(ch, COND_HUNGER,	/* ch->size > SIZE_MEDIUM ? -2 : */
                        -1);
 
-        for (Affect * paf_next, *paf = ch->affects; paf; paf = paf_next) {
+        for (Affect * paf_next, *paf = ch->affects; paf; paf = paf_next)
+        {
             paf_next = paf->next;
 
-            if (paf->duration > 0) {
+            if (paf->duration > 0)
+            {
                 paf->duration--;
                 if (number_range(0, 4) == 0 && paf->level > 0)
                     paf->level--;
-            } else if (paf->duration == 0) {
+            }
+            else if (paf->duration == 0)
+            {
                 if (!paf_next || paf_next->from != paf->from
-                        || paf_next->duration > 0) {
+                        || paf_next->duration > 0)
+                {
                     if (valid_skill(paf->from)
                             && !nullstr(skill_table[paf->from].
-                                        msgOff)) {
+                                        msgOff))
+                    {
                         writeln(ch,
                                 skill_table[paf->from].
                                 msgOff);
@@ -567,7 +622,8 @@ void character_update()
 
 void hint_update()
 {
-    for (Character * ch = first_player; ch != 0; ch = ch->next_player) {
+    for (Character * ch = first_player; ch != 0; ch = ch->next_player)
+    {
         if (!is_set(ch->pc->account->flags, PLR_HINTS))
             continue;
 
@@ -579,7 +635,8 @@ void hint_update()
 
 void violence_update()
 {
-    for (Character * ch_next, *ch = first_character; ch != 0; ch = ch_next) {
+    for (Character * ch_next, *ch = first_character; ch != 0; ch = ch_next)
+    {
         Character *victim;
 
         ch_next = ch->next;
@@ -587,9 +644,12 @@ void violence_update()
         if ((victim = ch->fighting) == 0 || ch->inRoom == 0)
             continue;
 
-        if (victim->inRoom == ch->inRoom) {
+        if (victim->inRoom == ch->inRoom)
+        {
             multi_hit(ch, victim, GSN_UNDEFINED, DAM_UNDEFINED);
-        } else {
+        }
+        else
+        {
             ch->fighting = 0;
         }
     }
@@ -608,19 +668,23 @@ void update_handler()
     static int pulse_hint;
     static int pulse_violence;
 
-    if (--pulse_area <= 0) {
+    if (--pulse_area <= 0)
+    {
         pulse_area = PULSE_AREA;
         area_update();
     }
-    if (--pulse_tick <= 0) {
+    if (--pulse_tick <= 0)
+    {
         pulse_tick = PULSE_TICK;
         character_update();
     }
-    if (--pulse_hint <= 0) {
+    if (--pulse_hint <= 0)
+    {
         pulse_hint = PULSE_HINT;
         hint_update();
     }
-    if (--pulse_violence <= 0) {
+    if (--pulse_violence <= 0)
+    {
         pulse_violence = PULSE_VIOLENCE;
         violence_update();
     }

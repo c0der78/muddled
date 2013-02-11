@@ -33,7 +33,7 @@
 
 #include <stdio.h>
 
-typedef struct Engine Engine;
+typedef struct engine Engine;
 
 typedef double money_t;
 
@@ -67,7 +67,8 @@ extern const float exp_table[EXP_TABLE_SIZ];
 
 typedef sql_int64 identifier_t;
 
-typedef enum {
+typedef enum
+{
     STAT_STR,
     STAT_INT,
     STAT_WIS,
@@ -78,7 +79,8 @@ typedef enum {
     MAX_STAT_VALUE = 500
 } stat_t;
 
-enum {
+enum
+{
     TO_CHAR = (1 << 0),
     TO_ROOM = (1 << 1),
     TO_VICT = (1 << 2),
@@ -86,11 +88,13 @@ enum {
     TO_WORLD = (1 << 4)
 };
 
-enum {
+enum
+{
     ENGINE_OFF
 };
 
-typedef enum {
+typedef enum
+{
     INFO_ALL,
     INFO_NOTE,
     INFO_LEVEL,
@@ -105,7 +109,8 @@ typedef enum {
     INFO_PRIVATE = (1 << INFO_ALL)
 } info_t;
 
-struct Engine {
+struct engine
+{
     identifier_t id;
     const char *name;
     const char *root_path;

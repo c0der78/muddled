@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *             Many thanks to creators of muds before me.                 *
+ *          (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com        *
+ *             Many thanks to creators of muds before me.                     *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -32,7 +32,8 @@
  * @constant VAR_FLOAT a float variable @constant VAR_DOUBLE a double
  * variable @constant VAR_PTR a generic ptr varaible @discussion
  */
-enum {
+enum
+{
     VAR_CHAR,
     VAR_SHORT,
     VAR_INT,
@@ -50,9 +51,11 @@ enum {
  * @field float_value the float_value @field double_value the double value
  * @field ptr_value the generic pointer value
  */
-typedef struct variant_t {
+typedef struct
+{
     int type;
-    union {
+    union
+    {
         char char_value;
         short short_value;
         int int_value;

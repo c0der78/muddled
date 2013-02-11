@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -31,7 +31,8 @@
 #include <muddyengine/string.h>
 #include <muddyengine/engine.h>
 
-const Lookup direction_table[] = {
+const Lookup direction_table[] =
+{
     {"north", DIR_NORTH},
     {"east", DIR_EAST},
     {"south", DIR_SOUTH},
@@ -41,7 +42,8 @@ const Lookup direction_table[] = {
     {0, 0}
 };
 
-const Lookup exit_flags[] = {
+const Lookup exit_flags[] =
+{
     {"closed", EXIT_CLOSED},
     {"locked", EXIT_LOCKED},
     {0, 0}
@@ -74,11 +76,14 @@ void destroy_exit(Exit * ex)
 void finalize_exits()
 {
 
-    for (int i = 0; i < ID_HASH; i++) {
+    for (int i = 0; i < ID_HASH; i++)
+    {
 
-        for (Room * room = room_hash[i]; room != 0; room = room->next) {
+        for (Room * room = room_hash[i]; room != 0; room = room->next)
+        {
 
-            for (direction_t dir = DIR_NORTH; dir < MAX_DIR; dir++) {
+            for (direction_t dir = DIR_NORTH; dir < MAX_DIR; dir++)
+            {
 
                 if (room->exits[dir] == 0)
                     continue;
@@ -111,14 +116,16 @@ int load_exits(Room * room)
     int len = sprintf(buf, "select * from exit where fromRoom=%" PRId64,
                       room->id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
         return 0;
 
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
 
         int count = sql_column_count(stmt);
 
@@ -128,29 +135,39 @@ int load_exits(Room * room)
 
         direction_t dir = MAX_DIR;
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
 
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "exitId")) {
+            if (!str_cmp(colname, "exitId"))
+            {
 
                 exit->id = sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "fromRoom")) {
+            }
+            else if (!str_cmp(colname, "fromRoom"))
+            {
 
                 if (room->id != sql_column_int(stmt, i))
                     log_error
                     ("sql returned invalid exit for room");
 
-            } else if (!str_cmp(colname, "toRoom")) {
+            }
+            else if (!str_cmp(colname, "toRoom"))
+            {
 
                 exit->toRoomId = sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "direction")) {
+            }
+            else if (!str_cmp(colname, "direction"))
+            {
 
                 dir = sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "flags")) {
+            }
+            else if (!str_cmp(colname, "flags"))
+            {
 
                 parse_flags(exit->flags,
                             sql_column_str(stmt, i),
@@ -158,7 +175,9 @@ int load_exits(Room * room)
 
                 copy_flags(exit->status, exit->flags);
 
-            } else {
+            }
+            else
+            {
 
                 log_warn("unknown room column '%s'", colname);
 
@@ -166,23 +185,30 @@ int load_exits(Room * room)
 
         }
 
-        if (dir == MAX_DIR) {
+        if (dir == MAX_DIR)
+        {
 
             log_bug("exit with no direction");
 
             destroy_exit(exit);
 
-        } else if (room->exits[dir] != 0) {
+        }
+        else if (room->exits[dir] != 0)
+        {
 
             log_bug("room already has exit");
 
             destroy_exit(exit);
 
-        } else if (exit->toRoomId == 0) {
+        }
+        else if (exit->toRoomId == 0)
+        {
             log_bug("exit (%" PRId64 ") with no room", exit->id);
 
             destroy_exit(exit);
-        } else {
+        }
+        else
+        {
 
             room->exits[dir] = exit;
 
@@ -192,7 +218,8 @@ int load_exits(Room * room)
 
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
 
         log_data("could not finalize statement");
 
@@ -203,7 +230,8 @@ int load_exits(Room * room)
 
 int save_exit(Exit * exit, direction_t dir)
 {
-    if (exit->toRoom == 0) {
+    if (exit->toRoom == 0)
+    {
 
         log_error("Exit %" PRId64 " with no room %" PRId64, exit->id,
                   exit->toRoomId);
@@ -211,7 +239,8 @@ int save_exit(Exit * exit, direction_t dir)
         return 0;
 
     }
-    field_map exit_values[] = {
+    field_map exit_values[] =
+    {
         {"toRoom", &exit->toRoom->id, SQL_INT}
         ,
         {"fromRoom", &exit->fromRoom->id, SQL_INT}
@@ -223,8 +252,10 @@ int save_exit(Exit * exit, direction_t dir)
         {0}
     };
 
-    if (exit->id == 0) {
-        if (sql_insert_query(exit_values, "exit") != SQL_OK) {
+    if (exit->id == 0)
+    {
+        if (sql_insert_query(exit_values, "exit") != SQL_OK)
+        {
 
             log_data("could not insert exit");
 
@@ -233,8 +264,11 @@ int save_exit(Exit * exit, direction_t dir)
         }
         exit->id = db_last_insert_rowid();
 
-    } else {
-        if (sql_update_query(exit_values, "exit", exit->id) != SQL_OK) {
+    }
+    else
+    {
+        if (sql_update_query(exit_values, "exit", exit->id) != SQL_OK)
+        {
 
             log_data("could not update exit");
 

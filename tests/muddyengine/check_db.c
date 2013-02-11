@@ -6,8 +6,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -28,114 +28,119 @@
 
 #define DBNAME "test"
 
-void test_db_setup() {
-	db_open("muddytest", NULL);
+void test_db_setup()
+{
+    db_open("muddytest", NULL);
 
-	char buf[BUF_SIZ];
+    char buf[BUF_SIZ];
 
-	sprintf(buf, "create table if not exists "DBNAME"(testId integer not null primary key autoincrement,"
-		"name varchar, intval integer)");
+    sprintf(buf, "create table if not exists "DBNAME"(testId integer not null primary key autoincrement,"
+            "name varchar, intval integer)");
 
-	if(sql_exec(buf) != SQL_OK) {
-		fail("Could not create "DBNAME" table");
-	}
+    if(sql_exec(buf) != SQL_OK)
+    {
+        fail("Could not create "DBNAME" table");
+    }
 
-	if(sql_exec("delete from " DBNAME) != SQL_OK)
-		fail("could not delete from table");
+    if(sql_exec("delete from " DBNAME) != SQL_OK)
+        fail("could not delete from table");
 }
 
-void test_db_teardown() {
-	db_close();
+void test_db_teardown()
+{
+    db_close();
 
-	system("rm -rf muddytest.db3");
+    system("rm -rf muddytest.db3");
 }
 
 START_TEST(test_escape_sql_str)
 {
-	const char *str = "test'ing";
-	
-	const char *estr = escape_sql_str(str);
-	
-	fail_unless(!str_cmp(estr, "test''ing"), "quotation was not escaped");
+    const char *str = "test'ing";
+
+    const char *estr = escape_sql_str(str);
+
+    fail_unless(!str_cmp(estr, "test''ing"), "quotation was not escaped");
 }
 END_TEST
 
 START_TEST(test_get_rowid_in_transaction)
 {
-	db_begin_transaction();
+    db_begin_transaction();
 
-	if ( sql_exec( "insert into "DBNAME"(name,intval) values('testA', '5')") != SQLITE_OK)
-	{
-		fail( "could not insert to test table" );
-	}
-	
-	int id = db_last_insert_rowid( );
+    if ( sql_exec( "insert into "DBNAME"(name,intval) values('testA', '5')") != SQLITE_OK)
+    {
+        fail( "could not insert to test table" );
+    }
 
-	fail_if(id == 0);
+    int id = db_last_insert_rowid( );
 
-	db_end_transaction();
+    fail_if(id == 0);
+
+    db_end_transaction();
 }
 END_TEST
 
 START_TEST(test_field_map)
-	
-	struct test
-	{
-		sql_int64 id;
-		const char *name;
-		int value;
-	};
 
-	struct test T;
+struct test
+{
+    sql_int64 id;
+    const char *name;
+    int value;
+};
 
-	T.id = 0;
-	T.name = str_dup("testA");
-	T.value = number_percent();
+struct test T;
 
-	field_map table[] = {
-		{"name", &T.name, SQL_TEXT},
-		{"intval", &T.value, SQL_INT},
-		{0}
-	};
+T.id = 0;
+T.name = str_dup("testA");
+T.value = number_percent();
 
-	fail_if(T.value != fm_int(&table[1]));
+field_map table[] =
+{
+    {"name", &T.name, SQL_TEXT},
+    {"intval", &T.value, SQL_INT},
+    {0}
+};
 
-	T.id = db_save(table, DBNAME, T.id);
+fail_if(T.value != fm_int(&table[1]));
 
-	int check = number_percent();
+T.id = db_save(table, DBNAME, T.id);
 
-	char buf[BUF_SIZ];
+int check = number_percent();
 
-	sprintf(buf, "update "DBNAME" set intval=%d where %s=%"PRId64" and name='%s' and intval='%d'", check, tablenameid(DBNAME), T.id, T.name, T.value);
+char buf[BUF_SIZ];
 
-	if(sql_exec(buf) != SQL_OK) {
-		fail("could not update saved data entry");
-	}
+sprintf(buf, "update "DBNAME" set intval=%d where %s=%"PRId64" and name='%s' and intval='%d'", check, tablenameid(DBNAME), T.id, T.name, T.value);
 
-	db_load_by_id(table, DBNAME, T.id);
+if(sql_exec(buf) != SQL_OK)
+{
+    fail("could not update saved data entry");
+}
 
-	fail_if(T.value != check);
+db_load_by_id(table, DBNAME, T.id);
+
+fail_if(T.value != check);
 
 END_TEST
 
 Suite *database_suite ()
 {
-  Suite *s = suite_create ("Database");
+    Suite *s = suite_create ("Database");
 
-  /* Core test case */
-  TCase *tc_core = tcase_create ("Core");
+    /* Core test case */
+    TCase *tc_core = tcase_create ("Core");
 
-  tcase_add_checked_fixture(tc_core, test_db_setup, test_db_teardown);
+    tcase_add_checked_fixture(tc_core, test_db_setup, test_db_teardown);
 
-  tcase_add_test (tc_core, test_escape_sql_str);
+    tcase_add_test (tc_core, test_escape_sql_str);
 
-  tcase_add_test (tc_core, test_get_rowid_in_transaction);
+    tcase_add_test (tc_core, test_get_rowid_in_transaction);
 
-  tcase_add_test (tc_core, test_field_map);
+    tcase_add_test (tc_core, test_field_map);
 
-  suite_add_tcase (s, tc_core);
+    suite_add_tcase (s, tc_core);
 
 
-  return s;
+    return s;
 }
 

@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -36,16 +36,19 @@
 Area *first_area = 0;
 int max_area = 0;
 
-const Lookup area_flags[] = {
+const Lookup area_flags[] =
+{
     {"noexplore", AREA_NOEXPLORE},
     {"changed", AREA_CHANGED},
     {0, 0}
 };
 
-field_map *area_field_map(Area *area) {
+field_map *area_field_map(Area *area)
+{
     static field_map *area_values;
 
-    field_map temp[] = {
+    field_map temp[] =
+    {
         {"areaId", &area->id, SQL_INT },
         {"name", &area->name, SQL_TEXT},
         {"flags", &area->flags, SQL_FLAG, area_flags},
@@ -133,7 +136,8 @@ Area *load_area(identifier_t id)
 
     int res = db_load_by_id(area_field_map(area), "area",  id);
 
-    if(!res) {
+    if(!res)
+    {
         log_data("unable to load area");
         destroy_area(area);
         return 0;
@@ -199,7 +203,8 @@ int load_areas()
 
 Area *get_area_by_id(identifier_t id)
 {
-    for (Area * area = first_area; area != 0; area = area->next) {
+    for (Area * area = first_area; area != 0; area = area->next)
+    {
         if (area->id == id)
             return area;
     }
@@ -212,15 +217,20 @@ int save_area_only(Area * area)
 
 
 
-    if (area->id == 0) {
-        if (sql_insert_query(area_field_map(area), "area") != SQL_OK) {
+    if (area->id == 0)
+    {
+        if (sql_insert_query(area_field_map(area), "area") != SQL_OK)
+        {
             log_data("could not insert area");
             return 0;
         }
         area->id = db_last_insert_rowid();
 
-    } else {
-        if (sql_update_query(area_field_map(area), "area", area->id) != SQL_OK) {
+    }
+    else
+    {
+        if (sql_update_query(area_field_map(area), "area", area->id) != SQL_OK)
+        {
             log_data("could not update area");
             return 0;
         }
@@ -234,15 +244,18 @@ int save_area(Area * area)
 
     save_area_only(area);
 
-    for (Object * obj = area->objects; obj; obj = obj->next_in_area) {
+    for (Object * obj = area->objects; obj; obj = obj->next_in_area)
+    {
         save_object(obj);
     }
 
-    for (Character * npc = area->npcs; npc; npc = npc->next_in_area) {
+    for (Character * npc = area->npcs; npc; npc = npc->next_in_area)
+    {
         save_npc(npc);
     }
 
-    for (Room * room = area->rooms; room; room = room->next_in_area) {
+    for (Room * room = area->rooms; room; room = room->next_in_area)
+    {
         save_room(room);
     }
 
@@ -256,10 +269,12 @@ Area *area_lookup(const char *arg)
     if (!arg || !*arg)
         return 0;
 
-    if (is_number(arg)) {
+    if (is_number(arg))
+    {
         return get_area_by_id(atoi(arg));
     }
-    for (Area * area = first_area; area != 0; area = area->next) {
+    for (Area * area = first_area; area != 0; area = area->next)
+    {
         if (!str_prefix(arg, strip_color(area->name)))
             return area;
     }

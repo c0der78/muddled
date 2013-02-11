@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,11 +22,12 @@
 #ifndef RACE_H
 #define RACE_H
 
-typedef struct Race Race;
+typedef struct race Race;
 
 #include <muddyengine/engine.h>
 
-struct Race {
+struct race
+{
     identifier_t id;
     Race *next;
     const char *name;
@@ -36,7 +37,8 @@ struct Race {
     int statMods[MAX_STAT];
 };
 
-enum {
+enum
+{
     RACE_PC
 };
 

@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,14 +22,15 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-typedef struct Player Player;
+typedef struct player Player;
 
 #include <muddyengine/account.h>
 #include <muddyengine/character.h>
 #include <muddyengine/connection.h>
 #include <time.h>
 
-struct Player {
+struct player
+{
     Account *account;
     Connection *conn;
     const char *title;
@@ -45,7 +46,8 @@ struct Player {
     time_t created;
 };
 
-enum {
+enum
+{
     PLR_COLOR_OFF,
     PLR_TICKS_OFF,
     PLR_BRIEF,

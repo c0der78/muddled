@@ -6,8 +6,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -28,7 +28,7 @@
 /*!
  * @typedef Area
  */
-typedef struct Area Area;
+typedef struct area Area;
 
 #include <muddyengine/character.h>
 #include <muddyengine/room.h>
@@ -42,7 +42,8 @@ typedef struct Area Area;
  * of rooms in the area @field objects a list of objects in the area @field
  * flags flags affecting behaviour of the area
  */
-struct Area {
+struct area
+{
     identifier_t id;
     Area *next;
     const char *name;
@@ -57,7 +58,8 @@ struct Area {
  * AREA_NOEXPLORE do not record this area in exploring statistics @constant
  * AREA_CHANGED area is changed and needs to be saved @discussion
  */
-enum {
+enum
+{
     AREA_NOEXPLORE,
     AREA_CHANGED
 };

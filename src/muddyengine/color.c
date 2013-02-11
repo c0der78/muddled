@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -43,7 +43,7 @@ static bool is_valid_color(short c)
 
 }
 
-const char *make_color(struct color_t *color)
+const char *make_color(color_t *color)
 {
 
     static char buf[3][25];
@@ -71,7 +71,7 @@ const char *make_color(struct color_t *color)
 
 }
 
-const char *convert_color_code(const char *pstr, struct color_t *color)
+const char *convert_color_code(const char *pstr, color_t *color)
 {
 
     assert(pstr && *pstr == COLOR_CODE);
@@ -88,15 +88,20 @@ const char *convert_color_code(const char *pstr, struct color_t *color)
 
     color->value = bg ? BG_MOD : 0;
 
-    if (islower((int)*pstr)) {
+    if (islower((int)*pstr))
+    {
 
         color->attr = 0;
 
-    } else if (isupper((int)*pstr)) {
+    }
+    else if (isupper((int)*pstr))
+    {
 
         color->attr = 1;
 
-    } else {
+    }
+    else
+    {
 
         color->attr = -1;
 
@@ -104,7 +109,8 @@ const char *convert_color_code(const char *pstr, struct color_t *color)
 
     // add to the color value so the background mod will be
     // taken into account
-    switch (UPPER(*pstr)) {
+    switch (UPPER(*pstr))
+    {
 
     case '\0':
 

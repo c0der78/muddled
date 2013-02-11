@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -65,11 +65,14 @@ Client *first_client = 0;
 bool client_has_color(const Client * conn)
 {
 
-    if (conn->account) {
+    if (conn->account)
+    {
 
         return !is_set(conn->account->flags, PLR_COLOR_OFF);
 
-    } else {
+    }
+    else
+    {
 
         return !nullstr(conn->termType);
 
@@ -85,7 +88,8 @@ static void write_to_client(Client * conn, const char *arg)
     /*
      * Initial \n\r if needed.
      */
-    if (conn->outtop == 0 && !conn->fCommand) {
+    if (conn->outtop == 0 && !conn->fCommand)
+    {
 
         conn->outbuf[0] = '\n';
 
@@ -97,11 +101,13 @@ static void write_to_client(Client * conn, const char *arg)
     /*
      * Expand the buffer as needed.
      */
-    while (conn->outtop + length >= conn->outsize) {
+    while (conn->outtop + length >= conn->outsize)
+    {
 
         char *outbuf;
 
-        if (conn->outsize >= 32000) {
+        if (conn->outsize >= 32000)
+        {
 
             log_warn("Buffer overflow. Closing %s.", getip(conn));
 
@@ -184,7 +190,8 @@ static void page_to_client(Client * conn, const char *txt)
     if (txt == NULL || !*txt || conn == 0)
         return;
 
-    if (conn->scrHeight == 0) {
+    if (conn->scrHeight == 0)
+    {
 
         write(conn, txt);
 
@@ -244,11 +251,13 @@ static bool write_to_socket(int desc, char *txt, size_t length)
     if (length <= 0)
         length = strlen(txt);
 
-    for (iStart = 0; iStart < length; iStart += nWrite) {
+    for (iStart = 0; iStart < length; iStart += nWrite)
+    {
 
         nBlock = UMIN(length - iStart, 4096);
 
-        if ((nWrite = send(desc, txt + iStart, nBlock, 0)) < 0) {
+        if ((nWrite = send(desc, txt + iStart, nBlock, 0)) < 0)
+        {
 
             log_error("write_to_socket");
 
@@ -347,7 +356,8 @@ void initialize_client(int control)
     getsockname(control, (struct sockaddr *)&c->addr, &size);
 
     if ((c->socket =
-                accept(control, (struct sockaddr *)&c->addr, &size)) < 0) {
+                accept(control, (struct sockaddr *)&c->addr, &size)) < 0)
+    {
 
         log_error("accept");
 
@@ -356,20 +366,24 @@ void initialize_client(int control)
         return;
 
     }
-    if (fcntl(c->socket, F_SETFL, FNDELAY) == -1) {
+    if (fcntl(c->socket, F_SETFL, FNDELAY) == -1)
+    {
 
         log_error("fcntl: FNDELAY");
 
         return;
 
     }
-    if (getpeername(c->socket, (struct sockaddr *)&c->addr, &size) < 0) {
+    if (getpeername(c->socket, (struct sockaddr *)&c->addr, &size) < 0)
+    {
 
         log_error("getpeername");
 
         c->host = str_dup("(unknown)");
 
-    } else {
+    }
+    else
+    {
 
         from =
             gethostbyaddr((char *)&c->addr.sin_addr,
@@ -385,13 +399,16 @@ void initialize_client(int control)
 
     test_telopts(c);
 
-    if (greeting == 0) {
+    if (greeting == 0)
+    {
 
         writelnf(c, "Welcome to %s!", engine_info.name);
 
         writeln(c, "");
 
-    } else {
+    }
+    else
+    {
 
         writeln(c, greeting);
 
@@ -424,9 +441,11 @@ bool parse_input_buffer(Client * conn)
     /*
      * Look for at least one new line.
      */
-    for (i = 0; conn->inbuf[i] != '\n' && conn->inbuf[i] != '\r'; i++) {
+    for (i = 0; conn->inbuf[i] != '\n' && conn->inbuf[i] != '\r'; i++)
+    {
 
-        if (conn->inbuf[i] == IAC) {
+        if (conn->inbuf[i] == IAC)
+        {
             // Telnet IAC
             process_telnet(conn, conn->inbuf, i);
 
@@ -437,13 +456,16 @@ bool parse_input_buffer(Client * conn)
     }
 
     for (i = 0, k = 0; conn->inbuf[i] != '\n' && conn->inbuf[i] != '\r';
-            i++) {
+            i++)
+    {
 
-        if (k >= sizeof(conn->inbuf) - 4) {
+        if (k >= sizeof(conn->inbuf) - 4)
+        {
 
             writeln(conn, "Line too long.");
 
-            for (; conn->inbuf[i] != 0; i++) {
+            for (; conn->inbuf[i] != 0; i++)
+            {
 
                 if (conn->inbuf[i] == '\n'
                         || conn->inbuf[i] == '\r')
@@ -463,7 +485,8 @@ bool parse_input_buffer(Client * conn)
 
 #define DISABLE_EXTENDED_ASCII_CHARS
 #ifdef DISABLE_EXTENDED_ASCII_CHARS
-        else {
+        else
+        {
 
             if (isascii(conn->inbuf[i]) && isprint(conn->inbuf[i]))
                 conn->incomm[k++] = conn->inbuf[i];
@@ -471,11 +494,13 @@ bool parse_input_buffer(Client * conn)
         }
 
 #else				/* */
-        else {
+        else
+        {
 
             unsigned char c = conn->inbuf[i];
 
-            if (c > 0x1F && c != 0x7F && c != 0xFF) {
+            if (c > 0x1F && c != 0x7F && c != 0xFF)
+            {
 
                 conn->incomm[k++] = conn->inbuf[i];
 
@@ -491,25 +516,34 @@ bool parse_input_buffer(Client * conn)
 
     conn->incomm[k] = 0;
 
-    if (k > 1 || conn->incomm[0] == '!') {
+    if (k > 1 || conn->incomm[0] == '!')
+    {
 
         if (conn->incomm[0] != '!'
-                && strcasecmp(conn->incomm, conn->lastCommand)) {
+                && strcasecmp(conn->incomm, conn->lastCommand))
+        {
 
             conn->repeat = 0;
 
-        } else {
+        }
+        else
+        {
 
-            if (++conn->repeat == 25) {
+            if (++conn->repeat == 25)
+            {
 
                 log_warn("%s input spamming!", getip(conn));
 
-            } else if (conn->repeat == 35) {
+            }
+            else if (conn->repeat == 35)
+            {
 
                 log_warn("%s still input spamming!",
                          getip(conn));
 
-            } else if (conn->repeat >= 45) {
+            }
+            else if (conn->repeat >= 45)
+            {
 
                 conn->repeat = 0;
 
@@ -521,11 +555,14 @@ bool parse_input_buffer(Client * conn)
         }
 
     }
-    if (conn->incomm[0] == '!') {
+    if (conn->incomm[0] == '!')
+    {
 
         strcpy(conn->incomm, conn->lastCommand);
 
-    } else {
+    }
+    else
+    {
 
         strcpy(conn->lastCommand, conn->incomm);
 
@@ -533,7 +570,8 @@ bool parse_input_buffer(Client * conn)
 
     got_n = got_r = false;
 
-    for (; conn->inbuf[i] == '\r' || conn->inbuf[i] == '\n'; i++) {
+    for (; conn->inbuf[i] == '\r' || conn->inbuf[i] == '\n'; i++)
+    {
 
         if (conn->inbuf[i] == '\r' && got_r++)
             break;
@@ -560,7 +598,8 @@ bool read_line_from_client(Client * conn)
     if (conn->incomm[0] != 0)
         return false;
 
-    if (iStart >= sizeof(conn->inbuf) - 10) {
+    if (iStart >= sizeof(conn->inbuf) - 10)
+    {
 
         log_error("input overflow for %s", getip(conn));
 
@@ -569,7 +608,8 @@ bool read_line_from_client(Client * conn)
         return false;
 
     }
-    for (;;) {
+    for (;;)
+    {
 
         ssize_t nRead;
 
@@ -580,7 +620,8 @@ bool read_line_from_client(Client * conn)
             recv(conn->socket, (conn->inbuf + iStart),
                  (sizeof(conn->inbuf) - 10 - iStart), 0);
 
-        if (nRead > 0) {
+        if (nRead > 0)
+        {
 
             iStart += nRead;
 
@@ -588,17 +629,23 @@ bool read_line_from_client(Client * conn)
                     || conn->inbuf[iStart - 1] == '\r')
                 break;
 
-        } else if (nRead == 0) {
+        }
+        else if (nRead == 0)
+        {
 
             log_warn("%s disconnected", getip(conn));
 
             return false;
 
-        } else if (errno == EWOULDBLOCK) {
+        }
+        else if (errno == EWOULDBLOCK)
+        {
 
             break;
 
-        } else {
+        }
+        else
+        {
 
             return false;
 
@@ -654,7 +701,8 @@ void bust_a_prompt(Client * conn)
     const char *pstr;
 
     if (!conn->account || !conn->account->playing
-            || !conn->account->playing->pc) {
+            || !conn->account->playing->pc)
+    {
 
         write(conn, "> ");
 
@@ -663,19 +711,24 @@ void bust_a_prompt(Client * conn)
     }
     ch = conn->account->playing;
 
-    if (ch->fighting) {
+    if (ch->fighting)
+    {
 
         pstr = ch->pc->battlePrompt;
 
-    } else {
+    }
+    else
+    {
 
         pstr = ch->pc->prompt;
 
     }
 
-    while (*pstr) {
+    while (*pstr)
+    {
 
-        if (*pstr != '%') {
+        if (*pstr != '%')
+        {
 
             *pbuf++ = *pstr++;
 
@@ -684,7 +737,8 @@ void bust_a_prompt(Client * conn)
         }
         pstr++;
 
-        switch (*pstr) {
+        switch (*pstr)
+        {
 
         default:
 
@@ -694,11 +748,14 @@ void bust_a_prompt(Client * conn)
 
         case 'E':
 
-            if (ch->fighting == 0) {
+            if (ch->fighting == 0)
+            {
 
                 tmp = "No Enemy";
 
-            } else {
+            }
+            else
+            {
 
                 sprintf(buf2, "%d%%",
                         (int)percent(ch->fighting->hit,
@@ -788,7 +845,7 @@ void bust_a_prompt(Client * conn)
 bool parse_color_codes(Client * conn)
 {
 
-    struct color_t color;
+    color_t color;
 
     bool colorOn = client_has_color(conn);
 
@@ -805,9 +862,11 @@ bool parse_color_codes(Client * conn)
     result = output;
 
     for (pstr = conn->outbuf;
-            *pstr && (pstr - conn->outbuf) < conn->outtop; pstr++) {
+            *pstr && (pstr - conn->outbuf) < conn->outtop; pstr++)
+    {
 
-        if ((result - output) >= OUT_SIZ - 32) {
+        if ((result - output) >= OUT_SIZ - 32)
+        {
 
             *result++ = 0;
 
@@ -823,7 +882,8 @@ bool parse_color_codes(Client * conn)
             result = output;	/* increment counter */
 
         }
-        if (*pstr != COLOR_CODE) {
+        if (*pstr != COLOR_CODE)
+        {
 
             *result++ = *pstr;
 
@@ -832,15 +892,19 @@ bool parse_color_codes(Client * conn)
         }
         pstr = convert_color_code(pstr, colorOn ? &color : 0);
 
-        if (*pstr == COLOR_CODE) {
+        if (*pstr == COLOR_CODE)
+        {
 
             *result++ = COLOR_CODE;
 
-        } else if (colorOn) {
+        }
+        else if (colorOn)
+        {
 
             tmp = make_color(&color);
 
-            while (*tmp != 0 && (result - output) < OUT_SIZ) {
+            while (*tmp != 0 && (result - output) < OUT_SIZ)
+            {
 
                 *result++ = *tmp++;
 
@@ -868,7 +932,8 @@ bool process_output(Client * conn, bool fPrompt)
      * Bust a prompt.
      * OLC changed
      */
-    if (!is_set(engine_info.flags, ENGINE_OFF)) {
+    if (!is_set(engine_info.flags, ENGINE_OFF))
+    {
 
         if (conn->showstr_point)
             pager_prompt(conn);
@@ -876,7 +941,8 @@ bool process_output(Client * conn, bool fPrompt)
         else if (fPrompt && conn->editing)
             olc_prompt(conn);
 
-        else if (fPrompt && client_is_playing(conn)) {
+        else if (fPrompt && client_is_playing(conn))
+        {
 
             Character *ch;
 
@@ -888,7 +954,8 @@ bool process_output(Client * conn, bool fPrompt)
              * battle prompt
              */
             if ((victim = ch->fighting) != NULL
-                    && can_see(ch, victim)) {
+                    && can_see(ch, victim))
+            {
 
                 int percent;
 
@@ -979,7 +1046,8 @@ void show_string(Client * conn, const char *input)
 
     one_argument(input, buf);
 
-    switch (UPPER(buf[0])) {
+    switch (UPPER(buf[0]))
+    {
 
     case '\0':
 
@@ -1021,7 +1089,8 @@ void show_string(Client * conn, const char *input)
 
     default:		/* otherwise, stop the text viewing */
 
-        if (conn->showstr_head) {
+        if (conn->showstr_head)
+        {
 
             free_mem(conn->showstr_head);
 
@@ -1037,12 +1106,15 @@ void show_string(Client * conn, const char *input)
     /*
      * do any backing up necessary
      */
-    if (lines < 0) {
+    if (lines < 0)
+    {
 
         for (chk = conn->showstr_point; chk != conn->showstr_head;
-                chk--) {
+                chk--)
+        {
 
-            if ((*chk == '\n') || (*chk == '\r')) {
+            if ((*chk == '\n') || (*chk == '\r'))
+            {
 
                 toggle = -toggle;
 
@@ -1062,27 +1134,31 @@ void show_string(Client * conn, const char *input)
 
     toggle = 1;
 
-    for (scan = buffer;; scan++, conn->showstr_point++) {
+    for (scan = buffer;; scan++, conn->showstr_point++)
+    {
 
         if (((*scan = *conn->showstr_point) == '\n'
                 || *scan == '\r') && (toggle = -toggle) < 0)
             lines++;
 
-        else if (!*scan || (show_lines > 0 && lines >= show_lines)) {
+        else if (!*scan || (show_lines > 0 && lines >= show_lines))
+        {
 
             *scan = '\0';
 
             write(conn, buffer);
 
             for (chk = conn->showstr_point; isspace((int)*chk);
-                    chk++) 
+                    chk++)
                 ;
 
             {
 
-                if (!*chk) {
+                if (!*chk)
+                {
 
-                    if (conn->showstr_head) {
+                    if (conn->showstr_head)
+                    {
 
                         free_mem(conn->showstr_head);
 
@@ -1113,17 +1189,23 @@ void client_wait_to_quit(Client * conn, const char *argument)
 void client_command_parser(Client * conn, const char *argument)
 {
 
-    if (conn->showstr_point != 0) {
+    if (conn->showstr_point != 0)
+    {
 
         show_string(conn, argument);
 
-    } else {
+    }
+    else
+    {
 
-        if (conn->editing != 0) {
+        if (conn->editing != 0)
+        {
 
             conn->editing->edit(conn, argument);
 
-        } else {
+        }
+        else
+        {
 
             command_interpret(conn->account->playing, argument);
 
@@ -1152,12 +1234,14 @@ void client_display_account_menu(Client * conn)
 
     writeln(conn, "~Y(E)~Cxit game\n");
 
-    if (conn->account->players != 0) {
+    if (conn->account->players != 0)
+    {
 
         writeln(conn, "Players:");
 
         for (AccountPlayer * ch = conn->account->players; ch != 0;
-                ch = ch->next) {
+                ch = ch->next)
+        {
 
             writelnf(conn, " ~Y%2d) ~W%s ~C(Lvl %d)~x", ++count,
                      ch->name, ch->level);
@@ -1182,7 +1266,8 @@ void set_playing(Client * conn)
 
     Character *ch = conn->account->playing;
 
-    if (ch->inRoom == 0) {
+    if (ch->inRoom == 0)
+    {
 
         ch->inRoom = get_default_room();
 
@@ -1195,7 +1280,8 @@ void set_playing(Client * conn)
 
     char_to_room(ch, ch->inRoom);
 
-    if (!server_rebooting) {
+    if (!server_rebooting)
+    {
 
         clear_screen(conn);
 
@@ -1226,7 +1312,8 @@ void client_display_sex_menu(Client * conn)
 
     int count = 0;
 
-    for (const Lookup * t = sex_table; t->name != 0; t++) {
+    for (const Lookup * t = sex_table; t->name != 0; t++)
+    {
 
         writelnf(conn, "~Y%d) ~W%s", ++count, capitalize(t->name));
 
@@ -1241,7 +1328,8 @@ void client_display_sex_menu(Client * conn)
 void client_confirm_delete_char(Client * conn, const char *argument)
 {
 
-    if (!argument || !*argument) {
+    if (!argument || !*argument)
+    {
 
         set_playing(conn);
 
@@ -1251,7 +1339,8 @@ void client_confirm_delete_char(Client * conn, const char *argument)
 
     }
     if (strcmp
-            (conn->account->password, crypt(argument, conn->account->login))) {
+            (conn->account->password, crypt(argument, conn->account->login)))
+    {
 
         set_playing(conn);
 
@@ -1294,7 +1383,8 @@ void client_display_class_menu(Client * conn)
 
     conn->title(conn, "Available Classes");
 
-    for (int i = 0; i < max_class; i++) {
+    for (int i = 0; i < max_class; i++)
+    {
 
         writelnf(conn, "~W%12s~C: %s~x", class_table[i].name,
                  class_table[i].description);
@@ -1309,7 +1399,8 @@ void client_display_class_menu(Client * conn)
 void client_get_class(Client * conn, const char *argument)
 {
 
-    if (!argument || !*argument) {
+    if (!argument || !*argument)
+    {
 
         write(conn,
               "~CPlease specify which class your character shall be: ~x");
@@ -1319,7 +1410,8 @@ void client_get_class(Client * conn, const char *argument)
     }
     int c = class_lookup(argument);
 
-    if (c == -1) {
+    if (c == -1)
+    {
 
         writeln(conn, "~CThat is not a valid class.~x");
 
@@ -1361,7 +1453,8 @@ void client_display_race_menu(Client * conn)
 
     conn->title(conn, "Available Races");
 
-    for (Race * race = first_race; race != 0; race = race->next) {
+    for (Race * race = first_race; race != 0; race = race->next)
+    {
 
         writelnf(conn, "~W%12s~C: %s~x", race->name, race->description);
 
@@ -1376,7 +1469,8 @@ void client_display_race_menu(Client * conn)
 void client_get_race(Client * conn, const char *argument)
 {
 
-    if (!argument || !*argument) {
+    if (!argument || !*argument)
+    {
 
         write(conn,
               "~CPlease specify which race your character shall be: ~x");
@@ -1386,7 +1480,8 @@ void client_get_race(Client * conn, const char *argument)
     }
     Race *race = race_lookup(argument);
 
-    if (race == 0) {
+    if (race == 0)
+    {
 
         writeln(conn, "~CThat is not a valid race.~x");
 
@@ -1407,7 +1502,8 @@ void client_get_race(Client * conn, const char *argument)
 void client_get_char_sex(Client * conn, const char *argument)
 {
 
-    if (!argument || !*argument) {
+    if (!argument || !*argument)
+    {
 
         writeln(conn,
                 "~CPlease specify which sex your character shall be:~x ");
@@ -1415,7 +1511,8 @@ void client_get_char_sex(Client * conn, const char *argument)
         return;
 
     }
-    if (is_number(argument)) {
+    if (is_number(argument))
+    {
 
         int num = atoi(argument);
 
@@ -1423,14 +1520,16 @@ void client_get_char_sex(Client * conn, const char *argument)
 
         const Lookup *t;
 
-        for (t = sex_table; t->name != 0; t++) {
+        for (t = sex_table; t->name != 0; t++)
+        {
 
             if (++count == num)
                 break;
 
         }
 
-        if (t->name == 0) {
+        if (t->name == 0)
+        {
 
             writelnf(conn, "~CValid sexes are: ~W%s~x",
                      lookup_names(sex_table));
@@ -1440,11 +1539,14 @@ void client_get_char_sex(Client * conn, const char *argument)
         }
         conn->account->playing->sex = t->value;
 
-    } else {
+    }
+    else
+    {
 
         long sex = value_lookup(sex_table, argument);
 
-        if (sex == -1) {
+        if (sex == -1)
+        {
 
             writelnf(conn, "~CValid sexes are: ~W%s~x",
                      lookup_names(sex_table));
@@ -1475,7 +1577,8 @@ void client_create_new_char(Client * conn, const char *argument)
 {
 
     if (!argument || !*argument || strlen(argument) > 12
-            || strlen(argument) < 3) {
+            || strlen(argument) < 3)
+    {
 
         writeln(conn,
                 "Please enter a name between 3 and 12 characters.");
@@ -1483,9 +1586,11 @@ void client_create_new_char(Client * conn, const char *argument)
         return;
 
     }
-    for (const char *str = argument; *str != 0; str++) {
+    for (const char *str = argument; *str != 0; str++)
+    {
 
-        if (!isalpha((int)*str)) {
+        if (!isalpha((int)*str))
+        {
 
             writeln(conn,
                     "You can only use letters for your characters name.");
@@ -1515,7 +1620,8 @@ void client_confirm_account_delete(Client * conn, const char *argument)
     send_telopt(conn, WONT, TELOPT_ECHO);
 
     if (strcmp
-            (conn->account->password, crypt(argument, conn->account->login))) {
+            (conn->account->password, crypt(argument, conn->account->login)))
+    {
 
         writeln(conn,
                 "Incorrect password.  Account deletion cancelled.");
@@ -1538,32 +1644,39 @@ void client_confirm_account_delete(Client * conn, const char *argument)
 void client_account_menu(Client * conn, const char *argument)
 {
 
-    if (is_number(argument)) {
+    if (is_number(argument))
+    {
 
         int count = 0, num = atoi(argument);
 
         AccountPlayer *ch;
 
-        for (ch = conn->account->players; ch != 0; ch = ch->next) {
+        for (ch = conn->account->players; ch != 0; ch = ch->next)
+        {
 
-            if (++count == num) {
+            if (++count == num)
+            {
 
                 break;
 
             }
         }
 
-        if (ch != 0) {
+        if (ch != 0)
+        {
 
             conn->account->playing =
                 load_player_by_id((Connection *) conn, ch->charId);
 
-            if (conn->account->playing == 0) {
+            if (conn->account->playing == 0)
+            {
 
                 writeln(conn,
                         "There was a problem loading that character.");
 
-            } else {
+            }
+            else
+            {
 
                 writelnf(conn,
                          "The nebula orion flashes and %s materializes from the 4th dimension...",
@@ -1584,7 +1697,8 @@ void client_account_menu(Client * conn, const char *argument)
         return;
 
     }
-    switch (UPPER(argument[0])) {
+    switch (UPPER(argument[0]))
+    {
 
     case 'C':
 
@@ -1644,7 +1758,8 @@ void client_display_timezones(Client * conn)
 
     writelnf(conn, "~C%s~x", fillstr("-", conn->scrWidth));
 
-    for (int i = 0; timezones[i].name != 0; i++) {
+    for (int i = 0; timezones[i].name != 0; i++)
+    {
 
         writelnf(conn, "%-6s %-30s (%s)", timezones[i].name,
                  timezones[i].zone, str_time(current_time, i, NULL));
@@ -1661,7 +1776,8 @@ void client_get_timezone(Client * conn, const char *argument)
 
     int zone = timezone_lookup(argument);
 
-    if (zone == -1) {
+    if (zone == -1)
+    {
 
         writeln(conn, "That is not a valid timezone.");
 
@@ -1681,7 +1797,8 @@ void client_get_timezone(Client * conn, const char *argument)
 void client_create_account_email(Client * conn, const char *argument)
 {
 
-    if (!argument || !*argument || !is_valid_email(argument)) {
+    if (!argument || !*argument || !is_valid_email(argument))
+    {
 
         write(conn, "That is not a valid email address. Try again: ");
 
@@ -1702,7 +1819,8 @@ void client_confirm_account_password(Client * conn, const char *argument)
 {
 
     if (strcmp
-            (conn->account->password, crypt(argument, conn->account->login))) {
+            (conn->account->password, crypt(argument, conn->account->login)))
+    {
 
         writeln(conn, "Passwords don't match.  Let's try again.");
 
@@ -1726,7 +1844,8 @@ void client_confirm_account_password(Client * conn, const char *argument)
 void client_create_account_password(Client * conn, const char *argument)
 {
 
-    if (!argument || !*argument || strlen(argument) < 6) {
+    if (!argument || !*argument || strlen(argument) < 6)
+    {
 
         writeln(conn,
                 "Your password must be at least 6 symbols or more.");
@@ -1746,7 +1865,8 @@ void client_create_account_password(Client * conn, const char *argument)
 void client_create_account(Client * conn, const char *argument)
 {
 
-    switch (UPPER(argument[0])) {
+    switch (UPPER(argument[0]))
+    {
 
     case 'Y':
 
@@ -1781,9 +1901,11 @@ void client_get_account_password(Client * conn, const char *argument)
 {
 
     if (strcmp
-            (conn->account->password, crypt(argument, conn->account->login))) {
+            (conn->account->password, crypt(argument, conn->account->login)))
+    {
 
-        if (conn->password_retries >= 2) {
+        if (conn->password_retries >= 2)
+        {
 
             send_telopt(conn, WONT, TELOPT_ECHO);
 
@@ -1808,30 +1930,37 @@ void client_get_account_password(Client * conn, const char *argument)
 
     AccountPlayer *p;
 
-    for (p = conn->account->players; p; p = p->next) {
+    for (p = conn->account->players; p; p = p->next)
+    {
 
         if (p->charId == conn->account->autologinId)
             break;
 
     }
 
-    if (p == 0) {
+    if (p == 0)
+    {
 
         client_display_account_menu(conn);
 
         conn->handler = client_account_menu;
 
-    } else {
+    }
+    else
+    {
 
         conn->account->playing =
             load_player_by_id((Connection *) conn, p->charId);
 
-        if (conn->account->playing == 0) {
+        if (conn->account->playing == 0)
+        {
 
             writeln(conn,
                     "There was a problem loading your character.");
 
-        } else {
+        }
+        else
+        {
 
             act(TO_ROOM, conn->account->playing, 0, 0,
                 "~?The nebula orion flashes and $n materializes from the fourth dimension...~x");
@@ -1853,7 +1982,8 @@ void client_get_account_password(Client * conn, const char *argument)
 void client_get_account_name(Client * conn, const char *argument)
 {
 
-    if (!argument || !*argument) {
+    if (!argument || !*argument)
+    {
 
         write(conn, "Please enter your account login: ");
 
@@ -1862,7 +1992,8 @@ void client_get_account_name(Client * conn, const char *argument)
     }
     conn->account = new_account((Connection *) conn);
 
-    if (!load_account(conn->account, argument)) {
+    if (!load_account(conn->account, argument))
+    {
 
         conn->account->login = str_dup(argument);
 
@@ -1873,7 +2004,9 @@ void client_get_account_name(Client * conn, const char *argument)
 
         conn->handler = client_create_account;
 
-    } else {
+    }
+    else
+    {
 
         write(conn, "Please enter your password: ");
 

@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -58,53 +58,72 @@ int load_classes()
 
     int len = sprintf(buf, "select count(*) from class");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    if (sql_step(stmt) == SQL_DONE) {
+    if (sql_step(stmt) == SQL_DONE)
+    {
         log_data("could not count hints");
         return 0;
     }
     max_class = sql_column_int(stmt, 0);
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     class_table = (Class *) alloc_mem(max_class, sizeof(Class));
 
     len = sprintf(buf, "select * from class");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
         int count = sql_column_count(stmt);
 
         // Class * c = new_class();
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "name")) {
+            if (!str_cmp(colname, "name"))
+            {
                 class_table[total].name =
                     str_dup(sql_column_str(stmt, i));
-            } else if (!str_cmp(colname, "summary")) {
+            }
+            else if (!str_cmp(colname, "summary"))
+            {
                 class_table[total].description =
                     str_dup(sql_column_str(stmt, i));
-            } else if (!str_cmp(colname, "classId")) {
+            }
+            else if (!str_cmp(colname, "classId"))
+            {
                 class_table[total].id = sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "fMana")) {
+            }
+            else if (!str_cmp(colname, "fMana"))
+            {
                 class_table[total].fMana =
                     sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "thac0")) {
+            }
+            else if (!str_cmp(colname, "thac0"))
+            {
                 class_table[total].thac0 =
                     sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "thac32")) {
+            }
+            else if (!str_cmp(colname, "thac32"))
+            {
                 class_table[total].thac32 =
                     sql_column_int(stmt, i);
-            } else {
+            }
+            else
+            {
                 log_warn("unknown class column '%s'", colname);
             }
         }
@@ -113,7 +132,8 @@ int load_classes()
         total++;
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     return total;
@@ -121,7 +141,8 @@ int load_classes()
 
 int get_class_by_id(identifier_t id)
 {
-    for (int i = 0; i < max_class; i++) {
+    for (int i = 0; i < max_class; i++)
+    {
         if (class_table[i].id == id)
             return i;
     }
@@ -136,7 +157,8 @@ int class_lookup(const char *arg)
     if (is_number(arg))
         return get_class_by_id(atoi(arg));
 
-    for (int i = 0; i < max_class; i++) {
+    for (int i = 0; i < max_class; i++)
+    {
         if (!str_prefix(arg, class_table[i].name))
             return i;
     }
@@ -151,7 +173,8 @@ bool is_valid_class(int index)
 
 bool has_class(Character * ch, int classId)
 {
-    for (int *i = ch->classes; i && *i != -1; i++) {
+    for (int *i = ch->classes; i && *i != -1; i++)
+    {
         if (class_table[*i].id == classId)
             return true;
     }
@@ -160,7 +183,8 @@ bool has_class(Character * ch, int classId)
 
 const char *class_short(Character * ch)
 {
-    if (ch->classes == 0 || *ch->classes == -1) {
+    if (ch->classes == 0 || *ch->classes == -1)
+    {
         log_warn("char %" PRId64 " with no class", ch->id);
         return "Unknown";
     }
@@ -169,13 +193,15 @@ const char *class_short(Character * ch)
 
     ++i, i %= 4;
 
-    if (ch->classes[1] == -1) {
+    if (ch->classes[1] == -1)
+    {
         strcpy(buf[i], capitalize(class_table[*ch->classes].name));
         return buf[i];
     }
     int len = 0;
 
-    for (int *c = ch->classes; c && *c != -1; c++) {
+    for (int *c = ch->classes; c && *c != -1; c++)
+    {
         len +=
             sprintf(&buf[i][len], "%.3s/",
                     capitalize(class_table[*c].name));
@@ -191,11 +217,13 @@ const char *class_who(Character * ch)
 {
     static char buf[100];
 
-    if (ch->classes == 0) {
+    if (ch->classes == 0)
+    {
         log_warn("char %" PRId64 " with no class", ch->id);
         return "Unk";
     }
-    if (ch->classes[1] == -1) {
+    if (ch->classes[1] == -1)
+    {
         sprintf(buf, "%.3s",
                 capitalize(class_table[*ch->classes].name));
         return buf;

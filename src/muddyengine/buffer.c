@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -33,7 +33,8 @@
 /*
  * valid states
  */
-enum buf_t {
+enum buf_t
+{
     BUFFER_SAFE,
     BUFFER_OVERFLOW
 };
@@ -41,7 +42,8 @@ enum buf_t {
 /*
  * buffer sizes
  */
-const int buf_size[MAX_BUF_LIST] = {
+const int buf_size[MAX_BUF_LIST] =
+{
     16, 32, 64, 128, 256, 1024, 2048, 4096, 8192, 16384
 };
 
@@ -58,7 +60,8 @@ static int get_size(int val)
     int i;
 
     for (i = 0; i < MAX_BUF_LIST; i++)
-        if (buf_size[i] >= val) {
+        if (buf_size[i] >= val)
+        {
 
             return buf_size[i];
 
@@ -101,7 +104,8 @@ Buffer *new_buf_size(int size)
 
     buffer->size = get_size(size);
 
-    if (buffer->size == -1) {
+    if (buffer->size == -1)
+    {
 
         log_error("new_buf: buffer size %d too large.", size);
 
@@ -188,11 +192,13 @@ bool buf_add_len(Buffer * buffer, const char *string, size_t str_len)
 
     len = strlen(buffer->string) + str_len + 1;
 
-    while (len >= buffer->size) {	/* increase the buffer size */
+    while (len >= buffer->size)  	/* increase the buffer size */
+    {
 
         buffer->size = get_size(buffer->size + 1);
 
-        if (buffer->size == -1) {	/* overflow */
+        if (buffer->size == -1)  	/* overflow */
+        {
 
             buffer->size = oldsize;
 
@@ -205,7 +211,8 @@ bool buf_add_len(Buffer * buffer, const char *string, size_t str_len)
         }
     }
 
-    if (buffer->size != oldsize) {
+    if (buffer->size != oldsize)
+    {
 
         buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
 

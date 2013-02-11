@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,9 +22,10 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-typedef struct Character Character;
+typedef struct character Character;
 
-typedef enum {
+typedef enum
+{
     SIZE_TINY = 2,
     SIZE_SMALL = 4,
     SIZE_AVERAGE = 6,
@@ -32,7 +33,8 @@ typedef enum {
     SIZE_HUGE = 10
 } size_type;
 
-typedef enum {
+typedef enum
+{
     POS_FIGHTING,
     POS_STANDING,
     POS_SITTING,
@@ -44,14 +46,16 @@ typedef enum {
     POS_DEAD
 } position_t;
 
-typedef enum {
+typedef enum
+{
     SEX_NEUTRAL,
     SEX_MALE,
     SEX_FEMALE,
     SEX_HERMAPHRODITE
 } sex_t;
 
-typedef enum {
+typedef enum
+{
     COND_HUNGER,
     COND_THIRST,
     COND_DRUNK,
@@ -67,7 +71,8 @@ typedef enum {
 #include <muddyengine/fight.h>
 #include <muddyengine/room.h>
 
-struct Character {
+struct character
+{
     identifier_t id;
     Character *next;
     Character *next_in_area;

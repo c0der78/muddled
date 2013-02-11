@@ -79,7 +79,8 @@
 #define dd			536870912
 #define ee			1073741824
 
-typedef struct temp_reset {
+typedef struct temp_reset
+{
     int id;
     char type;
     long arg1;
@@ -110,7 +111,8 @@ Help *import_helps = 0;
 
 void import_finalize_exits(Room * room)
 {
-    for (int e = 0; e < MAX_DIR; e++) {
+    for (int e = 0; e < MAX_DIR; e++)
+    {
         if (!room->exits[e])
             continue;
 
@@ -120,20 +122,27 @@ void import_finalize_exits(Room * room)
         Room *toRoom = (Room *) hm_get(room_indexes, id);
         Object *keyObj = (Object *) hm_get(obj_indexes, key);
 
-        if (!toRoom) {
+        if (!toRoom)
+        {
             toRoom = get_room_by_id(id);
         }
-        if (!toRoom) {
+        if (!toRoom)
+        {
             log_bug("exit (%" PRId64 ") with no room %" PRId64,
                     room->exits[e]->id, id);
             destroy_exit(room->exits[e]);
             room->exits[e] = 0;
-        } else {
+        }
+        else
+        {
             room->exits[e]->toRoom = toRoom;
 
-            if (keyObj && keyObj->id != 0) {
+            if (keyObj && keyObj->id != 0)
+            {
                 room->exits[e]->key = key;
-            } else {
+            }
+            else
+            {
                 room->exits[e]->key = 0;
             }
 
@@ -179,14 +188,16 @@ void import_cleanup()
 
     npc_indexes = obj_indexes = room_indexes = 0;
 
-    for (TmpReset * tmp = temp_resets; tmp; tmp = tmp->next) {
+    for (TmpReset * tmp = temp_resets; tmp; tmp = tmp->next)
+    {
         for (TmpReset * sub = tmp->subresets; sub; sub = sub->next_sub)
             free_mem(sub);
         free_mem(tmp);
     }
     temp_resets = 0;
 
-    for (Area * a_next, *area = import_areas; area; area = a_next) {
+    for (Area * a_next, *area = import_areas; area; area = a_next)
+    {
         a_next = area->next;
 
         destroy_area(area);
@@ -195,7 +206,8 @@ void import_cleanup()
 
 bool import_rom_area_list(const char *dir, FILE * fpList)
 {
-    for (;;) {
+    for (;;)
+    {
         char strArea[BUF_SIZ];
         FILE *fpArea;
 
@@ -204,7 +216,8 @@ bool import_rom_area_list(const char *dir, FILE * fpList)
         if (!str_suffix("$", strArea))
             break;
 
-        if ((fpArea = fopen(strArea, "r")) == NULL) {
+        if ((fpArea = fopen(strArea, "r")) == NULL)
+        {
             log_error("%s", strArea);
             return false;
         }
@@ -227,10 +240,12 @@ void import_finalize_reset(TmpReset * res, char *buf, int tab)
     for (int i = 0; i < tab; i++)
         strcat(buf, "\t");
 
-    switch (res->type) {
+    switch (res->type)
+    {
     case 'M':
         npc = (Character *) hm_get(npc_indexes, res->arg1);
-        if (npc->id == 0) {
+        if (npc->id == 0)
+        {
             log_bug("npc %ld not saved", res->arg1);
         }
         sprintf(buf + strlen(buf), "npc(%" PRId64, npc->id);
@@ -242,7 +257,8 @@ void import_finalize_reset(TmpReset * res, char *buf, int tab)
         break;
     case 'O':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
-        if (obj->id == 0) {
+        if (obj->id == 0)
+        {
             log_bug("obj %ld not saved", res->arg1);
         }
         sprintf(buf + strlen(buf), "obj(%" PRId64, obj->id);
@@ -253,7 +269,8 @@ void import_finalize_reset(TmpReset * res, char *buf, int tab)
         break;
     case 'P':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
-        if (obj->id == 0) {
+        if (obj->id == 0)
+        {
             log_bug("obj %ld not saved", res->arg1);
         }
         sprintf(buf + strlen(buf), "put(%" PRId64 ")\n", obj->id);
@@ -264,7 +281,8 @@ void import_finalize_reset(TmpReset * res, char *buf, int tab)
         break;
     case 'G':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
-        if (obj->id == 0) {
+        if (obj->id == 0)
+        {
             log_bug("obj %ld not saved", res->arg1);
         }
         sprintf(buf + strlen(buf), "give(%" PRId64 ")\n", obj->id);
@@ -275,7 +293,8 @@ void import_finalize_reset(TmpReset * res, char *buf, int tab)
         break;
     case 'E':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
-        if (obj->id == 0) {
+        if (obj->id == 0)
+        {
             log_bug("obj %ld not saved", res->arg1);
         }
         sprintf(buf + strlen(buf), "equip(%" PRId64 ")\n", obj->id);
@@ -288,7 +307,8 @@ void import_finalize_reset(TmpReset * res, char *buf, int tab)
         break;
     }
 
-    for (TmpReset * sub = res->subresets; sub; sub = sub->next_sub) {
+    for (TmpReset * sub = res->subresets; sub; sub = sub->next_sub)
+    {
         import_finalize_reset(sub, buf, tab + 1);
     }
 }
@@ -297,11 +317,13 @@ void import_save_area(Area * area)
 {
     save_area_only(area);
 
-    for (Character * npc = area->npcs; npc; npc = npc->next_in_area) {
+    for (Character * npc = area->npcs; npc; npc = npc->next_in_area)
+    {
         save_npc(npc);
     }
 
-    for (Object * obj = area->objects; obj; obj = obj->next_in_area) {
+    for (Object * obj = area->objects; obj; obj = obj->next_in_area)
+    {
         save_object(obj);
     }
 }
@@ -310,11 +332,13 @@ void import_commit(bool load)
 {
     db_begin_transaction();
 
-    for (Area * area = import_areas; area; area = area->next) {
+    for (Area * area = import_areas; area; area = area->next)
+    {
         import_save_area(area);
     }
 
-    for (TmpReset * tmp_next, *tmp = temp_resets; tmp; tmp = tmp_next) {
+    for (TmpReset * tmp_next, *tmp = temp_resets; tmp; tmp = tmp_next)
+    {
         tmp_next = tmp->next;
 
         char buf[OUT_SIZ * 2] = { 0 };
@@ -326,7 +350,8 @@ void import_commit(bool load)
         // save_room_only(tmp->room);
 
         for (TmpReset * sub_next = 0, *sub = tmp->subresets; sub;
-                sub = sub->next_sub) {
+                sub = sub->next_sub)
+        {
             sub_next = sub->next;
             free_mem(sub);
         }
@@ -336,15 +361,19 @@ void import_commit(bool load)
 
     temp_resets = 0;
 
-    for (Area * area = import_areas; area; area = area->next) {
-        for (Room * room = area->rooms; room; room = room->next_in_area) {
+    for (Area * area = import_areas; area; area = area->next)
+    {
+        for (Room * room = area->rooms; room; room = room->next_in_area)
+        {
             save_room_only(room);
         }
     }
 
-    for (Area * area = import_areas; area; area = area->next) {
+    for (Area * area = import_areas; area; area = area->next)
+    {
 
-        for (Room * room = area->rooms; room; room = room->next_in_area) {
+        for (Room * room = area->rooms; room; room = room->next_in_area)
+        {
             import_finalize_exits(room);
         }
 
@@ -362,11 +391,13 @@ void server_import(const char *db_path, const char *file)
     FILE *fp = fopen(file, "r");
     bool success;
 
-    if (fp == 0) {
+    if (fp == 0)
+    {
         log_bug("Could not open %s for importing.", file);
         return;
     }
-    if (db_open(SQLITE3_FILE, db_path)) {
+    if (db_open(SQLITE3_FILE, db_path))
+    {
         log_data("Can't open database");
         db_close();
         exit(EXIT_FAILURE);
@@ -377,20 +408,24 @@ void server_import(const char *db_path, const char *file)
 
     log_info("loaded %d skills", load_skills());
 
-    if (!str_suffix(".lst", file)) {
+    if (!str_suffix(".lst", file))
+    {
         if (!
                 (success = import_rom_area_list(dirname((char *)file), fp)))
             log_bug("Could not import areas.");
         else
             log_info("Areas imported.");
-    } else {
+    }
+    else
+    {
         if (!(success = import_rom_file(fp)))
             log_bug("Could not import file.");
         else
             log_info("File imported.");
     }
 
-    if (success) {
+    if (success)
+    {
         import_commit(false);
         log_info("Areas commited.");
     }
@@ -409,10 +444,12 @@ bool import_rom_file(FILE * fpArea)
     if (room_indexes == 0)
         room_indexes = new_hashmap(0);
 
-    for (;;) {
+    for (;;)
+    {
         const char *word;
 
-        if (fread_letter(fpArea) != '#') {
+        if (fread_letter(fpArea) != '#')
+        {
             log_bug("# not found.");
             fclose(fpArea);
             import_cleanup();
@@ -442,7 +479,8 @@ bool import_rom_file(FILE * fpArea)
             import_rom_socials(fpArea);
         else if (!str_cmp(word, "SPECIALS"))
             import_rom_specials(fpArea);
-        else {
+        else
+        {
             log_bug("bad section name.");
             fclose(fpArea);
             import_cleanup();
@@ -486,34 +524,40 @@ bool import_rom_olc_area(FILE * fp)
 
     pArea = new_area();
 
-    for (;;) {
+    for (;;)
+    {
         word = feof(fp) ? "End" : fread_word(fp);
         fMatch = false;
 
-        switch (UPPER(word[0])) {
+        switch (UPPER(word[0]))
+        {
         case 'C':
-            if (!str_cmp(word, "Credits")) {
+            if (!str_cmp(word, "Credits"))
+            {
                 free_str(fread_string(fp));
                 fMatch = true;
                 break;
             }
             break;
         case 'N':
-            if (!str_cmp(word, "Name")) {
+            if (!str_cmp(word, "Name"))
+            {
                 pArea->name = fread_string(fp);
                 fMatch = true;
                 break;
             }
             break;
         case 'S':
-            if (!str_cmp(word, "Security")) {
+            if (!str_cmp(word, "Security"))
+            {
                 fread_number(fp);
                 fMatch = true;
                 break;
             }
             break;
         case 'V':
-            if (!str_cmp(word, "VNUMs")) {
+            if (!str_cmp(word, "VNUMs"))
+            {
                 fread_number(fp);
                 fread_number(fp);
                 fMatch = true;
@@ -521,7 +565,8 @@ bool import_rom_olc_area(FILE * fp)
             }
             break;
         case 'E':
-            if (!str_cmp(word, "End")) {
+            if (!str_cmp(word, "End"))
+            {
                 fMatch = true;
                 set_bit(pArea->flags, AREA_CHANGED);
                 LINK(import_areas, pArea, next);
@@ -530,7 +575,8 @@ bool import_rom_olc_area(FILE * fp)
             }
             break;
         case 'B':
-            if (!str_cmp(word, "Builders")) {
+            if (!str_cmp(word, "Builders"))
+            {
                 free_str(fread_string(fp));
                 fMatch = true;
                 break;
@@ -543,10 +589,12 @@ bool import_rom_olc_area(FILE * fp)
 
 void rom_act_flag_convert(Flag * flags, long bits)
 {
-    static const struct {
+    static const struct
+    {
         long rombit;
         int bit;
-    } actconvert[] = {
+    } actconvert[] =
+    {
 
         {
             B, NPC_SENTINEL
@@ -562,8 +610,10 @@ void rom_act_flag_convert(Flag * flags, long bits)
         }
     };
 
-    for (int i = 0; i < sizeof(actconvert) / sizeof(actconvert[0]); i++) {
-        if (actconvert[i].rombit & bits) {
+    for (int i = 0; i < sizeof(actconvert) / sizeof(actconvert[0]); i++)
+    {
+        if (actconvert[i].rombit & bits)
+        {
             set_bit(flags, actconvert[i].bit);
         }
     }
@@ -571,10 +621,12 @@ void rom_act_flag_convert(Flag * flags, long bits)
 
 void rom_resists_flag_convert(Character * ch, long bits, int mod)
 {
-    static const struct {
+    static const struct
+    {
         int resist;
         long rombit;
-    } resistconv[] = {
+    } resistconv[] =
+    {
         {
             DAM_BASH, E
         }, {
@@ -604,8 +656,10 @@ void rom_resists_flag_convert(Character * ch, long bits, int mod)
         }
     };
 
-    for (int i = 0; i < sizeof(resistconv) / sizeof(resistconv[0]); i++) {
-        if (resistconv[i].rombit & bits) {
+    for (int i = 0; i < sizeof(resistconv) / sizeof(resistconv[0]); i++)
+    {
+        if (resistconv[i].rombit & bits)
+        {
             ch->resists[resistconv[i].resist] += (mod * ch->level);
         }
     }
@@ -613,10 +667,12 @@ void rom_resists_flag_convert(Character * ch, long bits, int mod)
 
 float rom_convert_size(const char *word)
 {
-    static const struct {
+    static const struct
+    {
         float size;
         const char *name;
-    } sizetable[] = {
+    } sizetable[] =
+    {
         {
             1.8f, "tiny"
         }, {
@@ -632,7 +688,8 @@ float rom_convert_size(const char *word)
         }
     };
 
-    for (int i = 0; i < sizeof(sizetable) / sizeof(sizetable[0]); i++) {
+    for (int i = 0; i < sizeof(sizetable) / sizeof(sizetable[0]); i++)
+    {
         if (!str_cmp(word, sizetable[i].name))
             return sizetable[i].size;
     }
@@ -643,16 +700,19 @@ bool import_rom_mobiles(FILE * fp)
 {
     Character *pMobIndex;
 
-    if (!area_last) {	/* OLC */
+    if (!area_last)  	/* OLC */
+    {
         log_bug("no area seen yet.");
         return false;
     }
-    for (;;) {
+    for (;;)
+    {
         long vnum;
         char letter;
 
         letter = fread_letter(fp);
-        if (letter != '#') {
+        if (letter != '#')
+        {
             log_bug("# not found.");
             return false;
         }
@@ -660,7 +720,8 @@ bool import_rom_mobiles(FILE * fp)
         if (vnum == 0)
             break;
 
-        if (hm_get(npc_indexes, vnum) != NULL) {
+        if (hm_get(npc_indexes, vnum) != NULL)
+        {
             log_bug("vnum %ld duplicated.", vnum);
             return false;
         }
@@ -831,10 +892,12 @@ bool import_rom_mobiles(FILE * fp)
          * )
          */
 
-        for (;;) {
+        for (;;)
+        {
             letter = fread_letter(fp);
 
-            if (letter == 'F') {
+            if (letter == 'F')
+            {
                 const char *word;
                 long vector;
 
@@ -879,13 +942,16 @@ bool import_rom_mobiles(FILE * fp)
                      * REMOVE_BIT(pMobIndex->parts,vector)
                      *
                      */ ;
-                else {
+                else
+                {
                     log_bug("flag not found.");
                     destroy_char(pMobIndex);
                     return false;
                 }
 
-            } else {
+            }
+            else
+            {
                 ungetc(letter, fp);
                 break;
             }
@@ -898,11 +964,13 @@ bool import_rom_mobiles(FILE * fp)
 
 int lookup_rom_obj_type(const char *word)
 {
-    static const struct {
+    static const struct
+    {
         int romtype;
         const char *name;
         object_type type;
-    } table[] = {
+    } table[] =
+    {
         {
             1, "light", OBJ_LIGHT
         }, {
@@ -968,7 +1036,8 @@ int lookup_rom_obj_type(const char *word)
         }
     };
 
-    for (int i = 0; table[i].name != 0; i++) {
+    for (int i = 0; table[i].name != 0; i++)
+    {
         if (!str_cmp(word, table[i].name))
             return table[i].romtype;
     }
@@ -978,10 +1047,12 @@ int lookup_rom_obj_type(const char *word)
 
 Flag *rom_convert_weapon_flags(long bits)
 {
-    static const struct {
+    static const struct
+    {
         int rombit;
         int bit;
-    } convert[] = {
+    } convert[] =
+    {
         {
             A, WEAPON_FLAMING
         }, {
@@ -1003,7 +1074,8 @@ Flag *rom_convert_weapon_flags(long bits)
 
     Flag *flag = new_flag();
 
-    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++) {
+    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
+    {
         if ((convert[i].rombit & bits) != 0)
             set_bit(flag, convert[i].bit);
     }
@@ -1013,10 +1085,12 @@ Flag *rom_convert_weapon_flags(long bits)
 
 Flag *rom_convert_container_flags(long bits)
 {
-    static const struct {
+    static const struct
+    {
         int rombit;
         int bit;
-    } convert[] = {
+    } convert[] =
+    {
         {
             A, CONT_CLOSEABLE
         }, {
@@ -1032,8 +1106,10 @@ Flag *rom_convert_container_flags(long bits)
 
     Flag *flag = new_flag();
 
-    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++) {
-        if ((convert[i].rombit & bits) != 0) {
+    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
+    {
+        if ((convert[i].rombit & bits) != 0)
+        {
             set_bit(flag, convert[i].bit);
         }
     }
@@ -1094,7 +1170,8 @@ wear_type import_rom_convert_wear_flags(long flag)
 void rom_load_obj_values(Object * pObjIndex, int item_type, FILE * fp)
 {
 
-    switch (item_type) {
+    switch (item_type)
+    {
         /*
          * case ITEM_WEAPON:
          */
@@ -1159,10 +1236,12 @@ void rom_load_obj_values(Object * pObjIndex, int item_type, FILE * fp)
 
 void rom_convert_obj_flags(Flag * flags, long flag)
 {
-    static const struct {
+    static const struct
+    {
         int bit;
         long rombit;
-    } convert[] = {
+    } convert[] =
+    {
         {
             ITEM_GLOW, (A)
         }, {
@@ -1198,7 +1277,8 @@ void rom_convert_obj_flags(Flag * flags, long flag)
         }
     };
 
-    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++) {
+    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
+    {
         if ((convert[i].rombit & flag) != 0)
             set_bit(flags, convert[i].bit);
     }
@@ -1206,10 +1286,12 @@ void rom_convert_obj_flags(Flag * flags, long flag)
 
 Flag *rom_convert_affect_flags(long bits)
 {
-    static const struct {
+    static const struct
+    {
         int bit;
         long rombit;
-    } convert[] = {
+    } convert[] =
+    {
         {
             AFF_BLIND, (A)
         }, {
@@ -1270,7 +1352,8 @@ Flag *rom_convert_affect_flags(long bits)
     };
 
     Flag *flags = new_flag();
-    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++) {
+    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
+    {
         if ((convert[i].rombit & bits) != 0)
             set_bit(flags, convert[i].bit);
     }
@@ -1279,10 +1362,12 @@ Flag *rom_convert_affect_flags(long bits)
 
 void *convert_affect_location(int location)
 {
-    static const struct {
+    static const struct
+    {
         void *callback;
         int location;
-    } convert[] = {
+    } convert[] =
+    {
         {
             &affect_apply_str, 1
         }, {
@@ -1305,7 +1390,8 @@ void *convert_affect_location(int location)
             &affect_apply_move, 14
         }
     };
-    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++) {
+    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
+    {
         if (convert[i].location == location)
             return convert[i].callback;
     }
@@ -1316,16 +1402,19 @@ bool import_rom_objects(FILE * fp)
 {
     Object *pObjIndex;
 
-    if (!area_last) {	/* OLC */
+    if (!area_last)  	/* OLC */
+    {
         log_bug("no area seen yet.");
         return false;
     }
-    for (;;) {
+    for (;;)
+    {
         long vnum;
         char letter;
 
         letter = fread_letter(fp);
-        if (letter != '#') {
+        if (letter != '#')
+        {
             log_bug("# not found.");
             return false;
         }
@@ -1333,7 +1422,8 @@ bool import_rom_objects(FILE * fp)
         if (vnum == 0)
             break;
 
-        if (hm_get(obj_indexes, vnum) != NULL) {
+        if (hm_get(obj_indexes, vnum) != NULL)
+        {
             log_bug("vnum %ld duplicated.", vnum);
             return false;
         }
@@ -1372,7 +1462,8 @@ bool import_rom_objects(FILE * fp)
          * condition
          */
         letter = fread_letter(fp);
-        switch (letter) {
+        switch (letter)
+        {
         case ('P'):
             pObjIndex->condition = 100.0f;
             break;
@@ -1399,12 +1490,14 @@ bool import_rom_objects(FILE * fp)
             break;
         }
 
-        for (;;) {
+        for (;;)
+        {
             char letter;
 
             letter = fread_letter(fp);
 
-            if (letter == 'A') {
+            if (letter == 'A')
+            {
                 Affect *paf;
 
                 paf = new_affect();
@@ -1415,12 +1508,15 @@ bool import_rom_objects(FILE * fp)
                 paf->modifier = (int)fread_number(fp);
                 paf->flags = new_flag();
                 LINK(pObjIndex->affects, paf, next);
-            } else if (letter == 'F') {
+            }
+            else if (letter == 'F')
+            {
                 Affect *paf;
 
                 paf = new_affect();
                 letter = fread_letter(fp);
-                switch (letter) {
+                switch (letter)
+                {
                 case 'A':
                     break;
                 case 'I':
@@ -1445,7 +1541,9 @@ bool import_rom_objects(FILE * fp)
                 paf->flags =
                     rom_convert_affect_flags(fread_flag(fp));
                 LINK(pObjIndex->affects, paf, next);
-            } else if (letter == 'E') {
+            }
+            else if (letter == 'E')
+            {
                 // EXTRA_DESCR_DATA * ed;
                 // Property * prop = new_property();
 
@@ -1459,7 +1557,9 @@ bool import_rom_objects(FILE * fp)
                 // prop->value = fread_string(fp);
 
                 // LINK(pObjIndex->extraDescr, prop, next);
-            } else {
+            }
+            else
+            {
                 ungetc(letter, fp);
                 break;
             }
@@ -1474,10 +1574,12 @@ bool import_rom_objects(FILE * fp)
 
 void rom_convert_room_flags(Flag * flags, long bits)
 {
-    static const struct {
+    static const struct
+    {
         int bit;
         long rombit;
-    } convert[] = {
+    } convert[] =
+    {
         {
             ROOM_SAFE, (K)
         }, {
@@ -1485,7 +1587,8 @@ void rom_convert_room_flags(Flag * flags, long bits)
         }
     };
 
-    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++) {
+    for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
+    {
         if ((convert[i].rombit & bits) != 0)
             set_bit(flags, convert[i].bit);
     }
@@ -1496,16 +1599,19 @@ bool import_rom_rooms(FILE * fp)
 
     Room *pRoomIndex;
 
-    if (area_last == NULL) {
+    if (area_last == NULL)
+    {
         log_bug("no area seen yet.");
         return false;
     }
-    for (;;) {
+    for (;;)
+    {
         char letter;
         int door;
 
         letter = fread_letter(fp);
-        if (letter != '#') {
+        if (letter != '#')
+        {
             log_bug("# not found.");
             return false;
         }
@@ -1513,7 +1619,8 @@ bool import_rom_rooms(FILE * fp)
         if (vnum == 0)
             break;
 
-        if (hm_get(room_indexes, vnum) != NULL) {
+        if (hm_get(room_indexes, vnum) != NULL)
+        {
             log_bug("vnum %ld duplicated.", vnum);
             return false;
         }
@@ -1530,7 +1637,8 @@ bool import_rom_rooms(FILE * fp)
 
         pRoomIndex->sector = (sector_t) fread_number(fp);
 
-        for (;;) {
+        for (;;)
+        {
             letter = fread_letter(fp);
 
             if (letter == 'S')
@@ -1542,15 +1650,19 @@ bool import_rom_rooms(FILE * fp)
             else if (letter == 'M')	/* mana room */
                 fread_number(fp);
 
-            else if (letter == 'C') {	/* clan */
+            else if (letter == 'C')  	/* clan */
+            {
 
                 free_str(fread_string(fp));
-            } else if (letter == 'D') {
+            }
+            else if (letter == 'D')
+            {
                 Exit *pexit;
                 long locks;
 
                 door = (int)fread_number(fp);
-                if (door < 0 || door > 5) {
+                if (door < 0 || door > 5)
+                {
                     log_bug("%s bad door number.",
                             pRoomIndex->name);
                     destroy_room(pRoomIndex);
@@ -1566,7 +1678,8 @@ bool import_rom_rooms(FILE * fp)
                 pexit->toRoomId = fread_number(fp);
                 // pexit->orig_door = door; /* OLC */
 
-                switch (locks) {
+                switch (locks)
+                {
                 case 0:
                     break;
                 case 1:
@@ -1614,19 +1727,25 @@ bool import_rom_rooms(FILE * fp)
                 }
 
                 pRoomIndex->exits[door] = pexit;
-            } else if (letter == 'E') {
+            }
+            else if (letter == 'E')
+            {
                 // Property * ed = new_property();
 
                 const char *key = fread_string(fp);
                 const char *value = fread_string(fp);
 
                 sm_insert(&pRoomIndex->extraDescr, value, key);
-            } else if (letter == 'O') {
+            }
+            else if (letter == 'O')
+            {
 
                 /*
                  * pRoomIndex->owner =
                  */ fread_string(fp);
-            } else {
+            }
+            else
+            {
                 log_bug("room %s has flag not 'DES'.",
                         pRoomIndex->name);
                 destroy_room(pRoomIndex);
@@ -1642,7 +1761,8 @@ bool import_rom_rooms(FILE * fp)
 int convert_rom_wear_loc(int val)
 {
     int table[] =
-    {   WEAR_LIGHT, WEAR_FINGER, WEAR_FINGER_2, WEAR_NECK, WEAR_NECK,
+    {
+        WEAR_LIGHT, WEAR_FINGER, WEAR_FINGER_2, WEAR_NECK, WEAR_NECK,
         WEAR_TORSO,
         WEAR_HEAD, WEAR_LEGS, WEAR_FEET, WEAR_HANDS, WEAR_ARMS,
         WEAR_SHIELD, WEAR_ABOUT,
@@ -1663,13 +1783,15 @@ bool import_rom_resets(FILE * fp)
     long iLastRoom = 0;
     long iLastObj = 0;
 
-    if (!area_last) {
+    if (!area_last)
+    {
         log_bug("no area seen yet.");
         return false;
     }
     TmpReset *last_reset = 0;
 
-    for (;;) {
+    for (;;)
+    {
         Exit *pexit;
         Room *pRoomIndex;
         char letter;
@@ -1677,7 +1799,8 @@ bool import_rom_resets(FILE * fp)
         if ((letter = fread_letter(fp)) == 'S')
             break;
 
-        if (letter == '*') {
+        if (letter == '*')
+        {
             fread_to_eol(fp);
             continue;
         }
@@ -1701,19 +1824,22 @@ bool import_rom_resets(FILE * fp)
          * Validate parameters.
          * We're calling the index functions for the side effect.
          */
-        switch (letter) {
+        switch (letter)
+        {
         default:
             log_bug("bad command '%c'.", letter);
             free_mem(pReset);
             break;
 
         case 'M':
-            if (hm_get(npc_indexes, pReset->arg1) == 0) {
+            if (hm_get(npc_indexes, pReset->arg1) == 0)
+            {
                 log_bug("bad npc for reset.");
                 free_mem(pReset);
                 break;
             }
-            if ((pRoomIndex = hm_get(room_indexes, pReset->arg3))) {
+            if ((pRoomIndex = hm_get(room_indexes, pReset->arg3)))
+            {
 
                 LINK(temp_resets, pReset, next);
                 pReset->room = pRoomIndex;
@@ -1723,12 +1849,14 @@ bool import_rom_resets(FILE * fp)
             break;
 
         case 'O':
-            if (hm_get(obj_indexes, pReset->arg1) == 0) {
+            if (hm_get(obj_indexes, pReset->arg1) == 0)
+            {
                 log_bug("bad object for O reset.");
                 free_mem(pReset);
                 break;
             }
-            if ((pRoomIndex = hm_get(room_indexes, pReset->arg3))) {
+            if ((pRoomIndex = hm_get(room_indexes, pReset->arg3)))
+            {
                 LINK(temp_resets, pReset, next);
                 pReset->room = pRoomIndex;
                 iLastObj = pReset->arg3;
@@ -1737,16 +1865,19 @@ bool import_rom_resets(FILE * fp)
             break;
 
         case 'P':
-            if (hm_get(obj_indexes, pReset->arg1) == 0) {
+            if (hm_get(obj_indexes, pReset->arg1) == 0)
+            {
                 log_bug("bad object for P reset.");
                 free_mem(pReset);
                 break;
             }
-            if ((pRoomIndex = hm_get(room_indexes, iLastObj))) {
+            if ((pRoomIndex = hm_get(room_indexes, iLastObj)))
+            {
                 if (last_reset == 0
                         || (last_reset->type != 'O'
                             && last_reset->type != 'G'
-                            && last_reset->type != 'E')) {
+                            && last_reset->type != 'E'))
+                {
                     log_bug("bad container reset");
                     free_mem(pReset);
                     break;
@@ -1757,15 +1888,18 @@ bool import_rom_resets(FILE * fp)
             break;
 
         case 'G':
-            if (hm_get(obj_indexes, pReset->arg1) == 0) {
+            if (hm_get(obj_indexes, pReset->arg1) == 0)
+            {
                 log_bug("bad object for G reset %ld.",
                         pReset->arg1);
                 free_mem(pReset);
                 break;
             }
-            if ((pRoomIndex = hm_get(room_indexes, iLastRoom))) {
+            if ((pRoomIndex = hm_get(room_indexes, iLastRoom)))
+            {
                 if (last_reset == 0
-                        || (last_reset->type != 'M')) {
+                        || (last_reset->type != 'M'))
+                {
                     log_bug("bad give reset");
                     free_mem(pReset);
                     break;
@@ -1777,14 +1911,17 @@ bool import_rom_resets(FILE * fp)
             break;
 
         case 'E':
-            if (hm_get(obj_indexes, pReset->arg1) == 0) {
+            if (hm_get(obj_indexes, pReset->arg1) == 0)
+            {
                 log_bug("bad object for E reset.");
                 free_mem(pReset);
                 break;
             }
-            if ((pRoomIndex = hm_get(room_indexes, iLastRoom))) {
+            if ((pRoomIndex = hm_get(room_indexes, iLastRoom)))
+            {
                 if (last_reset == 0
-                        || (last_reset->type != 'M')) {
+                        || (last_reset->type != 'M'))
+                {
                     log_bug("bad give reset");
                     free_mem(pReset);
                     break;
@@ -1798,7 +1935,8 @@ bool import_rom_resets(FILE * fp)
 
         case 'D':
             if ((pRoomIndex =
-                        hm_get(room_indexes, pReset->arg1)) == 0) {
+                        hm_get(room_indexes, pReset->arg1)) == 0)
+            {
                 log_bug("bad room for reset");
                 free_mem(pReset);
                 break;
@@ -1807,13 +1945,15 @@ bool import_rom_resets(FILE * fp)
                     || pReset->arg2 > 5
                     || !pRoomIndex
                     || !(pexit = pRoomIndex->exits[pReset->arg2])
-                    || !is_set(pexit->flags, EXIT_ISDOOR)) {
+                    || !is_set(pexit->flags, EXIT_ISDOOR))
+            {
                 log_bug("exit %ld not door, room %ld.",
                         pReset->arg2, pReset->arg1);
                 free_mem(pReset);
                 break;
             }
-            switch (pReset->arg3) {
+            switch (pReset->arg3)
+            {
             default:
                 log_bug("bad 'locks': %ld.", pReset->arg3);
             case 0:
@@ -1846,7 +1986,8 @@ bool import_rom_resets(FILE * fp)
             break;
 
         case 'R':
-            if (pReset->arg2 < 0 || pReset->arg2 > 6) {	/* Last Door. */
+            if (pReset->arg2 < 0 || pReset->arg2 > 6)  	/* Last Door. */
+            {
                 log_bug("bad exit %ld.", pReset->arg2);
                 free_mem(pReset);
                 break;
@@ -1864,7 +2005,8 @@ bool import_rom_resets(FILE * fp)
 
 bool import_rom_shops(FILE * fp)
 {
-    for (;;) {
+    for (;;)
+    {
         int iTrade;
 
         long keeper = fread_number(fp);
@@ -1884,11 +2026,13 @@ bool import_rom_shops(FILE * fp)
 
 bool import_rom_specials(FILE * fp)
 {
-    for (;;) {
+    for (;;)
+    {
 
         char letter;
 
-        switch (letter = fread_letter(fp)) {
+        switch (letter = fread_letter(fp))
+        {
         default:
             log_bug("letter '%c' not *MS.", letter);
             return false;
@@ -1915,14 +2059,16 @@ bool import_rom_helps(FILE * fp)
 {
     Help *pHelp;
 
-    for (;;) {
+    for (;;)
+    {
         pHelp = new_help();
         /*
          * pHelp->level =
          */
         fread_number(fp);
         pHelp->keywords = fread_string(fp);
-        if (pHelp->keywords[0] == '$') {
+        if (pHelp->keywords[0] == '$')
+        {
             destroy_help(pHelp);
             break;
         }
@@ -1935,7 +2081,8 @@ bool import_rom_helps(FILE * fp)
 
 bool import_rom_socials(FILE * fp)
 {
-    for (;;) {
+    for (;;)
+    {
         const char *temp;
 
         temp = fread_word(fp);
@@ -1949,59 +2096,75 @@ bool import_rom_socials(FILE * fp)
         fread_to_eol(fp);
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->charNoArg = temp;
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->othersNoArg = temp;
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->charFound = temp;
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->othersFound = temp;
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->victFound = temp;
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->charNotFound = temp;
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->charAuto = temp;
 
         temp = fread_string_eol(fp);
-        if (!strcmp(temp, "#")) {
+        if (!strcmp(temp, "#"))
+        {
             LINK(import_socials, social, next);
             continue;
-        } else if (strcmp(temp, "$"))
+        }
+        else if (strcmp(temp, "$"))
             social->othersAuto = temp;
 
         LINK(import_socials, social, next);
@@ -2013,7 +2176,8 @@ char fread_letter(FILE * fp)
 {
     char c;
 
-    do {
+    do
+    {
         c = fgetc(fp);
     }
     while (isspace((int)c));
@@ -2027,7 +2191,8 @@ long fread_number(FILE * fp)
     bool sign;
     char c;
 
-    do {
+    do
+    {
         c = fgetc(fp);
     }
     while (isspace((int)c));
@@ -2035,18 +2200,23 @@ long fread_number(FILE * fp)
     number = 0;
 
     sign = false;
-    if (c == '+') {
+    if (c == '+')
+    {
         c = fgetc(fp);
-    } else if (c == '-') {
+    }
+    else if (c == '-')
+    {
         sign = true;
         c = fgetc(fp);
     }
-    if (!isdigit((int)c)) {
+    if (!isdigit((int)c))
+    {
         log_bug("bad format '%c'... %s", c, "aborting");
 
         abort();
     }
-    while (isdigit((int)c)) {
+    while (isdigit((int)c))
+    {
         number = number * 10 + c - '0';
         c = fgetc(fp);
     }
@@ -2067,11 +2237,14 @@ long flag_convert(char letter)
     long bitsum = 0;
     char i;
 
-    if ('A' <= letter && letter <= 'Z') {
+    if ('A' <= letter && letter <= 'Z')
+    {
         bitsum = 1;
         for (i = letter; i > 'A'; i--)
             bitsum *= 2;
-    } else if ('a' <= letter && letter <= 'z') {
+    }
+    else if ('a' <= letter && letter <= 'z')
+    {
         bitsum = 67108864;	/* 2^26 */
         for (i = letter; i > 'a'; i--)
             bitsum *= 2;
@@ -2087,25 +2260,31 @@ long fread_flag(FILE * fp)
     char c;
     bool negative = false;
 
-    do {
+    do
+    {
         c = fgetc(fp);
     }
     while (isspace((int)c));
 
-    if (c != '+') {
-        if (c == '-') {
+    if (c != '+')
+    {
+        if (c == '-')
+        {
             negative = true;
             c = fgetc(fp);
         }
         number = 0;
 
-        if (!isdigit((int)c)) {
-            while (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
+        if (!isdigit((int)c))
+        {
+            while (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'))
+            {
                 number += flag_convert(c);
                 c = fgetc(fp);
             }
         }
-        while (isdigit((int)c)) {
+        while (isdigit((int)c))
+        {
             number = number * 10 + c - '0';
             c = fgetc(fp);
         }
@@ -2120,10 +2299,13 @@ long fread_flag(FILE * fp)
             return -1 * number;
 
         return number;
-    } else {
+    }
+    else
+    {
         number = 0;
         flag = 0;
-        do {
+        do
+        {
             c = fgetc(fp);
             flag += (temp << number) * (c == 'Y');
             number++;
@@ -2141,12 +2323,14 @@ void fread_to_eol(FILE * fp)
 {
     char c;
 
-    do {
+    do
+    {
         c = fgetc(fp);
     }
     while (c != '\n' && c != '\r');
 
-    do {
+    do
+    {
         c = fgetc(fp);
     }
     while (c == '\n' || c == '\r');
@@ -2161,8 +2345,10 @@ const char *fread_word(FILE * fp)
     char *pword;
     char cEnd;
 
-    do {
-        if (feof(fp)) {
+    do
+    {
+        if (feof(fp))
+        {
             log_bug("EOF encountered on read.");
             word[0] = 0;
             return word;
@@ -2171,17 +2357,22 @@ const char *fread_word(FILE * fp)
     }
     while (isspace((int)cEnd));
 
-    if (cEnd == '\'' || cEnd == '"') {
+    if (cEnd == '\'' || cEnd == '"')
+    {
         pword = word;
-    } else {
+    }
+    else
+    {
         word[0] = cEnd;
         pword = word + 1;
         cEnd = ' ';
     }
 
-    for (; pword < word + OUT_SIZ; pword++) {
+    for (; pword < word + OUT_SIZ; pword++)
+    {
         *pword = fgetc(fp);
-        if (cEnd == ' ' ? isspace((int)*pword) : *pword == cEnd) {
+        if (cEnd == ' ' ? isspace((int)*pword) : *pword == cEnd)
+        {
             if (cEnd == ' ')
                 ungetc(*pword, fp);
             *pword = 0;
@@ -2206,7 +2397,8 @@ const char *fread_string(FILE * fp)
     /*
      * skip blanks
      */
-    do {
+    do
+    {
         c = fgetc(fp);
     }
     while (isspace((int)c));
@@ -2219,14 +2411,18 @@ const char *fread_string(FILE * fp)
 
     buf[i++] = c;
 
-    for (;;) {
-        if (i >= sizeof(buf) && !sFull) {
+    for (;;)
+    {
+        if (i >= sizeof(buf) && !sFull)
+        {
             log_bug("String [%20.20s...] exceeded maximum.", buf);
             sFull = true;
         }
-        switch (c = fgetc(fp)) {
+        switch (c = fgetc(fp))
+        {
         default:
-            if (!sFull) {
+            if (!sFull)
+            {
                 buf[i++] = c;
             }
             break;
@@ -2241,7 +2437,8 @@ const char *fread_string(FILE * fp)
             break;
 
         case '\n':
-            if (!sFull) {
+            if (!sFull)
+            {
                 buf[i++] = '\n';
                 buf[i++] = '\r';
             }
@@ -2265,7 +2462,8 @@ const char *fread_string_eol(FILE * fp)
     register char c;
     bool sFull = false;
 
-    if (char_special[EOF - EOF] != true) {
+    if (char_special[EOF - EOF] != true)
+    {
         char_special[EOF - EOF] = true;
         char_special['\n' - EOF] = true;
         char_special['\r' - EOF] = true;
@@ -2274,7 +2472,8 @@ const char *fread_string_eol(FILE * fp)
      * Skip blanks.
      * Read first char.
      */
-    do {
+    do
+    {
         c = fgetc(fp);
     }
     while (isspace((int)c));
@@ -2282,13 +2481,16 @@ const char *fread_string_eol(FILE * fp)
     if ((buf[i++] = c) == '\n')
         return &str_empty[0];
 
-    for (;;) {
-        if (!char_special[(c = fgetc(fp)) - EOF]) {
+    for (;;)
+    {
+        if (!char_special[(c = fgetc(fp)) - EOF])
+        {
             if (!sFull)
                 buf[i++] = c;
             continue;
         }
-        switch (c) {
+        switch (c)
+        {
         default:
             break;
         case EOF:

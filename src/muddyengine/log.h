@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -51,7 +51,8 @@ __attribute__ ((format(printf, 3, 4)));
 #define log_trace(msg, ...)	log_fun(__FUNCTION__, LOG_TRACE, msg, ## __VA_ARGS__)
 #define log_bug(msg, ...)	log_fun(__FUNCTION__, LOG_BUG, msg, ## __VA_ARGS__)
 
-enum {
+enum
+{
     LOG_INFO,
     LOG_ERR,
     LOG_DEBUG,

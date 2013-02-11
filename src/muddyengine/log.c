@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -28,7 +28,8 @@
 #include <errno.h>
 #include "config.h"
 
-const Lookup logging_flags[] = {
+const Lookup logging_flags[] =
+{
     {"info", LOG_INFO},
     {"error", LOG_ERR},
     {"debug", LOG_DEBUG},
@@ -54,15 +55,19 @@ void log_fun(const char *func, int level, const char *fmt, ...)
 
     strcpy(date, str_time(-1, -1, "[%D %T]"));
 
-    switch (level) {
+    switch (level)
+    {
     case LOG_INFO:
         sprintf(log, "%s INFO: %s\n", date, buf);
         break;
     case LOG_ERR:
-        if (errno != 0) {
+        if (errno != 0)
+        {
             sprintf(log, "%s ERROR [%s]: %s (%s)\n", date, func,
                     buf, strerror(errno));
-        } else {
+        }
+        else
+        {
             sprintf(log, "%s ERROR [%s]: %s\n", date, func, buf);
         }
         break;
@@ -73,10 +78,13 @@ void log_fun(const char *func, int level, const char *fmt, ...)
         sprintf(log, "%s WARN [%s]: %s\n", date, func, buf);
         break;
     case LOG_DATA:
-        if (sql_errcode() != SQL_OK) {
+        if (sql_errcode() != SQL_OK)
+        {
             sprintf(log, "%s SQL [%s]: %s (%s)\n", date, func, buf,
                     sql_errmsg());
-        } else {
+        }
+        else
+        {
             sprintf(log, "%s SQL [%s]: %s\n", date, func, buf);
         }
         break;
@@ -93,7 +101,8 @@ void log_fun(const char *func, int level, const char *fmt, ...)
     if (!engine_info.logging || !is_set(engine_info.logging, level))
         return;
 
-    if (is_set(engine_info.logging, LOG_FILE)) {
+    if (is_set(engine_info.logging, LOG_FILE))
+    {
         char filename[ARG_SIZ];
 
         filename[0] = '\0';
@@ -106,7 +115,8 @@ void log_fun(const char *func, int level, const char *fmt, ...)
 
         FILE *fp = fopen(filename, "a+");
 
-        if (fp != 0) {
+        if (fp != 0)
+        {
 
             fputs(log, fp);
 

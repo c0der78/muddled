@@ -6,8 +6,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -57,13 +57,17 @@ const char *tablenameid(const char *tablename)
 
     int c = 0;
 
-    for (int i = 0; tablename[i] != '\0'; ++i) {
-        if (tablename[i] == '_') {
+    for (int i = 0; tablename[i] != '\0'; ++i)
+    {
+        if (tablename[i] == '_')
+        {
             if (tablename[++i] == '\0')
                 break;
 
             result[c++] = UPPER(tablename[i]);
-        } else {
+        }
+        else
+        {
             result[c++] = tablename[i];
         }
     }
@@ -86,16 +90,17 @@ int sql_exec(const char *buf)
 
 void db_close()
 {
-    if (sqlite3_close(enginedb()) != SQLITE_OK) {
+    if (sqlite3_close(enginedb()) != SQLITE_OK)
+    {
         log_data("unable to close db");
     }
 }
 
 int db_open(const char *name, const char *root_path)
-{   
+{
     if(root_path && *root_path)
         return sqlite3_open(formatf("%s/%s.db3", root_path, name),
-                        &engine_info.db);
+                            &engine_info.db);
     else
         return sqlite3_open(formatf("%s.db3", name), &engine_info.db);
 }
@@ -117,8 +122,10 @@ const char *sql_column_str(sql_stmt * stmt, int column)
 
 int sql_column_index(sql_stmt * stmt, const char *name)
 {
-    for (int i = 0, size = sql_column_count(stmt); i < size; ++i) {
-        if (!strcmp(sql_column_name(stmt, i), name)) {
+    for (int i = 0, size = sql_column_count(stmt); i < size; ++i)
+    {
+        if (!strcmp(sql_column_name(stmt, i), name))
+        {
             return i;
         }
     }
@@ -135,7 +142,8 @@ int fm_int(const field_map * field)
     return *((int *)field->value);
 }
 
-void fm_set_float(const field_map *field, float value) {
+void fm_set_float(const field_map *field, float value)
+{
     *((float*)field->value) = value;
 }
 
@@ -149,11 +157,13 @@ Flag *fm_flag(const field_map * field)
     return *((Flag **) field->value);
 }
 
-void fm_parse_flags(const field_map *field, const char *value) {
+void fm_parse_flags(const field_map *field, const char *value)
+{
     parse_flags(fm_flag(field), value, (const Lookup *)field->arg1);
 }
 
-void fm_set_double(const field_map *field, double value) {
+void fm_set_double(const field_map *field, double value)
+{
     *((double*)field->value) = value;
 }
 
@@ -162,7 +172,8 @@ double fm_double(const field_map * field)
     return *((double *)field->value);
 }
 
-void fm_set_str(const field_map *field, const char *value) {
+void fm_set_str(const field_map *field, const char *value)
+{
     *((const char **)field->value) = str_dup(value);
 }
 
@@ -191,7 +202,8 @@ const char *escape_sql_str(const char *pstr)
 
     char *pbuf = buf;
 
-    while (pstr && *pstr) {
+    while (pstr && *pstr)
+    {
         if (*pstr == '\'')
             *pbuf++ = '\'';
 
@@ -205,11 +217,14 @@ const char *escape_sql_str(const char *pstr)
 
 sql_int64 db_save(field_map * table, const char *tableName, sql_int64 id)
 {
-    if (id == 0) {
+    if (id == 0)
+    {
         if (sql_insert_query(table, tableName) != SQL_OK)
             log_data("could not insert to %s", tableName);
         return db_last_insert_rowid();
-    } else {
+    }
+    else
+    {
         if (sql_update_query(table, tableName, id) != SQL_OK)
             log_data("could not update %s", tableName);
 
@@ -221,7 +236,8 @@ int db_load_all(const char *tableName, sql_callback_t callback, const char *cons
 {
     char buf[OUT_SIZ] = {0};
 
-    if(constraints) {
+    if(constraints)
+    {
         va_list args;
 
         va_start(args, constraints);
@@ -231,7 +247,8 @@ int db_load_all(const char *tableName, sql_callback_t callback, const char *cons
         va_end(args);
     }
 
-    if (sql_select_query(0, tableName, callback, buf) != SQL_OK) {
+    if (sql_select_query(0, tableName, callback, buf) != SQL_OK)
+    {
         log_data("could not load from %s", tableName);
         return 0;
     }
@@ -245,7 +262,8 @@ int db_load_by_id(field_map *table, const char *tablename, sql_int64 id)
 
     sprintf(buf, "where %s='%"PRId64"'", tablenameid(tablename), id);
 
-    if(sql_select_query(table, tablename, 0, buf) != SQL_OK) {
+    if(sql_select_query(table, tablename, 0, buf) != SQL_OK)
+    {
         fprintf(stderr, "could not load from %s", tablename);
         return 0;
     }
@@ -253,7 +271,8 @@ int db_load_by_id(field_map *table, const char *tablename, sql_int64 id)
     return 1;
 }
 
-int sql_bind_str(sql_stmt *stmt, int index, const char *str) {
+int sql_bind_str(sql_stmt *stmt, int index, const char *str)
+{
     return sql_bind_text(stmt, index, str, strlen(str), 0);
 }
 
@@ -262,10 +281,12 @@ int sql_bind_table_value(sql_stmt * stmt, int index, field_map * field)
 
     //log_trace("binding %s...", field->name);
 
-    if (field->value == 0) {
+    if (field->value == 0)
+    {
         return sql_bind_null(stmt, index);
     }
-    switch (field->type) {
+    switch (field->type)
+    {
     case SQL_INT:
         return sql_bind_int(stmt, index, fm_int(field));
     case SQL_TEXT:
@@ -307,7 +328,8 @@ int sql_bind_table_value(sql_stmt * stmt, int index, field_map * field)
 static int sql_bind_values(sql_stmt * stmt, field_map * table, const char *idname)
 {
 
-    for (int i = 0, p = 1; table[i].name != 0; i++) {
+    for (int i = 0, p = 1; table[i].name != 0; i++)
+    {
         if(!strcmp(table[i].name, idname))
             continue;
 
@@ -328,7 +350,8 @@ int db_save_int_array(sql_stmt * stmt, int index, const field_map * table)
     static char buf[BUF_SIZ];
     int len = 0;
 
-    for (int i = 0; i < max; i++) {
+    for (int i = 0; i < max; i++)
+    {
         len += sprintf(&buf[len], "%d,", (values)[i]);
     }
 
@@ -344,7 +367,8 @@ void db_read_int_array(int max, void *arg, sql_stmt * stmt, int i)
     const char *value = strtok((char *)sql_column_str(stmt, i), ",");
     int index = 0;
 
-    while (value) {
+    while (value)
+    {
         if (index >= max)
             break;
 
@@ -383,14 +407,16 @@ int sql_insert_query(field_map * table, const char *tablename)
 
     const char *idname = tablenameid(tablename);
 
-    for (int i = 0; table[i].name != 0; i++) {
+    for (int i = 0; table[i].name != 0; i++)
+    {
         if(!strcmp(table[i].name, idname))
             continue;
 
         strcat(columns, table[i].name);
         strcat(params, "?");
 
-        if (table[i + 1].name != 0) {
+        if (table[i + 1].name != 0)
+        {
             strcat(columns, ",");
             strcat(params, ",");
         }
@@ -403,11 +429,13 @@ int sql_insert_query(field_map * table, const char *tablename)
 
     //log_trace("%s", buf);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         return sql_finalize(stmt);
     }
 
-    if (sql_bind_values(stmt, table, idname) != SQL_OK) {
+    if (sql_bind_values(stmt, table, idname) != SQL_OK)
+    {
         return sql_finalize(stmt);
     }
 
@@ -423,7 +451,8 @@ int sql_update_query(field_map * table, const char *tablename, sql_int64 id)
 
     const char *idname = tablenameid(tablename);
 
-    for (int i = 0; table[i].name != 0; i++) {
+    for (int i = 0; table[i].name != 0; i++)
+    {
 
         if(!strcmp(table[i].name, idname))
             continue;
@@ -431,7 +460,8 @@ int sql_update_query(field_map * table, const char *tablename, sql_int64 id)
         strcat(params, table[i].name);
         strcat(params, "=?");
 
-        if (table[i + 1].name != 0) {
+        if (table[i + 1].name != 0)
+        {
             strcat(params, ",");
         }
     }
@@ -441,7 +471,8 @@ int sql_update_query(field_map * table, const char *tablename, sql_int64 id)
     int len = sprintf(buf, "update %s set %s where %s=%" PRId64, tablename,
                       params, idname, id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         return sql_finalize(stmt);
     }
 
@@ -460,13 +491,15 @@ int sql_load_columns(sql_stmt *stmt, field_map *table)
 {
     int i;
 
-    for (i = 0; table && table[i].name != 0; i++) {
+    for (i = 0; table && table[i].name != 0; i++)
+    {
 
         field_map *field = &table[i];
 
         //log_trace("loading %s...", field->name);
 
-        switch (field->type) {
+        switch (field->type)
+        {
         case SQL_INT:
             fm_set_int(field, sql_column_int(stmt, i));
             break;
@@ -498,15 +531,18 @@ int sql_select_query(field_map * table, const char *tablename, sql_callback_t ca
     char buf[OUT_SIZ] = { 0 };
     char columns[OUT_SIZ] = { 0 };
 
-    for (int i = 0; table && table[i].name != 0; i++) {
+    for (int i = 0; table && table[i].name != 0; i++)
+    {
         strcat(columns, table[i].name);
 
-        if (table[i + 1].name != 0) {
+        if (table[i + 1].name != 0)
+        {
             strcat(columns, ",");
         }
     }
 
-    if(columns[0] == 0) {
+    if(columns[0] == 0)
+    {
         sprintf(columns, "%s.*", tablename);
     }
 
@@ -519,15 +555,19 @@ int sql_select_query(field_map * table, const char *tablename, sql_callback_t ca
 
     //log_trace("%s", buf);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         return sql_finalize(stmt);
     }
-    for (int res = sql_step(stmt); res != SQL_DONE; res = sql_step(stmt)) {
-        if(table) {
+    for (int res = sql_step(stmt); res != SQL_DONE; res = sql_step(stmt))
+    {
+        if(table)
+        {
             sql_load_columns(stmt, table);
         }
 
-        if(callback) {
+        if(callback)
+        {
             callback(stmt);
         }
 
@@ -537,7 +577,8 @@ int sql_select_query(field_map * table, const char *tablename, sql_callback_t ca
 
 int db_begin_transaction()
 {
-    if (sql_exec("BEGIN") != SQL_OK) {
+    if (sql_exec("BEGIN") != SQL_OK)
+    {
         log_data("unable to begin transaction.");
         return 0;
     }
@@ -547,7 +588,8 @@ int db_begin_transaction()
 
 int db_end_transaction()
 {
-    if (sql_exec("END") != SQL_OK) {
+    if (sql_exec("END") != SQL_OK)
+    {
         log_data("unable to end transaction.");
         return 0;
     }

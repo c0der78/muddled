@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -38,7 +38,8 @@ Room *room_hash[ID_HASH] = { 0 };
 int max_room = 0;
 int max_explorable_room = 0;
 
-const Lookup sector_table[] = {
+const Lookup sector_table[] =
+{
     {"inside", SECT_INSIDE},
     {"city", SECT_CITY},
     {"field", SECT_FIELD},
@@ -58,7 +59,8 @@ const Lookup sector_table[] = {
     {0, 0}
 };
 
-const Lookup room_flags[] = {
+const Lookup room_flags[] =
+{
     {"noexplore", ROOM_NOEXPLORE},
     {"safe", ROOM_SAFE},
     {"no_recall", ROOM_NO_RECALL},
@@ -83,7 +85,8 @@ void destroy_room(Room * room)
     free_str(room->description);
     destroy_flags(room->flags);
 
-    for (Character * ch_next, *ch = room->characters; ch != 0; ch = ch_next) {
+    for (Character * ch_next, *ch = room->characters; ch != 0; ch = ch_next)
+    {
         ch_next = ch->next_in_room;
 
         writeln(ch,
@@ -102,33 +105,52 @@ void destroy_room(Room * room)
 void load_room_columns(Room * room, sql_stmt * stmt)
 {
     int count = sql_column_count(stmt);
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         const char *colname = sql_column_name(stmt, i);
 
-        if (!str_cmp(colname, "name")) {
+        if (!str_cmp(colname, "name"))
+        {
             room->name = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "description")) {
+        }
+        else if (!str_cmp(colname, "description"))
+        {
             room->description = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "roomId")) {
+        }
+        else if (!str_cmp(colname, "roomId"))
+        {
             room->id = sql_column_int(stmt, i);
-        } else if (!str_cmp(colname, "reset")) {
+        }
+        else if (!str_cmp(colname, "reset"))
+        {
             room->reset = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "areaId")) {
+        }
+        else if (!str_cmp(colname, "areaId"))
+        {
             int areaId = sql_column_int(stmt, i);
 
-            if (room->area != 0) {
+            if (room->area != 0)
+            {
                 if (room->area->id != areaId)
                     log_error
                     ("sql returned invalid room for area");
-            } else {
+            }
+            else
+            {
                 room->area = get_area_by_id(areaId);
             }
-        } else if (!str_cmp(colname, "sector")) {
+        }
+        else if (!str_cmp(colname, "sector"))
+        {
             room->sector = sql_column_int(stmt, i);
-        } else if (!str_cmp(colname, "flags")) {
+        }
+        else if (!str_cmp(colname, "flags"))
+        {
             parse_flags(room->flags, sql_column_str(stmt, i),
                         room_flags);
-        } else {
+        }
+        else
+        {
             log_warn("unknown room column '%s'", colname);
         }
     }
@@ -146,11 +168,13 @@ int load_rooms(Area * area)
     int len =
         sprintf(buf, "select * from room where areaId=%" PRId64, area->id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
         Room *room = new_room();
 
         room->area = area;
@@ -166,7 +190,8 @@ int load_rooms(Area * area)
             max_explorable_room++;
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     return total;
@@ -182,11 +207,13 @@ Room *load_room(identifier_t id)
         sprintf(buf, "select * from room where roomId=%" PRId64 " limit 1",
                 id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    if (sql_step(stmt) != SQL_DONE) {
+    if (sql_step(stmt) != SQL_DONE)
+    {
         room = new_room();
 
         load_room_columns(room, stmt);
@@ -201,7 +228,8 @@ Room *load_room(identifier_t id)
             max_explorable_room++;
 
     }
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     return room;
@@ -209,7 +237,8 @@ Room *load_room(identifier_t id)
 
 int save_room_only(Room * room)
 {
-    field_map room_values[] = {
+    field_map room_values[] =
+    {
         {"name", &room->name, SQL_TEXT,},
         {"description", &room->description, SQL_TEXT},
         {"areaId", &room->area->id, SQL_INT},
@@ -219,15 +248,20 @@ int save_room_only(Room * room)
         {0}
     };
 
-    if (room->id == 0) {
-        if (sql_insert_query(room_values, "room") != SQL_OK) {
+    if (room->id == 0)
+    {
+        if (sql_insert_query(room_values, "room") != SQL_OK)
+        {
             log_data("could not insert room");
             return 0;
         }
         room->id = db_last_insert_rowid();
 
-    } else {
-        if (sql_update_query(room_values, "room", room->id) != SQL_OK) {
+    }
+    else
+    {
+        if (sql_update_query(room_values, "room", room->id) != SQL_OK)
+        {
             log_data("could not update room");
             return 0;
         }
@@ -240,7 +274,8 @@ int save_room(Room * room)
 {
     save_room_only(room);
 
-    for (int i = 0; i < MAX_DIR; i++) {
+    for (int i = 0; i < MAX_DIR; i++)
+    {
         if (room->exits[i] == 0)
             continue;
 
@@ -254,7 +289,8 @@ Room *get_room_by_id(identifier_t id)
 {
     identifier_t hash = id % ID_HASH;
 
-    for (Room * room = room_hash[hash]; room != 0; room = room->next) {
+    for (Room * room = room_hash[hash]; room != 0; room = room->next)
+    {
         if (room->id == id)
             return room;
     }
@@ -263,11 +299,14 @@ Room *get_room_by_id(identifier_t id)
 
 Room *room_lookup(const char *arg)
 {
-    if (is_number(arg)) {
+    if (is_number(arg))
+    {
         return get_room_by_id(atoi(arg));
     }
-    for (int i = 0; i < ID_HASH; i++) {
-        for (Room * room = room_hash[i]; room != 0; room = room->next) {
+    for (int i = 0; i < ID_HASH; i++)
+    {
+        for (Room * room = room_hash[i]; room != 0; room = room->next)
+        {
             if (!str_prefix(arg, strip_color(room->name)))
                 return room;
         }
@@ -278,7 +317,8 @@ Room *room_lookup(const char *arg)
 Room *get_default_room()
 {
 
-    for (int i = 0; i < ID_HASH; i++) {
+    for (int i = 0; i < ID_HASH; i++)
+    {
         for (Room * room = room_hash[i]; room != 0; room = room->next)
             return room;
     }

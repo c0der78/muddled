@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -32,7 +32,8 @@
 #include <muddyengine/lookup.h>
 #include <assert.h>
 
-const Lookup affect_flags[] = {
+const Lookup affect_flags[] =
+{
     {"blindness", AFF_BLIND},
     {"invisibility", AFF_INVISIBLE},
     {"detect_evil", AFF_DETECT_EVIL},
@@ -98,7 +99,8 @@ void affect_apply_resists(Affect * paf, void *obj, bool fRemove)
     Character *ch = (Character *) obj;
     assert(ch != 0);
 
-    for (int i = DAM_BASH; i <= DAM_SLASH; i++) {
+    for (int i = DAM_BASH; i <= DAM_SLASH; i++)
+    {
         ch->resists[i] += affect_mod(paf, fRemove);
     }
 }
@@ -186,7 +188,8 @@ void affect_apply_align(Affect * paf, void *obj, bool fRemove)
                MAX_ALIGN);
 }
 
-const Lookup affect_callbacks[] = {
+const Lookup affect_callbacks[] =
+{
     {"none", 0},
     {"strength", (uintptr_t) & affect_apply_str},
     {"dexterity", (uintptr_t) & affect_apply_dex},
@@ -220,7 +223,8 @@ void destroy_affect(Affect * aff)
 
 void affect_remove(Character * ch, Affect * paf)
 {
-    if (ch->affects == 0) {
+    if (ch->affects == 0)
+    {
         log_bug("no affects.");
         return;
     }
@@ -231,7 +235,8 @@ void affect_remove(Character * ch, Affect * paf)
 
 void affect_remove_obj(Object * obj, Affect * paf)
 {
-    if (obj->affects == 0) {
+    if (obj->affects == 0)
+    {
         log_bug("no affects on object.");
         return;
     }
@@ -250,7 +255,8 @@ const char *affect_name(Affect * paf)
 
 void affect_modify(Character * ch, Affect * paf, bool fAdd)
 {
-    if (ch && paf && paf->callback) {
+    if (ch && paf && paf->callback)
+    {
 
         (*paf->callback) (paf, ch, !fAdd);
     }
@@ -272,7 +278,8 @@ void affect_modify(Character * ch, Affect * paf, bool fAdd)
 Affect *affect_find(Affect * paf, identifier_t sn)
 {
 
-    for (Affect * paf_find = paf; paf_find; paf_find = paf_find->next) {
+    for (Affect * paf_find = paf; paf_find; paf_find = paf_find->next)
+    {
         if (paf_find->from == sn)
             return paf_find;
     }
@@ -313,52 +320,71 @@ Affect *load_affect_by_id(identifier_t id)
     int len =
         sprintf(buf, "select * from affect where affectId=%" PRId64, id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare sql statement");
         return 0;
     }
     Affect *paf = 0;
 
-    if (sql_step(stmt) != SQL_DONE) {
+    if (sql_step(stmt) != SQL_DONE)
+    {
         paf = new_affect();
         paf->id = id;
 
         int count = sql_column_count(stmt);
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "affectId")) {
+            if (!str_cmp(colname, "affectId"))
+            {
                 if (id != sql_column_int(stmt, i))
                     log_error
                     ("sql statement did not return correct affect");
-            } else if (!str_cmp(colname, "from")) {
+            }
+            else if (!str_cmp(colname, "from"))
+            {
                 paf->from = sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "level")) {
+            }
+            else if (!str_cmp(colname, "level"))
+            {
                 paf->level = sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "duration")) {
+            }
+            else if (!str_cmp(colname, "duration"))
+            {
                 paf->duration = paf->perm_duration =
                                     sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "modifier")) {
+            }
+            else if (!str_cmp(colname, "modifier"))
+            {
                 paf->modifier = sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "flags")) {
+            }
+            else if (!str_cmp(colname, "flags"))
+            {
                 parse_flags(paf->flags,
                             sql_column_str(stmt, i),
                             affect_flags);
-            } else if (!str_cmp(colname, "type")) {
+            }
+            else if (!str_cmp(colname, "type"))
+            {
 
                 paf->callback =
                     (affect_callback *)
                     value_lookup(affect_callbacks,
                                  sql_column_str(stmt, i));
 
-            } else {
+            }
+            else
+            {
                 log_warn("unknown coloumn for affect '%s'",
                          colname);
             }
         }
     }
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("unable to finalize statement");
     }
     return paf;
@@ -366,7 +392,8 @@ Affect *load_affect_by_id(identifier_t id)
 
 int save_affect(Affect * paf)
 {
-    field_map affect_values[] = {
+    field_map affect_values[] =
+    {
         {"duration", &paf->duration, SQL_INT},
         {"perm_duration", &paf->perm_duration, SQL_INT},
         {"modifier", &paf->modifier, SQL_INT},
@@ -376,16 +403,21 @@ int save_affect(Affect * paf)
         {0}
     };
 
-    if (paf->id == 0) {
-        if (sql_insert_query(affect_values, "affect") != SQL_OK) {
+    if (paf->id == 0)
+    {
+        if (sql_insert_query(affect_values, "affect") != SQL_OK)
+        {
             log_data("could not insert affect");
             return 0;
         }
         paf->id = db_last_insert_rowid();
 
-    } else {
+    }
+    else
+    {
         if (sql_update_query(affect_values, "affect", paf->id) !=
-                SQL_OK) {
+                SQL_OK)
+        {
             log_data("could not update affect");
             return 0;
         }

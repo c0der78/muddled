@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -40,7 +40,8 @@
 #include <muddyengine/string.h>
 #include <muddyengine/social.h>
 
-const Command cmd_table[] = {
+const Command cmd_table[] =
+{
     {"north", 0, do_north, COMMAND_MANIP, POS_STANDING},
     {"east", 0, do_east, COMMAND_MANIP, POS_STANDING},
     {"south", 0, do_south, COMMAND_MANIP, POS_STANDING},
@@ -75,7 +76,8 @@ const Command cmd_table[] = {
     {"automap", 0, do_automap, COMMAND_SETTINGS, POS_DEAD},
     {"prompt", 0, do_prompt, COMMAND_SETTINGS, POS_DEAD},
     {"chat", 0, do_chat, COMMAND_COMM, POS_SLEEPING},
-    {   "admin", LEVEL_IMMORTAL, do_admin, COMMAND_ADMIN | COMMAND_COMM,
+    {
+        "admin", LEVEL_IMMORTAL, do_admin, COMMAND_ADMIN | COMMAND_COMM,
         POS_DEAD
     },
     {"autologin", 0, do_autologin, COMMAND_CONN, POS_DEAD},
@@ -105,7 +107,8 @@ const Command cmd_table[] = {
 
 int max_command = (sizeof(cmd_table) / sizeof(cmd_table[0]) - 1);
 
-const Lookup command_types[] = {
+const Lookup command_types[] =
+{
     {"info", COMMAND_INFO},
     {"settings", COMMAND_SETTINGS},
     {"admin", COMMAND_ADMIN},
@@ -136,20 +139,24 @@ void command_interpret(Character * ch, const char *argument)
      * Look for command in command table.
      */
     found = false;
-    for (cmd = cmd_table; cmd->name != 0; cmd++) {
+    for (cmd = cmd_table; cmd->name != 0; cmd++)
+    {
         if (UPPER(arg[0]) == UPPER(cmd->name[0])
-                && !str_prefix(arg, cmd->name) && cmd->level <= ch->level) {
+                && !str_prefix(arg, cmd->name) && cmd->level <= ch->level)
+        {
             found = true;
             break;
         }
     }
 
-    if (!found) {
+    if (!found)
+    {
 
         if (interpret_social(ch, arg, argument))
             return;
 
-        const char *const message[] = {
+        const char *const message[] =
+        {
             "Huh?",
             "Pardon?",
             "Excuse me?",
@@ -171,7 +178,8 @@ void command_interpret(Character * ch, const char *argument)
                          (sizeof(message) / sizeof(message[0])) - 1)]);
         return;
     }
-    if (cmd->position < ch->position) {
+    if (cmd->position < ch->position)
+    {
         writelnf(ch, "You can't do that while you are %s.",
                  position_table[ch->position].name);
         return;
@@ -196,7 +204,8 @@ void cmd_syntax(Character * ch, const char *n_fun, ...)
     if (str == NULL)
         return;
 
-    switch (number_range(1, 2)) {
+    switch (number_range(1, 2))
+    {
     default:
     case 1:
         title = "Syntax";
@@ -221,7 +230,8 @@ DOFUN(quit)
 {
     if (ch->pc == 0)
         return;
-    const char *const chmessage[] = {
+    const char *const chmessage[] =
+    {
         "Alas, all good things must come to an end.",
         "This concludes our broadcast of the emergency mudding system.",
         "We await your return friend.",
@@ -233,7 +243,8 @@ DOFUN(quit)
         "%s boots you in the head on your way out.  OuCH!!!"
     };
 
-    const char *const wmessage[] = {
+    const char *const wmessage[] =
+    {
         "$n has left the realms.",
         "$n retires from the realm.",
         "$n has returned to real life!",
@@ -275,8 +286,10 @@ DOFUN(autologin)
     AccountPlayer *p;
     int count = 0;
 
-    if (nullstr(argument)) {
-        for (p = ch->pc->account->players; p; p = p->next) {
+    if (nullstr(argument))
+    {
+        for (p = ch->pc->account->players; p; p = p->next)
+        {
             writelnf(ch, "%s~Y%2d)~C %s",
                      p->charId ==
                      ch->pc->account->autologinId ? "~R*" : " ",
@@ -285,13 +298,16 @@ DOFUN(autologin)
         writelnf(ch, "~WSyntax: %s <# or name>~x", do_name);
         return;
     }
-    for (p = ch->pc->account->players; p; p = p->next) {
-        if (atoi(argument) == ++count || !str_prefix(argument, p->name)) {
+    for (p = ch->pc->account->players; p; p = p->next)
+    {
+        if (atoi(argument) == ++count || !str_prefix(argument, p->name))
+        {
             break;
         }
     }
 
-    if (p == 0) {
+    if (p == 0)
+    {
         do_autologin(do_name, ch, str_empty);
         return;
     }
@@ -302,13 +318,15 @@ DOFUN(autologin)
 
 void move_char(Character * ch, direction_t dir)
 {
-    if (ch->inRoom == 0) {
+    if (ch->inRoom == 0)
+    {
         log_error("character with no room");
         return;
     }
     Exit *ex = ch->inRoom->exits[dir];
 
-    if (ex == 0 || ex->toRoom == 0) {
+    if (ex == 0 || ex->toRoom == 0)
+    {
         writeln(ch, "You can't move in that direction.");
         return;
     }
@@ -353,7 +371,8 @@ DOFUN(kill)
 {
     Character *victim = get_char_room(ch, argument);
 
-    if (victim == 0) {
+    if (victim == 0)
+    {
         writeln(ch, "They are not here.");
         return;
     }
@@ -365,7 +384,8 @@ DOFUN(kill)
 
 DOFUN(kick)
 {
-    if (ch->fighting == 0) {
+    if (ch->fighting == 0)
+    {
         writeln(ch, "Your not fighting anyone!");
         return;
     }
@@ -376,16 +396,19 @@ DOFUN(cast)
 {
     int sn;
 
-    for (sn = 0; sn < max_skill; sn++) {
+    for (sn = 0; sn < max_skill; sn++)
+    {
         if (skill_table[sn].spellfun == 0)
             continue;
 
-        if (!str_prefix(argument, skill_table[sn].name)) {
+        if (!str_prefix(argument, skill_table[sn].name))
+        {
             break;
         }
     }
 
-    if (sn >= max_skill) {
+    if (sn >= max_skill)
+    {
         writeln(ch, "No such spell!");
         return;
     }
@@ -394,13 +417,15 @@ DOFUN(cast)
 
 DOFUN(get)
 {
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
         writeln(ch, "Get what?");
         return;
     }
     Object *obj = get_obj_list(ch, argument, ch->inRoom->objects);
 
-    if (obj == 0) {
+    if (obj == 0)
+    {
         writeln(ch, "That is not here.");
         return;
     }
@@ -414,13 +439,15 @@ DOFUN(get)
 
 DOFUN(drop)
 {
-    if (nullstr(argument)) {
+    if (nullstr(argument))
+    {
         writeln(ch, "Drop what?");
         return;
     }
     Object *obj = get_obj_list(ch, argument, ch->carrying);
 
-    if (obj == 0) {
+    if (obj == 0)
+    {
         writeln(ch, "You are not carrying that.");
         return;
     }
@@ -450,7 +477,8 @@ bool remove_obj(Character * ch, int iWear, bool fReplace)
 
 void wear_obj(Character * ch, Object * obj, bool fReplace)
 {
-    if (ch->level < obj->level) {
+    if (ch->level < obj->level)
+    {
         writelnf(ch, "You must be level %d to use this object.",
                  obj->level);
 
@@ -460,19 +488,22 @@ void wear_obj(Character * ch, Object * obj, bool fReplace)
     }
     const wear_table_type *t = wear_table;
 
-    while (t->display != 0) {
+    while (t->display != 0)
+    {
         if (t->flags == obj->wearFlags)
             break;
         t++;
     }
 
-    if (t != 0 && t->canUse != 0 && !(*t->canUse) (ch)) {
+    if (t != 0 && t->canUse != 0 && !(*t->canUse) (ch))
+    {
         writeln(ch, "You do not know how to wear that object.");
         act(TO_ROOM, ch, obj, 0,
             "$n tries to use $p, but doesn't know how.");
         return;
     }
-    switch (obj->wearFlags) {
+    switch (obj->wearFlags)
+    {
     case WEAR_HEAD:
         if (!remove_obj(ch, WEAR_HEAD, fReplace))
             return;
@@ -531,7 +562,8 @@ void wear_obj(Character * ch, Object * obj, bool fReplace)
                 !remove_obj(ch, WEAR_WRIST, fReplace) &&
                 !remove_obj(ch, WEAR_WRIST_2, fReplace))
             return;
-        if (get_eq_char(ch, WEAR_WRIST) == 0) {
+        if (get_eq_char(ch, WEAR_WRIST) == 0)
+        {
             act(TO_ROOM, ch, obj, 0,
                 "$n wears $p on $s left wrist.");
             act(TO_CHAR, ch, obj, 0,
@@ -539,7 +571,8 @@ void wear_obj(Character * ch, Object * obj, bool fReplace)
             equip_char(ch, obj, WEAR_WRIST);
             return;
         }
-        if (get_eq_char(ch, WEAR_WRIST_2) == 0) {
+        if (get_eq_char(ch, WEAR_WRIST_2) == 0)
+        {
             act(TO_ROOM, ch, obj, 0,
                 "$n wears $p on $s right wrist.");
             act(TO_CHAR, ch, obj, 0,
@@ -556,7 +589,8 @@ void wear_obj(Character * ch, Object * obj, bool fReplace)
                 !remove_obj(ch, WEAR_FINGER, fReplace) &&
                 !remove_obj(ch, WEAR_FINGER_2, fReplace))
             return;
-        if (get_eq_char(ch, WEAR_FINGER) == 0) {
+        if (get_eq_char(ch, WEAR_FINGER) == 0)
+        {
             act(TO_ROOM, ch, obj, 0,
                 "$n wears $p on $s left finger.");
             act(TO_CHAR, ch, obj, 0,
@@ -564,7 +598,8 @@ void wear_obj(Character * ch, Object * obj, bool fReplace)
             equip_char(ch, obj, WEAR_FINGER);
             return;
         }
-        if (get_eq_char(ch, WEAR_FINGER_2) == 0) {
+        if (get_eq_char(ch, WEAR_FINGER_2) == 0)
+        {
             act(TO_ROOM, ch, obj, 0,
                 "$n wears $p on $s right finger.");
             act(TO_CHAR, ch, obj, 0,
@@ -660,21 +695,27 @@ DOFUN(wear)
 
     one_argument(argument, arg);
 
-    if (arg[0] == '\0') {
+    if (arg[0] == '\0')
+    {
         writeln(ch, "Wear, wield, or hold what?");
         return;
     }
-    if (!str_cmp(arg, "all")) {
+    if (!str_cmp(arg, "all"))
+    {
         Object *obj_next;
 
-        for (obj = ch->carrying; obj != NULL; obj = obj_next) {
+        for (obj = ch->carrying; obj != NULL; obj = obj_next)
+        {
             obj_next = obj->next_content;
             if (obj->wearLoc == WEAR_NONE && can_see_obj(ch, obj))
                 wear_obj(ch, obj, false);
         }
         return;
-    } else {
-        if ((obj = get_obj_carry(ch, arg, ch)) == NULL) {
+    }
+    else
+    {
+        if ((obj = get_obj_carry(ch, arg, ch)) == NULL)
+        {
             writeln(ch, "You do not have that item.");
             return;
         }

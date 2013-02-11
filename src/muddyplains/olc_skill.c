@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -86,7 +86,8 @@ void skill_editor_menu(Client * conn)
 
     write(conn, "~YL) ~CLevels: ~W");
 
-    for (int i = 0; i < max_class; i++) {
+    for (int i = 0; i < max_class; i++)
+    {
 
         writef(conn, "%s [%d] ", class_table[i].name, skill->levels[i]);
 
@@ -101,7 +102,8 @@ void skill_edit_list(Client * conn)
 
     int count = 0;
 
-    for (int i = 0; i < max_skill; i++) {
+    for (int i = 0; i < max_skill; i++)
+    {
 
         writef(conn, "%2d) %-12.12s ", skill_table[i].id,
                skill_table[i].name);
@@ -123,14 +125,16 @@ void skill_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         finish_editing(conn);
 
         return;
 
     }
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
@@ -139,7 +143,8 @@ void skill_editor(Client * conn, const char *argument)
     }
     Skill *skill = (Skill *) conn->editing->data;
 
-    if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save"))
+    {
 
         save_skill(skill);
 
@@ -148,16 +153,19 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "list")) {
+    if (!str_cmp(arg, "list"))
+    {
 
         skill_edit_list(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "name"))
+    {
 
-        if (nullstr(argument)) {
+        if (nullstr(argument))
+        {
 
             writeln(conn, "~CChange skill name to what?~x");
 
@@ -173,15 +181,19 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "B") || !str_cmp(arg, "damage")) {
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "damage"))
+    {
 
-        if (nullstr(argument)) {
+        if (nullstr(argument))
+        {
 
             free_str(skill->damage);
 
             skill->damage = str_empty;
 
-        } else {
+        }
+        else
+        {
 
             free_str(skill->name);
 
@@ -194,15 +206,19 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "C") || !str_cmp(arg, "msgOff")) {
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "msgOff"))
+    {
 
-        if (nullstr(argument)) {
+        if (nullstr(argument))
+        {
 
             free_str(skill->msgOff);
 
             skill->msgOff = str_empty;
 
-        } else {
+        }
+        else
+        {
 
             free_str(skill->msgOff);
 
@@ -215,15 +231,19 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "D") || !str_cmp(arg, "msgObj")) {
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "msgObj"))
+    {
 
-        if (nullstr(argument)) {
+        if (nullstr(argument))
+        {
 
             free_str(skill->msgObj);
 
             skill->msgObj = str_empty;
 
-        } else {
+        }
+        else
+        {
 
             free_str(skill->msgObj);
 
@@ -236,9 +256,11 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "F") || !str_cmp(arg, "mana")) {
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "mana"))
+    {
 
-        if (!is_number(argument)) {
+        if (!is_number(argument))
+        {
 
             writeln(conn, "~CThat is not a number.~x");
 
@@ -250,9 +272,11 @@ void skill_editor(Client * conn, const char *argument)
         conn->editing->show(conn);
 
     }
-    if (!str_cmp(arg, "E") || !str_cmp(arg, "wait")) {
+    if (!str_cmp(arg, "E") || !str_cmp(arg, "wait"))
+    {
 
-        if (!is_number(argument)) {
+        if (!is_number(argument))
+        {
 
             writeln(conn, "~CThat is not a number.~x");
 
@@ -266,9 +290,11 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "G") || !str_cmp(arg, "cost")) {
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "cost"))
+    {
 
-        if (!is_number(argument)) {
+        if (!is_number(argument))
+        {
 
             writeln(conn, "~CThat is not a number.~x");
 
@@ -282,23 +308,29 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "H") || !str_cmp(arg, "spell")) {
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "spell"))
+    {
 
-        if (nullstr(argument)) {
+        if (nullstr(argument))
+        {
 
             skill->spellfun = 0;
 
-        } else {
+        }
+        else
+        {
 
             skill->spellfun = spellfun_lookup(argument);
 
-            if (skill->spellfun == 0) {
+            if (skill->spellfun == 0)
+            {
 
                 writeln(conn, "~CValid spells are:~x");
 
                 int i;
 
-                for (i = 0; spellfun_table[i].name != 0; i++) {
+                for (i = 0; spellfun_table[i].name != 0; i++)
+                {
 
                     writef(conn, "%-10s ",
                            spellfun_table[i].name);
@@ -321,9 +353,11 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "I") || !str_cmp(arg, "gsn")) {
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "gsn"))
+    {
 
-        if (nullstr(argument)) {
+        if (nullstr(argument))
+        {
 
             skill->pgsn = 0;
 
@@ -334,13 +368,15 @@ void skill_editor(Client * conn, const char *argument)
         }
         skill->pgsn = gsn_lookup(argument);
 
-        if (skill->pgsn == 0) {
+        if (skill->pgsn == 0)
+        {
 
             writeln(conn, "~CValid gsns are:~x");
 
             int i;
 
-            for (i = 0; gsn_table[i].name != 0; i++) {
+            for (i = 0; gsn_table[i].name != 0; i++)
+            {
 
                 writef(conn, "%-10s ", gsn_table[i].name);
 
@@ -360,11 +396,13 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "J") || !str_cmp(arg, "minpos")) {
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "minpos"))
+    {
 
         long pos = value_lookup(position_table, argument);
 
-        if (pos == -1) {
+        if (pos == -1)
+        {
 
             writelnf(conn, "~CValid positions are: ~W%s~x",
                      lookup_names(position_table));
@@ -379,7 +417,8 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "K") || !str_cmp(arg, "flags")) {
+    if (!str_cmp(arg, "K") || !str_cmp(arg, "flags"))
+    {
 
         if (edit_flag
                 ("flags", conn, &skill->flags, argument, skill_flags))
@@ -388,7 +427,8 @@ void skill_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "L") || !str_cmp(arg, "levels")) {
+    if (!str_cmp(arg, "L") || !str_cmp(arg, "levels"))
+    {
 
         char name[BUF_SIZ];
 
@@ -396,11 +436,13 @@ void skill_editor(Client * conn, const char *argument)
 
         int c = class_lookup(name);
 
-        if (c == -1) {
+        if (c == -1)
+        {
 
             writeln(conn, "~CValid classes are:~W");
 
-            for (int i = 0; i < max_class; i++) {
+            for (int i = 0; i < max_class; i++)
+            {
 
                 writef(conn, "%s ", class_table[i].name);
 
@@ -410,7 +452,8 @@ void skill_editor(Client * conn, const char *argument)
             return;
 
         }
-        if (!is_number(argument)) {
+        if (!is_number(argument))
+        {
 
             writeln(conn, "~CThat is not a valid level.~x");
 

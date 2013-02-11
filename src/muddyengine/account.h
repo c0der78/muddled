@@ -6,7 +6,7 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *	           Many thanks to creators of muds before me.                     *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
@@ -28,15 +28,15 @@
 /*!
  * @typedef Account
  */
-typedef struct Account Account;
+typedef struct account Account;
 /*!
  * @typedef AccountPlayer
  */
-typedef struct AccountPlayer AccountPlayer;
+typedef struct account_player AccountPlayer;
 /*!
  * @typedef AccountForum
  */
-typedef struct AccountForum AccountForum;
+typedef struct account_forum AccountForum;
 
 
 #define ACCOUNT_TABLE "account"
@@ -61,7 +61,8 @@ typedef struct AccountForum AccountForum;
  * network connection descriptor @field playing the current player being
  * played
  */
-struct Account {
+struct account
+{
     identifier_t id;
     const char *login;
     const char *email;
@@ -82,7 +83,8 @@ struct Account {
  * @field charId the character id @field name the character name @field
  * level the character level
  */
-struct AccountPlayer {
+struct account_player
+{
     AccountPlayer *next;
     identifier_t charId;
     const char *name;
@@ -95,7 +97,8 @@ struct AccountPlayer {
  * false if account is subscribed to the forum @field draft any saved
  * drafts of a note in the forum
  */
-struct AccountForum {
+struct account_forum
+{
     identifier_t forumId;
     identifier_t id;
     time_t lastNote;
@@ -108,7 +111,8 @@ struct AccountForum {
  * @constant ACC_COLOR_OFF controls whether the account connection display
  * color text @discussion
  */
-enum {
+enum
+{
     ACC_COLOR_OFF
 };
 

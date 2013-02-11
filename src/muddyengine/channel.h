@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,14 +22,16 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
-typedef struct Channel Channel;
+typedef struct channel Channel;
 
-typedef enum {
+typedef enum
+{
     channel_global,
     channel_admin
 } channel_t;
 
-typedef enum {
+typedef enum
+{
     CHANNEL_NORMAL,
     CHANNEL_SOCIAL,
     CHANNEL_EMOTE,
@@ -39,7 +41,8 @@ typedef enum {
 
 #include <muddyengine/character.h>
 
-struct Channel {
+struct channel
+{
 
     int *pgcn;
 
@@ -57,7 +60,8 @@ struct Channel {
 
 };
 
-enum {
+enum
+{
     CHANNEL_CHAT,
     CHANNEL_ADMIN
 };

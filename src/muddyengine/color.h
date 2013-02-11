@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -25,17 +25,18 @@
 #include <string.h>
 #include <stdbool.h>
 
-struct color_t {
+typedef struct
+{
 
     short attr;
 
     short value;
 
-};
+}  color_t;
 
-const char *make_color(struct color_t *);
+const char *make_color(color_t *);
 
-const char *convert_color_code(const char *, struct color_t *);
+const char *convert_color_code(const char *, color_t *);
 
 #define COLOR_CODE '~'
 #define BLACK 	30

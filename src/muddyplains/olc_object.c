@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -86,7 +86,8 @@ void object_edit_list(Client * conn, Area * area)
 
     int count = 0;
 
-    for (Object * obj = area->objects; obj != 0; obj = obj->next_in_area) {
+    for (Object * obj = area->objects; obj != 0; obj = obj->next_in_area)
+    {
 
         writelnf(conn, "%2d) %-12.12s ", obj->id, obj->shortDescr);
 
@@ -107,21 +108,24 @@ void object_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         finish_editing(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "list")) {
+    if (!str_cmp(arg, "list"))
+    {
 
         object_edit_list(conn, conn->account->playing->inRoom->area);
 
@@ -130,7 +134,8 @@ void object_editor(Client * conn, const char *argument)
     }
     Object *object = (Object *) conn->editing->data;
 
-    if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save"))
+    {
 
         save_object(object);
 
@@ -139,7 +144,8 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "delete")) {
+    if (!str_cmp(arg, "delete"))
+    {
 
         delete_object(object);
 
@@ -150,11 +156,13 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "A") || !str_cmp(arg, "type")) {
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "type"))
+    {
 
         long type = value_lookup(object_types, argument);
 
-        if (type == -1) {
+        if (type == -1)
+        {
 
             writelnf(conn, "~CValid types are: ~W%s~x",
                      lookup_names(object_types));
@@ -169,9 +177,11 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "B") || !str_cmp(arg, "name")) {
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "name"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn, "~CYou must provide a name to set.~x");
 
@@ -185,7 +195,8 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "D") || !str_cmp(arg, "description")) {
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "description"))
+    {
 
         Editor *editor = build_string_editor(&object->description);
 
@@ -198,9 +209,11 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "C") || !str_cmp(arg, "short")) {
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "short"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn,
                     "~CYou must provide a short description.~x");
@@ -215,9 +228,11 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "D") || !str_cmp(arg, "long")) {
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "long"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn,
                     "~CYou must provide a long description.~x");
@@ -232,9 +247,11 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "F") || !str_cmp(arg, "weight")) {
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "weight"))
+    {
 
-        if (!argument || !*argument || is_number(argument) != 2) {
+        if (!argument || !*argument || is_number(argument) != 2)
+        {
 
             writeln(conn, "~CYou must specify a decimal number.~x");
 
@@ -248,9 +265,11 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "G") || !str_cmp(arg, "condition")) {
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "condition"))
+    {
 
-        if (!argument || !*argument || is_number(argument) != 2) {
+        if (!argument || !*argument || is_number(argument) != 2)
+        {
 
             writeln(conn, "~CYou must specify a decimal number.~x");
 
@@ -259,7 +278,8 @@ void object_editor(Client * conn, const char *argument)
         }
         float cond = (float)atof(argument);
 
-        if (cond < 0.0 || cond > 100.0) {
+        if (cond < 0.0 || cond > 100.0)
+        {
 
             writeln(conn,
                     "~CValid ranges for condition is 0.0 to 100.0.~x");
@@ -274,11 +294,13 @@ void object_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "H") || !str_cmp(arg, "wearloc")) {
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "wearloc"))
+    {
 
         long loc = value_lookup(wear_flags, argument);
 
-        if (loc == -1) {
+        if (loc == -1)
+        {
 
             writelnf(conn, "~CValid locations are: ~W%s~x",
                      lookup_names(wear_flags));

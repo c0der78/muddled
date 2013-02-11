@@ -73,14 +73,16 @@ void engine_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         finish_editing(conn);
 
         return;
 
     }
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
@@ -89,7 +91,8 @@ void engine_editor(Client * conn, const char *argument)
     }
     Engine *engine = (Engine *) conn->editing->data;
 
-    if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save"))
+    {
 
         save_engine();
 
@@ -98,9 +101,11 @@ void engine_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "name"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn, "~CChange name to what?~x");
 
@@ -116,7 +121,8 @@ void engine_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "B") || !str_cmp(arg, "flags")) {
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "flags"))
+    {
 
         if (edit_flag
                 ("flags", conn, engine->flags, argument, engine_flags))
@@ -125,7 +131,8 @@ void engine_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "C") || !str_cmp(arg, "logging")) {
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "logging"))
+    {
 
         if (edit_flag
                 ("logging", conn, engine->logging, argument, logging_flags))

@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -98,7 +98,8 @@ long dice(int number, int size)
 
     long sum;
 
-    switch (size) {
+    switch (size)
+    {
 
     case 0:
         return 0;
@@ -202,7 +203,8 @@ bool can_see_obj(const Character * ch, const Object * obj)
 void char_from_room(Character * ch)
 {
 
-    if (ch->inRoom) {
+    if (ch->inRoom)
+    {
 
         UNLINK(ch->inRoom->characters, Character, ch, next_in_room);
 
@@ -259,7 +261,8 @@ void obj_from_room(Object * obj)
 
     Room *room;
 
-    if ((room = obj->inRoom) == 0) {
+    if ((room = obj->inRoom) == 0)
+    {
 
         log_error("obj_from_room: NULL");
 
@@ -295,7 +298,8 @@ void obj_from_char(Object * obj)
 
     Character *ch;
 
-    if ((ch = obj->carriedBy) == NULL) {
+    if ((ch = obj->carriedBy) == NULL)
+    {
 
         log_error("obj_from_char: null ch.");
 
@@ -325,7 +329,8 @@ void obj_from_obj(Object * obj)
 
     Object *obj_from;
 
-    if ((obj_from = obj->inObj) == NULL) {
+    if ((obj_from = obj->inObj) == NULL)
+    {
 
         log_error("obj_from_obj: null obj_from.");
 
@@ -355,7 +360,8 @@ Object *get_eq_char(Character * ch, int iWear)
     if (ch == NULL)
         return NULL;
 
-    for (Object * obj = ch->carrying; obj != NULL; obj = obj->next_content) {
+    for (Object * obj = ch->carrying; obj != NULL; obj = obj->next_content)
+    {
 
         if (obj->wearLoc == iWear)
             return obj;
@@ -371,7 +377,8 @@ void equip_char(Character * ch, Object * obj, int iWear)
 
     // int i;
 
-    if (get_eq_char(ch, iWear) != NULL) {
+    if (get_eq_char(ch, iWear) != NULL)
+    {
 
         log_bug("char %" PRId64 " already equipped (obj %" PRId64
                 ") in room %" PRId64 " (%s).", ch->id, obj->id,
@@ -393,7 +400,8 @@ void equip_char(Character * ch, Object * obj, int iWear)
      */
     obj->wearLoc = iWear;
 
-    for (Affect * paf = obj->affects; paf; paf = paf->next) {
+    for (Affect * paf = obj->affects; paf; paf = paf->next)
+    {
 
         affect_modify(ch, paf, true);
 
@@ -411,14 +419,16 @@ void equip_char(Character * ch, Object * obj, int iWear)
 void unequip_char(Character * ch, Object * obj)
 {
 
-    if (obj->wearLoc == WEAR_NONE) {
+    if (obj->wearLoc == WEAR_NONE)
+    {
 
         log_bug("Unequip_char: already unequipped.");
 
         return;
 
     }
-    for (Affect * paf = obj->affects; paf; paf = paf->next) {
+    for (Affect * paf = obj->affects; paf; paf = paf->next)
+    {
 
         affect_modify(ch, paf, false);
 
@@ -445,7 +455,8 @@ Character *get_char_room(Character * ch, const char *argument)
     if (!str_cmp(arg, "self"))
         return ch;
 
-    for (rch = ch->inRoom->characters; rch != NULL; rch = rch->next_in_room) {
+    for (rch = ch->inRoom->characters; rch != NULL; rch = rch->next_in_room)
+    {
 
         if (!can_see(ch, rch) || !is_name(arg, rch->name))
             continue;
@@ -534,9 +545,11 @@ act_pos(int type, position_t minPos, const Character * ch,
 
     to = ch->inRoom->characters;
 
-    if (type & TO_VICT) {
+    if (type & TO_VICT)
+    {
 
-        if (vch == NULL) {
+        if (vch == NULL)
+        {
 
             log_warn("Act: null vch with TO_VICT.");
 
@@ -549,13 +562,15 @@ act_pos(int type, position_t minPos, const Character * ch,
         to = vch->inRoom->characters;
 
     }
-    if (type & TO_WORLD) {
+    if (type & TO_WORLD)
+    {
 
         to = first_player;
 
     }
     for (; to != NULL;
-            to = (type & TO_WORLD) ? to->next_player : to->next_in_room) {
+            to = (type & TO_WORLD) ? to->next_player : to->next_in_room)
+    {
 
         if (to->position > minPos)
             continue;
@@ -576,9 +591,11 @@ act_pos(int type, position_t minPos, const Character * ch,
 
         str = orig;
 
-        while (*str != 0) {
+        while (*str != 0)
+        {
 
-            if (*str != '$') {
+            if (*str != '$')
+            {
 
                 *point++ = *str++;
 
@@ -589,14 +606,18 @@ act_pos(int type, position_t minPos, const Character * ch,
 
             i = "<@@@>";
 
-            if (!arg2 && isupper((int)*str)) {
+            if (!arg2 && isupper((int)*str))
+            {
 
                 log_error("act: missing arg2 for code %d.",
                           *str);
 
-            } else {
+            }
+            else
+            {
 
-                switch (*str) {
+                switch (*str)
+                {
 
                 default:
 
@@ -695,7 +716,8 @@ act_pos(int type, position_t minPos, const Character * ch,
 
         buf[0] = UPPER(buf[0]);
 
-        if (to->pc) {
+        if (to->pc)
+        {
 
             writeln(to, buf);
 
@@ -740,7 +762,8 @@ actf_pos(int type, position_t minPos, const Character * ch,
     act_pos(type, minPos, ch, arg1, arg2, buf);
 }
 
-const struct timezone_type timezones[] = {
+const struct timezone_type timezones[] =
+{
     {"GMT-12", "Eniwetok", -12, 0},
     {"GMT-11", "Samoa", -11, 0},
     {"GMT-10", "Hawaii", -10, 0},
@@ -775,7 +798,8 @@ int timezone_lookup(const char *arg)
     if (!arg || !*arg)
         return -1;
 
-    for (int i = 0; timezones[i].name != 0; i++) {
+    for (int i = 0; timezones[i].name != 0; i++)
+    {
 
         if (!str_cmp(arg, timezones[i].name))
             return i;
@@ -802,12 +826,14 @@ const char *str_time(time_t timet, int tz, const char *format)
 
     result = buf_new[i];
 
-    if (timet <= 0) {
+    if (timet <= 0)
+    {
 
         timet = time(0);
 
     }
-    if (tz > -1 && tz < (sizeof(timezones) / sizeof(timezones[0])) - 1) {
+    if (tz > -1 && tz < (sizeof(timezones) / sizeof(timezones[0])) - 1)
+    {
 
         timet += timezone;	/* timezone external variable in time.h
 					 * holds the difference in seconds to GMT.

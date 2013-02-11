@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -36,7 +36,8 @@ int bitcount(int c)
 
     int count = 0;
 
-    for (int i = 0; i < sizeof(int) * 8; i++) {
+    for (int i = 0; i < sizeof(int) * 8; i++)
+    {
 
         if (c & (1 << i))
             count++;
@@ -60,7 +61,8 @@ int roomcount(Flag * explored)
 
     int pIndex = 0, count = 0;
 
-    for (pIndex = 0; pIndex < explored->size; pIndex++) {
+    for (pIndex = 0; pIndex < explored->size; pIndex++)
+    {
 
         count += bitcount(explored->bits[pIndex]);
 
@@ -77,16 +79,20 @@ void update_explored(Flag * explored)
 
     int nMatch = 0;
 
-    for (int id = 1; nMatch < max_room; id++) {
+    for (int id = 1; nMatch < max_room; id++)
+    {
 
-        if ((pRoom = get_room_by_id(id)) != NULL) {
+        if ((pRoom = get_room_by_id(id)) != NULL)
+        {
 
             nMatch++;
 
             if (!is_explorable(pRoom) && is_set(explored, id))
                 remove_bit(explored, id);
 
-        } else if (is_set(explored, id)) {
+        }
+        else if (is_set(explored, id))
+        {
 
             remove_bit(explored, id);
 
@@ -105,7 +111,8 @@ int areacount(Flag * explored, Area * area)
     if (area == NULL)
         return 0;
 
-    for (pRoom = area->rooms; pRoom != 0; pRoom = pRoom->next_in_area) {
+    for (pRoom = area->rooms; pRoom != 0; pRoom = pRoom->next_in_area)
+    {
 
         count += is_set(explored, pRoom->id) ? 1 : 0;
 
@@ -125,7 +132,8 @@ int arearooms(Area * area)
     if (!area)
         return 0;
 
-    for (pRoom = area->rooms; pRoom != 0; pRoom = pRoom->next_in_area) {
+    for (pRoom = area->rooms; pRoom != 0; pRoom = pRoom->next_in_area)
+    {
 
         if (is_explorable(pRoom))
             count++;
@@ -151,16 +159,21 @@ const char *get_explored_rle(Flag * explored)
 
     strcpy(out, "0");
 
-    for (hash = 0; hash < ID_HASH; hash++) {
+    for (hash = 0; hash < ID_HASH; hash++)
+    {
 
         for (Room * pRoom = room_hash[hash]; pRoom != 0;
-                pRoom = pRoom->next) {
+                pRoom = pRoom->next)
+        {
 
-            if ((is_set(explored, pRoom->id) ? 1 : 0) == bit) {
+            if ((is_set(explored, pRoom->id) ? 1 : 0) == bit)
+            {
 
                 count++;
 
-            } else {
+            }
+            else
+            {
 
                 len += sprintf(&out[len], ",%d", count);
 
@@ -193,7 +206,8 @@ void convert_explored_rle(Flag * explored, const char *str)
 
     char *pstr = strtok((char *)str, ",");
 
-    if (pstr == 0 || !is_number(pstr)) {
+    if (pstr == 0 || !is_number(pstr))
+    {
 
         log_error("unable to read explored rle");
 
@@ -202,11 +216,13 @@ void convert_explored_rle(Flag * explored, const char *str)
     }
     bit = atoi(pstr);
 
-    for (;;) {
+    for (;;)
+    {
 
         pstr = strtok(NULL, ",");
 
-        if (!is_number(pstr)) {
+        if (!is_number(pstr))
+        {
 
             log_error("error in explored rle format");
 
@@ -221,9 +237,11 @@ void convert_explored_rle(Flag * explored, const char *str)
         if (count == 0)
             continue;
 
-        do {
+        do
+        {
 
-            if (bit == 1) {
+            if (bit == 1)
+            {
 
                 set_bit(explored, index);
 

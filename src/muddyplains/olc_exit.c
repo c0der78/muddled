@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -110,7 +110,8 @@ void exits_editor_menu(Client * conn)
 
     int count = 0;
 
-    for (const Lookup * t = direction_table; t->name != 0; t++) {
+    for (const Lookup * t = direction_table; t->name != 0; t++)
+    {
 
         if (exits[t->value] == 0)
             continue;
@@ -131,14 +132,16 @@ void exits_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         finish_editing(conn);
 
@@ -147,9 +150,11 @@ void exits_editor(Client * conn, const char *argument)
     }
     Exit **exits = (Exit **) conn->editing->data;
 
-    if (!str_cmp(arg, "A") || !str_prefix(arg, "create")) {
+    if (!str_cmp(arg, "A") || !str_prefix(arg, "create"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn, "~CCreate an exit in which direction?~x");
 
@@ -158,7 +163,8 @@ void exits_editor(Client * conn, const char *argument)
         }
         long dir = value_lookup(direction_table, argument);
 
-        if (dir == -1) {
+        if (dir == -1)
+        {
 
             writelnf(conn, "~C'%s' is not a valid direction.~x",
                      argument);
@@ -166,7 +172,8 @@ void exits_editor(Client * conn, const char *argument)
             return;
 
         }
-        if (exits[dir] != 0) {
+        if (exits[dir] != 0)
+        {
 
             writeln(conn,
                     "~CThere is already an exit in that direction.~x");
@@ -189,9 +196,11 @@ void exits_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "D") || !str_prefix(arg, "delete")) {
+    if (!str_cmp(arg, "D") || !str_prefix(arg, "delete"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn, "~CCreate an exit in which direction?~x");
 
@@ -204,20 +213,23 @@ void exits_editor(Client * conn, const char *argument)
 
         int num = atoi(argument);
 
-        for (dir = direction_table; dir->name != 0; dir++) {
+        for (dir = direction_table; dir->name != 0; dir++)
+        {
 
             if (exits[dir->value] != 0)
                 count++;
 
             if ((num != 0 && num == count)
-                    || !str_prefix(argument, dir->name)) {
+                    || !str_prefix(argument, dir->name))
+            {
 
                 break;
 
             }
         }
 
-        if (dir->name == 0) {
+        if (dir->name == 0)
+        {
 
             writelnf(conn, "~C'%s' is not a valid direction.~x",
                      argument);
@@ -225,7 +237,8 @@ void exits_editor(Client * conn, const char *argument)
             return;
 
         }
-        if (exits[dir->value] == 0) {
+        if (exits[dir->value] == 0)
+        {
 
             writeln(conn,
                     "~CThere is no exit in that direction.~x");
@@ -242,9 +255,11 @@ void exits_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "E") || !str_prefix(arg, "edit")) {
+    if (!str_cmp(arg, "E") || !str_prefix(arg, "edit"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn,
                     "~CWhich direction do you wish to edit?~x");
@@ -258,20 +273,23 @@ void exits_editor(Client * conn, const char *argument)
 
         int num = atoi(argument);
 
-        for (dir = direction_table; dir->name != 0; dir++) {
+        for (dir = direction_table; dir->name != 0; dir++)
+        {
 
             if (exits[dir->value] != 0)
                 count++;
 
             if ((num != 0 && num == count)
-                    || !str_prefix(argument, dir->name)) {
+                    || !str_prefix(argument, dir->name))
+            {
 
                 break;
 
             }
         }
 
-        if (dir->name == 0) {
+        if (dir->name == 0)
+        {
 
             writelnf(conn, "~C'%s' is not a valid direction.~x",
                      argument);
@@ -279,7 +297,8 @@ void exits_editor(Client * conn, const char *argument)
             return;
 
         }
-        if (exits[dir->value] == 0) {
+        if (exits[dir->value] == 0)
+        {
 
             writeln(conn,
                     "~CThere is no exit in that direction.~x");
@@ -307,14 +326,16 @@ void exit_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         finish_editing(conn);
 
@@ -323,9 +344,11 @@ void exit_editor(Client * conn, const char *argument)
     }
     Exit *exit = (Exit *) conn->editing->data;
 
-    if (!str_cmp(arg, "A") || !str_cmp(arg, "ToRoom")) {
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "ToRoom"))
+    {
 
-        if (!argument || !*argument || !is_number(argument)) {
+        if (!argument || !*argument || !is_number(argument))
+        {
 
             writeln(conn,
                     "~CPlease specify the id of the room you want to delete.~x");
@@ -335,7 +358,8 @@ void exit_editor(Client * conn, const char *argument)
         }
         Room *r = get_room_by_id(atoi(argument));
 
-        if (r == 0) {
+        if (r == 0)
+        {
 
             writeln(conn, "~CNo such room.~x");
 
@@ -349,7 +373,8 @@ void exit_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "B") || !str_cmp(arg, "flags")) {
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "flags"))
+    {
 
         if (edit_flag("flags", conn, exit->flags, argument, exit_flags))
             conn->editing->show(conn);

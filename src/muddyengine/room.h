@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,7 +22,7 @@
 #ifndef ROOM_H
 #define ROOM_H
 
-typedef struct Room Room;
+typedef struct room Room;
 
 #include <muddyengine/character.h>
 #include <muddyengine/area.h>
@@ -31,7 +31,8 @@ typedef struct Room Room;
 #include <muddyengine/exit.h>
 #include <muddyengine/object.h>
 
-typedef enum {
+typedef enum
+{
     SECT_INSIDE,
     SECT_CITY,
     SECT_FIELD,
@@ -51,7 +52,8 @@ typedef enum {
     SECT_MAX
 } sector_t;
 
-struct Room {
+struct room
+{
     Room *next;
     Room *next_in_area;
     identifier_t id;
@@ -67,7 +69,8 @@ struct Room {
     Flag *flags;
 };
 
-enum {
+enum
+{
     ROOM_SAFE,
     ROOM_NO_RECALL,
 

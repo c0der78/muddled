@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -32,7 +32,8 @@
 #include <muddyengine/macro.h>
 #include <muddyengine/race.h>
 
-const Lookup npc_flags[] = {
+const Lookup npc_flags[] =
+{
     {"sentinel", NPC_SENTINEL},
     {"scavenger", NPC_SCAVENGER},
     {"aggressive", NPC_AGGRESSIVE},
@@ -64,22 +65,36 @@ void load_npc_columns(Character * ch, sql_stmt * stmt)
 {
     int count = sql_column_count(stmt);
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         const char *colname = sql_column_name(stmt, i);
 
-        if (load_char_column(ch, stmt, colname, i)) {
-        } else if (!str_cmp(colname, "shortDescr")) {
+        if (load_char_column(ch, stmt, colname, i))
+        {
+        }
+        else if (!str_cmp(colname, "shortDescr"))
+        {
             ch->npc->shortDescr = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "longDescr")) {
+        }
+        else if (!str_cmp(colname, "longDescr"))
+        {
             ch->npc->longDescr = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "startPosition")) {
+        }
+        else if (!str_cmp(colname, "startPosition"))
+        {
             ch->npc->startPosition = sql_column_int(stmt, i);
-        } else if (!str_cmp(colname, "flags")) {
+        }
+        else if (!str_cmp(colname, "flags"))
+        {
             parse_flags(ch->flags, sql_column_str(stmt, i),
                         npc_flags);
-        } else if (!str_cmp(colname, "areaId")) {
+        }
+        else if (!str_cmp(colname, "areaId"))
+        {
             ch->npc->area = get_area_by_id(sql_column_int(stmt, i));
-        } else {
+        }
+        else
+        {
             log_warn("unknown nonplayer column '%s'", colname);
         }
     }
@@ -96,11 +111,13 @@ Character *load_npc(identifier_t id)
                       PRId64,
                       id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    if (sql_step(stmt) != SQL_DONE) {
+    if (sql_step(stmt) != SQL_DONE)
+    {
         ch = new_char();
         ch->npc = new_npc();
 
@@ -109,7 +126,8 @@ Character *load_npc(identifier_t id)
         LINK(ch->npc->area->npcs, ch, next_in_area);
         LINK(first_character, ch, next);
     }
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     return ch;
@@ -126,11 +144,13 @@ int load_npcs(Area * area)
                       PRId64,
                       area->id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
         Character *ch = new_char();
         ch->npc = new_npc();
 
@@ -143,7 +163,8 @@ int load_npcs(Area * area)
         total++;
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     return total;
@@ -154,7 +175,8 @@ int save_npc(Character * ch)
 
     int res = save_character(ch, npc_flags);
 
-    field_map npc_values[] = {
+    field_map npc_values[] =
+    {
         {"nonplayerId", &ch->id, SQL_INT},
         {"shortDescr", &ch->npc->shortDescr, SQL_TEXT},
         {"longDescr", &ch->npc->longDescr, SQL_TEXT},
@@ -163,13 +185,18 @@ int save_npc(Character * ch)
         {0, 0, 0}
     };
 
-    if (res == 1) {
-        if (sql_insert_query(npc_values, "nonplayer") != SQL_OK) {
+    if (res == 1)
+    {
+        if (sql_insert_query(npc_values, "nonplayer") != SQL_OK)
+        {
             log_data("could not insert player");
             return 0;
         }
-    } else if (res == 2) {
-        if (sql_update_query(npc_values, "nonplayer", ch->id) != SQL_OK) {
+    }
+    else if (res == 2)
+    {
+        if (sql_update_query(npc_values, "nonplayer", ch->id) != SQL_OK)
+        {
             log_data("could not update character");
             return 0;
         }
@@ -186,7 +213,8 @@ int delete_npc(Character * ch)
 
     sprintf(buf, "delete from nonplayer where charId=%" PRId64, ch->id);
 
-    if (sql_exec(buf) != SQL_OK) {
+    if (sql_exec(buf) != SQL_OK)
+    {
         log_data("could not delete player");
         return 0;
     }
@@ -195,11 +223,15 @@ int delete_npc(Character * ch)
 
 Character *npc_lookup(const char *arg)
 {
-    if (is_number(arg)) {
+    if (is_number(arg))
+    {
         return get_npc_by_id(atoi(arg));
-    } else {
+    }
+    else
+    {
         for (Character * nch = first_character; nch != 0;
-                nch = nch->next) {
+                nch = nch->next)
+        {
             if (nch->npc == 0)
                 continue;
 
@@ -212,7 +244,8 @@ Character *npc_lookup(const char *arg)
 
 Character *get_npc_by_id(identifier_t id)
 {
-    for (Character * nch = first_character; nch != 0; nch = nch->next) {
+    for (Character * nch = first_character; nch != 0; nch = nch->next)
+    {
         if (nch->npc == 0)
             continue;
 

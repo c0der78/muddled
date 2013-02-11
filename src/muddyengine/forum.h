@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,22 +22,24 @@
 #ifndef FORUM_H
 #define FORUM_H
 
-typedef struct Forum Forum;
+typedef struct forum Forum;
 
-typedef struct Note Note;
+typedef struct note Note;
 
 #include <muddyengine/character.h>
 #include <muddyengine/engine.h>
 #include <time.h>
 
-typedef enum {
+typedef enum
+{
     DEF_NORMAL,
     DEF_INCLUDE,
     DEF_EXCLUDE,
     DEF_READONLY
 } forum_t;
 
-struct Forum {
+struct forum
+{
     identifier_t id;
     const char *name;
     const char *description;
@@ -50,7 +52,8 @@ struct Forum {
     int flags;
 };
 
-struct Note {
+struct note
+{
     Note *next;
     identifier_t id;
     const char *from;
@@ -64,7 +67,8 @@ struct Note {
 extern Forum *forum_table;
 extern int max_forum;
 
-enum {
+enum
+{
     FORUM_CHANGED = (1 << 0),
     FORUM_NOUNSUB = (1 << 1)
 };

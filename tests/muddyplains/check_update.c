@@ -6,8 +6,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -29,117 +29,122 @@ void reset_room(Room *);
 START_TEST(test_reset_room)
 {
 
-	const char *str = "npc(1,2)\nobj(3)\nequip(4,'lfinger')\nput( 5 )";
-	
-	const char *delims = "(),";
+    const char *str = "npc(1,2)\nobj(3)\nequip(4,'lfinger')\nput( 5 )";
 
-	char buf[ARG_SIZ];
+    const char *delims = "(),";
 
-	while (str && *str != 0) {
-		str = get_line(str, buf);
-		
-		char *tmp;
-		long id = 0;
-	
-		if(buf[0] == 0 || (tmp = strtok(buf, delims)) == 0)
-			continue;
+    char buf[ARG_SIZ];
 
-		if(!str_cmp("npc", tmp))
-		{
-			if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
-				continue;
+    while (str && *str != 0)
+    {
+        str = get_line(str, buf);
 
-			int max = 1;
+        char *tmp;
+        long id = 0;
 
-			if((tmp = strtok(0, delims)) != 0) {
-				max = atoi(tmp);
-			}
-			
-			fail_if(id != 1, "invalid npc id");
-			fail_if(max != 2, "invalid npc max");
+        if(buf[0] == 0 || (tmp = strtok(buf, delims)) == 0)
+            continue;
 
-			continue;
-		}
-		
-		if(!str_cmp("obj", tmp))
-		{
-			if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
-				continue;
+        if(!str_cmp("npc", tmp))
+        {
+            if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
+                continue;
 
-			int max = 1;
+            int max = 1;
 
-			if((tmp = strtok(0, delims)) != 0) {
-				max = atoi(tmp);
-			}
+            if((tmp = strtok(0, delims)) != 0)
+            {
+                max = atoi(tmp);
+            }
 
-			fail_if(id != 3, "invalid obj id");
-			fail_if(max != 1, "invalid obj max");
+            fail_if(id != 1, "invalid npc id");
+            fail_if(max != 2, "invalid npc max");
 
-			continue;
-		}
+            continue;
+        }
 
-		if(!str_cmp("give", tmp))
-		{
-		
+        if(!str_cmp("obj", tmp))
+        {
+            if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
+                continue;
 
-			if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
-				continue;
+            int max = 1;
 
-			int max = 1;
+            if((tmp = strtok(0, delims)) != 0)
+            {
+                max = atoi(tmp);
+            }
 
-			if((tmp = strtok(0, delims)) != 0) {
-				max = atoi(tmp);
-			}
+            fail_if(id != 3, "invalid obj id");
+            fail_if(max != 1, "invalid obj max");
 
-			continue;
-		}
+            continue;
+        }
 
-		if(!str_cmp("equip", tmp))
-		{
-			
-			if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
-				continue;
+        if(!str_cmp("give", tmp))
+        {
 
-			one_argument(strtok(0, delims), buf);
 
-			int type = value_lookup(wear_types, buf);
+            if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
+                continue;
 
-			fail_if(id != 4, "invalid equip id");
-			fail_if(type != WEAR_FINGER_2, "invalid equip wear type");
+            int max = 1;
 
-			continue;
-		}
+            if((tmp = strtok(0, delims)) != 0)
+            {
+                max = atoi(tmp);
+            }
 
-		if (!str_cmp("put", tmp))
-		{
-			if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
-				continue;
+            continue;
+        }
 
-			int max = 1;
+        if(!str_cmp("equip", tmp))
+        {
 
-			if((tmp = strtok(0, delims)) != 0) {
-				max = atoi(tmp);
-			}
+            if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
+                continue;
 
-			fail_if(id != 5, "invalid put id");
+            one_argument(strtok(0, delims), buf);
 
-			continue;
-		}
-	}
-	
+            int type = value_lookup(wear_types, buf);
+
+            fail_if(id != 4, "invalid equip id");
+            fail_if(type != WEAR_FINGER_2, "invalid equip wear type");
+
+            continue;
+        }
+
+        if (!str_cmp("put", tmp))
+        {
+            if((tmp = strtok(0, delims)) == 0 || (id = atol(tmp)) == 0)
+                continue;
+
+            int max = 1;
+
+            if((tmp = strtok(0, delims)) != 0)
+            {
+                max = atoi(tmp);
+            }
+
+            fail_if(id != 5, "invalid put id");
+
+            continue;
+        }
+    }
+
 }
 END_TEST
 
 
 Suite *update_suite (void)
 {
-  Suite *s = suite_create ("Updates");
+    Suite *s = suite_create ("Updates");
 
-  /* Core test case */
-  TCase *tc_core = tcase_create ("Core");
-  tcase_add_test (tc_core, test_reset_room);
-  suite_add_tcase (s, tc_core);
-  
-  return s;
+    /* Core test case */
+    TCase *tc_core = tcase_create ("Core");
+    tcase_add_test (tc_core, test_reset_room);
+    suite_add_tcase (s, tc_core);
+
+    return s;
 }
 

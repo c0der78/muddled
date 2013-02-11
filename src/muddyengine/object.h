@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,7 +22,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-typedef struct Object Object;
+typedef struct object Object;
 
 #include <muddyengine/variant.h>
 #include <muddyengine/hashmap.h>
@@ -31,7 +31,8 @@ typedef struct Object Object;
 
 #define MAX_OBJ_VAL	4
 
-typedef enum {
+typedef enum
+{
     WEAPON_EXOTIC,
     WEAPON_SWORD,
     WEAPON_DAGGER,
@@ -44,7 +45,8 @@ typedef enum {
     WEAPON_LONGRANGE
 } weapon_type;
 
-typedef enum {
+typedef enum
+{
     OBJ_LIGHT,
     OBJ_SCROLL,
     OBJ_WAND,
@@ -71,7 +73,8 @@ typedef enum {
     OBJ_JEWELRY
 } object_type;
 
-typedef enum {
+typedef enum
+{
     WEAR_NONE,
     WEAR_HEAD,
     WEAR_NECK,
@@ -98,7 +101,8 @@ typedef enum {
     MAX_WEAR
 } wear_type;
 
-struct Object {
+struct object
+{
     Object *next;
     Object *next_in_area;
     Object *next_content;
@@ -151,7 +155,8 @@ int wear_type_to_flag(int);
 
 bool can_wear(Object *, wear_type);
 
-enum {
+enum
+{
     WEAPON_FLAMING,
     WEAPON_FROST,
     WEAPON_VAMPIRIC,
@@ -162,7 +167,8 @@ enum {
     WEAPON_POISON
 };
 
-enum {
+enum
+{
     CONT_CLOSEABLE,
     CONT_PICKPROOF,
     CONT_CLOSED,
@@ -170,7 +176,8 @@ enum {
     CONT_PUT_ON
 };
 
-enum {
+enum
+{
     ITEM_GLOW,
     ITEM_HUM,
     ITEM_DARK,
@@ -189,7 +196,8 @@ enum {
     ITEM_MELT_DROP,
     ITEM_BURN_PROOF
 };
-typedef struct {
+typedef struct
+{
     wear_type loc;
     wear_type flags;
     const char *display;

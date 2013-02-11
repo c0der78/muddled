@@ -6,19 +6,19 @@
 #include <muddyengine/engine.h>
 #include <muddyengine/variant.h>
 
-typedef struct {
+typedef struct
+{
     void *data;
     int flags;
     identifier_t key;
-} hEntry;
+} hash_entry;
 
 /** Hashmap structure (forward declaration) */
-struct s_hashmap {
-    hEntry *table;
+typedef struct s_hashmap
+{
+    hash_entry *table;
     long size, count, pos;
-};
-
-typedef struct s_hashmap hashmap;
+} hashmap;
 
 /** Creates a new hashmap near the given size. */
 extern hashmap *new_hashmap(long startsize);

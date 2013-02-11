@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -84,7 +84,8 @@ void npc_edit_list(Client * conn, Area * area)
 
     int count = 0;
 
-    for (Character * vch = area->npcs; vch != 0; vch = vch->next_in_area) {
+    for (Character * vch = area->npcs; vch != 0; vch = vch->next_in_area)
+    {
 
         writelnf(conn, "%2d) %-12.12s ", vch->id, vch->npc->shortDescr);
 
@@ -105,14 +106,16 @@ void npc_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "list")) {
+    if (!str_cmp(arg, "list"))
+    {
 
         npc_edit_list(conn, conn->account->playing->inRoom->area);
 
@@ -121,7 +124,8 @@ void npc_editor(Client * conn, const char *argument)
     }
     Character *npc = (Character *) conn->editing->data;
 
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         if (npc->inRoom == 0)
             destroy_char(npc);
@@ -131,7 +135,8 @@ void npc_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save"))
+    {
 
         save_npc(npc);
 
@@ -140,7 +145,8 @@ void npc_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "delete")) {
+    if (!str_cmp(arg, "delete"))
+    {
 
         delete_npc(npc);
 
@@ -156,9 +162,11 @@ void npc_editor(Client * conn, const char *argument)
     if (character_editor(conn, npc, arg, argument))
         return;
 
-    if (!str_cmp(arg, "F") || !str_cmp(arg, "short")) {
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "short"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn,
                     "~CYou must provide a short description.~x");
@@ -173,9 +181,11 @@ void npc_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "G") || !str_cmp(arg, "long")) {
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "long"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn,
                     "~CYou must provide a long description.~x");
@@ -190,9 +200,11 @@ void npc_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "H") || !str_cmp(arg, "position")) {
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "position"))
+    {
 
-        if (!argument || !*argument || argument[0] == '?') {
+        if (!argument || !*argument || argument[0] == '?')
+        {
 
             writelnf(conn, "~CValid positions are: ~W%s~x",
                      lookup_names(position_table));
@@ -202,7 +214,8 @@ void npc_editor(Client * conn, const char *argument)
         }
         long p = value_lookup(position_table, argument);
 
-        if (p == -1) {
+        if (p == -1)
+        {
 
             writeln(conn, "~CThat is not a valid position.~x");
 
@@ -216,7 +229,8 @@ void npc_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "I") || !str_cmp(arg, "flags")) {
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "flags"))
+    {
 
         if (edit_flag("flags", conn, npc->flags, argument, npc_flags))
             conn->editing->show(conn);
@@ -224,11 +238,13 @@ void npc_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "J") || !str_cmp(arg, "alignment")) {
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "alignment"))
+    {
 
         int a = atoi(argument);
 
-        if (a < -MAX_ALIGN || a > MAX_ALIGN) {
+        if (a < -MAX_ALIGN || a > MAX_ALIGN)
+        {
 
             writelnf(conn, "~CValue must be between %d and %d.~x",
                      -MAX_ALIGN, MAX_ALIGN);

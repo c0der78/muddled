@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -38,23 +38,27 @@ void synch_table(const char *tablename, const Lookup * table)
             "[name] VARCHAR NOT NULL PRIMARY KEY UNIQUE,"
             "[value] INTEGER)", tablename);
 
-    if (sql_exec(buf) != SQL_OK) {
+    if (sql_exec(buf) != SQL_OK)
+    {
         log_data("could not create %s", tablename);
         return;
     }
-    for (const Lookup * ptable = table; ptable->name != 0; ptable++) {
+    for (const Lookup * ptable = table; ptable->name != 0; ptable++)
+    {
         sprintf(buf,
                 "insert into %s (name,value) values('%s','%" PRIXPTR
                 "')", tablename, ptable->name, ptable->value);
 
-        if (sql_exec(buf) != SQL_OK) {
+        if (sql_exec(buf) != SQL_OK)
+        {
 
             sprintf(buf,
                     "update %s set name='%s', value='%" PRIXPTR
                     "' where name='%s'", tablename, ptable->name,
                     ptable->value, ptable->name);
 
-            if (sql_exec(buf) != SQL_OK) {
+            if (sql_exec(buf) != SQL_OK)
+            {
                 log_data("could not save into %s", tablename);
 
                 return;
@@ -84,7 +88,8 @@ uintptr_t value_lookup(const Lookup * table, const char *arg)
     if (!arg || !*arg)
         return -1;
 
-    for (const Lookup * t = table; t->name != 0; t++) {
+    for (const Lookup * t = table; t->name != 0; t++)
+    {
         if (!str_prefix(arg, t->name))
             return t->value;
     }
@@ -97,7 +102,8 @@ int index_lookup(const Lookup * table, const char *arg)
     if (nullstr(arg))
         return -1;
 
-    for (int i = 0; table[i].name != 0; i++) {
+    for (int i = 0; table[i].name != 0; i++)
+    {
         if (!str_prefix(arg, table[i].name))
             return i;
     }
@@ -111,7 +117,8 @@ const char *lookup_names(const Lookup * table)
 
     buf[0] = 0;
 
-    for (const Lookup * t = table; t->name != 0; t++) {
+    for (const Lookup * t = table; t->name != 0; t++)
+    {
         strcat(buf, t->name);
         strcat(buf, " ");
     }
@@ -121,7 +128,8 @@ const char *lookup_names(const Lookup * table)
 
 const char *lookup_name(const Lookup * table, uintptr_t value)
 {
-    for (const Lookup * t = table; t->name != 0; t++) {
+    for (const Lookup * t = table; t->name != 0; t++)
+    {
         if (t->value == value)
             return t->name;
     }

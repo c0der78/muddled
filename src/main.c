@@ -6,8 +6,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -77,8 +77,10 @@ void parse_options(int argc, char *argv[])
 
     exec_path = argv[0];
 
-    while ((c = getopt(argc, argv, "c:p:i:")) != -1) {
-        switch (c) {
+    while ((c = getopt(argc, argv, "c:p:i:")) != -1)
+    {
+        switch (c)
+        {
         case 'c':
             server_socket = atoi(optarg);
             server_rebooting = true;
@@ -105,16 +107,19 @@ void handle_sig(int sig)
     static volatile sig_atomic_t crashed = 0;
 
     waitpid(-1, &status, WNOHANG);
-    if (crashed == 0) {
+    if (crashed == 0)
+    {
         crashed++;
 
         log_info("game has crashed (%d).", sig);
 
-        for (Client * c_next, *c = first_client; c; c = c_next) {
+        for (Client * c_next, *c = first_client; c; c = c_next)
+        {
             c_next = c->next;
             ch = c->account ? c->account->playing : 0;
 
-            if (!ch) {
+            if (!ch)
+            {
                 close_client(c);
                 continue;
             }
@@ -127,12 +132,15 @@ void handle_sig(int sig)
         /*success - proceed with fork / copyover plan.Otherwise will go to
            // next section and crash with a full reboot to recover */
         forkpid = fork();
-        if (forkpid > 0) {
+        if (forkpid > 0)
+        {
             /*Parent process copyover and exit */
             waitpid(forkpid, &status, WNOHANG);
             reboot_server();
             exit(0);
-        } else if (forkpid < 0) {
+        }
+        else if (forkpid < 0)
+        {
             exit(1);
         }
         /*Child process proceed to dump
@@ -151,18 +159,24 @@ void handle_sig(int sig)
         sigaction(sig, &default_action, NULL);
 
         /*I run different scripts depending on my port */
-        if (!fork()) {
+        if (!fork())
+        {
             exit(0);
-        } else
+        }
+        else
             return;
         raise(sig);
-    } else if (crashed == 1) {
+    }
+    else if (crashed == 1)
+    {
         crashed++;
 
-        for (Client * c_next, *c = first_client; c; c = c_next) {
+        for (Client * c_next, *c = first_client; c; c = c_next)
+        {
             c_next = c->next;
             ch = c->account ? c->account->playing : 0;
-            if (ch == NULL) {
+            if (ch == NULL)
+            {
                 close_client(c);
                 continue;
             }
@@ -175,32 +189,42 @@ void handle_sig(int sig)
         default_action.sa_handler = SIG_DFL;
         sigaction(sig, &default_action, NULL);
 
-        if (!fork()) {
+        if (!fork())
+        {
             kill(getppid(), sig);
             exit(1);
-        } else
+        }
+        else
             return;
         raise(sig);
-    } else if (crashed == 2) {
+    }
+    else if (crashed == 2)
+    {
         crashed++;
         log_info("total game crash");
         default_action.sa_handler = SIG_DFL;
         sigaction(sig, &default_action, NULL);
 
-        if (!fork()) {
+        if (!fork())
+        {
             kill(getppid(), sig);
             exit(1);
-        } else
+        }
+        else
             return;
         raise(sig);
-    } else if (crashed == 3) {
+    }
+    else if (crashed == 3)
+    {
         default_action.sa_handler = SIG_DFL;
         sigaction(sig, &default_action, NULL);
 
-        if (!fork()) {
+        if (!fork())
+        {
             kill(getppid(), sig);
             exit(1);
-        } else
+        }
+        else
             return;
         raise(sig);
     }
@@ -215,7 +239,8 @@ void set_vtimer(long sec)
     vtimer.it_value.tv_usec = 0;
     struct itimerval otimer;
 
-    if (setitimer(ITIMER_REAL, &vtimer, &otimer) < 0) {
+    if (setitimer(ITIMER_REAL, &vtimer, &otimer) < 0)
+    {
         perror("setitimer");
         exit(EXIT_FAILURE);
     }
@@ -229,7 +254,8 @@ void handle_alarm(int sig)
     char crash_message_b[] = "initiating reboot...";
     char crash_message_c[] = "failed to gracefully restart.";
 
-    switch (safe_check) {
+    switch (safe_check)
+    {
     case 0:
         safe_check = 1;
         log_bug("%s", crash_message_a);
@@ -258,12 +284,14 @@ void handle_alarm(int sig)
     exit(1);
 }
 
-const struct sig_type {
+const struct sig_type
+{
     const char *name;
     int sig;
     void (*sigfun) (int);
     int flags;
-} sig_table[] = {
+} sig_table[] =
+{
     {
         "SIGPIPE", SIGPIPE, SIG_IGN, 0
     }, {
@@ -307,7 +335,8 @@ bool init_sig(const struct sig_type *tabl)
 
     sigaction(tabl->sig, &sigact, NULL);
 
-    if (tabl->sig == SIGVTALRM) {
+    if (tabl->sig == SIGVTALRM)
+    {
         set_vtimer(-1);
     }
     return true;

@@ -6,8 +6,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -48,7 +48,8 @@ static bool canUseShield(Character * ch)
     return !class_table[*ch->classes].fMana;
 }
 
-const wear_table_type wear_table[] = {
+const wear_table_type wear_table[] =
+{
     {WEAR_NONE, WEAR_NONE, "not worn", 0},
     {WEAR_HEAD, WEAR_HEAD, "worn on head", 0},
     {WEAR_NECK, WEAR_NECK, "worn around neck", 0},
@@ -75,7 +76,8 @@ const wear_table_type wear_table[] = {
     {0, 0, 0}
 };
 
-const Lookup object_types[] = {
+const Lookup object_types[] =
+{
     {"light", OBJ_LIGHT},
     {"scroll", OBJ_SCROLL},
     {"wand", OBJ_WAND},
@@ -103,7 +105,8 @@ const Lookup object_types[] = {
     {0, 0}
 };
 
-const Lookup wear_types[] = {
+const Lookup wear_types[] =
+{
     {"none", WEAR_NONE},
     {"head", WEAR_HEAD},
     {"neck", WEAR_NECK},
@@ -130,7 +133,8 @@ const Lookup wear_types[] = {
     {0, 0}
 };
 
-const Lookup wear_flags[] = {
+const Lookup wear_flags[] =
+{
     {"none", WEAR_NONE},
     {"head", WEAR_HEAD},
     {"neck", WEAR_NECK},
@@ -155,7 +159,8 @@ const Lookup wear_flags[] = {
     {0, 0}
 };
 
-const Lookup weapon_types[] = {
+const Lookup weapon_types[] =
+{
     {"exotic", WEAPON_EXOTIC},
     {"sword", WEAPON_SWORD},
     {"dagger", WEAPON_DAGGER},
@@ -169,7 +174,8 @@ const Lookup weapon_types[] = {
     {0, 0}
 };
 
-const Lookup weapon_flags[] = {
+const Lookup weapon_flags[] =
+{
 
     {"flaming", WEAPON_FLAMING},
     {"freezing", WEAPON_FROST},
@@ -182,7 +188,8 @@ const Lookup weapon_flags[] = {
     {0, 0}
 };
 
-const Lookup container_flags[] = {
+const Lookup container_flags[] =
+{
     {"closeable", CONT_CLOSEABLE},
     {"pickproof", CONT_PICKPROOF},
     {"closed", CONT_CLOSED},
@@ -191,7 +198,8 @@ const Lookup container_flags[] = {
     {0, 0}
 };
 
-const Lookup object_flags[] = {
+const Lookup object_flags[] =
+{
     {"glow", ITEM_GLOW},
     {"hum", ITEM_HUM},
     {"dark", ITEM_DARK},
@@ -255,46 +263,76 @@ int load_obj_columns(Object * obj, sql_stmt * stmt)
 {
     int count = sql_column_count(stmt);
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         const char *colname = sql_column_name(stmt, i);
 
-        if (!str_cmp(colname, "name")) {
+        if (!str_cmp(colname, "name"))
+        {
             obj->name = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "shortDescr")) {
+        }
+        else if (!str_cmp(colname, "shortDescr"))
+        {
             obj->shortDescr = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "longDescr")) {
+        }
+        else if (!str_cmp(colname, "longDescr"))
+        {
             obj->longDescr = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "description")) {
+        }
+        else if (!str_cmp(colname, "description"))
+        {
             obj->description = str_dup(sql_column_str(stmt, i));
-        } else if (!str_cmp(colname, "objectId")) {
+        }
+        else if (!str_cmp(colname, "objectId"))
+        {
             obj->id = sql_column_int(stmt, i);
-        } else if (!str_cmp(colname, "level")) {
+        }
+        else if (!str_cmp(colname, "level"))
+        {
             obj->level = sql_column_int(stmt, i);
-        } else if (!str_cmp(colname, "areaId")) {
+        }
+        else if (!str_cmp(colname, "areaId"))
+        {
             if (obj->area
                     && obj->area->id != sql_column_int64(stmt, i))
                 log_error("sql returned invalid room for area");
             else
                 obj->area =
                     get_area_by_id(sql_column_int(stmt, i));
-        } else if (!str_cmp(colname, "type")) {
+        }
+        else if (!str_cmp(colname, "type"))
+        {
             obj->type = (object_type) sql_column_int(stmt, i);
-        } else if (!str_cmp(colname, "inObjId")) {
+        }
+        else if (!str_cmp(colname, "inObjId"))
+        {
             obj->inObj = get_obj_by_id(sql_column_int(stmt, i));
-        } else if (!str_cmp(colname, "wearFlags")) {
+        }
+        else if (!str_cmp(colname, "wearFlags"))
+        {
             obj->wearFlags = (wear_type) sql_column_int(stmt, i);
-        } else if (!str_cmp(colname, "weight")) {
+        }
+        else if (!str_cmp(colname, "weight"))
+        {
             obj->weight = (float)sqlite3_column_double(stmt, i);
-        } else if (!str_cmp(colname, "cost")) {
+        }
+        else if (!str_cmp(colname, "cost"))
+        {
             obj->cost = sqlite3_column_double(stmt, i);
-        } else if (!str_cmp(colname, "condition")) {
+        }
+        else if (!str_cmp(colname, "condition"))
+        {
             obj->condition = (float)sqlite3_column_double(stmt, i);
-        } else if (!str_cmp(colname, "carriedById")) {
+        }
+        else if (!str_cmp(colname, "carriedById"))
+        {
             if (obj->carriedBy
                     && obj->carriedBy->id != sql_column_int(stmt, i))
                 log_error
                 ("sql returned invalid character for object");
-        } else {
+        }
+        else
+        {
             log_warn("unknown room column '%s'", colname);
         }
     }
@@ -311,11 +349,13 @@ Object *load_object(identifier_t id)
     int len =
         sprintf(buf, "select * from object where objectId=%" PRId64, id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    if (sql_step(stmt) != SQL_DONE) {
+    if (sql_step(stmt) != SQL_DONE)
+    {
 
         obj = new_object();
 
@@ -324,7 +364,8 @@ Object *load_object(identifier_t id)
         LINK(first_object, obj, next);
         LINK(obj->area->objects, obj, next_in_area);
     }
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     return obj;
@@ -339,11 +380,13 @@ int load_objects(Area * area)
     int len = sprintf(buf, "select * from object where areaId=%" PRId64,
                       area->id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare statement");
         return 0;
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
 
         Object *obj = new_object();
 
@@ -356,7 +399,8 @@ int load_objects(Area * area)
         total++;
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("could not finalize statement");
     }
     return total;
@@ -364,7 +408,8 @@ int load_objects(Area * area)
 
 int save_object(Object * obj)
 {
-    field_map obj_values[] = {
+    field_map obj_values[] =
+    {
         {"name", &obj->name, SQL_TEXT, 0},
         {"description", &obj->description, SQL_TEXT, 0},
         {"shortDescr", &obj->shortDescr, SQL_TEXT, 0},
@@ -374,7 +419,8 @@ int save_object(Object * obj)
         {"condition", &obj->condition, SQL_FLOAT, 0},
         {"wearFlags", &obj->wearFlags, SQL_INT, 0},
         {"level", &obj->level, SQL_INT, 0},
-        {   "carriedById", (obj->carriedBy ? &obj->carriedBy->id : 0),
+        {
+            "carriedById", (obj->carriedBy ? &obj->carriedBy->id : 0),
             SQL_INT, 0
         },
         {"inObjId", (obj->inObj ? &obj->inObj->id : 0), SQL_INT, 0},
@@ -382,14 +428,19 @@ int save_object(Object * obj)
         {0, 0, 0}
     };
 
-    if (obj->id == 0) {
-        if (sql_insert_query(obj_values, "object") != SQL_OK) {
+    if (obj->id == 0)
+    {
+        if (sql_insert_query(obj_values, "object") != SQL_OK)
+        {
             log_data("could not insert object");
             return 0;
         }
         obj->id = db_last_insert_rowid();
-    } else {
-        if (sql_update_query(obj_values, "object", obj->id) != SQL_OK) {
+    }
+    else
+    {
+        if (sql_update_query(obj_values, "object", obj->id) != SQL_OK)
+        {
             log_data("could not update object");
             return 0;
         }
@@ -404,7 +455,8 @@ int delete_object(Object * obj)
 
     sprintf(buf, "delete from object where objectId=%" PRId64, obj->id);
 
-    if (sql_exec(buf) != SQL_OK) {
+    if (sql_exec(buf) != SQL_OK)
+    {
         log_data("could not delete object");
         return 0;
     }
@@ -413,17 +465,21 @@ int delete_object(Object * obj)
 
 void extract_obj(Object * obj)
 {
-    if (obj->inRoom) {
+    if (obj->inRoom)
+    {
         obj_from_room(obj);
     }
-    if (obj->carriedBy) {
+    if (obj->carriedBy)
+    {
         obj_from_char(obj);
     }
-    if (obj->inObj) {
+    if (obj->inObj)
+    {
         obj_from_obj(obj);
     }
     for (Object * obj_next, *obj_content = obj->contains; obj_content;
-            obj_content = obj_next) {
+            obj_content = obj_next)
+    {
         obj_next = obj_content->next_content;
         extract_obj(obj_content);
     }
@@ -435,7 +491,8 @@ void extract_obj(Object * obj)
 
 Object *get_obj_by_id(identifier_t id)
 {
-    for (Object * obj = first_object; obj != 0; obj = obj->next) {
+    for (Object * obj = first_object; obj != 0; obj = obj->next)
+    {
         if (obj->id == id)
             return obj;
     }
@@ -444,10 +501,14 @@ Object *get_obj_by_id(identifier_t id)
 
 Object *object_lookup(const char *arg)
 {
-    if (is_number(arg)) {
+    if (is_number(arg))
+    {
         return get_obj_by_id(atoi(arg));
-    } else {
-        for (Object * obj = first_object; obj != 0; obj = obj->next) {
+    }
+    else
+    {
+        for (Object * obj = first_object; obj != 0; obj = obj->next)
+        {
             if (is_name(arg, obj->name))
                 return obj;
         }
@@ -489,8 +550,10 @@ show_list_to_char(Object * list, Character * ch, bool fShort, bool fShowNothing)
     /*
      * Format the list of objects.
      */
-    for (obj = list; obj != NULL; obj = obj->next_content) {
-        if (obj->wearLoc == WEAR_NONE && can_see_obj(ch, obj)) {
+    for (obj = list; obj != NULL; obj = obj->next_content)
+    {
+        if (obj->wearLoc == WEAR_NONE && can_see_obj(ch, obj))
+        {
             pstrShow = format_obj_to_char(obj, ch, fShort);
 
             fCombine = false;
@@ -499,8 +562,10 @@ show_list_to_char(Object * list, Character * ch, bool fShort, bool fShowNothing)
              * Look for duplicates, case sensitive.
              * Matches tend to be near end so run loop backwords.
              */
-            for (iShow = nShow - 1; iShow >= 0; iShow--) {
-                if (!strcmp(prgpstrShow[iShow], pstrShow)) {
+            for (iShow = nShow - 1; iShow >= 0; iShow--)
+            {
+                if (!strcmp(prgpstrShow[iShow], pstrShow))
+                {
                     prgnShow[iShow]++;
                     fCombine = true;
                     break;
@@ -510,7 +575,8 @@ show_list_to_char(Object * list, Character * ch, bool fShort, bool fShowNothing)
             /*
              * Couldn't combine, or didn't want to.
              */
-            if (!fCombine) {
+            if (!fCombine)
+            {
                 prgpstrShow[nShow] = str_dup(pstrShow);
                 prgnShow[nShow] = 1;
                 nShow++;
@@ -521,14 +587,19 @@ show_list_to_char(Object * list, Character * ch, bool fShort, bool fShowNothing)
     /*
      * Output the formatted list.
      */
-    for (iShow = 0; iShow < nShow; iShow++) {
-        if (prgpstrShow[iShow][0] == '\0') {
+    for (iShow = 0; iShow < nShow; iShow++)
+    {
+        if (prgpstrShow[iShow][0] == '\0')
+        {
             free_str(prgpstrShow[iShow]);
             continue;
         }
-        if (prgnShow[iShow] != 1) {
+        if (prgnShow[iShow] != 1)
+        {
             writef(output, "(%2d) ", prgnShow[iShow]);
-        } else {
+        }
+        else
+        {
             write(output, "     ");
         }
 
@@ -536,7 +607,8 @@ show_list_to_char(Object * list, Character * ch, bool fShort, bool fShowNothing)
         free_str(prgpstrShow[iShow]);
     }
 
-    if (fShowNothing && nShow == 0) {
+    if (fShowNothing && nShow == 0)
+    {
         writeln(ch, "     Nothing.");
     }
     ch->page(ch, buf_string(output));
@@ -565,9 +637,11 @@ Object *get_obj_carry(const Character * ch, const char *argument,
 
     number = number_argument(argument, arg);
     count = 0;
-    for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
+    for (obj = ch->carrying; obj != NULL; obj = obj->next_content)
+    {
         if (obj->wearLoc == WEAR_NONE && (can_see_obj(viewer, obj))
-                && is_name(arg, obj->name)) {
+                && is_name(arg, obj->name))
+        {
             if (++count == number)
                 return obj;
         }
@@ -588,8 +662,10 @@ Object *get_obj_world(const Character * ch, const char *argument)
 
     number = number_argument(argument, arg);
     count = 0;
-    for (obj = first_object; obj != NULL; obj = obj->next) {
-        if (can_see_obj(ch, obj) && is_name(arg, obj->name)) {
+    for (obj = first_object; obj != NULL; obj = obj->next)
+    {
+        if (can_see_obj(ch, obj) && is_name(arg, obj->name))
+        {
             if (++count == number)
                 return obj;
         }
@@ -607,8 +683,10 @@ Object *get_obj_list(const Character * ch, const char *argument, Object * list)
 
     number = number_argument(argument, arg);
     count = 0;
-    for (obj = list; obj != NULL; obj = obj->next_content) {
-        if (can_see_obj(ch, obj) && is_name(arg, obj->name)) {
+    for (obj = list; obj != NULL; obj = obj->next_content)
+    {
+        if (can_see_obj(ch, obj) && is_name(arg, obj->name))
+        {
             if (++count == number)
                 return obj;
         }
@@ -629,9 +707,11 @@ Object *get_obj_wear(const Character * ch, const char *argument)
 
     number = number_argument(argument, arg);
     count = 0;
-    for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
+    for (obj = ch->carrying; obj != NULL; obj = obj->next_content)
+    {
         if (obj->wearLoc != WEAR_NONE && can_see_obj(ch, obj)
-                && is_name(arg, obj->name)) {
+                && is_name(arg, obj->name))
+        {
             if (++count == number)
                 return obj;
         }

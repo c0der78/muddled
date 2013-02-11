@@ -6,8 +6,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -32,7 +32,8 @@
 #include <muddyengine/lookup.h>
 #include <muddyengine/flag.h>
 
-const Lookup account_flags[] = {
+const Lookup account_flags[] =
+{
     {"coloroff", ACC_COLOR_OFF},
     {0, 0}
 };
@@ -68,18 +69,21 @@ void destroy_account(Account * acc)
 
     destroy_flags(acc->flags);
 
-    for (int i = 0; i < max_forum; i++) {
+    for (int i = 0; i < max_forum; i++)
+    {
         free_str(acc->forumData[i].draft);
     }
 
     free_mem(acc->forumData);
 
-    for (AccountPlayer * ch_next, *ch = acc->players; ch != 0; ch = ch_next) {
+    for (AccountPlayer * ch_next, *ch = acc->players; ch != 0; ch = ch_next)
+    {
         ch_next = ch->next;
         destroy_account_player(ch);
     }
 
-    if (acc->playing) {
+    if (acc->playing)
+    {
         extract_char(acc->playing, true);
     }
     free_mem(acc);
@@ -202,7 +206,8 @@ field_map *account_forum_fields(Account *acc, AccountForum *forum)
 {
     static field_map *table = 0;
 
-    field_map account_values[] = {
+    field_map account_values[] =
+    {
         {"accountForumId", &forum->id, SQL_INT},
         {"forumId", &forum->id, SQL_INT},
         {"accountId", &acc->id, SQL_INT},
@@ -212,7 +217,8 @@ field_map *account_forum_fields(Account *acc, AccountForum *forum)
         {0}
     };
 
-    if(table == 0) {
+    if(table == 0)
+    {
         table = alloc_mem(1, sizeof(account_values));
     }
 
@@ -235,7 +241,8 @@ field_map *account_fields(Account *acc)
 {
     static field_map *table = 0;
 
-    field_map accvalues[] = {
+    field_map accvalues[] =
+    {
         {"accountId", &acc->id, SQL_INT},
         {"login", &acc->login, SQL_TEXT},
         {"email", &acc->email, SQL_TEXT},
@@ -246,7 +253,8 @@ field_map *account_fields(Account *acc)
         {0}
     };
 
-    if(table == 0) {
+    if(table == 0)
+    {
         table = alloc_mem(1, sizeof(accvalues));
     }
     memcpy(table, accvalues, sizeof(accvalues));
@@ -299,42 +307,55 @@ int load_account_players(Account * acc)
                       PRId64,
                       acc->id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare sql statement");
         return 0;
     }
-    if (sql_step(stmt) == SQL_DONE) {
+    if (sql_step(stmt) == SQL_DONE)
+    {
         if (sql_finalize(stmt) != SQL_OK)
             log_data("could not finalize sql statement");
         return 0;
     }
     AccountPlayer *ch = new_account_player();
 
-    do {
+    do
+    {
         int i, cols = sql_column_count(stmt);
 
-        for (i = 0; i < cols; i++) {
+        for (i = 0; i < cols; i++)
+        {
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "name")) {
+            if (!str_cmp(colname, "name"))
+            {
                 ch->name = str_dup(sql_column_str(stmt, i));
-            } else if (!str_cmp(colname, "level")) {
+            }
+            else if (!str_cmp(colname, "level"))
+            {
                 ch->level = sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "accountId")) {
-                if (acc->id != sql_column_int(stmt, i)) {
+            }
+            else if (!str_cmp(colname, "accountId"))
+            {
+                if (acc->id != sql_column_int(stmt, i))
+                {
                     log_error
                     ("sql retrieved invalid player for account");
                     break;
                 }
                 LINK(acc->players, ch, next);
-            } else if (!str_cmp(colname, "characterId")) {
+            }
+            else if (!str_cmp(colname, "characterId"))
+            {
                 ch->charId = sql_column_int(stmt, i);
             }
         }
     }
     while (sql_step(stmt) != SQL_DONE);
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("unable to finalize statement");
     }
     return 1;
@@ -351,42 +372,55 @@ int load_account_forums(Account * acc)
                       PRId64,
                       acc->id);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
         log_data("could not prepare sql statement");
         return 0;
     }
-    if (sql_step(stmt) == SQL_DONE) {
+    if (sql_step(stmt) == SQL_DONE)
+    {
         if (sql_finalize(stmt) != SQL_OK)
             log_data("could not finalize sql statement");
         return 0;
     }
-    do {
+    do
+    {
         int i, cols = sql_column_count(stmt);
 
         AccountForum f;
 
-        for (i = 0; i < cols; i++) {
+        for (i = 0; i < cols; i++)
+        {
             const char *colname = sql_column_name(stmt, i);
-            if (!str_cmp(colname, "timestamp")) {
+            if (!str_cmp(colname, "timestamp"))
+            {
                 f.lastNote = sql_column_int(stmt, i);
-            } else if (!str_cmp(colname, "unsubscribed")) {
+            }
+            else if (!str_cmp(colname, "unsubscribed"))
+            {
                 f.unsubscribed = sql_column_int(stmt, i) == 1;
-            } else if (!str_cmp(colname, "draft")) {
+            }
+            else if (!str_cmp(colname, "draft"))
+            {
                 f.draft = sql_column_str(stmt, i);
-            } else if (!str_cmp(colname, "forumId")) {
+            }
+            else if (!str_cmp(colname, "forumId"))
+            {
                 f.id = sql_column_int(stmt, i);
             }
         }
 
         int index = lookup_forum_by_id(f.id);
 
-        if (index != FORUM_ERROR) {
+        if (index != FORUM_ERROR)
+        {
             memcpy(&acc->forumData[index], &f, sizeof(f));
         }
     }
     while (sql_step(stmt) != SQL_DONE);
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
         log_data("unable to finalize statement");
     }
     return 1;

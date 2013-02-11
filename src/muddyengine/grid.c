@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -44,7 +44,8 @@ void grid_init_border(Border * border)
 static void grid_init_row(GridRow * row)
 {
 
-    for (int i = 0; i < row->columns; i++) {
+    for (int i = 0; i < row->columns; i++)
+    {
 
         GridCell *cell = &row->cells[i];
 
@@ -90,7 +91,8 @@ Grid *new_grid(int width, int columns)
 void destroy_grid(Grid * grid)
 {
 
-    for (int i = 0; i < grid->rowcount; i++) {
+    for (int i = 0; i < grid->rowcount; i++)
+    {
 
         free_mem(grid->rows[i].cells);
 
@@ -106,7 +108,8 @@ static void next_row(Grid * grid)
 
     grid->x = 0;
 
-    if (++grid->y >= grid->rowcount) {
+    if (++grid->y >= grid->rowcount)
+    {
 
         grid->rowcount++;
 
@@ -143,7 +146,8 @@ void grid_set_next_row(Grid * grid, int columns)
     row->cells =
         (GridCell *) realloc(row->cells, columns * sizeof(GridCell));
 
-    for (int i = grid->x; i < row->columns; i++) {
+    for (int i = grid->x; i < row->columns; i++)
+    {
 
         GridCell *cell = &row->cells[i];
 
@@ -207,7 +211,8 @@ grid_set(Grid * grid, int x, int y, align_t align, int colspan,
 
     cell->span = UMAX(1, colspan);
 
-    if (border) {
+    if (border)
+    {
 
         cell->border.flags = border->flags;
 
@@ -219,7 +224,8 @@ grid_set(Grid * grid, int x, int y, align_t align, int colspan,
                 sizeof(cell->border.color));
 
     }
-    if (color) {
+    if (color)
+    {
 
         strncpy(cell->color, color, sizeof(cell->color));
 
@@ -290,10 +296,12 @@ void grid_print(Grid * grid, Character * ch)
 
     Buffer *buf = new_buf();
 
-    for (int i = 0; i < grid->rowcount; i++) {
+    for (int i = 0; i < grid->rowcount; i++)
+    {
 
         for (int j = 0; j < grid->rows[i].columns;
-                j += grid->rows[i].cells[j].span) {
+                j += grid->rows[i].cells[j].span)
+        {
 
             GridRow *row = &grid->rows[i];
 
@@ -304,7 +312,8 @@ void grid_print(Grid * grid, Character * ch)
             int width_adjust =
                 cell->left_margin + cell->right_margin;
 
-            if (border->flags & BORDER_LEFT) {
+            if (border->flags & BORDER_LEFT)
+            {
 
                 writef(buf, "%s%c~x", border->color,
                        border->vertical);
@@ -312,12 +321,14 @@ void grid_print(Grid * grid, Character * ch)
                 width_adjust++;
 
             }
-            if (cell->left_margin > 0) {
+            if (cell->left_margin > 0)
+            {
 
                 writef(buf, "%*s", cell->left_margin, " ");
 
             }
-            if (border->flags & BORDER_RIGHT) {
+            if (border->flags & BORDER_RIGHT)
+            {
 
                 width_adjust++;
 
@@ -325,7 +336,8 @@ void grid_print(Grid * grid, Character * ch)
             int colwidth =
                 (row->columnsize * cell->span) - (width_adjust);
 
-            if (j + cell->span >= row->columns) {
+            if (j + cell->span >= row->columns)
+            {
 
                 int loss =
                     (grid->width -
@@ -340,12 +352,14 @@ void grid_print(Grid * grid, Character * ch)
                                &border->horizontal : 0,
                                cell->value));
 
-            if (cell->right_margin > 0) {
+            if (cell->right_margin > 0)
+            {
 
                 writef(buf, "%*s", cell->right_margin, " ");
 
             }
-            if (border->flags & BORDER_RIGHT) {
+            if (border->flags & BORDER_RIGHT)
+            {
 
                 writef(buf, "%s%c~x", border->color,
                        border->vertical);

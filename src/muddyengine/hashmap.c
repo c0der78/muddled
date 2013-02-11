@@ -15,11 +15,13 @@ static unsigned long isPrime(identifier_t val)
     int i;
     identifier_t a, p, exp;
 
-    for (i = 9; i--;) {
+    for (i = 9; i--;)
+    {
         a = (rand() % (val - 4)) + 2;
         p = 1;
         exp = val - 1;
-        while (exp) {
+        while (exp)
+        {
             if (exp & 1)
                 p = (p * a) % val;
 
@@ -50,10 +52,10 @@ static unsigned long findPrimeGreaterThan(unsigned long val)
 static void rehash(hashmap * hm)
 {
     long size = hm->size;
-    hEntry *table = hm->table;
+    hash_entry *table = hm->table;
 
     hm->size = findPrimeGreaterThan(size << 1);
-    hm->table = (hEntry *) calloc(sizeof(hEntry), hm->size);
+    hm->table = (hash_entry *) calloc(sizeof(hash_entry), hm->size);
     hm->count = 0;
 
     while (--size >= 0)
@@ -71,7 +73,8 @@ static unsigned long hash_key(const char *str)
     unsigned long hash = 5381;
     int c;
 
-    while ((c = *str++)) {
+    while ((c = *str++))
+    {
         hash = ((hash << 5) + hash) + c;
     }
     return hash;
@@ -86,7 +89,7 @@ hashmap *new_hashmap(long startsize)
     else
         startsize = findPrimeGreaterThan(startsize - 2);
 
-    hm->table = (hEntry *) calloc(sizeof(hEntry), startsize);
+    hm->table = (hash_entry *) calloc(sizeof(hash_entry), startsize);
     hm->size = startsize;
     hm->count = 0;
 
@@ -95,9 +98,11 @@ hashmap *new_hashmap(long startsize)
 
 void hm_foreach(hashmap * hash, void (*foreach) (void *data))
 {
-    if (hash->count) {
+    if (hash->count)
+    {
 
-        for (int i = 0; i < hash->size; i++) {
+        for (int i = 0; i < hash->size; i++)
+        {
             if (!hash->table[i].data)
                 break;
 
@@ -110,7 +115,8 @@ void *hm_start(hashmap * hm)
 {
     hm->pos = 0;
 
-    if (hm->pos < hm->size) {
+    if (hm->pos < hm->size)
+    {
         return hm->table[hm->pos].data;
     }
     return 0;
@@ -141,17 +147,23 @@ void hm_insert(hashmap * hash, const void *data, identifier_t key)
     if (hash->size <= hash->count)
         rehash(hash);
 
-    do {
+    do
+    {
         index = key % hash->size;
         step = (key % (hash->size - 2)) + 1;
 
-        for (i = 0; i < hash->size; i++) {
-            if (hash->table[index].flags & ACTIVE) {
-                if (hash->table[index].key == key) {
+        for (i = 0; i < hash->size; i++)
+        {
+            if (hash->table[index].flags & ACTIVE)
+            {
+                if (hash->table[index].key == key)
+                {
                     hash->table[index].data = (void *)data;
                     return;
                 }
-            } else {
+            }
+            else
+            {
                 hash->table[index].flags |= ACTIVE;
                 hash->table[index].data = (void *)data;
                 hash->table[index].key = key;
@@ -184,17 +196,23 @@ void *hm_remove(hashmap * hash, identifier_t key)
     index = key % hash->size;
     step = (key % (hash->size - 2)) + 1;
 
-    for (i = 0; i < hash->size; i++) {
-        if (hash->table[index].data) {
-            if (hash->table[index].key == key) {
-                if (hash->table[index].flags & ACTIVE) {
+    for (i = 0; i < hash->size; i++)
+    {
+        if (hash->table[index].data)
+        {
+            if (hash->table[index].key == key)
+            {
+                if (hash->table[index].flags & ACTIVE)
+                {
                     hash->table[index].flags &= ~ACTIVE;
                     --hash->count;
                     return hash->table[index].data;
-                } else	/* in, but not active (i.e. deleted) */
+                }
+                else	/* in, but not active (i.e. deleted) */
                     return 0;
             }
-        } else		/* found an empty place (can't be in) */
+        }
+        else		/* found an empty place (can't be in) */
             return 0;
 
         index = (index + step) % hash->size;
@@ -212,17 +230,21 @@ void *sm_get(hashmap * hash, const char *key)
 
 void *hm_get(hashmap * hash, identifier_t key)
 {
-    if (hash->count) {
+    if (hash->count)
+    {
         identifier_t index, i, step;
         index = key % hash->size;
         step = (key % (hash->size - 2)) + 1;
 
-        for (i = 0; i < hash->size; i++) {
-            if (hash->table[index].key == key) {
+        for (i = 0; i < hash->size; i++)
+        {
+            if (hash->table[index].key == key)
+            {
                 if (hash->table[index].flags & ACTIVE)
                     return hash->table[index].data;
                 break;
-            } else if (!hash->table[index].data)
+            }
+            else if (!hash->table[index].data)
                 break;
 
             index = (index + step) % hash->size;

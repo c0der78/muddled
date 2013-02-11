@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -105,10 +105,12 @@ int interpret_social(Character * ch, const char *command, const char *argument)
 
     Social *soc;
 
-    for (soc = first_social; soc != 0; soc = soc->next) {
+    for (soc = first_social; soc != 0; soc = soc->next)
+    {
 
         if (UPPER(command[0]) == UPPER(soc->name[0])
-                && !str_prefix(command, soc->name)) {
+                && !str_prefix(command, soc->name))
+        {
 
             break;
 
@@ -118,7 +120,8 @@ int interpret_social(Character * ch, const char *command, const char *argument)
     if (soc == 0)
         return 0;
 
-    if (ch->position > soc->minPosition) {
+    if (ch->position > soc->minPosition)
+    {
 
         writelnf(ch, "You can't do that while your %s.",
                  position_table[ch->position].name);
@@ -130,7 +133,8 @@ int interpret_social(Character * ch, const char *command, const char *argument)
 
     victim = NULL;
 
-    if (arg[0] == 0) {
+    if (arg[0] == 0)
+    {
 
         act_pos(TO_ROOM, soc->minPosition, ch, NULL, victim,
                 soc->othersNoArg);
@@ -138,11 +142,15 @@ int interpret_social(Character * ch, const char *command, const char *argument)
         act_pos(TO_CHAR, soc->minPosition, ch, NULL, victim,
                 soc->charNoArg);
 
-    } else if ((victim = get_char_room(ch, arg)) == NULL) {
+    }
+    else if ((victim = get_char_room(ch, arg)) == NULL)
+    {
 
         writeln(ch, "They aren't here.");
 
-    } else if (victim == ch) {
+    }
+    else if (victim == ch)
+    {
 
         act_pos(TO_ROOM, soc->minPosition, ch, NULL, victim,
                 soc->othersAuto);
@@ -150,7 +158,9 @@ int interpret_social(Character * ch, const char *command, const char *argument)
         act_pos(TO_CHAR, soc->minPosition, ch, NULL, victim,
                 soc->charAuto);
 
-    } else {
+    }
+    else
+    {
 
         act_pos(TO_NOTVICT, soc->minPosition, ch, NULL, victim,
                 soc->othersFound);
@@ -161,9 +171,11 @@ int interpret_social(Character * ch, const char *command, const char *argument)
         act_pos(TO_VICT, soc->minPosition, ch, NULL, victim,
                 soc->victFound);
 
-        if (!ch->npc && victim->npc && victim->position < POS_SLEEPING) {
+        if (!ch->npc && victim->npc && victim->position < POS_SLEEPING)
+        {
 
-            switch (number_bits(4)) {
+            switch (number_bits(4))
+            {
 
             case 0:
 
@@ -231,86 +243,116 @@ int load_socials()
 
     int len = sprintf(buf, "select * from social");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
         return 0;
 
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
 
         int count = sql_column_count(stmt);
 
         Social *soc = new_social();
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
 
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "name")) {
+            if (!str_cmp(colname, "name"))
+            {
 
                 soc->name = str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "charNoArg")) {
+            }
+            else if (!str_cmp(colname, "charNoArg"))
+            {
 
                 soc->charNoArg =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "othersNoArg")) {
+            }
+            else if (!str_cmp(colname, "othersNoArg"))
+            {
 
                 soc->othersNoArg =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "charFound")) {
+            }
+            else if (!str_cmp(colname, "charFound"))
+            {
 
                 soc->charFound =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "othersFound")) {
+            }
+            else if (!str_cmp(colname, "othersFound"))
+            {
 
                 soc->othersFound =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "victFound")) {
+            }
+            else if (!str_cmp(colname, "victFound"))
+            {
 
                 soc->victFound =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "charNotFound")) {
+            }
+            else if (!str_cmp(colname, "charNotFound"))
+            {
 
                 soc->charNotFound =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "charAuto")) {
+            }
+            else if (!str_cmp(colname, "charAuto"))
+            {
 
                 soc->charAuto =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "othersAuto")) {
+            }
+            else if (!str_cmp(colname, "othersAuto"))
+            {
 
                 soc->othersAuto =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "charObjFound")) {
+            }
+            else if (!str_cmp(colname, "charObjFound"))
+            {
 
                 soc->charObjFound =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "othersObjFound")) {
+            }
+            else if (!str_cmp(colname, "othersObjFound"))
+            {
 
                 soc->othersObjFound =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "socialId")) {
+            }
+            else if (!str_cmp(colname, "socialId"))
+            {
 
                 soc->id = sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "minPosition")) {
+            }
+            else if (!str_cmp(colname, "minPosition"))
+            {
 
                 soc->minPosition = sql_column_int(stmt, i);
 
-            } else {
+            }
+            else
+            {
 
                 log_warn("unknown social column '%s'", colname);
 
@@ -324,7 +366,8 @@ int load_socials()
 
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
 
         log_data("could not finalize statement");
 
@@ -335,7 +378,8 @@ int load_socials()
 
 int save_social(Social * soc)
 {
-    field_map social_values[] = {
+    field_map social_values[] =
+    {
         {"name", &soc->name, SQL_TEXT},
         {"charNoArg", &soc->charNoArg, SQL_TEXT},
         {"othersNoArg", &soc->othersNoArg, SQL_TEXT},
@@ -351,16 +395,21 @@ int save_social(Social * soc)
         {0}
     };
 
-    if (soc->id == 0) {
-        if (sql_insert_query(social_values, "social") != SQL_OK) {
+    if (soc->id == 0)
+    {
+        if (sql_insert_query(social_values, "social") != SQL_OK)
+        {
             log_data("could not insert social");
             return 0;
         }
         soc->id = db_last_insert_rowid();
 
-    } else {
+    }
+    else
+    {
         if (sql_update_query(social_values, "social", soc->id) !=
-                SQL_OK) {
+                SQL_OK)
+        {
             log_data("could not update social");
             return 0;
         }
@@ -375,7 +424,8 @@ void save_socials()
 
     db_begin_transaction();
 
-    for (Social * soc = first_social; soc; soc = soc->next) {
+    for (Social * soc = first_social; soc; soc = soc->next)
+    {
 
         save_social(soc);
 
@@ -388,20 +438,25 @@ void save_socials()
 Social *social_lookup(const char *arg)
 {
 
-    if (is_number(arg)) {
+    if (is_number(arg))
+    {
 
         int id = atoi(arg);
 
-        for (Social * soc = first_social; soc; soc = soc->next) {
+        for (Social * soc = first_social; soc; soc = soc->next)
+        {
 
             if (soc->id == id)
                 return soc;
 
         }
 
-    } else {
+    }
+    else
+    {
 
-        for (Social * soc = first_social; soc; soc = soc->next) {
+        for (Social * soc = first_social; soc; soc = soc->next)
+        {
 
             if (!str_prefix(arg, soc->name))
                 return soc;

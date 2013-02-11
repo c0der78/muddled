@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -64,14 +64,16 @@ int load_hints()
 
     int len = sprintf(buf, "select count(*) from hint");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
         return 0;
 
     }
-    if (sql_step(stmt) == SQL_DONE) {
+    if (sql_step(stmt) == SQL_DONE)
+    {
 
         log_data("could not count hints");
 
@@ -80,7 +82,8 @@ int load_hints()
     }
     max_hint = sql_column_int(stmt, 0);
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
 
         log_data("could not finalize statement");
 
@@ -89,36 +92,46 @@ int load_hints()
 
     len = sprintf(buf, "select * from hint");
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
 
         log_data("could not prepare statement");
 
         return 0;
 
     }
-    while (sql_step(stmt) != SQL_DONE) {
+    while (sql_step(stmt) != SQL_DONE)
+    {
 
         int count = sql_column_count(stmt);
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
 
             const char *colname = sql_column_name(stmt, i);
 
-            if (!str_cmp(colname, "text")) {
+            if (!str_cmp(colname, "text"))
+            {
 
                 hint_table[total].text =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "hintId")) {
+            }
+            else if (!str_cmp(colname, "hintId"))
+            {
 
                 hint_table[total].id = sql_column_int(stmt, i);
 
-            } else if (!str_cmp(colname, "level")) {
+            }
+            else if (!str_cmp(colname, "level"))
+            {
 
                 hint_table[total].level =
                     sql_column_int(stmt, i);
 
-            } else {
+            }
+            else
+            {
 
                 log_warn("unknown hint column '%s'", colname);
 
@@ -130,12 +143,14 @@ int load_hints()
 
     }
 
-    if (sql_finalize(stmt) != SQL_OK) {
+    if (sql_finalize(stmt) != SQL_OK)
+    {
 
         log_data("could not finalize statement");
 
     }
-    if (total != max_hint) {
+    if (total != max_hint)
+    {
 
         log_warn("counted hints did not match number read");
 
@@ -146,14 +161,17 @@ int load_hints()
 
 int save_hint(Hint * hint)
 {
-    field_map hint_values[] = {
+    field_map hint_values[] =
+    {
         {"text", &hint->text, SQL_TEXT},
         {"level", &hint->level, SQL_INT},
         {0}
     };
 
-    if (hint->id == 0) {
-        if (sql_insert_query(hint_values, "hint") != SQL_OK) {
+    if (hint->id == 0)
+    {
+        if (sql_insert_query(hint_values, "hint") != SQL_OK)
+        {
 
             log_data("could not insert hint");
 
@@ -162,9 +180,12 @@ int save_hint(Hint * hint)
         }
         hint->id = db_last_insert_rowid();
 
-    } else {
+    }
+    else
+    {
 
-        if (sql_update_query(hint_values, "hint", hint->id) != SQL_OK) {
+        if (sql_update_query(hint_values, "hint", hint->id) != SQL_OK)
+        {
 
             log_data("could not update hint");
 

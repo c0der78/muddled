@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,7 +22,7 @@
 #ifndef NONPLAYER_H
 #define NONPLAYER_H
 
-typedef struct NPC NPC;
+typedef struct npc NPC;
 
 #include <muddyengine/character.h>
 #include <muddyengine/area.h>
@@ -32,7 +32,8 @@ typedef struct NPC NPC;
 #define DICE_BONUS			2
 #define MAX_DICE			3
 
-struct NPC {
+struct npc
+{
     const char *shortDescr;
     const char *longDescr;
     position_t startPosition;
@@ -43,7 +44,8 @@ struct NPC {
     int hit[MAX_DICE];
 };
 
-enum {
+enum
+{
     NPC_SENTINEL,
     NPC_SCAVENGER,
     NPC_AGGRESSIVE,

@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -21,7 +21,7 @@
 #ifndef SKILL_H
 #define SKILL_H
 
-typedef struct Skill Skill;
+typedef struct skill Skill;
 
 #include <muddyengine/character.h>
 
@@ -31,7 +31,8 @@ typedef void SpellFun(int, Character *);
 
 #include <muddyengine/flag.h>
 
-struct Skill {
+struct skill
+{
     identifier_t id;
     const char *name;
     int *levels;
@@ -47,12 +48,14 @@ struct Skill {
     Flag flags;
 };
 
-struct gsn_type {
+struct gsn_type
+{
     int *pgsn;
     const char *name;
 };
 
-struct spellfun_type {
+struct spellfun_type
+{
     SpellFun *fun;
     const char *name;
 };

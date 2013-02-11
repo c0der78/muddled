@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -68,7 +68,8 @@ void area_edit_list(Client * conn)
 
     int count = 0;
 
-    for (Area * area = first_area; area != 0; area = area->next) {
+    for (Area * area = first_area; area != 0; area = area->next)
+    {
 
         writelnf(conn, "%2d) %12.12s ", area->id, area->name);
 
@@ -89,21 +90,24 @@ void area_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         finish_editing(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "list")) {
+    if (!str_cmp(arg, "list"))
+    {
 
         area_edit_list(conn);
 
@@ -112,7 +116,8 @@ void area_editor(Client * conn, const char *argument)
     }
     Area *area = (Area *) conn->editing->data;
 
-    if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save"))
+    {
 
         save_area(area);
 
@@ -121,9 +126,11 @@ void area_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "name"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn, "~CYou must provide a name to set.~x");
 
@@ -137,7 +144,8 @@ void area_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "B") || !str_cmp(arg, "flags")) {
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "flags"))
+    {
 
         if (edit_flag("flags", conn, area->flags, argument, area_flags))
             conn->editing->show(conn);

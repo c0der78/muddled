@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -31,7 +31,8 @@
 #include <muddyengine/class.h>
 #include <muddyengine/channel.h>
 
-const Lookup dam_types[] = {
+const Lookup dam_types[] =
+{
     {"bash", DAM_BASH},
     {"pierce", DAM_PIERCE},
     {"slash", DAM_SLASH},
@@ -61,7 +62,8 @@ dam_message(Character * ch, Character * victim, long dam, int dt, dam_t type)
                           && dt <
                           max_skill) ? skill_table[dt].damage : "attack";
 
-    if (dam <= 0) {
+    if (dam <= 0)
+    {
 
         act(TO_CHAR, ch, attack, victim, "Your $t misses $N!");
 
@@ -69,7 +71,9 @@ dam_message(Character * ch, Character * victim, long dam, int dt, dam_t type)
 
         act(TO_NOTVICT, ch, attack, victim, "$n's $t misses $N!");
 
-    } else {
+    }
+    else
+    {
 
         actf(TO_CHAR, ch, attack, victim,
              "Your $t hits $N for %ld damage!", dam);
@@ -98,7 +102,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * compute the base exp
      */
-    switch (level_range) {
+    switch (level_range)
+    {
 
     default:
         base_exp = 0;
@@ -182,7 +187,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * monster is more good than slayer
      */
-    if (align > 500) {
+    if (align > 500)
+    {
 
         change =
             (align - 500) * base_exp / 500 * gch->level / total_levels;
@@ -195,7 +201,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * monster is more evil than slayer
      */
-    else if (align < -500) {
+    else if (align < -500)
+    {
 
         change =
             (-1 * align -
@@ -209,7 +216,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * //improve this someday
      */
-    else {
+    else
+    {
 
         change =
             gch->alignment * base_exp / 500 * gch->level / total_levels;
@@ -229,7 +237,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * for goodie two shoes
      */
-    if (gch->alignment > 500) {
+    if (gch->alignment > 500)
+    {
 
         if (victim->alignment < -750)
             xp = (base_exp * 4) / 3;
@@ -255,7 +264,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
      * for baddies
      */
 
-    else if (gch->alignment < -500) {
+    else if (gch->alignment < -500)
+    {
         if (victim->alignment > 750)
             xp = (base_exp * 5) / 4;
 
@@ -279,7 +289,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * a little good
      */
-    else if (gch->alignment > 200) {
+    else if (gch->alignment > 200)
+    {
 
         if (victim->alignment < -500)
             xp = (base_exp * 6) / 5;
@@ -297,7 +308,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * a little bad
      */
-    else if (gch->alignment < -200) {
+    else if (gch->alignment < -200)
+    {
 
         if (victim->alignment > 500)
             xp = (base_exp * 6) / 5;
@@ -315,7 +327,8 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
     /*
      * neutral
      */
-    else {
+    else
+    {
 
         if (victim->alignment > 500 || victim->alignment < -500)
             xp = (base_exp * 4) / 3;
@@ -433,7 +446,8 @@ void advance_level(Character * ch, bool hide)
 
     ch->pc->permMove += add_move;
 
-    if (!hide) {
+    if (!hide)
+    {
 
         writelnf(ch,
                  "You gain %d hit point%s, %d mana, %d move.",
@@ -456,7 +470,8 @@ void gain_exp(Character * ch, long gain)
 
     ch->pc->experience = UMAX(tolvl, ch->pc->experience + gain);
 
-    while (ch->level < MAX_PLAYABLE_LEVEL && ch->pc->experience >= tolvl) {
+    while (ch->level < MAX_PLAYABLE_LEVEL && ch->pc->experience >= tolvl)
+    {
 
         writeln(ch, "You raise a level!!  ");
 
@@ -470,7 +485,8 @@ void gain_exp(Character * ch, long gain)
 
     }
 
-    if (ch->level != oldlevel) {
+    if (ch->level != oldlevel)
+    {
 
         announce(ch, INFO_LEVEL, "$n has attained level %d!",
                  ch->level);
@@ -488,7 +504,8 @@ bool damage(Character * ch, Character * victim, long dam, int dt, dam_t type)
 
     victim->hit -= dam;
 
-    if (victim->hit <= 0) {
+    if (victim->hit <= 0)
+    {
 
         act(TO_CHAR, ch, NULL, victim, "~R$N is DEAD!~x");
 
@@ -504,13 +521,16 @@ bool damage(Character * ch, Character * victim, long dam, int dt, dam_t type)
 
         gain_exp(ch, xp);
 
-        if (victim->pc == 0) {
+        if (victim->pc == 0)
+        {
 
             char_from_room(victim);
 
             extract_char(victim, true);
 
-        } else {
+        }
+        else
+        {
 
             victim->fighting = 0;
 
@@ -554,7 +574,8 @@ void one_hit(Character * ch, Character * victim, int dt, dam_t type)
 
     while ((diceroll = number_bits(5)) >= 20) ;
 
-    if (diceroll == 0 || (diceroll != 19 && diceroll < thac0 - victim_ac)) {
+    if (diceroll == 0 || (diceroll != 19 && diceroll < thac0 - victim_ac))
+    {
 
         damage(ch, victim, 0, dt, type);
 

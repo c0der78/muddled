@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -87,7 +87,8 @@ void social_edit_list(Client * conn)
 
     int count = 0;
 
-    for (Social * social = first_social; social != 0; social = social->next) {
+    for (Social * social = first_social; social != 0; social = social->next)
+    {
 
         writef(conn, "%2d) %-12.12s ", social->id, social->name);
 
@@ -108,21 +109,24 @@ void social_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (nullstr(arg) || arg[0] == '?') {
+    if (nullstr(arg) || arg[0] == '?')
+    {
 
         olc_syntax(conn, 0);
 
         return;
 
     }
-    if (!str_cmp(arg, "Q") || !str_cmp(arg, "quit")) {
+    if (!str_cmp(arg, "Q") || !str_cmp(arg, "quit"))
+    {
 
         finish_editing(conn);
 
         return;
 
     }
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
@@ -131,7 +135,8 @@ void social_editor(Client * conn, const char *argument)
     }
     Social *social = (Social *) conn->editing->data;
 
-    if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save"))
+    {
 
         save_social(social);
 
@@ -140,14 +145,16 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "list")) {
+    if (!str_cmp(arg, "list"))
+    {
 
         social_edit_list(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "A") || !str_cmp(arg, "name")) {
+    if (!str_cmp(arg, "A") || !str_cmp(arg, "name"))
+    {
 
         free_str(social->name);
 
@@ -158,7 +165,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "B") || !str_cmp(arg, "charnoarg")) {
+    if (!str_cmp(arg, "B") || !str_cmp(arg, "charnoarg"))
+    {
 
         free_str(social->charNoArg);
 
@@ -169,7 +177,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "C") || !str_cmp(arg, "othersnoarg")) {
+    if (!str_cmp(arg, "C") || !str_cmp(arg, "othersnoarg"))
+    {
 
         free_str(social->othersNoArg);
 
@@ -180,7 +189,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "D") || !str_cmp(arg, "charfound")) {
+    if (!str_cmp(arg, "D") || !str_cmp(arg, "charfound"))
+    {
 
         free_str(social->charFound);
 
@@ -191,7 +201,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "E") || !str_cmp(arg, "othersfound")) {
+    if (!str_cmp(arg, "E") || !str_cmp(arg, "othersfound"))
+    {
 
         free_str(social->othersFound);
 
@@ -202,7 +213,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "F") || !str_cmp(arg, "victfound")) {
+    if (!str_cmp(arg, "F") || !str_cmp(arg, "victfound"))
+    {
 
         free_str(social->name);
 
@@ -213,7 +225,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "G") || !str_cmp(arg, "charnotfound")) {
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "charnotfound"))
+    {
 
         free_str(social->charNotFound);
 
@@ -224,7 +237,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "H") || !str_cmp(arg, "charauto")) {
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "charauto"))
+    {
 
         free_str(social->charAuto);
 
@@ -235,7 +249,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "I") || !str_cmp(arg, "othersAuto")) {
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "othersAuto"))
+    {
 
         free_str(social->othersAuto);
 
@@ -246,7 +261,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "J") || !str_cmp(arg, "charobjfound")) {
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "charobjfound"))
+    {
 
         free_str(social->charObjFound);
 
@@ -257,7 +273,8 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "K") || !str_cmp(arg, "othersobjfound")) {
+    if (!str_cmp(arg, "K") || !str_cmp(arg, "othersobjfound"))
+    {
 
         free_str(social->othersObjFound);
 
@@ -268,11 +285,13 @@ void social_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "L") || !str_cmp(arg, "minposition")) {
+    if (!str_cmp(arg, "L") || !str_cmp(arg, "minposition"))
+    {
 
         long val = value_lookup(position_table, argument);
 
-        if (val == -1) {
+        if (val == -1)
+        {
 
             writelnf(conn, "~CValid positions are: ~W%s~x",
                      lookup_names(position_table));

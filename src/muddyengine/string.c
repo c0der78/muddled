@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -39,7 +39,8 @@ int match(const char *string, const char *pattern)
 
     regex_t re;
 
-    if (regcomp(&re, pattern, REG_EXTENDED | REG_NOSUB) != 0) {
+    if (regcomp(&re, pattern, REG_EXTENDED | REG_NOSUB) != 0)
+    {
 
         return 0;
 
@@ -48,7 +49,8 @@ int match(const char *string, const char *pattern)
 
     regfree(&re);
 
-    if (status != 0) {
+    if (status != 0)
+    {
 
         return 0;
 
@@ -76,17 +78,20 @@ char *trim(char *b)
 bool str_cmp(const char *astr, const char *bstr)
 {
 
-    if (astr == NULL) {
+    if (astr == NULL)
+    {
 
         return true;
 
     }
-    if (bstr == NULL) {
+    if (bstr == NULL)
+    {
 
         return true;
 
     }
-    for (; *astr || *bstr; astr++, bstr++) {
+    for (; *astr || *bstr; astr++, bstr++)
+    {
 
         if (LOWER(*astr) != LOWER(*bstr))
             return true;
@@ -105,17 +110,20 @@ bool str_cmp(const char *astr, const char *bstr)
 bool str_prefix(const char *astr, const char *bstr)
 {
 
-    if (astr == NULL || !*astr) {
+    if (astr == NULL || !*astr)
+    {
 
         return true;
 
     }
-    if (bstr == NULL) {
+    if (bstr == NULL)
+    {
 
         return true;
 
     }
-    for (; *astr; astr++, bstr++) {
+    for (; *astr; astr++, bstr++)
+    {
 
         if (LOWER(*astr) != LOWER(*bstr))
             return true;
@@ -149,7 +157,8 @@ bool str_infix(const char *astr, const char *bstr)
 
     sstr2 = strlen(bstr);
 
-    for (ichar = 0; ichar <= sstr2 - sstr1; ichar++) {
+    for (ichar = 0; ichar <= sstr2 - sstr1; ichar++)
+    {
 
         if (c0 == LOWER(bstr[ichar]) && !str_prefix(astr, bstr + ichar))
             return false;
@@ -206,7 +215,8 @@ bool is_name(const char *str, const char *namelist)
     /*
      * we need ALL parts of string to match part of namelist
      */
-    for (;;) {		/* start parsing string */
+    for (;;)  		/* start parsing string */
+    {
 
         str = one_argument(str, part);
 
@@ -218,7 +228,8 @@ bool is_name(const char *str, const char *namelist)
          */
         list = namelist;
 
-        for (;;) {	/* start parsing namelist */
+        for (;;)  	/* start parsing namelist */
+        {
 
             list = one_argument(list, name);
 
@@ -245,7 +256,8 @@ bool is_exact_name(const char *str, const char *namelist)
     if (namelist == NULL)
         return false;
 
-    for (;;) {
+    for (;;)
+    {
 
         namelist = one_argument(namelist, name);
 
@@ -264,7 +276,8 @@ const char *stristr(const char *String, const char *Pattern)
 
     const char *pptr, *sptr, *start;
 
-    for (start = String; *start != 0; start++) {
+    for (start = String; *start != 0; start++)
+    {
 
         /*
          * find start of pattern in string
@@ -280,7 +293,8 @@ const char *stristr(const char *String, const char *Pattern)
 
         sptr = start;
 
-        while (toupper((int)*sptr) == toupper((int)*pptr)) {
+        while (toupper((int)*sptr) == toupper((int)*pptr))
+        {
 
             sptr++;
 
@@ -344,14 +358,16 @@ const char *str_replace_all(const char *orig, const char *old,
 
     size_t len;
 
-    if (!strstr(orig, old) || !str_cmp(old, newstr)) {
+    if (!strstr(orig, old) || !str_cmp(old, newstr))
+    {
 
         return orig;
 
     }
     len = strlen(newstr);
 
-    while ((ptr = strstr(orig, old)) && (ptr - orig) + len < (OUT_SIZ - 4)) {
+    while ((ptr = strstr(orig, old)) && (ptr - orig) + len < (OUT_SIZ - 4))
+    {
 
         orig = str_replace(orig, old, newstr);
 
@@ -404,7 +420,8 @@ const char *str_ireplace_all(const char *orig, const char *old,
 
     size_t len;
 
-    if (!stristr(orig, old) || !str_cmp(old, newstr)) {
+    if (!stristr(orig, old) || !str_cmp(old, newstr))
+    {
 
         return orig;
 
@@ -412,7 +429,8 @@ const char *str_ireplace_all(const char *orig, const char *old,
     len = strlen(newstr);
 
     while ((ptr = stristr(orig, old))
-            && (ptr - orig) + len < (OUT_SIZ - 4)) {
+            && (ptr - orig) + len < (OUT_SIZ - 4))
+    {
 
         orig = str_ireplace(orig, old, newstr);
 
@@ -458,7 +476,8 @@ const char *str_dup(const char *str)
 
     char *p = alloc_mem(1, strlen(str) + 1);
 
-    if (p) {
+    if (p)
+    {
         strcpy(p, str);
     }
     return p;
@@ -501,12 +520,15 @@ bool is_valid_email(const char *address)
     /*
      * first we validate the name portion (name@domain)
      */
-    for (c = address; *c; c++) {
+    for (c = address; *c; c++)
+    {
 
         if (*c == '\"'
-                && (c == address || *(c - 1) == '.' || *(c - 1) == '\"')) {
+                && (c == address || *(c - 1) == '.' || *(c - 1) == '\"'))
+        {
 
-            while (*++c) {
+            while (*++c)
+            {
 
                 if (*c == '\"')
                     break;
@@ -551,9 +573,11 @@ bool is_valid_email(const char *address)
     if (!*(domain = ++c))
         return 0;
 
-    do {
+    do
+    {
 
-        if (*c == '.') {
+        if (*c == '.')
+        {
 
             if (c == domain || *(c - 1) == '.')
                 return 0;
@@ -588,9 +612,11 @@ int is_number(const char *arg)
     if (*arg == '+' || *arg == '-')
         arg++;
 
-    for (; *arg != 0; arg++) {
+    for (; *arg != 0; arg++)
+    {
 
-        if (*arg == '.') {
+        if (*arg == '.')
+        {
 
             precision = true;
 
@@ -609,7 +635,8 @@ int is_number(const char *arg)
 const char *get_line(const char *str, char *buf)
 {
 
-    while (str && *str != 0) {
+    while (str && *str != 0)
+    {
 
         if (*str == '\n')
             break;
@@ -618,7 +645,8 @@ const char *get_line(const char *str, char *buf)
 
     }
 
-    if (str && *str != 0) {
+    if (str && *str != 0)
+    {
 
         if (*(++str) == '\r')
             str++;
@@ -635,7 +663,8 @@ int count_lines(const char *pstr)
 
     int count = 0;
 
-    while (pstr && *pstr) {
+    while (pstr && *pstr)
+    {
 
         if (*pstr == '\n')
             count++;
@@ -667,21 +696,26 @@ const char *first_arg(const char *argument, char *arg_first, bool fCase)
     cEnd = ' ';
 
     if (*argument == '\'' || *argument == '"'
-            || *argument == '%' || *argument == '(') {
+            || *argument == '%' || *argument == '(')
+    {
 
-        if (*argument == '(') {
+        if (*argument == '(')
+        {
 
             cEnd = ')';
 
             argument++;
 
-        } else
+        }
+        else
             cEnd = *argument++;
 
     }
-    while (*argument != '\0') {
+    while (*argument != '\0')
+    {
 
-        if (*argument == cEnd) {
+        if (*argument == cEnd)
+        {
 
             argument++;
 
@@ -720,9 +754,11 @@ const char *strip_color(const char *str)
 
     char *res = out[i];
 
-    for (const char *pstr = str; *pstr != 0; pstr++) {
+    for (const char *pstr = str; *pstr != 0; pstr++)
+    {
 
-        if (*pstr != COLOR_CODE) {
+        if (*pstr != COLOR_CODE)
+        {
 
             *res++ = *pstr;
 
@@ -752,9 +788,11 @@ int strlen_color(const char *str)
 
     int count = 0;
 
-    for (const char *pstr = str; *pstr != 0; pstr++) {
+    for (const char *pstr = str; *pstr != 0; pstr++)
+    {
 
-        if (*pstr != COLOR_CODE) {
+        if (*pstr != COLOR_CODE)
+        {
 
             count++;
 
@@ -814,7 +852,8 @@ static const char *fill_str_len(const char *src, size_t len)
 
     count = 0;
 
-    for (c = 0; c < len; c++) {
+    for (c = 0; c < len; c++)
+    {
 
         strcat(result, src);
 
@@ -822,9 +861,11 @@ static const char *fill_str_len(const char *src, size_t len)
 
     }
 
-    for (c = 0; c < sz && count < mod; c++, pos++) {
+    for (c = 0; c < sz && count < mod; c++, pos++)
+    {
 
-        if (src[c] == COLOR_CODE) {
+        if (src[c] == COLOR_CODE)
+        {
 
             result[pos++] = src[c++];
 
@@ -833,7 +874,9 @@ static const char *fill_str_len(const char *src, size_t len)
 
             result[pos] = src[c];
 
-        } else {
+        }
+        else
+        {
 
             result[pos] = src[c];
 
@@ -873,7 +916,8 @@ const char *align_string(align_t align, int width, const char *color,
 
     strcpy(result, color ? color : &str_empty[0]);
 
-    switch (align) {
+    switch (align)
+    {
 
     case ALIGN_RIGHT:
 
@@ -943,11 +987,14 @@ int strpos(const char *str, int width)
 
     int i = 0, count = 0;
 
-    for (i = 0; str[i] != 0; i++) {
+    for (i = 0; str[i] != 0; i++)
+    {
 
-        if (str[i] != COLOR_CODE) {
+        if (str[i] != COLOR_CODE)
+        {
 
-            if (++count >= width) {
+            if (++count >= width)
+            {
 
                 return i + 1;
 
@@ -1014,7 +1061,8 @@ const char *strupper(const char *str)
 
     char *pstr = buf[i];
 
-    while (*str) {
+    while (*str)
+    {
 
         *pstr++ = toupper((int)(*str++));
 
@@ -1056,7 +1104,8 @@ long x_argument(char c, const char *argument, char *arg)
 
     p = strchr(argument, c);
 
-    if (p == NULL) {
+    if (p == NULL)
+    {
 
         strcpy(arg, argument);
 

@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -87,7 +87,8 @@ void player_edit_list(Client * conn)
 
     int count = 0;
 
-    for (Character * vch = first_player; vch != 0; vch = vch->next_player) {
+    for (Character * vch = first_player; vch != 0; vch = vch->next_player)
+    {
 
         writelnf(conn, "%2d) %-12.12s ", vch->id, vch->name);
 
@@ -108,14 +109,16 @@ void player_editor(Client * conn, const char *argument)
 
     argument = one_argument(argument, arg);
 
-    if (!str_prefix(arg, "show")) {
+    if (!str_prefix(arg, "show"))
+    {
 
         conn->editing->show(conn);
 
         return;
 
     }
-    if (!str_cmp(arg, "list")) {
+    if (!str_cmp(arg, "list"))
+    {
 
         player_edit_list(conn);
 
@@ -124,7 +127,8 @@ void player_editor(Client * conn, const char *argument)
     }
     Character *player = (Character *) conn->editing->data;
 
-    if (!str_cmp(arg, "Q")) {
+    if (!str_cmp(arg, "Q"))
+    {
 
         if (player->pc->conn == 0)
             destroy_char(player);
@@ -134,7 +138,8 @@ void player_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "save")) {
+    if (!str_cmp(arg, "save"))
+    {
 
         save_player(player);
 
@@ -146,9 +151,11 @@ void player_editor(Client * conn, const char *argument)
     if (character_editor(conn, player, arg, argument))
         return;
 
-    if (!str_cmp(arg, "G") || !str_cmp(arg, "title")) {
+    if (!str_cmp(arg, "G") || !str_cmp(arg, "title"))
+    {
 
-        if (!argument || !*argument) {
+        if (!argument || !*argument)
+        {
 
             writeln(conn, "~CYou must provide a title.~x");
 
@@ -162,7 +169,8 @@ void player_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "H") || !str_cmp(arg, "flags")) {
+    if (!str_cmp(arg, "H") || !str_cmp(arg, "flags"))
+    {
 
         if (edit_flag
                 ("flags", conn, player->flags, argument, plr_flags))
@@ -171,7 +179,8 @@ void player_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "I") || !str_cmp(arg, "prompt")) {
+    if (!str_cmp(arg, "I") || !str_cmp(arg, "prompt"))
+    {
 
         free_str_dup(&player->pc->prompt, argument);
 
@@ -180,11 +189,13 @@ void player_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "J") || !str_cmp(arg, "alignment")) {
+    if (!str_cmp(arg, "J") || !str_cmp(arg, "alignment"))
+    {
 
         int a = atoi(argument);
 
-        if (a < -MAX_ALIGN || a > MAX_ALIGN) {
+        if (a < -MAX_ALIGN || a > MAX_ALIGN)
+        {
 
             writelnf(conn, "~CValue must be between %d and %d.~x",
                      -MAX_ALIGN, MAX_ALIGN);
@@ -199,7 +210,8 @@ void player_editor(Client * conn, const char *argument)
         return;
 
     }
-    if (!str_cmp(arg, "K") || !str_cmp(arg, "stats")) {
+    if (!str_cmp(arg, "K") || !str_cmp(arg, "stats"))
+    {
 
         char type[BUF_SIZ];
 
@@ -207,7 +219,8 @@ void player_editor(Client * conn, const char *argument)
 
         long v = value_lookup(stat_table, type);
 
-        if (v == -1) {
+        if (v == -1)
+        {
 
             writelnf(conn, "~CValid stats are: %s~x",
                      lookup_names(stat_table));
@@ -217,7 +230,8 @@ void player_editor(Client * conn, const char *argument)
         }
         int a = atoi(argument);
 
-        if (a > getMaxTrain(player)) {
+        if (a > getMaxTrain(player))
+        {
 
             writelnf(conn, "Stat cannot be higher than %d for %s.",
                      getMaxTrain(player), player->name);

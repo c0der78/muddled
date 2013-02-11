@@ -7,8 +7,8 @@
  *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
  *                                  |___/                                     *
  *                                                                            *
- *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
- *	           Many thanks to creators of muds before me.                 *
+ *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
+ *	               Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -38,13 +38,16 @@ DOFUN(color)
     if (ch->pc == 0)
         return;
 
-    if (!is_set(ch->pc->account->flags, ACC_COLOR_OFF)) {
+    if (!is_set(ch->pc->account->flags, ACC_COLOR_OFF))
+    {
 
         set_bit(ch->pc->account->flags, ACC_COLOR_OFF);
 
         writeln(ch, "Color off. *sigh*");
 
-    } else {
+    }
+    else
+    {
 
         remove_bit(ch->pc->account->flags, ACC_COLOR_OFF);
 
@@ -60,11 +63,14 @@ DOFUN(save)
     if (ch->pc == 0)
         return;
 
-    if (!save_player(ch)) {
+    if (!save_player(ch))
+    {
 
         writeln(ch, "There was a problem saving this character.");
 
-    } else {
+    }
+    else
+    {
 
         writeln(ch, "Character saved.");
 
@@ -80,11 +86,14 @@ DOFUN(title)
 
     free_str_dup(&ch->pc->title, argument);
 
-    if (!argument || !*argument) {
+    if (!argument || !*argument)
+    {
 
         writeln(ch, "Title cleared.");
 
-    } else {
+    }
+    else
+    {
 
         writeln(ch, "Title set.");
 
@@ -98,13 +107,16 @@ DOFUN(autotick)
     if (!ch->pc)
         return;
 
-    if (is_set(ch->pc->account->flags, PLR_TICKS_OFF)) {
+    if (is_set(ch->pc->account->flags, PLR_TICKS_OFF))
+    {
 
         remove_bit(ch->pc->account->flags, PLR_TICKS_OFF);
 
         writeln(ch, "You will now be notified of game ticks.");
 
-    } else {
+    }
+    else
+    {
 
         set_bit(ch->pc->account->flags, PLR_TICKS_OFF);
 
@@ -120,13 +132,16 @@ DOFUN(brief)
     if (!ch->pc)
         return;
 
-    if (is_set(ch->pc->account->flags, PLR_BRIEF)) {
+    if (is_set(ch->pc->account->flags, PLR_BRIEF))
+    {
 
         remove_bit(ch->pc->account->flags, PLR_BRIEF);
 
         writeln(ch, "You now see room descriptions.");
 
-    } else {
+    }
+    else
+    {
 
         set_bit(ch->pc->account->flags, PLR_BRIEF);
 
@@ -142,7 +157,8 @@ DOFUN(timezone)
     if (!ch->pc)
         return;
 
-    if (!*argument) {
+    if (!*argument)
+    {
 
         Buffer *buf = new_buf();
 
@@ -155,7 +171,8 @@ DOFUN(timezone)
 
         writelnf(buf, "%s~x", line);
 
-        for (int i = 0; timezones[i].name != 0; i++) {
+        for (int i = 0; timezones[i].name != 0; i++)
+        {
 
             writelnf(buf, "%-6s %-30s (%s)", timezones[i].name,
                      timezones[i].zone, str_time(current_time, i,
@@ -175,7 +192,8 @@ DOFUN(timezone)
     }
     int i = timezone_lookup(argument);
 
-    if (i == -1) {
+    if (i == -1)
+    {
 
         writelnf(ch,
                  "That time zone does not exists.  See '%s' for a list.",
@@ -197,13 +215,16 @@ DOFUN(hints)
     if (!ch->pc)
         return;
 
-    if (is_set(ch->pc->account->flags, PLR_HINTS)) {
+    if (is_set(ch->pc->account->flags, PLR_HINTS))
+    {
 
         remove_bit(ch->pc->account->flags, PLR_HINTS);
 
         writeln(ch, "You no longer see hints.");
 
-    } else {
+    }
+    else
+    {
 
         set_bit(ch->pc->account->flags, PLR_HINTS);
 
@@ -235,13 +256,16 @@ DOFUN(automap)
     if (!ch->pc)
         return;
 
-    if (is_set(ch->pc->account->flags, PLR_AUTOMAP_OFF)) {
+    if (is_set(ch->pc->account->flags, PLR_AUTOMAP_OFF))
+    {
 
         remove_bit(ch->pc->account->flags, PLR_AUTOMAP_OFF);
 
         writeln(ch, "You now see a map in room descriptions.");
 
-    } else {
+    }
+    else
+    {
 
         set_bit(ch->pc->account->flags, PLR_AUTOMAP_OFF);
 
