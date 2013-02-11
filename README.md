@@ -18,20 +18,20 @@ see [documentation](http://c0der78.github.com/muddyplains/docs)
 I would like to see what other people could do with this.
 
 #### requirements
-* [rake](http://rake.ruby.org) (ruby)
+* [premake](http://industriousone.com/premake) for building (brew install premake on OSX)
 * the startup script requires the 'daemons' ruby gem
 * sqlite3
-
-#### optional
 * lua
 
 #### compiling
-* running 'rake' will compile and run unit tests
-* run 'rake -T' to see a list of specific builds
-* 'muddyplains' is the release build, 'muddyplainsd' is the debug build
+* run 'premake4 --help' to see a list of project configurations.  I use 'premake4 gmake' on OSX.
+* run 'make' to build all libraries and binaries
+* run 'config=release make' to build a release
 
 #### todo
+* more areas
 * more commenting!
 * more lua scripting
-* flesh out the combat code
+* expand the combat code
+* questing
 
