@@ -91,10 +91,13 @@ void db_close()
     }
 }
 
-int db_open(const char *root_path, const char *name)
-{
-    return sqlite3_open(formatf("%s/%s.db3", root_path, name),
+int db_open(const char *name, const char *root_path)
+{   
+    if(root_path && *root_path)
+        return sqlite3_open(formatf("%s/%s.db3", root_path, name),
                         &engine_info.db);
+    else
+        return sqlite3_open(formatf("%s.db3", name), &engine_info.db);
 }
 
 int sql_query(const char *buf, int len, sql_stmt ** stmt)
@@ -257,7 +260,7 @@ int sql_bind_str(sql_stmt *stmt, int index, const char *str) {
 int sql_bind_table_value(sql_stmt * stmt, int index, field_map * field)
 {
 
-    log_trace("binding %s...", field->name);
+    //log_trace("binding %s...", field->name);
 
     if (field->value == 0) {
         return sql_bind_null(stmt, index);
@@ -357,7 +360,7 @@ int db_delete(const char *tablename, sql_int64 id)
 
     int len = sprintf(buf, "delete from %s where %s=?", tablename, tablenameid(tablename));
 
-    log_trace("%s", buf);
+    //log_trace("%s", buf);
 
     sql_stmt *stmt;
 
@@ -398,7 +401,7 @@ int sql_insert_query(field_map * table, const char *tablename)
     int len = sprintf(buf, "insert into %s (%s) values(%s)", tablename, columns,
                       params);
 
-    log_trace("%s", buf);
+    //log_trace("%s", buf);
 
     if (sql_query(buf, len, &stmt) != SQL_OK) {
         return sql_finalize(stmt);
@@ -461,7 +464,7 @@ int sql_load_columns(sql_stmt *stmt, field_map *table)
 
         field_map *field = &table[i];
 
-        log_trace("loading %s...", field->name);
+        //log_trace("loading %s...", field->name);
 
         switch (field->type) {
         case SQL_INT:
@@ -514,7 +517,7 @@ int sql_select_query(field_map * table, const char *tablename, sql_callback_t ca
                       tablename,
                       constraints ? constraints : "");
 
-    log_trace("%s", buf);
+    //log_trace("%s", buf);
 
     if (sql_query(buf, len, &stmt) != SQL_OK) {
         return sql_finalize(stmt);

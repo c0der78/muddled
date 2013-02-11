@@ -601,7 +601,7 @@ int load_forums()
                 forum_table[total].name =
                     str_dup(sql_column_str(stmt, i));
 
-            } else if (!str_cmp(colname, "description")) {
+            } else if (!str_cmp(colname, "summary")) {
 
                 forum_table[total].description =
                     str_dup(sql_column_str(stmt, i));

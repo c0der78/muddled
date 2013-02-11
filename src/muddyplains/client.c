@@ -1075,7 +1075,8 @@ void show_string(Client * conn, const char *input)
             write(conn, buffer);
 
             for (chk = conn->showstr_point; isspace((int)*chk);
-                    chk++) ;
+                    chk++) 
+                ;
 
             {
 

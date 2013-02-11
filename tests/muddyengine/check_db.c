@@ -29,7 +29,7 @@
 #define DBNAME "test"
 
 void test_db_setup() {
-	db_open(Stringify(ROOT_DIR), "muddytest");
+	db_open("muddytest", NULL);
 
 	char buf[BUF_SIZ];
 

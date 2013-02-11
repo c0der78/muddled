@@ -104,7 +104,7 @@ int load_races()
 
             if (!str_cmp(colname, "name")) {
                 race->name = str_dup(sql_column_str(stmt, i));
-            } else if (!str_cmp(colname, "description")) {
+            } else if (!str_cmp(colname, "summary")) {
                 race->description =
                     str_dup(sql_column_str(stmt, i));
             } else if (!str_cmp(colname, "raceId")) {
@@ -138,7 +138,7 @@ int save_race(Race * race)
 {
     field_map race_values[] = {
         {"name", &race->name, SQL_TEXT},
-        {"description", &race->description, SQL_TEXT},
+        {"sumary", &race->description, SQL_TEXT},
         {"flags", &race->flags, SQL_FLAG, race_flags},
         {   "stats", &race->stats, SQL_ARRAY, db_save_int_array,
             (void *)MAX_STAT

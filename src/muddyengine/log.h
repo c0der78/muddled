@@ -65,4 +65,5 @@ enum {
 #include <muddyengine/lookup.h>
 
 extern const Lookup logging_flags[];
+
 #endif				/* // #ifndef LOG_H */

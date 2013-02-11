@@ -366,7 +366,7 @@ void server_import(const char *db_path, const char *file)
         log_bug("Could not open %s for importing.", file);
         return;
     }
-    if (db_open(db_path, SQLITE3_FILE)) {
+    if (db_open(SQLITE3_FILE, db_path)) {
         log_data("Can't open database");
         db_close();
         exit(EXIT_FAILURE);
@@ -1269,7 +1269,7 @@ Flag *rom_convert_affect_flags(long bits)
         }
     };
 
-    Flag *flags;
+    Flag *flags = new_flag();
     for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++) {
         if ((convert[i].rombit & bits) != 0)
             set_bit(flags, convert[i].bit);

@@ -146,7 +146,7 @@ int load_engine(const char *root_path)
     engine_info.logging = new_flag();
     engine_info.root_path = str_dup(root_path);
 
-    if (db_open(root_path, SQLITE3_FILE)) {
+    if (db_open(SQLITE3_FILE, root_path)) {
         log_data("Can't open database");
         db_close();
         exit(EXIT_FAILURE);
