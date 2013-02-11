@@ -7,6 +7,15 @@ newaction {
    end
 }
 
+newaction {
+    trigger     = "doc",
+    description = "Document source files",
+    execute = function()
+         os.execute("headerdoc2html -j -o docs src/muddyplains/*.h")
+         os.execute("gatherheaderdoc docs index.html")
+    end
+}
+
 if _ACTION == "clean" then
     matches = os.matchfiles("**.orig")
     for i=1, #matches do
