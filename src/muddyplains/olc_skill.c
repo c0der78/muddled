@@ -301,7 +301,7 @@ void skill_editor(Client * conn, const char *argument)
             return;
 
         }
-        skill->mana = (float)atof(argument);
+        skill->mana = (float) atof(argument);
 
         conn->editing->show(conn);
 

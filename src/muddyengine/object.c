@@ -356,7 +356,6 @@ Object *load_object(identifier_t id)
     }
     if (sql_step(stmt) != SQL_DONE)
     {
-
         obj = new_object();
 
         load_obj_columns(obj, stmt);

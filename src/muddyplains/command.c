@@ -76,10 +76,7 @@ const Command cmd_table[] =
     {"automap", 0, do_automap, COMMAND_SETTINGS, POS_DEAD},
     {"prompt", 0, do_prompt, COMMAND_SETTINGS, POS_DEAD},
     {"chat", 0, do_chat, COMMAND_COMM, POS_SLEEPING},
-    {
-        "admin", LEVEL_IMMORTAL, do_admin, COMMAND_ADMIN | COMMAND_COMM,
-        POS_DEAD
-    },
+    {"admin", LEVEL_IMMORTAL, do_admin, COMMAND_ADMIN | COMMAND_COMM, POS_DEAD},
     {"autologin", 0, do_autologin, COMMAND_CONN, POS_DEAD},
     {"get", 0, do_get, COMMAND_MANIP, POS_RESTING},
     {"inventory", 0, do_inventory, COMMAND_INFO, POS_DEAD},
@@ -230,6 +227,7 @@ DOFUN(quit)
 {
     if (ch->pc == 0)
         return;
+    
     const char *const chmessage[] =
     {
         "Alas, all good things must come to an end.",

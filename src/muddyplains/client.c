@@ -64,20 +64,14 @@ Client *first_client = 0;
 
 bool client_has_color(const Client * conn)
 {
-
     if (conn->account)
     {
-
         return !is_set(conn->account->flags, PLR_COLOR_OFF);
-
     }
     else
     {
-
         return !nullstr(conn->termType);
-
     }
-
 }
 
 static void write_to_client(Client * conn, const char *arg)

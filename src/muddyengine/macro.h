@@ -27,8 +27,8 @@
 #define xstr(var) #var
 #define Stringify(var) xstr(var)
 
-#define UPPER(c) (toupper((int)(c)))
-#define LOWER(c) (tolower((int)(c)))
+//#define UPPER(c) (toupper((int)(c)))
+//#define LOWER(c) (tolower((int)(c)))
 #define UMIN(a, b) ((a) < (b) ? (a) : (b))
 #define UMAX(a, b) ((a) > (b) ? (a) : (b))
 #define URANGE(a, b, c) ((b) < (a) ? (a) : ((b) > (c) ? ((c) > (a) ? (c) : (a)) : (b)))

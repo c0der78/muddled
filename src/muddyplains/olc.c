@@ -279,6 +279,7 @@ void olc_syntax(Client * conn, const char *arg, ...)
 
 int edit_text(Client * conn, const char **pStr, const char *argument)
 {
+    char buf[OUT_SIZ * 4];
 
     if (!str_cmp(argument, "\\?"))
     {
@@ -306,7 +307,6 @@ int edit_text(Client * conn, const char **pStr, const char *argument)
         return EDIT_END;
 
     }
-    char buf[OUT_SIZ * 4];
 
     if (!str_prefix("\\d", argument))
     {
