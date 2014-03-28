@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -27,25 +27,25 @@
 #define xstr(var) #var
 #define Stringify(var) xstr(var)
 
-//#define UPPER(c) (toupper((int)(c)))
-//#define LOWER(c) (tolower((int)(c)))
+#define UPPER(c) (toupper((int)(c)))
+#define LOWER(c) (tolower((int)(c)))
 #define UMIN(a, b) ((a) < (b) ? (a) : (b))
 #define UMAX(a, b) ((a) > (b) ? (a) : (b))
 #define URANGE(a, b, c) ((b) < (a) ? (a) : ((b) > (c) ? ((c) > (a) ? (c) : (a)) : (b)))
 
-#define percent(a, b)	(((a) * 100) / b)
+#define percent(a, b)   (((a) * 100) / b)
 
-#define write(to, arg) 		(to)->write((to), (arg))
-#define writeln(to, arg) 	(to)->writeln((to), (arg))
-#define writef(to, arg, ...)	(to)->writef((to), (arg), __VA_ARGS__)
-#define writelnf(to, arg, ...)	(to)->writelnf((to), (arg), __VA_ARGS__)
+#define write(to, arg)      (to)->write((to), (arg))
+#define writeln(to, arg)    (to)->writeln((to), (arg))
+#define writef(to, arg, ...)    (to)->writef((to), (arg), __VA_ARGS__)
+#define writelnf(to, arg, ...)  (to)->writelnf((to), (arg), __VA_ARGS__)
 
 #define NAME(ch) ((ch->npc != 0) ? (ch->npc->shortDescr) : (ch->name))
 
 #define UNLINK(plist, ptype, pdata, pnext) \
-do { \
-	if (plist == pdata) \
-		plist = pdata->pnext; \
+    do { \
+        if (plist == pdata) \
+            plist = pdata->pnext; \
         else { \
             ptype *_prev; \
             for (_prev = plist; _prev != NULL; _prev = _prev->pnext) { \
@@ -55,25 +55,25 @@ do { \
                 } \
             } \
         } \
-} while(0)
+    } while(0)
 
 #define LINK(plist, pdata, pnext) \
-do { \
-	if((pdata) == NULL) \
-		break; \
-	(pdata)->pnext = (plist); \
-	(plist) = (pdata); \
-} while(0)
+    do { \
+        if((pdata) == NULL) \
+            break; \
+        (pdata)->pnext = (plist); \
+        (plist) = (pdata); \
+    } while(0)
 
 #define LINK_LAST(plist, ptype, pdata, pnext) \
-do { \
-	if(plist == NULL) { \
-		(plist) = (pdata); \
-		break; \
-	} \
-	ptype *p; \
-	for (p = plist; p->pnext; p = p->pnext ) ; \
-	p->pnext = pdata; \
-} while(0)
+    do { \
+        if(plist == NULL) { \
+            (plist) = (pdata); \
+            break; \
+        } \
+        ptype *p; \
+        for (p = plist; p->pnext; p = p->pnext ) ; \
+        p->pnext = pdata; \
+    } while(0)
 
 #endif
