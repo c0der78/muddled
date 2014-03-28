@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -31,7 +31,7 @@
 
 void exit_editor_menu(Client *);
 
-Editor *build_exit_editor(Exit * exit)
+Editor *build_exit_editor(Exit *exit)
 {
 
     Editor *editor = new_editor();
@@ -46,7 +46,7 @@ Editor *build_exit_editor(Exit * exit)
 
 }
 
-Editor *build_exits_editor(Exit ** exits)
+Editor *build_exits_editor(Exit **exits)
 {
 
     Editor *editor = new_editor();
@@ -61,7 +61,7 @@ Editor *build_exits_editor(Exit ** exits)
 
 }
 
-void exit_editor_menu(Client * conn)
+void exit_editor_menu(Client *conn)
 {
 
     clear_screen(conn);
@@ -75,14 +75,14 @@ void exit_editor_menu(Client * conn)
     writelnf(conn, "   ~CId: ~W%d~x", exit->id);
 
     writelnf(conn, "~YA) ~CToRoom: ~W%d~x",
-             exit->toRoom == 0 ? 0 : exit->toRoom->id);
+             exit->to.room == 0 ? 0 : exit->to.room->id);
 
     writelnf(conn, "~YB) ~CFlags: ~W%d~x",
              format_flags(exit->flags, exit_flags));
 
 }
 
-void exits_editor_menu(Client * conn)
+void exits_editor_menu(Client *conn)
 {
 
     Exit **exits = (Exit **) conn->editing->data;
@@ -110,7 +110,7 @@ void exits_editor_menu(Client * conn)
 
     int count = 0;
 
-    for (const Lookup * t = direction_table; t->name != 0; t++)
+    for (const Lookup *t = direction_table; t->name != 0; t++)
     {
 
         if (exits[t->value] == 0)
@@ -118,14 +118,14 @@ void exits_editor_menu(Client * conn)
 
         writelnf(conn, "  ~Y%d) %s~C -> Room %d (%s)~x", ++count,
                  capitalize(t->name),
-                 exits[t->value]->toRoom->id,
-                 exits[t->value]->toRoom->name);
+                 exits[t->value]->to.room->id,
+                 exits[t->value]->to.room->name);
 
     }
 
 }
 
-void exits_editor(Client * conn, const char *argument)
+void exits_editor(Client *conn, const char *argument)
 {
 
     char arg[100];
@@ -319,7 +319,7 @@ void exits_editor(Client * conn, const char *argument)
     }
 }
 
-void exit_editor(Client * conn, const char *argument)
+void exit_editor(Client *conn, const char *argument)
 {
 
     char arg[100];
@@ -366,7 +366,7 @@ void exit_editor(Client * conn, const char *argument)
             return;
 
         }
-        exit->toRoom = r;
+        exit->to.room = r;
 
         conn->editing->show(conn);
 

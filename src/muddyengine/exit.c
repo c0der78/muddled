@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -62,7 +62,7 @@ Exit *new_exit()
 
 }
 
-void destroy_exit(Exit * ex)
+void destroy_exit(Exit *ex)
 {
 
     destroy_flags(ex->flags);
@@ -79,7 +79,7 @@ void finalize_exits()
     for (int i = 0; i < ID_HASH; i++)
     {
 
-        for (Room * room = room_hash[i]; room != 0; room = room->next)
+        for (Room *room = room_hash[i]; room != 0; room = room->next)
         {
 
             for (direction_t dir = DIR_NORTH; dir < MAX_DIR; dir++)
@@ -88,7 +88,7 @@ void finalize_exits()
                 if (room->exits[dir] == 0)
                     continue;
 
-                identifier_t id = room->exits[dir]->toRoomId;
+                identifier_t id = room->exits[dir]->to.id;
 
                 Room *toRoom = get_room_by_id(id);
 
@@ -97,14 +97,14 @@ void finalize_exits()
                             ") for exit (%" PRId64 ")", id,
                             room->exits[dir]->id);
 
-                room->exits[dir]->toRoom = toRoom;
+                room->exits[dir]->to.room = toRoom;
 
             }
         }
     }
 }
 
-int load_exits(Room * room)
+int load_exits(Room *room)
 {
 
     char buf[BUF_SIZ];
@@ -157,7 +157,7 @@ int load_exits(Room * room)
             else if (!str_cmp(colname, "toRoom"))
             {
 
-                exit->toRoomId = sql_column_int(stmt, i);
+                exit->to.id = sql_column_int(stmt, i);
 
             }
             else if (!str_cmp(colname, "direction"))
@@ -201,7 +201,7 @@ int load_exits(Room * room)
             destroy_exit(exit);
 
         }
-        else if (exit->toRoomId == 0)
+        else if (exit->to.id == 0)
         {
             log_bug("exit (%" PRId64 ") with no room", exit->id);
 
@@ -228,20 +228,20 @@ int load_exits(Room * room)
 
 }
 
-int save_exit(Exit * exit, direction_t dir)
+int save_exit(Exit *exit, direction_t dir)
 {
-    if (exit->toRoom == 0)
+    if (exit->to.room == 0)
     {
 
         log_error("Exit %" PRId64 " with no room %" PRId64, exit->id,
-                  exit->toRoomId);
+                  exit->to.id);
 
         return 0;
 
     }
     field_map exit_values[] =
     {
-        {"toRoom", &exit->toRoom->id, SQL_INT}
+        {"toRoom", &exit->to.room->id, SQL_INT}
         ,
         {"fromRoom", &exit->fromRoom->id, SQL_INT}
         ,

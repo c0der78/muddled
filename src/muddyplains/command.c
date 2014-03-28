@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -116,7 +116,7 @@ const Lookup command_types[] =
     {0, 0}
 };
 
-void command_interpret(Character * ch, const char *argument)
+void command_interpret(Character *ch, const char *argument)
 {
     char arg[500];
     bool found;
@@ -184,7 +184,7 @@ void command_interpret(Character * ch, const char *argument)
     (*cmd->dofun) (cmd->name, ch, argument);
 }
 
-void cmd_syntax(Character * ch, const char *n_fun, ...)
+void cmd_syntax(Character *ch, const char *n_fun, ...)
 {
     va_list args;
     char *str;
@@ -227,7 +227,7 @@ DOFUN(quit)
 {
     if (ch->pc == 0)
         return;
-    
+
     const char *const chmessage[] =
     {
         "Alas, all good things must come to an end.",
@@ -273,7 +273,7 @@ DOFUN(logout)
     client_display_account_menu((Client *) ch->pc->conn);
 
     ch->pc->conn->handler =
-        (void (*)(Connection *, const char *))client_account_menu;
+        (void ( *)(Connection *, const char *))client_account_menu;
 }
 
 DOFUN(autologin)
@@ -314,7 +314,7 @@ DOFUN(autologin)
     writelnf(ch, "Autologin set to %s.", p->name);
 }
 
-void move_char(Character * ch, direction_t dir)
+void move_char(Character *ch, direction_t dir)
 {
     if (ch->inRoom == 0)
     {
@@ -323,14 +323,14 @@ void move_char(Character * ch, direction_t dir)
     }
     Exit *ex = ch->inRoom->exits[dir];
 
-    if (ex == 0 || ex->toRoom == 0)
+    if (ex == 0 || ex->to.room == 0)
     {
         writeln(ch, "You can't move in that direction.");
         return;
     }
     char_from_room(ch);
 
-    char_to_room(ch, ex->toRoom);
+    char_to_room(ch, ex->to.room);
 
     do_look(str_empty, ch, str_empty);
 }
@@ -457,7 +457,7 @@ DOFUN(drop)
     act(TO_ROOM, ch, obj, 0, "$n drops $p.");
 }
 
-bool remove_obj(Character * ch, int iWear, bool fReplace)
+bool remove_obj(Character *ch, int iWear, bool fReplace)
 {
     Object *obj;
 
@@ -473,7 +473,7 @@ bool remove_obj(Character * ch, int iWear, bool fReplace)
     return true;
 }
 
-void wear_obj(Character * ch, Object * obj, bool fReplace)
+void wear_obj(Character *ch, Object *obj, bool fReplace)
 {
     if (ch->level < obj->level)
     {

@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -165,7 +165,7 @@ void clear_coord(int x, int y)
 
 }
 
-void map_exits(int depth, Character * ch, Room * pRoom, int x, int y)
+void map_exits(int depth, Character *ch, Room *pRoom, int x, int y)
 {
 
     int door;
@@ -194,10 +194,10 @@ void map_exits(int depth, Character * ch, Room * pRoom, int x, int y)
         if ((pExit = pRoom->exits[door]) == NULL)
             continue;
 
-        if (pExit->toRoom == NULL)
+        if (pExit->to.room == NULL)
             continue;
 
-        if (!can_see_room(ch, pExit->toRoom))
+        if (!can_see_room(ch, pExit->to.room))
             continue;
 
         get_exit_dir(door, &exitx, &exity, x, y);
@@ -218,17 +218,17 @@ void map_exits(int depth, Character * ch, Room * pRoom, int x, int y)
         else
             automap[exitx][exity].symbol = map_chars[door];
 
-        automap[exitx][exity].pRoom = pExit->toRoom;
+        automap[exitx][exity].pRoom = pExit->to.room;
 
         if (door == DIR_UP || door == DIR_DOWN)
             continue;
 
         if ((depth < MAXDEPTH)
-                && ((automap[roomx][roomy].pRoom == pExit->toRoom)
+                && ((automap[roomx][roomy].pRoom == pExit->to.room)
                     || (automap[roomx][roomy].pRoom == NULL)))
         {
 
-            map_exits(depth + 1, ch, pExit->toRoom, roomx, roomy);
+            map_exits(depth + 1, ch, pExit->to.room, roomx, roomy);
 
         }
     }
@@ -344,7 +344,7 @@ unsigned int get_line_len(const char *desc, unsigned int max_len)
 
 }
 
-void show_map(Character * ch, const char *text, bool smallMap)
+void show_map(Character *ch, const char *text, bool smallMap)
 {
 
     char buf[OUT_SIZ * 2];
@@ -707,7 +707,7 @@ void show_map(Character * ch, const char *text, bool smallMap)
 
 }
 
-void draw_map(Character * ch, const char *desc)
+void draw_map(Character *ch, const char *desc)
 {
 
     int x, y;

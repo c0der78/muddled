@@ -56,14 +56,14 @@ typedef struct
     int type;
     union
     {
-        char char_value;
-        short short_value;
-        int int_value;
-        long long_value;
-        float float_value;
-        double double_value;
-        const void *ptr_value;
-    };
+        char vchar;
+        short vshort;
+        int vint;
+        long vlong;
+        float vfloat;
+        double vdouble;
+        const void *ptr;
+    } value;
 } variant_t;
 
 /*!
@@ -105,7 +105,7 @@ void vset_ptr(variant_t *, const void *);
 /*!
  * gets the set variant type @param v the variant to get the type from
  */
-int vget_type(variant_t * t);
+int vget_type(variant_t *t);
 /*!
  * gets the variant char value @param v the variant to get the value from
  */

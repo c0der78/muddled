@@ -7,7 +7,7 @@
 *                                  |___/                                     *
 *                                                                            *
 *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.ryan-jennings.net     *
-*	           Many thanks to creators of muds before me.					  *
+*              Many thanks to creators of muds before me.                     *
 *                                                                            *
 *        In order to use any part of this Mud, you must comply with the      *
 *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -43,41 +43,41 @@
 #include <muddyengine/hashmap.h>
 #include <ctype.h>
 
-#define A		  	1
-#define B			2
-#define C			4
-#define D			8
-#define E			16
-#define F			32
-#define G			64
-#define H			128
+#define A           1
+#define B           2
+#define C           4
+#define D           8
+#define E           16
+#define F           32
+#define G           64
+#define H           128
 
-#define I			256
-#define J			512
-#define K		    1024
-#define L		 	2048
-#define M			4096
-#define N		 	8192
-#define O			16384
-#define P			32768
+#define I           256
+#define J           512
+#define K           1024
+#define L           2048
+#define M           4096
+#define N           8192
+#define O           16384
+#define P           32768
 
-#define Q			65536
-#define R			131072
-#define S			262144
-#define T			524288
-#define U			1048576
-#define V			2097152
-#define W			4194304
-#define X			8388608
+#define Q           65536
+#define R           131072
+#define S           262144
+#define T           524288
+#define U           1048576
+#define V           2097152
+#define W           4194304
+#define X           8388608
 
-#define Y			16777216
-#define Z			33554432
-#define aa			67108864	/* doubled due to
+#define Y           16777216
+#define Z           33554432
+#define aa          67108864    /* doubled due to
 * conflicts */
-#define bb			134217728
-#define cc			268435456
-#define dd			536870912
-#define ee			1073741824
+#define bb          134217728
+#define cc          268435456
+#define dd          536870912
+#define ee          1073741824
 
 typedef struct temp_reset
 {
@@ -109,14 +109,14 @@ Social *import_socials = 0;
 
 Help *import_helps = 0;
 
-void import_finalize_exits(Room * room)
+void import_finalize_exits(Room *room)
 {
     for (int e = 0; e < MAX_DIR; e++)
     {
         if (!room->exits[e])
             continue;
 
-        identifier_t id = room->exits[e]->toRoomId;
+        identifier_t id = room->exits[e]->to.id;
         identifier_t key = room->exits[e]->key;
 
         Room *toRoom = (Room *) hm_get(room_indexes, id);
@@ -135,7 +135,7 @@ void import_finalize_exits(Room * room)
         }
         else
         {
-            room->exits[e]->toRoom = toRoom;
+            room->exits[e]->to.room = toRoom;
 
             if (keyObj && keyObj->id != 0)
             {
@@ -188,9 +188,9 @@ void import_cleanup()
 
     npc_indexes = obj_indexes = room_indexes = 0;
 
-    for (TmpReset * tmp = temp_resets; tmp; tmp = tmp->next)
+    for (TmpReset *tmp = temp_resets; tmp; tmp = tmp->next)
     {
-        for (TmpReset * sub = tmp->subresets; sub; sub = sub->next_sub)
+        for (TmpReset *sub = tmp->subresets; sub; sub = sub->next_sub)
             free_mem(sub);
         free_mem(tmp);
     }
@@ -204,7 +204,7 @@ void import_cleanup()
     }
 };
 
-bool import_rom_area_list(const char *dir, FILE * fpList)
+bool import_rom_area_list(const char *dir, FILE *fpList)
 {
     for (;;)
     {
@@ -232,7 +232,7 @@ bool import_rom_area_list(const char *dir, FILE * fpList)
     return true;
 }
 
-void import_finalize_reset(TmpReset * res, char *buf, int tab)
+void import_finalize_reset(TmpReset *res, char *buf, int tab)
 {
     Character *npc;
     Object *obj;
@@ -307,22 +307,22 @@ void import_finalize_reset(TmpReset * res, char *buf, int tab)
         break;
     }
 
-    for (TmpReset * sub = res->subresets; sub; sub = sub->next_sub)
+    for (TmpReset *sub = res->subresets; sub; sub = sub->next_sub)
     {
         import_finalize_reset(sub, buf, tab + 1);
     }
 }
 
-void import_save_area(Area * area)
+void import_save_area(Area *area)
 {
     save_area_only(area);
 
-    for (Character * npc = area->npcs; npc; npc = npc->next_in_area)
+    for (Character *npc = area->npcs; npc; npc = npc->next_in_area)
     {
         save_npc(npc);
     }
 
-    for (Object * obj = area->objects; obj; obj = obj->next_in_area)
+    for (Object *obj = area->objects; obj; obj = obj->next_in_area)
     {
         save_object(obj);
     }
@@ -332,7 +332,7 @@ void import_commit(bool load)
 {
     db_begin_transaction();
 
-    for (Area * area = import_areas; area; area = area->next)
+    for (Area *area = import_areas; area; area = area->next)
     {
         import_save_area(area);
     }
@@ -349,7 +349,7 @@ void import_commit(bool load)
 
         // save_room_only(tmp->room);
 
-        for (TmpReset * sub_next = 0, *sub = tmp->subresets; sub;
+        for (TmpReset *sub_next = 0, *sub = tmp->subresets; sub;
                 sub = sub->next_sub)
         {
             sub_next = sub->next;
@@ -361,18 +361,18 @@ void import_commit(bool load)
 
     temp_resets = 0;
 
-    for (Area * area = import_areas; area; area = area->next)
+    for (Area *area = import_areas; area; area = area->next)
     {
-        for (Room * room = area->rooms; room; room = room->next_in_area)
+        for (Room *room = area->rooms; room; room = room->next_in_area)
         {
             save_room_only(room);
         }
     }
 
-    for (Area * area = import_areas; area; area = area->next)
+    for (Area *area = import_areas; area; area = area->next)
     {
 
-        for (Room * room = area->rooms; room; room = room->next_in_area)
+        for (Room *room = area->rooms; room; room = room->next_in_area)
         {
             import_finalize_exits(room);
         }
@@ -432,7 +432,7 @@ void server_import(const char *db_path, const char *file)
     db_close();
 }
 
-bool import_rom_file(FILE * fpArea)
+bool import_rom_file(FILE *fpArea)
 {
 
     if (npc_indexes == 0)
@@ -491,7 +491,7 @@ bool import_rom_file(FILE * fpArea)
 
 }
 
-bool import_rom_area(FILE * fp)
+bool import_rom_area(FILE *fp)
 {
     Area *pArea;
 
@@ -516,7 +516,7 @@ bool import_rom_area(FILE * fp)
     return true;
 }
 
-bool import_rom_olc_area(FILE * fp)
+bool import_rom_olc_area(FILE *fp)
 {
     Area *pArea;
     const char *word;
@@ -587,7 +587,7 @@ bool import_rom_olc_area(FILE * fp)
     return false;
 }
 
-void rom_act_flag_convert(Flag * flags, long bits)
+void rom_act_flag_convert(Flag *flags, long bits)
 {
     static const struct
     {
@@ -598,7 +598,7 @@ void rom_act_flag_convert(Flag * flags, long bits)
 
         {
             B, NPC_SENTINEL
-        },	// ACT_SENTINEL
+        },  // ACT_SENTINEL
         {
             C, NPC_SCAVENGER
         }, {
@@ -619,7 +619,7 @@ void rom_act_flag_convert(Flag * flags, long bits)
     }
 }
 
-void rom_resists_flag_convert(Character * ch, long bits, int mod)
+void rom_resists_flag_convert(Character *ch, long bits, int mod)
 {
     static const struct
     {
@@ -696,11 +696,11 @@ float rom_convert_size(const char *word)
     return 4.8f;
 }
 
-bool import_rom_mobiles(FILE * fp)
+bool import_rom_mobiles(FILE *fp)
 {
     Character *pMobIndex;
 
-    if (!area_last)  	/* OLC */
+    if (!area_last)     /* OLC */
     {
         log_bug("no area seen yet.");
         return false;
@@ -830,24 +830,24 @@ bool import_rom_mobiles(FILE * fp)
         /*
          * pMobIndex->imm_flags =
          */
-        rom_resists_flag_convert(pMobIndex, fread_flag(fp), 1000);	/*
-										 * |
-										 * race_table[pMobIndex->race].imm
-										 */ ;
+        rom_resists_flag_convert(pMobIndex, fread_flag(fp), 1000);  /*
+                                         * |
+                                         * race_table[pMobIndex->race].imm
+                                         */ ;
         /*
          * pMobIndex->res_flags =
          */
-        rom_resists_flag_convert(pMobIndex, fread_flag(fp), 100);	/*
-										 * |
-										 * race_table[pMobIndex->race].res
-										 */ ;
+        rom_resists_flag_convert(pMobIndex, fread_flag(fp), 100);   /*
+                                         * |
+                                         * race_table[pMobIndex->race].res
+                                         */ ;
         /*
          * pMobIndex->vuln_flags =
          */
-        rom_resists_flag_convert(pMobIndex, fread_flag(fp), -100);	/*
-										 * |
-										 * race_table[pMobIndex->race].vuln
-										 */ ;
+        rom_resists_flag_convert(pMobIndex, fread_flag(fp), -100);  /*
+                                         * |
+                                         * race_table[pMobIndex->race].vuln
+                                         */ ;
 
         int e = value_lookup(position_table, fread_word(fp));
 
@@ -1167,7 +1167,7 @@ wear_type import_rom_convert_wear_flags(long flag)
     return WEAR_NONE;
 }
 
-void rom_load_obj_values(Object * pObjIndex, int item_type, FILE * fp)
+void rom_load_obj_values(Object *pObjIndex, int item_type, FILE *fp)
 {
 
     switch (item_type)
@@ -1234,7 +1234,7 @@ void rom_load_obj_values(Object * pObjIndex, int item_type, FILE * fp)
     }
 }
 
-void rom_convert_obj_flags(Flag * flags, long flag)
+void rom_convert_obj_flags(Flag *flags, long flag)
 {
     static const struct
     {
@@ -1398,11 +1398,11 @@ void *convert_affect_location(int location)
     return 0;
 }
 
-bool import_rom_objects(FILE * fp)
+bool import_rom_objects(FILE *fp)
 {
     Object *pObjIndex;
 
-    if (!area_last)  	/* OLC */
+    if (!area_last)     /* OLC */
     {
         log_bug("no area seen yet.");
         return false;
@@ -1572,7 +1572,7 @@ bool import_rom_objects(FILE * fp)
     return true;
 }
 
-void rom_convert_room_flags(Flag * flags, long bits)
+void rom_convert_room_flags(Flag *flags, long bits)
 {
     static const struct
     {
@@ -1594,7 +1594,7 @@ void rom_convert_room_flags(Flag * flags, long bits)
     }
 }
 
-bool import_rom_rooms(FILE * fp)
+bool import_rom_rooms(FILE *fp)
 {
 
     Room *pRoomIndex;
@@ -1644,13 +1644,13 @@ bool import_rom_rooms(FILE * fp)
             if (letter == 'S')
                 break;
 
-            if (letter == 'H')	/* healing room */
+            if (letter == 'H')  /* healing room */
                 fread_number(fp);
 
-            else if (letter == 'M')	/* mana room */
+            else if (letter == 'M') /* mana room */
                 fread_number(fp);
 
-            else if (letter == 'C')  	/* clan */
+            else if (letter == 'C')     /* clan */
             {
 
                 free_str(fread_string(fp));
@@ -1675,7 +1675,7 @@ bool import_rom_rooms(FILE * fp)
 
                 locks = fread_number(fp);
                 pexit->key = fread_number(fp);
-                pexit->toRoomId = fread_number(fp);
+                pexit->to.id = fread_number(fp);
                 // pexit->orig_door = door; /* OLC */
 
                 switch (locks)
@@ -1776,7 +1776,7 @@ int convert_rom_wear_loc(int val)
     return WEAR_NONE;
 }
 
-bool import_rom_resets(FILE * fp)
+bool import_rom_resets(FILE *fp)
 {
 
     TmpReset *pReset = 0;
@@ -1958,23 +1958,23 @@ bool import_rom_resets(FILE * fp)
                 log_bug("bad 'locks': %ld.", pReset->arg3);
             case 0:
                 break;
-            case 1:	/* SET_BIT( pexit->rs_flags,
-					 * EX_ISDOOR|EX_CLOSED ); */
+            case 1: /* SET_BIT( pexit->rs_flags,
+                     * EX_ISDOOR|EX_CLOSED ); */
                 break;
-            case 2:	/* SET_BIT( pexit->rs_flags,
-					 * EX_ISDOOR|EX_CLOSED|EX_LOCKED ); */
+            case 2: /* SET_BIT( pexit->rs_flags,
+                     * EX_ISDOOR|EX_CLOSED|EX_LOCKED ); */
                 break;
-            case 3:	/* SET_BIT( pexit->rs_flags,
-					 * EX_ISDOOR|EX_CLOSED|EX_LOCKED|EX_NOPASS
-					 * ); */
+            case 3: /* SET_BIT( pexit->rs_flags,
+                     * EX_ISDOOR|EX_CLOSED|EX_LOCKED|EX_NOPASS
+                     * ); */
                 break;
-            case 4:	/* SET_BIT( pexit->rs_flags,
-					 * EX_ISDOOR|EX_CLOSED|EX_LOCKED|EX_PICKPROOF
-					 * ); */
+            case 4: /* SET_BIT( pexit->rs_flags,
+                     * EX_ISDOOR|EX_CLOSED|EX_LOCKED|EX_PICKPROOF
+                     * ); */
                 break;
-            case 5:	/* SET_BIT( pexit->rs_flags,
-					 * EX_ISDOOR|EX_CLOSED|EX_LOCKED|EX_NOPASS|EX_
-					 * PICKPROOF ); */
+            case 5: /* SET_BIT( pexit->rs_flags,
+                     * EX_ISDOOR|EX_CLOSED|EX_LOCKED|EX_NOPASS|EX_
+                     * PICKPROOF ); */
                 break;
             }
 
@@ -1986,7 +1986,7 @@ bool import_rom_resets(FILE * fp)
             break;
 
         case 'R':
-            if (pReset->arg2 < 0 || pReset->arg2 > 6)  	/* Last Door. */
+            if (pReset->arg2 < 0 || pReset->arg2 > 6)   /* Last Door. */
             {
                 log_bug("bad exit %ld.", pReset->arg2);
                 free_mem(pReset);
@@ -2003,7 +2003,7 @@ bool import_rom_resets(FILE * fp)
     return true;
 }
 
-bool import_rom_shops(FILE * fp)
+bool import_rom_shops(FILE *fp)
 {
     for (;;)
     {
@@ -2024,7 +2024,7 @@ bool import_rom_shops(FILE * fp)
     return true;
 }
 
-bool import_rom_specials(FILE * fp)
+bool import_rom_specials(FILE *fp)
 {
     for (;;)
     {
@@ -2055,7 +2055,7 @@ bool import_rom_specials(FILE * fp)
     return true;
 }
 
-bool import_rom_helps(FILE * fp)
+bool import_rom_helps(FILE *fp)
 {
     Help *pHelp;
 
@@ -2079,7 +2079,7 @@ bool import_rom_helps(FILE * fp)
     return true;
 }
 
-bool import_rom_socials(FILE * fp)
+bool import_rom_socials(FILE *fp)
 {
     for (;;)
     {
@@ -2087,7 +2087,7 @@ bool import_rom_socials(FILE * fp)
 
         temp = fread_word(fp);
         if (!strcmp(temp, "#0"))
-            return true;	/* done */
+            return true;    /* done */
 
         Social *social = new_social();
 
@@ -2172,7 +2172,7 @@ bool import_rom_socials(FILE * fp)
     return false;
 }
 
-char fread_letter(FILE * fp)
+char fread_letter(FILE *fp)
 {
     char c;
 
@@ -2185,7 +2185,7 @@ char fread_letter(FILE * fp)
     return c;
 }
 
-long fread_number(FILE * fp)
+long fread_number(FILE *fp)
 {
     long number;
     bool sign;
@@ -2245,14 +2245,14 @@ long flag_convert(char letter)
     }
     else if ('a' <= letter && letter <= 'z')
     {
-        bitsum = 67108864;	/* 2^26 */
+        bitsum = 67108864;  /* 2^26 */
         for (i = letter; i > 'a'; i--)
             bitsum *= 2;
     }
     return bitsum;
 }
 
-long fread_flag(FILE * fp)
+long fread_flag(FILE *fp)
 {
     long number;
     long flag;
@@ -2319,7 +2319,7 @@ long fread_flag(FILE * fp)
     }
 }
 
-void fread_to_eol(FILE * fp)
+void fread_to_eol(FILE *fp)
 {
     char c;
 
@@ -2339,7 +2339,7 @@ void fread_to_eol(FILE * fp)
     return;
 }
 
-const char *fread_word(FILE * fp)
+const char *fread_word(FILE *fp)
 {
     static char word[OUT_SIZ];
     char *pword;
@@ -2386,10 +2386,10 @@ const char *fread_word(FILE * fp)
     return NULL;
 }
 
-const char *fread_string(FILE * fp)
+const char *fread_string(FILE *fp)
 {
-    char buf[OUT_SIZ * 4];	/* extra 2 bytes on the end for \0
-				 * and 1b slack */
+    char buf[OUT_SIZ * 4];  /* extra 2 bytes on the end for \0
+                 * and 1b slack */
     long i = 0;
     register char c;
     bool sFull = false;
@@ -2454,7 +2454,7 @@ const char *fread_string(FILE * fp)
     }
 }
 
-const char *fread_string_eol(FILE * fp)
+const char *fread_string_eol(FILE *fp)
 {
     static bool char_special[256 - EOF];
     char buf[OUT_SIZ * 4];
