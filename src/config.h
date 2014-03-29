@@ -6,3 +6,4 @@
 #define SQLITE3_FILE "muddyplains"
 
 #define HAVE_LUA 1
+

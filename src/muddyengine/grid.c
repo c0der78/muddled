@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -28,7 +28,7 @@
 #include <muddyengine/grid.h>
 #include <muddyengine/buffer.h>
 
-void grid_init_border(Border * border)
+void grid_init_border(Border *border)
 {
 
     border->flags = BORDER_NONE;
@@ -41,7 +41,7 @@ void grid_init_border(Border * border)
 
 }
 
-static void grid_init_row(GridRow * row)
+static void grid_init_row(GridRow *row)
 {
 
     for (int i = 0; i < row->columns; i++)
@@ -88,7 +88,7 @@ Grid *new_grid(int width, int columns)
 
 }
 
-void destroy_grid(Grid * grid)
+void destroy_grid(Grid *grid)
 {
 
     for (int i = 0; i < grid->rowcount; i++)
@@ -103,7 +103,7 @@ void destroy_grid(Grid * grid)
 
 }
 
-static void next_row(Grid * grid)
+static void next_row(Grid *grid)
 {
 
     grid->x = 0;
@@ -131,7 +131,7 @@ static void next_row(Grid * grid)
     }
 }
 
-void grid_set_next_row(Grid * grid, int columns)
+void grid_set_next_row(Grid *grid, int columns)
 {
 
     if (grid->x >= grid->rows[grid->y].columns)
@@ -163,14 +163,14 @@ void grid_set_next_row(Grid * grid, int columns)
 
 }
 
-int grid_add_default(Grid * grid, const char *value)
+int grid_add_default(Grid *grid, const char *value)
 {
 
     return grid_add(grid, ALIGN_LEFT, 1, 0, 0, 1, 1, value);
 
 }
 
-int grid_add_border(Grid * grid, Border * border, const char *value)
+int grid_add_border(Grid *grid, Border *border, const char *value)
 {
 
     return grid_add(grid, ALIGN_LEFT, 1, border, 0, 1, 1, value);
@@ -178,7 +178,7 @@ int grid_add_border(Grid * grid, Border * border, const char *value)
 }
 
 int
-grid_add(Grid * grid, align_t align, int colspan, Border * border,
+grid_add(Grid *grid, align_t align, int colspan, Border *border,
          const char *color, int lm, int rm, const char *value)
 {
 
@@ -199,8 +199,8 @@ grid_add(Grid * grid, align_t align, int colspan, Border * border,
 }
 
 void
-grid_set(Grid * grid, int x, int y, align_t align, int colspan,
-         Border * border, const char *color, int left_mar, int right_mar)
+grid_set(Grid *grid, int x, int y, align_t align, int colspan,
+         Border *border, const char *color, int left_mar, int right_mar)
 {
 
     if (y < 0 || y > grid->rowcount || x < 0
@@ -238,7 +238,7 @@ grid_set(Grid * grid, int x, int y, align_t align, int colspan,
 
 }
 
-int grid_addf_border(Grid * grid, Border * border, const char *fmt, ...)
+int grid_addf_border(Grid *grid, Border *border, const char *fmt, ...)
 {
 
     va_list args;
@@ -255,7 +255,7 @@ int grid_addf_border(Grid * grid, Border * border, const char *fmt, ...)
 
 }
 
-int grid_addf_default(Grid * grid, const char *fmt, ...)
+int grid_addf_default(Grid *grid, const char *fmt, ...)
 {
 
     va_list args;
@@ -273,7 +273,7 @@ int grid_addf_default(Grid * grid, const char *fmt, ...)
 }
 
 int
-grid_addf(Grid * grid, align_t align, int colspan, Border * border,
+grid_addf(Grid *grid, align_t align, int colspan, Border *border,
           const char *color, int lm, int rm, const char *fmt, ...)
 {
 
@@ -291,7 +291,7 @@ grid_addf(Grid * grid, align_t align, int colspan, Border * border,
 
 }
 
-void grid_print(Grid * grid, Character * ch)
+void grid_print(Grid *grid, Character *ch)
 {
 
     Buffer *buf = new_buf();
