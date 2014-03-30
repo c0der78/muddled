@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            function parse_command(message)
+            {
+                var pos = message.data.indexOf("{%");
+
+                if(pos != -1)
+                {
+                    var end = message.data.indexOf("%}");
+
+                    if(end != -1)
+                    {
+                        var orig = message.data.substring(pos, end+2);
+
+                        console.log(orig);
+
+                        var command = orig.substring(2, orig.length-2).trim();
+
+                        console.log(command);
+
+                        if(command == "start_password")
+                        {
+                            $('#input').hide();
+                            $('#hidden-input').show();
+                            $('#hidden-input').select();
+                        }
+                        else if(command == "end_password")
+                        {
+                            $('#input').show();
+                            $("#hidden-input").hide();
+                            $('#input').select();
+                        }
+
+                        return message.data.replace(orig, '');
+                    }
+                }
+
+                return message.data;
+            }
+
+            $(function() {
+                window.WebSocket = window.WebSocket || window.MozWebSocket;
+ 
+                var websocket = new WebSocket('ws://127.0.0.1:3779',
+                                              'muddy-protocol');
+ 
+                websocket.onopen = function () {
+                    $('h1').css('color', 'green');
+                };
+ 
+                websocket.onerror = function () {
+                    $('h1').css('color', 'red');
+                };
+ 
+                websocket.onmessage = function (message) {
+                    console.log(message.data);
+
+                    var output = parse_command(message);
+
+                    var div = $('#output');
+
+                    div.append(output);
+
+					var height = div[0].scrollHeight;
+					div.scrollTop(height);
+                };
+                
+                $('.input').keypress(function(e){
+                    if(e.which == 13)
+                    {
+                        e.preventDefault();
+                        websocket.send($(this).val());
+                        $(this).select();
+                        return false;
+                    }
+                });
+
+
+            });
+        </script>
+        <style>
+            #content {
+                width: 1024px;
+                margin: 0 auto;
+            }
+            .terminal {
+                background-color: #111;
+                color: #eee;
+                border-radius: 10px;
+                padding: 15px;
+                width: 100%;
+                height: 500px;
+                font-family: monospace;
+                white-space: pre;
+                overflow: scroll;
+            }
+            .input {
+                width: 100%;
+                margin-left: 12px;
+            }
+            .red {
+                color: red;
+            }
+            .boldred {
+                color: red;
+                font-weight: bold;
+            }
+            .green {
+                color: green;
+            }
+            .boldgreen {
+                color: green;
+                font-weight: : bold;
+            }
+            .yellow {
+                color: yellow;
+            }
+            .boldyellow {
+                color: yellow;
+                font-weight: bold;
+            }
+            .cyan {
+                color: cyan;
+            }
+            .boldcyan {
+                color: cyan;
+                font-weight: bold;
+            }
+            .magenta {
+                color: magenta;
+            }
+            .boldmagenta {
+                color: magenta;
+                font-weight: bold;
+            }
+            .white {
+                color: white;
+            }
+            .boldwhite {
+                color: white;
+                font-weight: bold;
+            }
+            .black {
+                color: gray;
+            }
+            .boldblack {
+                color: gray;
+                font-weight: bold;
+            }
+        </style>
+        </head>
+    <body>
+        <div id="content">
+            <h1>Muddy Plains</h1>
+            <div class="terminal" id="output"></div>
+            <form>
+                <input type="text" id="input" class="input" />
+                <input type="password" id="hidden-input" class="input" style="display: none" />
+            </form>
+        </div>
+    </body>
+</html>

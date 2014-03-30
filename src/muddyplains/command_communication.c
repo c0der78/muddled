@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,6 +19,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
+#include "client.h"
 #include "command.h"
 #include <muddyengine/channel.h>
 #include <ctype.h>
@@ -33,7 +34,6 @@
 #include <muddyengine/player.h>
 #include <muddyengine/room.h>
 #include "olc.h"
-#include "client.h"
 
 DOFUN(say)
 {
@@ -68,7 +68,7 @@ DOFUN(admin)
 
 }
 
-static void connection_note_text_prompt(Client * conn)
+static void connection_note_text_prompt(Client *conn)
 {
 
     writeln(conn, "");
@@ -86,7 +86,7 @@ static const char *szFinishPrompt =
 
 void connection_note_text(Client *, const char *);
 
-void connection_note_finish(Client * conn, const char *argument)
+void connection_note_finish(Client *conn, const char *argument)
 {
 
     switch (toupper((int)argument[0]))
@@ -144,7 +144,7 @@ void connection_note_finish(Client * conn, const char *argument)
 
         break;
 
-    default:		/* invalid response */
+    default:        /* invalid response */
 
         writeln(conn, "Huh? Valid answers are:");
 
@@ -154,7 +154,7 @@ void connection_note_finish(Client * conn, const char *argument)
 
 }
 
-void connection_note_text(Client * conn, const char *argument)
+void connection_note_text(Client *conn, const char *argument)
 {
 
     int action =
@@ -190,7 +190,7 @@ void connection_note_text(Client * conn, const char *argument)
 
 }
 
-void connection_note_expire(Client * conn, const char *argument)
+void connection_note_expire(Client *conn, const char *argument)
 {
 
     time_t expire;
@@ -244,7 +244,7 @@ void connection_note_expire(Client * conn, const char *argument)
 
 }
 
-void connection_note_subject(Client * conn, const char *argument)
+void connection_note_subject(Client *conn, const char *argument)
 {
 
     char buf[BUF_SIZ];
@@ -309,7 +309,7 @@ void connection_note_subject(Client * conn, const char *argument)
 
 }
 
-void connection_note_to(Client * conn, const char *argument)
+void connection_note_to(Client *conn, const char *argument)
 {
 
     char buf[BUF_SIZ];
@@ -405,7 +405,7 @@ void connection_note_to(Client * conn, const char *argument)
 
 }
 
-void note_write(Character * ch, const char *argument)
+void note_write(Character *ch, const char *argument)
 {
 
     if (!ch->pc)
@@ -540,7 +540,7 @@ void note_write(Character * ch, const char *argument)
 
 }
 
-void note_read(Character * ch, const char *argument)
+void note_read(Character *ch, const char *argument)
 {
 
     Note *p;
@@ -641,7 +641,7 @@ void note_read(Character * ch, const char *argument)
 
 }
 
-void note_remove(Character * ch, const char *argument)
+void note_remove(Character *ch, const char *argument)
 {
 
     if (!str_cmp(argument, "all") && is_immortal(ch))
@@ -708,7 +708,7 @@ void note_remove(Character * ch, const char *argument)
 
 }
 
-void note_list(Character * ch, const char *argument)
+void note_list(Character *ch, const char *argument)
 {
 
     int count = 0, show = 0, num = 0, has_shown = 0;
@@ -775,7 +775,7 @@ void note_list(Character * ch, const char *argument)
 
 }
 
-void note_catchup(Character * ch, const char *argument)
+void note_catchup(Character *ch, const char *argument)
 {
 
     Note *p;
@@ -851,7 +851,7 @@ void note_catchup(Character * ch, const char *argument)
 
 }
 
-void note_purge(Character * ch, const char *argument)
+void note_purge(Character *ch, const char *argument)
 {
 
     if (!is_immortal(ch))
@@ -867,7 +867,7 @@ void note_purge(Character * ch, const char *argument)
 
 }
 
-void note_reset(Character * ch, const char *argument)
+void note_reset(Character *ch, const char *argument)
 {
 
     if (!ch->pc)
@@ -1242,7 +1242,7 @@ DOFUN(shout)
     }
     act(TO_CHAR, ch, argument, 0, "~wYou shout '~W$t~w'~x");
 
-    for (Character * victim = first_player; victim;
+    for (Character *victim = first_player; victim;
             victim = victim->next_player)
     {
 

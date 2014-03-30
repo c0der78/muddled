@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,12 +19,12 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
+#include "client.h"
 #include "command.h"
 #include <muddyengine/character.h>
 #include <muddyengine/player.h>
 #include <muddyengine/room.h>
 #include <muddyengine/engine.h>
-#include "client.h"
 #include <muddyengine/log.h>
 #include <muddyengine/account.h>
 #include <muddyengine/connection.h>

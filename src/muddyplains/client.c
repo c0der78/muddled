@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -57,12 +57,13 @@
 #include "client.h"
 #include "olc.h"
 #include "server.h"
+#include "websocket.h"
 
 void show_string(Client *, const char *);
 
 Client *first_client = 0;
 
-bool client_has_color(const Client * conn)
+bool client_has_color(const Client *conn)
 {
     if (conn->account)
     {
@@ -74,7 +75,7 @@ bool client_has_color(const Client * conn)
     }
 }
 
-static void write_to_client(Client * conn, const char *arg)
+static void write_to_client(Client *conn, const char *arg)
 {
 
     size_t length = strlen(arg);
@@ -130,7 +131,7 @@ static void write_to_client(Client * conn, const char *arg)
 
 }
 
-static void vwrite_to_client(Client * conn, const char *fmt, va_list args)
+static void vwrite_to_client(Client *conn, const char *fmt, va_list args)
 {
 
     char buf[OUT_SIZ * 2];
@@ -141,7 +142,7 @@ static void vwrite_to_client(Client * conn, const char *fmt, va_list args)
 
 }
 
-static void writef_line_to_client(Client * conn, const char *fmt, ...)
+static void writef_line_to_client(Client *conn, const char *fmt, ...)
 {
 
     va_list args;
@@ -156,7 +157,7 @@ static void writef_line_to_client(Client * conn, const char *fmt, ...)
 
 }
 
-static void write_line_to_client(Client * conn, const char *arg)
+static void write_line_to_client(Client *conn, const char *arg)
 {
 
     write_to_client(conn, arg);
@@ -165,7 +166,7 @@ static void write_line_to_client(Client * conn, const char *arg)
 
 }
 
-static void writef_to_client(Client * conn, const char *fmt, ...)
+static void writef_to_client(Client *conn, const char *fmt, ...)
 {
 
     va_list args;
@@ -178,7 +179,7 @@ static void writef_to_client(Client * conn, const char *fmt, ...)
 
 }
 
-static void page_to_client(Client * conn, const char *txt)
+static void page_to_client(Client *conn, const char *txt)
 {
 
     if (txt == NULL || !*txt || conn == 0)
@@ -202,16 +203,14 @@ static void page_to_client(Client * conn, const char *txt)
 
 }
 
-static void vtitle_to_client(Client * conn, const char *title, va_list args)
+static void vtitle_to_client(Client *conn, const char *title, va_list args)
 {
 
-    writeln(conn,
-            valign_string(ALIGN_CENTER, conn->scrWidth, "~W~!B",
-                          client_has_color(conn) ? 0 : "-", title, args));
+    writeln(conn, valign_string(ALIGN_CENTER, conn->scrWidth, "~W~!B", client_has_color(conn) ? 0 : "-", title, args));
 
 }
 
-static void titlef_to_client(Client * conn, const char *title, ...)
+static void titlef_to_client(Client *conn, const char *title, ...)
 {
 
     va_list args;
@@ -224,12 +223,10 @@ static void titlef_to_client(Client * conn, const char *title, ...)
 
 }
 
-static void title_to_client(Client * conn, const char *title)
+static void title_to_client(Client *conn, const char *title)
 {
 
-    writeln(conn,
-            align_string(ALIGN_CENTER, conn->scrWidth, "~W~!B",
-                         client_has_color(conn) ? 0 : "-", title));
+    writeln(conn, align_string(ALIGN_CENTER, conn->scrWidth, "~W~!B", client_has_color(conn) ? 0 : "-", title));
 
 }
 
@@ -273,6 +270,8 @@ Client *new_client()
 
     conn->socket = -1;
 
+    conn->websocket = NULL;
+
     memset(conn->lastCommand, 0, sizeof(conn->lastCommand));
 
     conn->handler = client_get_account_name;
@@ -315,7 +314,7 @@ Client *new_client()
 
 }
 
-void destroy_client(Client * conn)
+void destroy_client(Client *conn)
 {
 
     free_str(conn->termType);
@@ -412,14 +411,14 @@ void initialize_client(int control)
 
 }
 
-const char *getip(const Client * conn)
+const char *getip(const Client *conn)
 {
 
     return inet_ntoa(conn->addr.sin_addr);
 
 }
 
-bool parse_input_buffer(Client * conn)
+bool parse_input_buffer(Client *conn)
 {
 
     int i, j, k;
@@ -487,7 +486,7 @@ bool parse_input_buffer(Client * conn)
 
         }
 
-#else				/* */
+#else               /* */
         else
         {
 
@@ -581,7 +580,7 @@ bool parse_input_buffer(Client * conn)
 
 }
 
-bool read_line_from_client(Client * conn)
+bool read_line_from_client(Client *conn)
 {
 
     size_t iStart = 0;
@@ -655,7 +654,7 @@ bool read_line_from_client(Client * conn)
 
 }
 
-void pager_prompt(Client * conn)
+void pager_prompt(Client *conn)
 {
 
     int shown_lines = 0;
@@ -679,7 +678,7 @@ void pager_prompt(Client * conn)
 
 }
 
-void bust_a_prompt(Client * conn)
+void bust_a_prompt(Client *conn)
 {
 
     char buf[OUT_SIZ] = { 0 };
@@ -836,7 +835,7 @@ void bust_a_prompt(Client * conn)
 
 }
 
-bool parse_color_codes(Client * conn)
+bool parse_color_codes(Client *conn)
 {
 
     color_t color;
@@ -853,6 +852,8 @@ bool parse_color_codes(Client * conn)
 
     bool written = false;
 
+    bool need_to_finish_color = false;
+
     result = output;
 
     for (pstr = conn->outbuf;
@@ -864,16 +865,17 @@ bool parse_color_codes(Client * conn)
 
             *result++ = 0;
 
-            written =
-                write_to_socket(conn->socket, output,
-                                result - output);
+            if (conn->websocket)
+                written = write_to_websocket(conn->websocket, output, result - output);
+            else
+                written =  write_to_socket(conn->socket, output, result - output);
 
             if (!(success = written))
-                break;	/* problems... */
+                break;  /* problems... */
 
             memset(output, 0, sizeof(output));
 
-            result = output;	/* increment counter */
+            result = output;    /* increment counter */
 
         }
         if (*pstr != COLOR_CODE)
@@ -895,21 +897,48 @@ bool parse_color_codes(Client * conn)
         else if (colorOn)
         {
 
-            tmp = make_color(&color);
+            if (conn->websocket)
+            {
+                if (need_to_finish_color)
+                {
+                    tmp = finish_html_color();
+
+                    while (*tmp && (result - output) < OUT_SIZ)
+                    {
+                        *result++ = *tmp++;
+                    }
+                }
+                tmp = make_html_color(&color);
+
+                need_to_finish_color = true;
+            }
+            else
+            {
+                tmp = make_terminal_color(&color);
+            }
 
             while (*tmp != 0 && (result - output) < OUT_SIZ)
             {
-
                 *result++ = *tmp++;
-
             }
-
         }
     }
 
+    if (conn->websocket && need_to_finish_color)
+    {
+        tmp = finish_html_color();
+
+        while (*tmp && (result - output) < OUT_SIZ)
+        {
+            *result++ = *tmp++;
+        }
+    }
     *result = 0;
 
-    written = write_to_socket(conn->socket, output, result - output);
+    if (conn->websocket)
+        written = write_to_websocket(conn->websocket, output, result - output);
+    else
+        written = write_to_socket(conn->socket, output, result - output);
 
     success = (success && written);
 
@@ -919,7 +948,7 @@ bool parse_color_codes(Client * conn)
 
 }
 
-bool process_output(Client * conn, bool fPrompt)
+bool process_output(Client *conn, bool fPrompt)
 {
 
     /*
@@ -1011,7 +1040,7 @@ bool process_output(Client * conn, bool fPrompt)
 
 }
 
-void close_client(Client * conn)
+void close_client(Client *conn)
 {
 
     if (conn->outtop > 0)
@@ -1023,7 +1052,7 @@ void close_client(Client * conn)
 
 }
 
-void show_string(Client * conn, const char *input)
+void show_string(Client *conn, const char *input)
 {
 
     char buffer[2 * OUT_SIZ];
@@ -1051,13 +1080,13 @@ void show_string(Client * conn, const char *input)
 
         break;
 
-    case 'R':		/* refresh current page of text */
+    case 'R':       /* refresh current page of text */
 
         lines = -1 - (conn->scrHeight - 2);
 
         break;
 
-    case 'B':		/* scroll back a page of text */
+    case 'B':       /* scroll back a page of text */
 
         lines = -1 - (2 * (conn->scrHeight - 2));
 
@@ -1065,7 +1094,7 @@ void show_string(Client * conn, const char *input)
 
     case '?':
 
-    case 'H':		/* Show some help */
+    case 'H':       /* Show some help */
 
         writeln(conn, "Pager help:");
 
@@ -1081,7 +1110,7 @@ void show_string(Client * conn, const char *input)
 
         return;
 
-    default:		/* otherwise, stop the text viewing */
+    default:        /* otherwise, stop the text viewing */
 
         if (conn->showstr_head)
         {
@@ -1142,27 +1171,28 @@ void show_string(Client * conn, const char *input)
 
             write(conn, buffer);
 
-            for (chk = conn->showstr_point; isspace((int)*chk);
-                    chk++)
-                ;
-
+            for (chk = conn->showstr_point; isspace((int)*chk); chk++)
             {
 
-                if (!*chk)
+            }
+
+
+
+            if (!*chk)
+            {
+
+                if (conn->showstr_head)
                 {
 
-                    if (conn->showstr_head)
-                    {
+                    free_mem(conn->showstr_head);
 
-                        free_mem(conn->showstr_head);
-
-                        conn->showstr_head = 0;
-
-                    }
-                    conn->showstr_point = 0;
+                    conn->showstr_head = 0;
 
                 }
+                conn->showstr_point = 0;
+
             }
+
 
             return;
 
@@ -1173,14 +1203,14 @@ void show_string(Client * conn, const char *input)
 
 }
 
-void client_wait_to_quit(Client * conn, const char *argument)
+void client_wait_to_quit(Client *conn, const char *argument)
 {
 
     conn->handler = 0;
 
 }
 
-void client_command_parser(Client * conn, const char *argument)
+void client_command_parser(Client *conn, const char *argument)
 {
 
     if (conn->showstr_point != 0)
@@ -1209,7 +1239,7 @@ void client_command_parser(Client * conn, const char *argument)
 
 }
 
-void client_display_account_menu(Client * conn)
+void client_display_account_menu(Client *conn)
 {
 
     int count = 0;
@@ -1233,7 +1263,7 @@ void client_display_account_menu(Client * conn)
 
         writeln(conn, "Players:");
 
-        for (AccountPlayer * ch = conn->account->players; ch != 0;
+        for (AccountPlayer *ch = conn->account->players; ch != 0;
                 ch = ch->next)
         {
 
@@ -1247,7 +1277,7 @@ void client_display_account_menu(Client * conn)
 
 }
 
-bool client_is_playing(Client * conn)
+bool client_is_playing(Client *conn)
 {
 
     return conn && conn->account && conn->account->playing
@@ -1255,7 +1285,7 @@ bool client_is_playing(Client * conn)
 
 }
 
-void set_playing(Client * conn)
+void set_playing(Client *conn)
 {
 
     Character *ch = conn->account->playing;
@@ -1295,7 +1325,7 @@ void set_playing(Client * conn)
     }
 }
 
-void client_display_sex_menu(Client * conn)
+void client_display_sex_menu(Client *conn)
 {
 
     clear_screen(conn);
@@ -1306,7 +1336,7 @@ void client_display_sex_menu(Client * conn)
 
     int count = 0;
 
-    for (const Lookup * t = sex_table; t->name != 0; t++)
+    for (const Lookup *t = sex_table; t->name != 0; t++)
     {
 
         writelnf(conn, "~Y%d) ~W%s", ++count, capitalize(t->name));
@@ -1319,7 +1349,7 @@ void client_display_sex_menu(Client * conn)
 
 }
 
-void client_confirm_delete_char(Client * conn, const char *argument)
+void client_confirm_delete_char(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument)
@@ -1353,7 +1383,7 @@ void client_confirm_delete_char(Client * conn, const char *argument)
 
 }
 
-void client_delete_char(Connection * conn)
+void client_delete_char(Connection *conn)
 {
 
     Client *cl = (Client *) conn;
@@ -1368,7 +1398,7 @@ void client_delete_char(Connection * conn)
 
 }
 
-void client_display_class_menu(Client * conn)
+void client_display_class_menu(Client *conn)
 {
 
     clear_screen(conn);
@@ -1390,7 +1420,7 @@ void client_display_class_menu(Client * conn)
 
 }
 
-void client_get_class(Client * conn, const char *argument)
+void client_get_class(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument)
@@ -1438,7 +1468,7 @@ void client_get_class(Client * conn, const char *argument)
 
 }
 
-void client_display_race_menu(Client * conn)
+void client_display_race_menu(Client *conn)
 {
 
     clear_screen(conn);
@@ -1447,7 +1477,7 @@ void client_display_race_menu(Client * conn)
 
     conn->title(conn, "Available Races");
 
-    for (Race * race = first_race; race != 0; race = race->next)
+    for (Race *race = first_race; race != 0; race = race->next)
     {
 
         writelnf(conn, "~W%12s~C: %s~x", race->name, race->description);
@@ -1460,7 +1490,7 @@ void client_display_race_menu(Client * conn)
 
 }
 
-void client_get_race(Client * conn, const char *argument)
+void client_get_race(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument)
@@ -1493,7 +1523,7 @@ void client_get_race(Client * conn, const char *argument)
 
 }
 
-void client_get_char_sex(Client * conn, const char *argument)
+void client_get_char_sex(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument)
@@ -1558,7 +1588,7 @@ void client_get_char_sex(Client * conn, const char *argument)
 
 }
 
-void newbize(Character * ch)
+void newbize(Character *ch)
 {
 
     set_bit(ch->pc->account->flags, PLR_HINTS);
@@ -1567,7 +1597,7 @@ void newbize(Character * ch)
 
 }
 
-void client_create_new_char(Client * conn, const char *argument)
+void client_create_new_char(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument || strlen(argument) > 12
@@ -1608,7 +1638,7 @@ void client_create_new_char(Client * conn, const char *argument)
 
 }
 
-void client_confirm_account_delete(Client * conn, const char *argument)
+void client_confirm_account_delete(Client *conn, const char *argument)
 {
 
     send_telopt(conn, WONT, TELOPT_ECHO);
@@ -1635,7 +1665,7 @@ void client_confirm_account_delete(Client * conn, const char *argument)
 
 }
 
-void client_account_menu(Client * conn, const char *argument)
+void client_account_menu(Client *conn, const char *argument)
 {
 
     if (is_number(argument))
@@ -1742,7 +1772,7 @@ void update_login_count()
 
 }
 
-void client_display_timezones(Client * conn)
+void client_display_timezones(Client *conn)
 {
 
     writelnf(conn, "~C%-6s %-30s (%s)", "Name", "City/Zone Crosses",
@@ -1765,7 +1795,7 @@ void client_display_timezones(Client * conn)
 
 }
 
-void client_get_timezone(Client * conn, const char *argument)
+void client_get_timezone(Client *conn, const char *argument)
 {
 
     int zone = timezone_lookup(argument);
@@ -1788,7 +1818,7 @@ void client_get_timezone(Client * conn, const char *argument)
 
 }
 
-void client_create_account_email(Client * conn, const char *argument)
+void client_create_account_email(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument || !is_valid_email(argument))
@@ -1809,7 +1839,7 @@ void client_create_account_email(Client * conn, const char *argument)
 
 void client_create_account_password(Client *, const char *);
 
-void client_confirm_account_password(Client * conn, const char *argument)
+void client_confirm_account_password(Client *conn, const char *argument)
 {
 
     if (strcmp
@@ -1835,7 +1865,7 @@ void client_confirm_account_password(Client * conn, const char *argument)
 
 }
 
-void client_create_account_password(Client * conn, const char *argument)
+void client_create_account_password(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument || strlen(argument) < 6)
@@ -1856,7 +1886,7 @@ void client_create_account_password(Client * conn, const char *argument)
 
 }
 
-void client_create_account(Client * conn, const char *argument)
+void client_create_account(Client *conn, const char *argument)
 {
 
     switch (UPPER(argument[0]))
@@ -1891,7 +1921,7 @@ void client_create_account(Client * conn, const char *argument)
 
 }
 
-void client_get_account_password(Client * conn, const char *argument)
+void client_get_account_password(Client *conn, const char *argument)
 {
 
     if (strcmp
@@ -1973,7 +2003,7 @@ void client_get_account_password(Client * conn, const char *argument)
 
 }
 
-void client_get_account_name(Client * conn, const char *argument)
+void client_get_account_name(Client *conn, const char *argument)
 {
 
     if (!argument || !*argument)

@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -26,9 +26,9 @@
 #include <muddyengine/engine.h>
 #include <muddyengine/buffer.h>
 
-#define MAX_BUF		16384
-#define MAX_BUF_LIST 	10
-#define BASE_BUF 	1024
+#define MAX_BUF     16384
+#define MAX_BUF_LIST    10
+#define BASE_BUF    1024
 
 /*
  * valid states
@@ -68,6 +68,20 @@ static int get_size(int val)
         }
     return -1;
 
+}
+
+
+char *get_temp_buf()
+{
+    static char temp_buf[MAX_TEMP_BUF][TEMP_BUF_SIZ];
+
+    static size_t temp_buf_index = 0;
+
+    ++temp_buf_index;
+
+    temp_buf_index %= MAX_TEMP_BUF;
+
+    return temp_buf[temp_buf_index];
 }
 
 Buffer *new_buf()
@@ -121,7 +135,7 @@ Buffer *new_buf_size(int size)
 
 }
 
-void destroy_buf(Buffer * buffer)
+void destroy_buf(Buffer *buffer)
 {
 
     free_mem(buffer->string);
@@ -130,7 +144,7 @@ void destroy_buf(Buffer * buffer)
 
 }
 
-bool buf_addf(Buffer * buffer, const char *fmt, ...)
+bool buf_addf(Buffer *buffer, const char *fmt, ...)
 {
 
     char buf[OUT_SIZ];
@@ -147,7 +161,7 @@ bool buf_addf(Buffer * buffer, const char *fmt, ...)
 
 }
 
-bool buf_addlnf(Buffer * buffer, const char *fmt, ...)
+bool buf_addlnf(Buffer *buffer, const char *fmt, ...)
 {
 
     char buf[OUT_SIZ];
@@ -166,14 +180,14 @@ bool buf_addlnf(Buffer * buffer, const char *fmt, ...)
 
 }
 
-bool buf_addln(Buffer * buffer, const char *string)
+bool buf_addln(Buffer *buffer, const char *string)
 {
 
     return buf_add(buffer, string) && buf_add(buffer, "\n\r");
 
 }
 
-bool buf_add_len(Buffer * buffer, const char *string, size_t str_len)
+bool buf_add_len(Buffer *buffer, const char *string, size_t str_len)
 {
 
     size_t len;
@@ -186,18 +200,18 @@ bool buf_add_len(Buffer * buffer, const char *string, size_t str_len)
 
     oldsize = buffer->size;
 
-    if (buffer->state == BUFFER_OVERFLOW)	/* don't waste time on bad
-						 * * strings! */
+    if (buffer->state == BUFFER_OVERFLOW)   /* don't waste time on bad
+                         * * strings! */
         return false;
 
     len = strlen(buffer->string) + str_len + 1;
 
-    while (len >= buffer->size)  	/* increase the buffer size */
+    while (len >= buffer->size)     /* increase the buffer size */
     {
 
         buffer->size = get_size(buffer->size + 1);
 
-        if (buffer->size == -1)  	/* overflow */
+        if (buffer->size == -1)     /* overflow */
         {
 
             buffer->size = oldsize;
@@ -227,14 +241,14 @@ bool buf_add_len(Buffer * buffer, const char *string, size_t str_len)
 
 }
 
-bool buf_add(Buffer * buffer, const char *string)
+bool buf_add(Buffer *buffer, const char *string)
 {
 
     return buf_add_len(buffer, string, strlen(string));
 
 }
 
-void clear_buf(Buffer * buffer)
+void clear_buf(Buffer *buffer)
 {
 
     buffer->string[0] = '\0';
@@ -243,7 +257,7 @@ void clear_buf(Buffer * buffer)
 
 }
 
-char *buf_string(Buffer * buffer)
+char *buf_string(Buffer *buffer)
 {
 
     return buffer->string;

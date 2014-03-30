@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,7 +19,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include "command.h"
+#include "client.h"
 #include <muddyengine/character.h>
 #include <muddyengine/player.h>
 #include <muddyengine/account.h>
@@ -28,7 +28,7 @@
 #include <libgen.h>
 #include "server.h"
 #include "olc.h"
-#include "client.h"
+#include "command.h"
 #include <muddyengine/object.h>
 #include <muddyengine/social.h>
 #include <muddyengine/area.h>
@@ -590,7 +590,7 @@ DOFUN(sockets)
 
     Buffer *buf = new_buf();
 
-    for (Client * c = first_client; c; c = c->next)
+    for (Client *c = first_client; c; c = c->next)
     {
 
         writelnf(buf, "~W%s~x - ~C%s~x (~G%s~x) ~B%s~x", getip(c),
@@ -753,7 +753,7 @@ DOFUN(db)
         else if (!str_prefix(argument, "areas"))
         {
 
-            for (Area * area = first_area; area; area = area->next)
+            for (Area *area = first_area; area; area = area->next)
             {
 
                 if (!is_set(area->flags, AREA_CHANGED))

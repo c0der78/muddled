@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -38,6 +38,7 @@
 #include "config.h"
 #include "client.h"
 #include "update.h"
+#include "websocket.h"
 
 short server_port = 4000;
 int server_socket = -1;
@@ -103,6 +104,7 @@ void initialize_server()
             close(server_socket);
             exit(-1);
         }
+
     }
     else
     {
@@ -137,16 +139,14 @@ void initialize_server()
                 char term[100];
                 int width, height;
                 struct hostent *from;
-                conn->account =
-                    new_account((Connection *) conn);
 
-                if (sscanf
-                        (buf, "%d %d %d %[^'~']~ %[^'~']~ %s\n",
-                         &conn->socket, &width, &height, account,
-                         name, term) != 6)
+                conn->account = new_account((Connection *) conn);
+
+                if (sscanf (buf, "%d %d %d %[^'~']~ %[^'~']~ %s\n",
+                            &conn->socket, &width, &height, account,
+                            name, term) != 6)
                 {
-                    log_error
-                    ("could not scan line for reboot");
+                    log_error("could not scan line for reboot");
                     destroy_client(conn);
                     continue;
                 }
@@ -154,52 +154,37 @@ void initialize_server()
                 conn->scrWidth = width;
                 conn->scrHeight = height;
 
-                if (getpeername
-                        (conn->socket,
-                         (struct sockaddr *)&conn->addr,
-                         &size) < 0)
+                if (getpeername(conn->socket, (struct sockaddr *)&conn->addr, &size) < 0)
                 {
                     log_error("getpeername");
                     conn->host = str_dup("(unknown)");
                 }
                 else
                 {
-                    from =
-                        gethostbyaddr((char *)&conn->addr.
-                                      sin_addr,
-                                      sizeof(conn->addr.
-                                             sin_addr),
-                                      AF_INET);
-                    conn->host =
-                        str_dup(from ? from->
-                                h_name : getip(conn));
+                    from = gethostbyaddr((char *)&conn->addr.sin_addr, sizeof(conn->addr.sin_addr), AF_INET);
+                    conn->host = str_dup(from ? from->h_name : getip(conn));
                     log_info("new client: %s", conn->host);
                 }
 
                 if (!load_account(conn->account, account))
                 {
-                    log_error("could not reload account %s",
-                              account);
+                    log_error("could not reload account %s", account);
                     destroy_client(conn);
                     continue;
                 }
-                for (AccountPlayer * ch =
-                            conn->account->players; ch != 0;
-                        ch = ch->next)
+                for (AccountPlayer *ch = conn->account->players; ch; ch = ch->next)
                 {
                     if (!str_cmp(ch->name, name))
                     {
                         log_info("reloaded %s", name);
-                        conn->account->playing =
-                            load_player_by_id((Connection *) conn, ch->charId);
+                        conn->account->playing = load_player_by_id((Connection *) conn, ch->charId);
                         break;
                     }
                 }
 
                 if (conn->account->playing == 0)
                 {
-                    log_error("could not reload player %s",
-                              name);
+                    log_error("could not reload player %s", name);
                     destroy_client(conn);
                 }
                 else
@@ -207,8 +192,7 @@ void initialize_server()
                     LINK(first_client, conn, next);
                     test_telopts(conn);
 
-                    writeln(conn,
-                            "Reality warps briefly and you feel a change in the world.");
+                    writeln(conn, "Reality warps briefly and you feel a change in the world.");
 
                     set_playing(conn);
                 }
@@ -218,7 +202,10 @@ void initialize_server()
             unlink(REBOOT_FILE);
         }
     }
+
     log_info("listening on port %d", server_port);
+
+    websocket_context = create_websocket(websocket_port);
 }
 
 void game_loop(int control)
@@ -256,8 +243,7 @@ void game_loop(int control)
             FD_SET(c->socket, &exc_set);
         }
 
-        if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time)
-                < 0)
+        if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0)
         {
             log_error("select: poll");
             exit(1);
@@ -301,8 +287,7 @@ void game_loop(int control)
                 {
                     FD_CLR(c->socket, &out_set);
                     if (client_is_playing(c))
-                        save_player(c->account->
-                                    playing);
+                        save_player(c->account->playing);
                     c->outtop = 0;
                     close_client(c);
                     continue;
@@ -332,6 +317,8 @@ void game_loop(int control)
          */
         update_handler();
 
+        libwebsocket_service(websocket_context, 1);
+
         /*
          * Output.
          */
@@ -339,14 +326,12 @@ void game_loop(int control)
         {
             c_next = c->next;
 
-            if ((c->fCommand || c->outtop > 0)
-                    && FD_ISSET(c->socket, &out_set))
+            if ((c->fCommand || c->outtop > 0) && FD_ISSET(c->socket, &out_set))
             {
                 if (!process_output(c, true))
                 {
                     if (client_is_playing(c))
-                        save_player(c->account->
-                                    playing);
+                        save_player(c->account->playing);
                     c->outtop = 0;
                     close_client(c);
                 }
@@ -444,7 +429,7 @@ void reboot_server()
     }
     fprintf(fp, "%ld\n", startup_time);
 
-    for (Client * conn = first_client; conn != 0; conn = conn->next)
+    for (Client *conn = first_client; conn; conn = conn->next)
     {
 
         if (client_is_playing(conn))

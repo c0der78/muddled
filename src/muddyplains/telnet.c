@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,15 +19,16 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddyengine/connection.h>
 #include "telnet.h"
+#include <muddyengine/connection.h>
 #include <muddyengine/string.h>
 #include <stdbool.h>
 #include <muddyengine/log.h>
 #include <muddyengine/macro.h>
 
-ssize_t send_telopt(const Client * conn, unsigned char cmd, unsigned char opt)
+ssize_t send_telopt(const Client *conn, unsigned char cmd, unsigned char opt)
 {
+    if (conn->websocket) return 0;
 
     unsigned char telopt[] = { IAC, cmd, opt };
 
@@ -36,15 +37,16 @@ ssize_t send_telopt(const Client * conn, unsigned char cmd, unsigned char opt)
 
 }
 
-ssize_t test_telopts(const Client * conn)
+ssize_t test_telopts(const Client *conn)
 {
 
     return send_telopt(conn, DO, TELOPT_TSPEED);
 
 }
 
-ssize_t send_telopt_sb(const Client * conn, unsigned char opt)
+ssize_t send_telopt_sb(const Client *conn, unsigned char opt)
 {
+    if (conn->websocket) return 0;
 
     unsigned char telopt[] = { IAC, SB, opt, SEND, IAC, SE };
 
@@ -53,7 +55,7 @@ ssize_t send_telopt_sb(const Client * conn, unsigned char opt)
 
 }
 
-void advertise_telopts(const Client * conn)
+void advertise_telopts(const Client *conn)
 {
 
     send_telopt(conn, DO, TELOPT_NAWS);
@@ -62,28 +64,29 @@ void advertise_telopts(const Client * conn)
 
 }
 
-void set_cursor(Client * conn, int r, int c)
+void set_cursor(Client *conn, int r, int c)
 {
 
-    writef(conn, "\0337\033[%d;%dH", r, c);
+    if (!conn->websocket)
+        writef(conn, "\0337\033[%d;%dH", r, c);
 
 }
 
-void restore_cursor(Client * conn)
+void restore_cursor(Client *conn)
 {
-
-    write(conn, "\0338");
+    if (!conn->websocket)
+        write(conn, "\0338");
 
 }
 
-void clear_screen(Client * conn)
+void clear_screen(Client *conn)
 {
-
-    write(conn, "\033[2J");
+    if (!conn->websocket)
+        write(conn, "\033[2J");
 
 }
 
-void process_telnet(Client * conn, unsigned char *buf, size_t index)
+void process_telnet(Client *conn, unsigned char *buf, size_t index)
 {
 
     size_t i = index;
@@ -254,7 +257,7 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                     // if we find a double NUL we have reached the end of
                     // the input
                     // stream before finding the expected SE
-                    i = iac_sb_index;	// jump i back to the code
+                    i = iac_sb_index;   // jump i back to the code
                     // starting IAC SB
                     finished = true;
 
@@ -380,8 +383,8 @@ void process_telnet(Client * conn, unsigned char *buf, size_t index)
                      * stream before finding the expected
                      * SE
                      */
-                    i = iac_sb_index;	/* jump i back to the code
-								 * starting IAC SB */
+                    i = iac_sb_index;   /* jump i back to the code
+                                 * starting IAC SB */
                     finished = true;
 
                 }

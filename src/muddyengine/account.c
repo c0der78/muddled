@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -38,7 +38,7 @@ const Lookup account_flags[] =
     {0, 0}
 };
 
-Account *new_account(Connection * conn)
+Account *new_account(Connection *conn)
 {
     Account *acc = (Account *) alloc_mem(1, sizeof(Account));
 
@@ -61,7 +61,7 @@ Account *new_account(Connection * conn)
     return acc;
 }
 
-void destroy_account(Account * acc)
+void destroy_account(Account *acc)
 {
     free_str(acc->login);
     free_str(acc->password);
@@ -99,14 +99,14 @@ AccountPlayer *new_account_player()
     return p;
 }
 
-void destroy_account_player(AccountPlayer * p)
+void destroy_account_player(AccountPlayer *p)
 {
     free_str(p->name);
 
     free_mem(p);
 }
 
-void account_forum_set_last_note(Account * acc, time_t value)
+void account_forum_set_last_note(Account *acc, time_t value)
 {
     assert(acc != 0);
 
@@ -118,7 +118,7 @@ void account_forum_set_last_note(Account * acc, time_t value)
     acc->forumData[i].lastNote = value;
 }
 
-time_t account_forum_last_note(Account * acc)
+time_t account_forum_last_note(Account *acc)
 {
     assert(acc != 0 && acc->forum != 0);
 
@@ -130,7 +130,7 @@ time_t account_forum_last_note(Account * acc)
     return acc->forumData[i].lastNote;
 }
 
-bool account_forum_is_subscribed(Account * acc)
+bool account_forum_is_subscribed(Account *acc)
 {
     assert(acc != 0 && acc->forum != 0);
 
@@ -142,55 +142,75 @@ bool account_forum_is_subscribed(Account * acc)
     return !acc->forumData[i].unsubscribed;
 }
 
-int load_account(Account * acc, const char *login)
+int load_account(Account *acc, const char *login)
 {
-    /*char buf[500];
+    char buf[500];
     sql_stmt *stmt;
     int len = sprintf(buf, "select * from account where login='%s'", login);
 
     log_debug("loading account %s", login);
 
-    if (sql_query(buf, len, &stmt) != SQL_OK) {
-    	log_data("could not prepare sql statement");
-    	return 0;
+    if (sql_query(buf, len, &stmt) != SQL_OK)
+    {
+        log_data("could not prepare sql statement");
+        return 0;
     }
-    if (sql_step(stmt) == SQL_DONE) {
-    	if (sql_finalize(stmt) != SQL_OK)
-    		log_data("could not finalize sql statement");
-    	return 0;
+    if (sql_step(stmt) == SQL_DONE)
+    {
+        if (sql_finalize(stmt) != SQL_OK)
+            log_data("could not finalize sql statement");
+        return 0;
     }
-    do {
-    	int i, cols = sql_column_count(stmt);
-    	for (i = 0; i < cols; i++) {
-    		const char *colname = sql_column_name(stmt, i);
+    do
+    {
+        int i, cols = sql_column_count(stmt);
+        for (i = 0; i < cols; i++)
+        {
+            const char *colname = sql_column_name(stmt, i);
 
-    		if (!str_cmp(colname, "accountId")) {
-    			acc->id = sql_column_int(stmt, i);
-    		} else if (!str_cmp(colname, "login")) {
-    			acc->login = str_dup(sql_column_str(stmt, i));
-    		} else if (!str_cmp(colname, "email")) {
-    			acc->email = str_dup(sql_column_str(stmt, i));
-    		} else if (!str_cmp(colname, "timezone")) {
-    			acc->timezone = sql_column_int(stmt, i);
-    		} else if (!str_cmp(colname, "autologinId")) {
-    			acc->autologinId = sql_column_int(stmt, i);
-    		} else if (!str_cmp(colname, "flags")) {
-    			parse_flags(acc->flags,
-    				    sql_column_str(stmt, i),
-    				    account_flags);
-    		} else if (!str_cmp(colname, "password")) {
-    			acc->password =
-    			    str_dup(sql_column_str(stmt, i));
-    		} else {
-    			log_warn("unknown account column '%s'",
-    				 colname);
-    		}
-    	}
+            if (!str_cmp(colname, "accountId"))
+            {
+                acc->id = sql_column_int(stmt, i);
+            }
+            else if (!str_cmp(colname, "login"))
+            {
+                acc->login = str_dup(sql_column_str(stmt, i));
+            }
+            else if (!str_cmp(colname, "email"))
+            {
+                acc->email = str_dup(sql_column_str(stmt, i));
+            }
+            else if (!str_cmp(colname, "timezone"))
+            {
+                acc->timezone = sql_column_int(stmt, i);
+            }
+            else if (!str_cmp(colname, "autologinId"))
+            {
+                acc->autologinId = sql_column_int(stmt, i);
+            }
+            else if (!str_cmp(colname, "flags"))
+            {
+                parse_flags(acc->flags,
+                            sql_column_str(stmt, i),
+                            account_flags);
+            }
+            else if (!str_cmp(colname, "password"))
+            {
+                acc->password =
+                    str_dup(sql_column_str(stmt, i));
+            }
+            else
+            {
+                log_warn("unknown account column '%s'",
+                         colname);
+            }
+        }
     }
     while (sql_step(stmt) != SQL_DONE);
 
-    if (sql_finalize(stmt) != SQL_OK) {
-    	log_data("could not finalize sql statement");
+    if (sql_finalize(stmt) != SQL_OK)
+    {
+        log_data("could not finalize sql statement");
     }
     // load account players
 
@@ -198,8 +218,7 @@ int load_account(Account * acc, const char *login)
 
     load_account_forums(acc);
 
-    return 1;*/
-    return 0;
+    return 1;
 }
 
 field_map *account_forum_fields(Account *acc, AccountForum *forum)
@@ -217,7 +236,7 @@ field_map *account_forum_fields(Account *acc, AccountForum *forum)
         {0}
     };
 
-    if(table == 0)
+    if (table == 0)
     {
         table = alloc_mem(1, sizeof(account_values));
     }
@@ -227,7 +246,7 @@ field_map *account_forum_fields(Account *acc, AccountForum *forum)
     return table;
 }
 
-int save_account_forum(Account * acc, int f)
+int save_account_forum(Account *acc, int f)
 {
     AccountForum *forum = &acc->forumData[f];
 
@@ -253,7 +272,7 @@ field_map *account_fields(Account *acc)
         {0}
     };
 
-    if(table == 0)
+    if (table == 0)
     {
         table = alloc_mem(1, sizeof(accvalues));
     }
@@ -261,7 +280,7 @@ field_map *account_fields(Account *acc)
     return table;
 }
 
-int save_account(Account * acc)
+int save_account(Account *acc)
 {
 
     acc->id = db_save(account_fields(acc), ACCOUNT_TABLE, acc->id);
@@ -272,7 +291,7 @@ int save_account(Account * acc)
     return acc->id != 0;
 }
 
-int delete_account(Account * acc)
+int delete_account(Account *acc)
 {
 
     /*char buf[500];
@@ -282,22 +301,22 @@ int delete_account(Account * acc)
     log_debug("deleting account %s", acc->login);
 
     if (sql_exec(buf) != SQL_OK) {
-    	log_data("could not exec sql statement");
-    	return 0;
+        log_data("could not exec sql statement");
+        return 0;
     }
     sprintf(buf, "delete from account_forum where accountId=%" PRId64,
-    	acc->id);
+        acc->id);
 
     if (sql_exec(buf) != SQL_OK) {
-    	log_data("could not exec sql statement");
-    	return 0;
+        log_data("could not exec sql statement");
+        return 0;
     }
     return 1;*/
 
     return db_delete(ACCOUNT_TABLE, acc->id) == SQL_OK;
 }
 
-int load_account_players(Account * acc)
+int load_account_players(Account *acc)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -362,7 +381,7 @@ int load_account_players(Account * acc)
 
 }
 
-int load_account_forums(Account * acc)
+int load_account_forums(Account *acc)
 {
     char buf[400];
     sql_stmt *stmt;

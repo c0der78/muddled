@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,11 +18,11 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
+#include "client.h"
 #include <muddyengine/room.h>
 #include "olc.h"
 #include <stdlib.h>
 #include <string.h>
-#include "client.h"
 #include <muddyengine/string.h>
 #include <muddyengine/macro.h>
 #include <muddyengine/room.h>
@@ -42,14 +42,14 @@ Editor *new_editor()
 
 }
 
-void destroy_editor(Editor * editor)
+void destroy_editor(Editor *editor)
 {
 
     free_mem(editor);
 
 }
 
-void olc_prompt(Client * conn)
+void olc_prompt(Client *conn)
 {
 
     if (conn->editing->show == string_editor_menu)
@@ -69,7 +69,7 @@ void olc_prompt(Client * conn)
 
 }
 
-void finish_editing(Client * conn)
+void finish_editing(Client *conn)
 {
 
     Editor *ed = conn->editing;
@@ -87,7 +87,7 @@ void finish_editing(Client * conn)
 
 }
 
-void string_editor_menu(Client * conn)
+void string_editor_menu(Client *conn)
 {
 
     const char **pStr = (const char **)conn->editing->data;
@@ -115,7 +115,7 @@ void string_editor_menu(Client * conn)
 
 }
 
-void string_editor_preview(Client * conn, const char *header, const char *pstr)
+void string_editor_preview(Client *conn, const char *header, const char *pstr)
 {
 
     int len = strlen_color(header);
@@ -229,7 +229,7 @@ string_lineadd(const char *string, const char *newstr, size_t line, char *buf)
 
 }
 
-void olc_syntax(Client * conn, const char *arg, ...)
+void olc_syntax(Client *conn, const char *arg, ...)
 {
 
     va_list args;
@@ -277,7 +277,7 @@ void olc_syntax(Client * conn, const char *arg, ...)
 
 }
 
-int edit_text(Client * conn, const char **pStr, const char *argument)
+int edit_text(Client *conn, const char **pStr, const char *argument)
 {
     char buf[OUT_SIZ * 4];
 
@@ -409,7 +409,7 @@ int edit_text(Client * conn, const char **pStr, const char *argument)
 
 }
 
-void string_edit(Client * conn, const char *argument)
+void string_edit(Client *conn, const char *argument)
 {
 
     int rval =
@@ -455,7 +455,7 @@ Editor *build_string_editor(const char **pStr)
 
 }
 
-void character_editor_menu(Client * conn, Character * ch)
+void character_editor_menu(Client *conn, Character *ch)
 {
 
     writelnf(conn, "~C   Id: ~W%d", ch->id);
@@ -475,7 +475,7 @@ void character_editor_menu(Client * conn, Character * ch)
 }
 
 int
-character_editor(Client * conn, Character * ch, const char *arg,
+character_editor(Client *conn, Character *ch, const char *arg,
                  const char *argument)
 {
 
@@ -621,8 +621,8 @@ character_editor(Client * conn, Character * ch, const char *arg,
 }
 
 int
-edit_flag(const char *arg, Client * conn, Flag * flags,
-          const char *argument, const Lookup * table)
+edit_flag(const char *arg, Client *conn, Flag *flags,
+          const char *argument, const Lookup *table)
 {
 
     if (nullstr(argument) || argument[0] == '?')
@@ -649,7 +649,7 @@ edit_flag(const char *arg, Client * conn, Flag * flags,
 }
 
 int
-edit_string(const char *arg, Client * conn, const char **str,
+edit_string(const char *arg, Client *conn, const char **str,
             const char *argument)
 {
 

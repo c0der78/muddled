@@ -19,53 +19,17 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef BUFFER_H
-#define BUFFER_H
+#ifndef WEBSOCKET_H
+#define WEBSOCKET_H
 
-typedef struct buffer Buffer;
+#include <libwebsockets.h>
 
-#define MAX_TEMP_BUF 5
-#define TEMP_BUF_SIZ BUFSIZ
+extern short websocket_port;
 
-char *get_temp_buf();
+extern struct libwebsocket_context *websocket_context;
 
-struct buffer
-{
+bool write_to_websocket(struct libwebsocket *websocket, char *txt, size_t len);
 
-    short state;        /* error state of the buffer */
+struct libwebsocket_context *create_websocket(int port);
 
-    int size;       /* size in k */
-
-    char *string;       /* buffer's string */
-
-    bool(*write) (Buffer *, const char *);
-
-    bool(*writeln) (Buffer *, const char *);
-
-    bool(*writef) (Buffer *, const char *, ...);
-
-    bool(*writelnf) (Buffer *, const char *, ...);
-
-};
-
-Buffer *new_buf();
-
-void destroy_buf(Buffer *);
-
-bool buf_add(Buffer *, const char *);
-
-bool buf_add_len(Buffer *, const char *, size_t);
-
-bool buf_addln(Buffer *, const char *);
-
-bool buf_addf(Buffer *, const char *, ...)
-__attribute__ ((format(printf, 2, 3)));
-
-bool buf_addlnf(Buffer *, const char *, ...)
-__attribute__ ((format(printf, 2, 3)));
-
-void clear_buf(Buffer *);
-
-char *buf_string(Buffer *);
-
-#endif              /* // #ifndef BUFFER_H */
+#endif

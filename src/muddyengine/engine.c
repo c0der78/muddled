@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -135,9 +135,9 @@ field_map *engine_field_map(Engine *info)
         {"logging", &info->logging, SQL_FLAG, logging_flags},
         {0}
     };
-    if(table == 0)
+    if (table == 0)
     {
-        table = alloc_mem(sizeof(engine_values)/sizeof(engine_values[0]), sizeof(engine_values[0]));
+        table = alloc_mem(sizeof(engine_values) / sizeof(engine_values[0]), sizeof(engine_values[0]));
     }
     memcpy(table, engine_values, sizeof(engine_values));
 
@@ -162,15 +162,15 @@ int load_engine(const char *root_path)
     }
 
     /*field_map engine_values[] = {
-    	{"name", &engine_info.name, SQL_TEXT}
-    	,
-    	{"logins", &engine_info.total_logins, SQL_INT}
-    	,
-    	{"flags", &engine_info.flags, SQL_FLAG, engine_flags}
-    	,
-    	{"logging", &engine_info.logging, SQL_FLAG, logging_flags}
-    	,
-    	{0, 0, 0}
+        {"name", &engine_info.name, SQL_TEXT}
+        ,
+        {"logins", &engine_info.total_logins, SQL_INT}
+        ,
+        {"flags", &engine_info.flags, SQL_FLAG, engine_flags}
+        ,
+        {"logging", &engine_info.logging, SQL_FLAG, logging_flags}
+        ,
+        {0, 0, 0}
     };*/
 
     if (!db_load_by_id(engine_field_map(&engine_info), "engine", 1))
@@ -178,41 +178,41 @@ int load_engine(const char *root_path)
         log_data("could not load engine info");
         return 0;
     }/*
-	if (sql_query(buf, len, &stmt) != SQL_OK) {
-		log_data("could not prepare sql statement");
-		return 0;
-	}
-	if (sql_step(stmt) == SQL_DONE) {
-		if (sql_finalize(stmt) != SQL_OK)
-			log_data("could not find engine info records");
+    if (sql_query(buf, len, &stmt) != SQL_OK) {
+        log_data("could not prepare sql statement");
+        return 0;
+    }
+    if (sql_step(stmt) == SQL_DONE) {
+        if (sql_finalize(stmt) != SQL_OK)
+            log_data("could not find engine info records");
 
-		initialize_default_engine();
-		return 0;
-	}
-	int i, cols = sql_column_count(stmt);
-	for (i = 0; i < cols; i++) {
-		const char *colname = sql_column_name(stmt, i);
+        initialize_default_engine();
+        return 0;
+    }
+    int i, cols = sql_column_count(stmt);
+    for (i = 0; i < cols; i++) {
+        const char *colname = sql_column_name(stmt, i);
 
-		if (!str_cmp(colname, "engineId")) {
-			engine_info.id = sql_column_int(stmt, i);
-		} else if (!str_cmp(colname, "name")) {
-			free_str_dup(&engine_info.name,
-				     sql_column_str(stmt, i));
-		} else if (!str_cmp(colname, "logins")) {
-			engine_info.total_logins = sql_column_int(stmt, i);
-		} else if (!str_cmp(colname, "flags")) {
-			parse_flags(engine_info.flags,
-				    sql_column_str(stmt, i), engine_flags);
-		} else if (!str_cmp(colname, "logging")) {
-			parse_flags(engine_info.logging,
-				    sql_column_str(stmt, i), logging_flags);
-		} else {
-			log_warn("unknown account column '%s'", colname);
-		}
-	}
-	if (sql_finalize(stmt) != SQL_OK) {
-		log_data("could not finalize sql statement");
-	}*/
+        if (!str_cmp(colname, "engineId")) {
+            engine_info.id = sql_column_int(stmt, i);
+        } else if (!str_cmp(colname, "name")) {
+            free_str_dup(&engine_info.name,
+                     sql_column_str(stmt, i));
+        } else if (!str_cmp(colname, "logins")) {
+            engine_info.total_logins = sql_column_int(stmt, i);
+        } else if (!str_cmp(colname, "flags")) {
+            parse_flags(engine_info.flags,
+                    sql_column_str(stmt, i), engine_flags);
+        } else if (!str_cmp(colname, "logging")) {
+            parse_flags(engine_info.logging,
+                    sql_column_str(stmt, i), logging_flags);
+        } else {
+            log_warn("unknown account column '%s'", colname);
+        }
+    }
+    if (sql_finalize(stmt) != SQL_OK) {
+        log_data("could not finalize sql statement");
+    }*/
     log_info("Starting %s", engine_info.name);
 
     return 1;
@@ -224,17 +224,17 @@ int save_engine()
     engine_info.id = db_save(engine_field_map(&engine_info), "engine", engine_info.id);
 
     /*if (engine_info.id == 0) {
-    	if (sql_insert_query(engine_values, "engine") != SQL_OK) {
-    		log_data("could not insert engine");
-    		return 0;
-    	}
-    	engine_info.id = db_last_insert_rowid();
+        if (sql_insert_query(engine_values, "engine") != SQL_OK) {
+            log_data("could not insert engine");
+            return 0;
+        }
+        engine_info.id = db_last_insert_rowid();
     } else {
-    	if (sql_update_query(engine_values, "engine", engine_info.id) !=
-    	    SQL_OK) {
-    		log_data("could not update engine");
-    		return 0;
-    	}
+        if (sql_update_query(engine_values, "engine", engine_info.id) !=
+            SQL_OK) {
+            log_data("could not update engine");
+            return 0;
+        }
     }*/
 
     return engine_info.id != 0;
@@ -260,8 +260,6 @@ void initialize_engine(const char *root_path)
 
     load_engine(root_path);
 
-    db_begin_transaction();
-
     synchronize_tables();
 
     log_info("loaded %d races", load_races());
@@ -280,6 +278,5 @@ void initialize_engine(const char *root_path)
 
     log_info("loaded %d forums", load_forums());
 
-    db_end_transaction();
 
 }

@@ -72,8 +72,7 @@
 
 #define Y           16777216
 #define Z           33554432
-#define aa          67108864    /* doubled due to
-* conflicts */
+#define aa          67108864    /* doubled due to conflicts */
 #define bb          134217728
 #define cc          268435456
 #define dd          536870912

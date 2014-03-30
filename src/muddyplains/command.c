@@ -18,7 +18,7 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include "command.h"
+
 #include <ctype.h>
 #include <stdarg.h>
 #include "client.h"
@@ -39,6 +39,7 @@
 #include <muddyengine/object.h>
 #include <muddyengine/string.h>
 #include <muddyengine/social.h>
+#include "command.h"
 
 const Command cmd_table[] =
 {

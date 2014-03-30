@@ -19,6 +19,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
+#include "client.h"
 #include <muddyengine/flag.h>
 #include <muddyengine/exit.h>
 #include <muddyengine/room.h>
@@ -26,7 +27,6 @@
 #include <muddyengine/lookup.h>
 #include <stdlib.h>
 #include "telnet.h"
-#include "client.h"
 #include "olc.h"
 
 void exit_editor_menu(Client *);
