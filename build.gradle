@@ -6,7 +6,7 @@ model {
         release
     }
     components {
-        muddled(NativeLibrarySpec) {
+        muddle(NativeLibrarySpec) {
         	sources {
         		c {
         			source {
@@ -18,13 +18,13 @@ model {
         		}
         	}
         }
-        muddledtimes(NativeExecutableSpec) {
+        muddled(NativeExecutableSpec) {
             sources {
                 c {
                     source {
 	                    srcDir "src/muddled"
 	                }
-	                lib library: 'muddled', linkage: 'shared'
+	                lib library: 'muddle', linkage: 'shared'
                 }
             }
         }

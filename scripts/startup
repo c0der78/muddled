@@ -5,4 +5,4 @@ require 'daemons'
 
 folder = ENV['DEBUG'] ? 'debug' : 'release'
 
-Daemons.run("bin/muddyplains")
+Daemons.run("bin/muddled")

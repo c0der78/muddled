@@ -5,3 +5,5 @@ include/
 build
 lib
 build
+autom4te.cache
+*~
