@@ -22,11 +22,11 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include <muddled/engine.h>
-#include <muddled/string.h>
-#include <muddled/lookup.h>
-#include <muddled/macro.h>
-#include <muddled/log.h>
+#include "../muddled/engine.h"
+#include "../muddled/string.h"
+#include "../muddled/lookup.h"
+#include "../muddled/macro.h"
+#include "../muddled/log.h"
 
 Editor *build_engine_editor(Engine *eng)
 {

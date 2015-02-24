@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -21,16 +21,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include <muddled/nonplayer.h>
-#include <muddled/db.h>
-#include <muddled/string.h>
-#include <muddled/log.h>
-#include <muddled/engine.h>
-#include <muddled/character.h>
-#include <muddled/area.h>
-#include <muddled/lookup.h>
-#include <muddled/macro.h>
-#include <muddled/race.h>
+#include "muddled/nonplayer.h"
+#include "muddled/db.h"
+#include "muddled/string.h"
+#include "muddled/log.h"
+#include "muddled/engine.h"
+#include "muddled/character.h"
+#include "muddled/area.h"
+#include "muddled/lookup.h"
+#include "muddled/macro.h"
+#include "muddled/race.h"
 
 const Lookup npc_flags[] =
 {
@@ -53,7 +53,7 @@ NPC *new_npc()
     return npc;
 }
 
-void destroy_npc(NPC * npc)
+void destroy_npc(NPC *npc)
 {
     free_str(npc->shortDescr);
     free_str(npc->longDescr);
@@ -61,7 +61,7 @@ void destroy_npc(NPC * npc)
     free_mem(npc);
 }
 
-void load_npc_columns(Character * ch, sql_stmt * stmt)
+void load_npc_columns(Character *ch, sql_stmt *stmt)
 {
     int count = sql_column_count(stmt);
 
@@ -133,7 +133,7 @@ Character *load_npc(identifier_t id)
     return ch;
 }
 
-int load_npcs(Area * area)
+int load_npcs(Area *area)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -170,7 +170,7 @@ int load_npcs(Area * area)
     return total;
 }
 
-int save_npc(Character * ch)
+int save_npc(Character *ch)
 {
 
     int res = save_character(ch, npc_flags);
@@ -204,7 +204,7 @@ int save_npc(Character * ch)
     return UMIN(res, 1);
 }
 
-int delete_npc(Character * ch)
+int delete_npc(Character *ch)
 {
     char buf[BUF_SIZ];
 
@@ -229,7 +229,7 @@ Character *npc_lookup(const char *arg)
     }
     else
     {
-        for (Character * nch = first_character; nch != 0;
+        for (Character *nch = first_character; nch != 0;
                 nch = nch->next)
         {
             if (nch->npc == 0)
@@ -244,7 +244,7 @@ Character *npc_lookup(const char *arg)
 
 Character *get_npc_by_id(identifier_t id)
 {
-    for (Character * nch = first_character; nch != 0; nch = nch->next)
+    for (Character *nch = first_character; nch != 0; nch = nch->next)
     {
         if (nch->npc == 0)
             continue;

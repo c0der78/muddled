@@ -28,8 +28,8 @@ typedef struct Client Client;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdio.h>
-#include <muddled/engine.h>
-#include <muddled/account.h>
+#include "../muddled/engine.h"
+#include "../muddled/account.h"
 #include <stdarg.h>
 #include "olc.h"
 

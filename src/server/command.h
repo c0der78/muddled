@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -21,8 +21,8 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
-#include <muddled/character.h>
-#include <muddled/lookup.h>
+#include "../muddled/character.h"
+#include "../muddled/lookup.h"
 
 typedef struct Command Command;
 
@@ -117,4 +117,4 @@ DoFun do_db;
 DoFun do_help;
 DoFun do_areas;
 
-#endif				/* // #ifndef COMMAND_H */
+#endif              /* // #ifndef COMMAND_H */

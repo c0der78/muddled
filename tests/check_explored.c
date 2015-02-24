@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,11 +18,11 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include <muddyengine/flag.h>
-#include <muddyengine/explored.h>
-#include <muddyengine/room.h>
-#include <muddyengine/area.h>
-#include <muddyengine/log.h>
+#include "../src/muddled/flag.h"
+#include "../src/muddled/explored.h"
+#include "../src/muddled/room.h"
+#include "../src/muddled/area.h"
+#include "../src/muddled/log.h"
 #include <stdio.h>
 
 int bitcount(int);

@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -24,8 +24,8 @@
 typedef struct social Social;
 
 #include <stdlib.h>
-#include <muddled/string.h>
-#include <muddled/character.h>
+#include "string.h"
+#include "character.h"
 
 struct social
 {
@@ -54,4 +54,4 @@ void save_socials();
 int interpret_social(Character *, const char *, const char *);
 Social *social_lookup(const char *);
 
-#endif				/* // #ifndef SOCIAL_H */
+#endif              /* // #ifndef SOCIAL_H */

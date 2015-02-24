@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -24,13 +24,13 @@
 
 typedef struct npc NPC;
 
-#include <muddled/character.h>
-#include <muddled/area.h>
+#include "character.h"
+#include "area.h"
 
-#define DICE_NUMBER			0
-#define DICE_TYPE			1
-#define DICE_BONUS			2
-#define MAX_DICE			3
+#define DICE_NUMBER         0
+#define DICE_TYPE           1
+#define DICE_BONUS          2
+#define MAX_DICE            3
 
 struct npc
 {
@@ -64,4 +64,4 @@ Character *get_npc_by_id(identifier_t);
 Character *npc_lookup(const char *);
 int delete_npc(Character *);
 
-#endif				/* // #ifndef NONPLAYER_H */
+#endif              /* // #ifndef NONPLAYER_H */

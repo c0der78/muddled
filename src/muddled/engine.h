@@ -55,9 +55,9 @@ typedef double money_t;
 #define EXP_TABLE_SIZ   ((MAX_PLAYABLE_LEVEL / LEVEL_GROUPS) + 1)
 
 #include <time.h>
-#include <muddled/flag.h>
-#include <muddled/macro.h>
-#include <muddled/db.h>
+#include "flag.h"
+#include "macro.h"
+#include "db.h"
 
 extern const char *weekdays[];
 extern const char *months[];

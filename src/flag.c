@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,14 +18,14 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include <muddled/flag.h>
+#include "muddled/flag.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <muddled/log.h>
-#include <muddled/engine.h>
-#include <muddled/lookup.h>
-#include <muddled/string.h>
+#include "muddled/log.h"
+#include "muddled/engine.h"
+#include "muddled/lookup.h"
+#include "muddled/string.h"
 
 Flag *new_flag()
 {
@@ -35,7 +35,7 @@ Flag *new_flag()
     return flags;
 }
 
-void destroy_flags(Flag * flags)
+void destroy_flags(Flag *flags)
 {
     if (flags->size > 0)
         free_mem(flags->bits);
@@ -43,7 +43,7 @@ void destroy_flags(Flag * flags)
     free(flags);
 }
 
-static void resize_bits(Flag * flags, size_t size)
+static void resize_bits(Flag *flags, size_t size)
 {
     size_t oldsize = flags->size;
 
@@ -68,7 +68,7 @@ Flag *init_flag(int bit)
     return flag;
 }
 
-Flag *copy_flags(Flag * f1, Flag * f2)
+Flag *copy_flags(Flag *f1, Flag *f2)
 {
     resize_bits(f1, f2->size);
     for (int i = 0; i < f1->size; i++)
@@ -77,7 +77,7 @@ Flag *copy_flags(Flag * f1, Flag * f2)
     return f1;
 }
 
-Flag *set_bit(Flag * flags, bit_t bit)
+Flag *set_bit(Flag *flags, bit_t bit)
 {
     size_t pos = (size_t) (bit / sizeof(bit_t));
 
@@ -90,7 +90,7 @@ Flag *set_bit(Flag * flags, bit_t bit)
     return flags;
 }
 
-Flag *set_flags(Flag * flags, Flag * val)
+Flag *set_flags(Flag *flags, Flag *val)
 {
 
     if (val->size > flags->size)
@@ -105,7 +105,7 @@ Flag *set_flags(Flag * flags, Flag * val)
     return flags;
 }
 
-Flag *remove_bit(Flag * flags, bit_t bit)
+Flag *remove_bit(Flag *flags, bit_t bit)
 {
     bit_t pos = bit / sizeof(bit_t);
 
@@ -117,7 +117,7 @@ Flag *remove_bit(Flag * flags, bit_t bit)
     return flags;
 }
 
-Flag *remove_flags(Flag * flags, Flag * val)
+Flag *remove_flags(Flag *flags, Flag *val)
 {
     for (int i = 0; i < val->size; i++)
     {
@@ -130,7 +130,7 @@ Flag *remove_flags(Flag * flags, Flag * val)
     return flags;
 }
 
-Flag *toggle_bit(Flag * flags, bit_t bit)
+Flag *toggle_bit(Flag *flags, bit_t bit)
 {
     size_t pos = (size_t) (bit / sizeof(bit_t));
 
@@ -143,7 +143,7 @@ Flag *toggle_bit(Flag * flags, bit_t bit)
     return flags;
 }
 
-Flag *toggle_flags(Flag * flags, Flag * val)
+Flag *toggle_flags(Flag *flags, Flag *val)
 {
     if (val->size > flags->size)
     {
@@ -157,7 +157,7 @@ Flag *toggle_flags(Flag * flags, Flag * val)
     return flags;
 }
 
-int flag_toint(Flag * flags)
+int flag_toint(Flag *flags)
 {
     if (flags->size == 0)
         return 0;
@@ -165,7 +165,7 @@ int flag_toint(Flag * flags)
     return flags->bits[0];
 }
 
-bool is_set(Flag * flags, bit_t bit)
+bool is_set(Flag *flags, bit_t bit)
 {
     bit_t pos = bit / sizeof(bit_t);
 
@@ -175,7 +175,7 @@ bool is_set(Flag * flags, bit_t bit)
     return (flags->bits[pos] & (1 << (bit % sizeof(bit_t))));
 }
 
-bool is_empty(Flag * flag)
+bool is_empty(Flag *flag)
 {
     if (flag->size == 0)
     {
@@ -189,7 +189,7 @@ bool is_empty(Flag * flag)
     return empty;
 }
 
-bool flags_set(Flag * flags, Flag * val)
+bool flags_set(Flag *flags, Flag *val)
 {
     bool isset = true;
 
@@ -208,11 +208,11 @@ bool flags_set(Flag * flags, Flag * val)
     return isset;
 }
 
-int parse_flags_toggle(Flag * flags, const char *arglist, const Lookup * table)
+int parse_flags_toggle(Flag *flags, const char *arglist, const Lookup *table)
 {
     int res = 0;
 
-    for (const Lookup * t = table; t->name != 0; t++)
+    for (const Lookup *t = table; t->name != 0; t++)
     {
         if (is_name(t->name, arglist))
         {
@@ -223,7 +223,7 @@ int parse_flags_toggle(Flag * flags, const char *arglist, const Lookup * table)
     return res;
 }
 
-int parse_flags(Flag * flags, const char *format, const Lookup * table)
+int parse_flags(Flag *flags, const char *format, const Lookup *table)
 {
     const char *name = strtok((char *)format, ",");
     int res = 0;
@@ -242,7 +242,7 @@ int parse_flags(Flag * flags, const char *format, const Lookup * table)
     return res;
 }
 
-const char *format_flags(Flag * flags, const Lookup * table)
+const char *format_flags(Flag *flags, const Lookup *table)
 {
     static char buf[3][OUT_SIZ];
     static int i;
@@ -252,7 +252,7 @@ const char *format_flags(Flag * flags, const Lookup * table)
 
     *res = 0;
 
-    for (const Lookup * t = table; t->name != 0; t++)
+    for (const Lookup *t = table; t->name != 0; t++)
     {
         if (!is_set(flags, t->value))
             continue;

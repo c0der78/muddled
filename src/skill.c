@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,17 +19,17 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/skill.h>
-#include <muddled/db.h>
-#include <muddled/string.h>
-#include <muddled/spellfun.h>
-#include <muddled/engine.h>
-#include <muddled/log.h>
-#include <muddled/class.h>
-#include <muddled/character.h>
-#include <muddled/lookup.h>
-#include <muddled/affect.h>
-#include <muddled/util.h>
+#include "muddled/skill.h"
+#include "muddled/db.h"
+#include "muddled/string.h"
+#include "muddled/spellfun.h"
+#include "muddled/engine.h"
+#include "muddled/log.h"
+#include "muddled/class.h"
+#include "muddled/character.h"
+#include "muddled/lookup.h"
+#include "muddled/affect.h"
+#include "muddled/util.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
@@ -39,13 +39,13 @@ Skill *skill_table = 0;
 int max_skill = 0;
 
 #define DEFINE_GSNS
-#include <muddled/gsn.h>
+#include "muddled/gsn.h"
 #undef DEFINE_GSNS
 
 const struct gsn_type gsn_table[] =
 {
 #define IN_GSN_TABLE
-#include <muddled/gsn.h>
+#include "muddled/gsn.h"
 #undef IN_GSN_TABLE
     {0, 0}
 };
@@ -53,7 +53,7 @@ const struct gsn_type gsn_table[] =
 const struct spellfun_type spellfun_table[] =
 {
 #define IN_SPELL_TABLE
-#include <muddled/spellfun.h>
+#include "muddled/spellfun.h"
 #undef IN_SPELL_TABLE
     {0, 0}
 };
@@ -80,7 +80,7 @@ Skill *new_skill()
 
 }
 
-void destroy_skill(Skill * skill)
+void destroy_skill(Skill *skill)
 {
 
     free_str(skill->name);
@@ -137,7 +137,7 @@ Skill *skill_lookup(const char *arg)
 
 }
 
-const char *spellfun_name(SpellFun * fun)
+const char *spellfun_name(SpellFun *fun)
 {
 
     if (!fun)
@@ -165,7 +165,7 @@ SpellFun *spellfun_lookup(const char *name)
 
 }
 
-int load_skill_levels(Skill * skill)
+int load_skill_levels(Skill *skill)
 {
 
     char buf[400];
@@ -435,7 +435,7 @@ int load_skills()
 
 }
 
-static int save_gsn(sql_stmt * stmt, int index, field_map * table)
+static int save_gsn(sql_stmt *stmt, int index, field_map *table)
 {
 
     const char *name = gsn_name(*((int **)table->value));
@@ -444,7 +444,7 @@ static int save_gsn(sql_stmt * stmt, int index, field_map * table)
 
 }
 
-static int save_skillspell(sql_stmt * stmt, int index, field_map * table)
+static int save_skillspell(sql_stmt *stmt, int index, field_map *table)
 {
 
     const char *name = spellfun_name(*((SpellFun **) table->value));
@@ -453,7 +453,7 @@ static int save_skillspell(sql_stmt * stmt, int index, field_map * table)
 
 }
 
-int save_skill(Skill * skill)
+int save_skill(Skill *skill)
 {
     field_map skill_values[] =
     {

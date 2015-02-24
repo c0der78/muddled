@@ -35,7 +35,7 @@ typedef enum
     MAX_DIR
 } direction_t;
 
-#include <muddled/room.h>
+#include "room.h"
 
 struct exit
 {

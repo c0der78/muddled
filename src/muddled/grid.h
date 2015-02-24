@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,8 +22,8 @@
 #ifndef __GRID_H_
 #define __GRID_H_
 
-#include <muddled/engine.h>
-#include <muddled/string.h>
+#include "engine.h"
+#include "string.h"
 
 typedef struct gridcell GridCell;
 
@@ -135,4 +135,4 @@ void grid_print(Grid *, Character *);
 
 void grid_set_next_row(Grid *, int);
 
-#endif				/* */
+#endif              /* */

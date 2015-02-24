@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -24,9 +24,9 @@
 
 typedef struct player Player;
 
-#include <muddled/account.h>
-#include <muddled/character.h>
-#include <muddled/connection.h>
+#include "account.h"
+#include "character.h"
+#include "connection.h"
 #include <time.h>
 
 struct player
@@ -68,4 +68,4 @@ int delete_player(Character *);
 bool is_drunk(Character *);
 long exp_to_level(const Character *);
 
-#endif				/* // #ifndef PLAYER_H */
+#endif              /* // #ifndef PLAYER_H */

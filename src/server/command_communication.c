@@ -21,18 +21,18 @@
 
 #include "client.h"
 #include "command.h"
-#include <muddled/channel.h>
+#include "../muddled/channel.h"
 #include <ctype.h>
-#include <muddled/util.h>
-#include <muddled/character.h>
-#include <muddled/engine.h>
-#include <muddled/grid.h>
-#include <muddled/forum.h>
-#include <muddled/account.h>
-#include <muddled/string.h>
-#include <muddled/connection.h>
-#include <muddled/player.h>
-#include <muddled/room.h>
+#include "../muddled/util.h"
+#include "../muddled/character.h"
+#include "../muddled/engine.h"
+#include "../muddled/grid.h"
+#include "../muddled/forum.h"
+#include "../muddled/account.h"
+#include "../muddled/string.h"
+#include "../muddled/connection.h"
+#include "../muddled/player.h"
+#include "../muddled/room.h"
 #include "olc.h"
 
 DOFUN(say)

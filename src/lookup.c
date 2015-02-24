@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,19 +18,19 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include <muddled/lookup.h>
-#include <muddled/string.h>
-#include <muddled/flag.h>
-#include <muddled/race.h>
-#include <muddled/log.h>
-#include <muddled/db.h>
-#include <muddled/engine.h>
-#include <muddled/affect.h>
-#include <muddled/help.h>
+#include "muddled/lookup.h"
+#include "muddled/string.h"
+#include "muddled/flag.h"
+#include "muddled/race.h"
+#include "muddled/log.h"
+#include "muddled/db.h"
+#include "muddled/engine.h"
+#include "muddled/affect.h"
+#include "muddled/help.h"
 #include <stdio.h>
 #include <inttypes.h>
 
-void synch_table(const char *tablename, const Lookup * table)
+void synch_table(const char *tablename, const Lookup *table)
 {
     char buf[400];
 
@@ -43,7 +43,7 @@ void synch_table(const char *tablename, const Lookup * table)
         log_data("could not create %s", tablename);
         return;
     }
-    for (const Lookup * ptable = table; ptable->name != 0; ptable++)
+    for (const Lookup *ptable = table; ptable->name != 0; ptable++)
     {
         sprintf(buf,
                 "insert into %s (name,value) values('%s','%" PRIXPTR
@@ -83,12 +83,12 @@ void synchronize_tables()
     synch_table("affect_type", affect_callbacks);
 }
 
-uintptr_t value_lookup(const Lookup * table, const char *arg)
+uintptr_t value_lookup(const Lookup *table, const char *arg)
 {
     if (!arg || !*arg)
         return -1;
 
-    for (const Lookup * t = table; t->name != 0; t++)
+    for (const Lookup *t = table; t->name != 0; t++)
     {
         if (!str_prefix(arg, t->name))
             return t->value;
@@ -97,7 +97,7 @@ uintptr_t value_lookup(const Lookup * table, const char *arg)
     return -1;
 }
 
-int index_lookup(const Lookup * table, const char *arg)
+int index_lookup(const Lookup *table, const char *arg)
 {
     if (nullstr(arg))
         return -1;
@@ -111,13 +111,13 @@ int index_lookup(const Lookup * table, const char *arg)
     return -1;
 }
 
-const char *lookup_names(const Lookup * table)
+const char *lookup_names(const Lookup *table)
 {
     static char buf[500];
 
     buf[0] = 0;
 
-    for (const Lookup * t = table; t->name != 0; t++)
+    for (const Lookup *t = table; t->name != 0; t++)
     {
         strcat(buf, t->name);
         strcat(buf, " ");
@@ -126,9 +126,9 @@ const char *lookup_names(const Lookup * table)
     return buf;
 }
 
-const char *lookup_name(const Lookup * table, uintptr_t value)
+const char *lookup_name(const Lookup *table, uintptr_t value)
 {
-    for (const Lookup * t = table; t->name != 0; t++)
+    for (const Lookup *t = table; t->name != 0; t++)
     {
         if (t->value == value)
             return t->name;

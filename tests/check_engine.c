@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -20,9 +20,9 @@
 #include <check.h>
 #include <stdlib.h>
 #include "check_engine.h"
-#include <muddyengine/engine.h>
-#include <muddyengine/script.h>
-#include <muddyengine/db.h>
+#include "../src/muddled/engine.h"
+#include "../src/muddled/script.h"
+#include "../src/muddled/db.h"
 
 int main()
 {

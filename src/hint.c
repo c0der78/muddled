@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,15 +19,15 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/db.h>
-#include <muddled/hint.h>
-#include <muddled/engine.h>
+#include "muddled/db.h"
+#include "muddled/hint.h"
+#include "muddled/engine.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include <muddled/string.h>
-#include <muddled/log.h>
-#include <muddled/macro.h>
+#include "muddled/string.h"
+#include "muddled/log.h"
+#include "muddled/macro.h"
 
 Hint *hint_table = 0;
 
@@ -44,7 +44,7 @@ Hint *new_hint()
 
 }
 
-void destroy_hint(Hint * hint)
+void destroy_hint(Hint *hint)
 {
 
     free_str(hint->text);
@@ -159,7 +159,7 @@ int load_hints()
 
 }
 
-int save_hint(Hint * hint)
+int save_hint(Hint *hint)
 {
     field_map hint_values[] =
     {

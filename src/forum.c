@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -21,17 +21,17 @@
 
 #include <stdio.h>
 #include <time.h>
-#include <muddled/character.h>
-#include <muddled/player.h>
-#include <muddled/engine.h>
-#include <muddled/forum.h>
-#include <muddled/string.h>
-#include <muddled/log.h>
-#include <muddled/buffer.h>
-#include <muddled/util.h>
-#include <muddled/account.h>
-#include <muddled/connection.h>
-#include <muddled/db.h>
+#include "muddled/character.h"
+#include "muddled/player.h"
+#include "muddled/engine.h"
+#include "muddled/forum.h"
+#include "muddled/string.h"
+#include "muddled/log.h"
+#include "muddled/buffer.h"
+#include "muddled/util.h"
+#include "muddled/account.h"
+#include "muddled/connection.h"
+#include "muddled/db.h"
 #include <inttypes.h>
 
 Forum *forum_table = 0;
@@ -57,7 +57,7 @@ Note *new_note()
 
 }
 
-void destroy_note(Note * note)
+void destroy_note(Note *note)
 {
 
     free_str(note->toList);
@@ -72,7 +72,7 @@ void destroy_note(Note * note)
 
 }
 
-void finish_note(Forum * forum, Note * note)
+void finish_note(Forum *forum, Note *note)
 {
 
     if (last_note_stamp >= current_time)
@@ -96,7 +96,7 @@ void finish_note(Forum * forum, Note * note)
 
 }
 
-bool is_note_to(Character * ch, Note * note)
+bool is_note_to(Character *ch, Note *note)
 {
 
     if (!str_cmp(ch->name, note->from))
@@ -150,7 +150,7 @@ int lookup_forum_by_name(const char *name)
 
 }
 
-Note *find_note(Character * ch, Forum * forum, int num)
+Note *find_note(Character *ch, Forum *forum, int num)
 {
 
     int count = 0;
@@ -169,7 +169,7 @@ Note *find_note(Character * ch, Forum * forum, int num)
 
 }
 
-void show_note_to_char(Character * ch, Note * note, int num)
+void show_note_to_char(Character *ch, Note *note, int num)
 {
 
     Buffer *buffer = new_buf();
@@ -194,7 +194,7 @@ void show_note_to_char(Character * ch, Note * note, int num)
 
 }
 
-void check_notes(Forum * b)
+void check_notes(Forum *b)
 {
 
     for (Note * p_next, *p = b->notes; p; p = p_next)
@@ -216,28 +216,28 @@ void check_notes(Forum * b)
 
 }
 
-bool is_subscribed(Account * acc, int forum)
+bool is_subscribed(Account *acc, int forum)
 {
 
     return !acc->forumData[forum].unsubscribed;
 
 }
 
-void set_subscribed(Account * acc, int forum)
+void set_subscribed(Account *acc, int forum)
 {
 
     acc->forumData[forum].unsubscribed = false;
 
 }
 
-void remove_subscribed(Account * acc, int forum)
+void remove_subscribed(Account *acc, int forum)
 {
 
     acc->forumData[forum].unsubscribed = true;
 
 }
 
-int unread_notes(Character * ch, Forum * forum)
+int unread_notes(Character *ch, Forum *forum)
 {
 
     int f = lookup_forum_by_id(forum->id);
@@ -249,7 +249,7 @@ int unread_notes(Character * ch, Forum * forum)
 
     int count = 0;
 
-    for (Note * note = forum->notes; note; note = note->next)
+    for (Note *note = forum->notes; note; note = note->next)
         if (is_note_to(ch, note)
                 && ((long)last_read < (long)note->date))
             count++;
@@ -258,13 +258,13 @@ int unread_notes(Character * ch, Forum * forum)
 
 }
 
-Note *last_note(Character * ch, Forum * forum)
+Note *last_note(Character *ch, Forum *forum)
 {
 
     if (forum->readLevel > ch->level)
         return NULL;
 
-    for (Note * note = forum->notes; note; note = note->next)
+    for (Note *note = forum->notes; note; note = note->next)
         if (is_note_to(ch, note))
             return note;
 
@@ -272,7 +272,7 @@ Note *last_note(Character * ch, Forum * forum)
 
 }
 
-void next_forum(Character * ch)
+void next_forum(Character *ch)
 {
 
     int i = lookup_forum_by_id(ch->pc->account->forum->id) + 1;
@@ -296,7 +296,7 @@ void next_forum(Character * ch)
 
 }
 
-void note_check(Character * ch)
+void note_check(Character *ch)
 {
 
     int i, count = 0, unread = 0;
@@ -319,7 +319,7 @@ void note_check(Character * ch)
 
 }
 
-void show_forum(Character * ch, bool fAll)
+void show_forum(Character *ch, bool fAll)
 {
 
     int unread, count, i, last;
@@ -356,7 +356,7 @@ void show_forum(Character * ch, bool fAll)
 
         b = &forum_table[i];
 
-        for (Note * p = b->notes; p; p = p->next)
+        for (Note *p = b->notes; p; p = p->next)
             if (is_note_to(ch, p))
                 last++;
 
@@ -442,7 +442,7 @@ make_note(const char *forum_name, const char *sender,
 
 }
 
-int delete_note(Forum * forum, Note * note)
+int delete_note(Forum *forum, Note *note)
 {
 
     char buf[BUF_SIZ];
@@ -465,7 +465,7 @@ int delete_note(Forum * forum, Note * note)
 
 }
 
-int load_notes(Forum * forum)
+int load_notes(Forum *forum)
 {
 
     char buf[BUF_SIZ];
@@ -717,7 +717,7 @@ int load_forums()
 
 }
 
-int save_note(Forum * forum, Note * note)
+int save_note(Forum *forum, Note *note)
 {
     field_map note_values[] =
     {
@@ -769,7 +769,7 @@ void save_forums()
         if (!(forum_table[i].flags & FORUM_CHANGED))
             continue;
 
-        for (Note * p = forum_table[i].notes; p; p = p->next)
+        for (Note *p = forum_table[i].notes; p; p = p->next)
         {
 
             save_note(&forum_table[i], p);

@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -30,10 +30,10 @@
  */
 typedef struct area Area;
 
-#include <muddled/character.h>
-#include <muddled/room.h>
-#include <muddled/flag.h>
-#include <muddled/object.h>
+#include "character.h"
+#include "room.h"
+#include "flag.h"
+#include "object.h"
 
 /*!
  * @typedef Area @abstract Represent an area in the world containing
@@ -44,13 +44,13 @@ typedef struct area Area;
  */
 struct area
 {
-    identifier_t id;
-    Area *next;
-    const char *name;
-    Character *npcs;
-    Room *rooms;
-    Object *objects;
-    Flag *flags;
+	identifier_t id;
+	Area *next;
+	const char *name;
+	Character *npcs;
+	Room *rooms;
+	Object *objects;
+	Flag *flags;
 };
 
 /*!
@@ -60,8 +60,8 @@ struct area
  */
 enum
 {
-    AREA_NOEXPLORE,
-    AREA_CHANGED
+	AREA_NOEXPLORE,
+	AREA_CHANGED
 };
 
 /*!
@@ -145,4 +145,4 @@ extern int max_area;
  */
 extern const Lookup area_flags[];
 
-#endif				/* // #ifndef AREA_H */
+#endif              /* // #ifndef AREA_H */

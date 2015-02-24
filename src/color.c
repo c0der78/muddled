@@ -19,15 +19,15 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/color.h>
+#include "muddled/color.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <assert.h>
-#include <muddled/flag.h>
-#include <muddled/character.h>
-#include <muddled/macro.h>
-#include <muddled/util.h>
-#include <muddled/buffer.h>
+#include "muddled/flag.h"
+#include "muddled/character.h"
+#include "muddled/macro.h"
+#include "muddled/util.h"
+#include "muddled/buffer.h"
 
 static bool is_valid_attr(short a)
 {
@@ -49,7 +49,7 @@ const char *make_terminal_color(color_t *color)
 
     char *buf = get_temp_buf();
 
-    int len = snprintf(buf, BUFSIZ, "\x1b[0;");
+    int len = snprintf(buf, BUFSIZ, "\x1b[");
 
     if (is_valid_attr(color->attr))
         len += sprintf(&buf[len], "%d;", color->attr);

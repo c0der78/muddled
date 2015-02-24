@@ -19,14 +19,14 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/character.h>
-#include <muddled/player.h>
-#include <muddled/room.h>
-#include <muddled/exit.h>
-#include <muddled/color.h>
-#include <muddled/util.h>
-#include <muddled/explored.h>
-#include <muddled/string.h>
+#include "muddled/character.h"
+#include "muddled/player.h"
+#include "muddled/room.h"
+#include "muddled/exit.h"
+#include "muddled/color.h"
+#include "muddled/util.h"
+#include "muddled/explored.h"
+#include "muddled/string.h"
 #include <stdio.h>
 
 char map_chars[5] = "|-|-";

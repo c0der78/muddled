@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -17,32 +17,32 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include <muddled/db.h>
-#include <muddled/log.h>
-#include <muddled/flag.h>
-#include <muddled/object.h>
-#include <muddled/string.h>
+#include "muddled/db.h"
+#include "muddled/log.h"
+#include "muddled/flag.h"
+#include "muddled/object.h"
+#include "muddled/string.h"
 #include <stdio.h>
 #include <inttypes.h>
 #include <stdlib.h>
-#include <muddled/area.h>
-#include <muddled/engine.h>
-#include <muddled/macro.h>
-#include <muddled/character.h>
-#include <muddled/util.h>
-#include <muddled/buffer.h>
-#include <muddled/class.h>
-#include <muddled/player.h>
-#include <muddled/room.h>
+#include "muddled/area.h"
+#include "muddled/engine.h"
+#include "muddled/macro.h"
+#include "muddled/character.h"
+#include "muddled/util.h"
+#include "muddled/buffer.h"
+#include "muddled/class.h"
+#include "muddled/player.h"
+#include "muddled/room.h"
 
 Object *first_object = 0;
 
-static bool canUseFloat(Character * ch)
+static bool canUseFloat(Character *ch)
 {
     return class_table[*ch->classes].fMana;
 }
 
-static bool canUseShield(Character * ch)
+static bool canUseShield(Character *ch)
 {
 
     return !class_table[*ch->classes].fMana;
@@ -248,7 +248,7 @@ Object *new_object()
     return obj;
 }
 
-void destroy_object(Object * obj)
+void destroy_object(Object *obj)
 {
     free_str(obj->name);
     free_str(obj->shortDescr);
@@ -259,7 +259,7 @@ void destroy_object(Object * obj)
     free_mem(obj);
 }
 
-int load_obj_columns(Object * obj, sql_stmt * stmt)
+int load_obj_columns(Object *obj, sql_stmt *stmt)
 {
     int count = sql_column_count(stmt);
 
@@ -370,7 +370,7 @@ Object *load_object(identifier_t id)
     return obj;
 }
 
-int load_objects(Area * area)
+int load_objects(Area *area)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -405,7 +405,7 @@ int load_objects(Area * area)
     return total;
 }
 
-int save_object(Object * obj)
+int save_object(Object *obj)
 {
     field_map obj_values[] =
     {
@@ -448,7 +448,7 @@ int save_object(Object * obj)
     return 1;
 }
 
-int delete_object(Object * obj)
+int delete_object(Object *obj)
 {
     char buf[BUF_SIZ];
 
@@ -462,7 +462,7 @@ int delete_object(Object * obj)
     return 1;
 }
 
-void extract_obj(Object * obj)
+void extract_obj(Object *obj)
 {
     if (obj->inRoom)
     {
@@ -490,7 +490,7 @@ void extract_obj(Object * obj)
 
 Object *get_obj_by_id(identifier_t id)
 {
-    for (Object * obj = first_object; obj != 0; obj = obj->next)
+    for (Object *obj = first_object; obj != 0; obj = obj->next)
     {
         if (obj->id == id)
             return obj;
@@ -506,7 +506,7 @@ Object *object_lookup(const char *arg)
     }
     else
     {
-        for (Object * obj = first_object; obj != 0; obj = obj->next)
+        for (Object *obj = first_object; obj != 0; obj = obj->next)
         {
             if (is_name(arg, obj->name))
                 return obj;
@@ -516,13 +516,13 @@ Object *object_lookup(const char *arg)
     }
 }
 
-const char *format_obj_to_char(Object * obj, Character * ch, bool fShort)
+const char *format_obj_to_char(Object *obj, Character *ch, bool fShort)
 {
     return can_see_obj(ch, obj) ? obj->shortDescr : "something";
 }
 
 void
-show_list_to_char(Object * list, Character * ch, bool fShort, bool fShowNothing)
+show_list_to_char(Object *list, Character *ch, bool fShort, bool fShowNothing)
 {
     Buffer *output;
     const char **prgpstrShow;
@@ -620,14 +620,14 @@ show_list_to_char(Object * list, Character * ch, bool fShort, bool fShowNothing)
     free_mem(prgnShow);
 }
 
-bool can_wear(Object * obj, wear_type loc)
+bool can_wear(Object *obj, wear_type loc)
 {
 
     return wear_table[loc].flags == obj->wearFlags;
 }
 
-Object *get_obj_carry(const Character * ch, const char *argument,
-                      const Character * viewer)
+Object *get_obj_carry(const Character *ch, const char *argument,
+                      const Character *viewer)
 {
     char arg[BUF_SIZ];
     Object *obj;
@@ -649,7 +649,7 @@ Object *get_obj_carry(const Character * ch, const char *argument,
     return NULL;
 }
 
-Object *get_obj_world(const Character * ch, const char *argument)
+Object *get_obj_world(const Character *ch, const char *argument)
 {
     char arg[BUF_SIZ];
     long number;
@@ -673,7 +673,7 @@ Object *get_obj_world(const Character * ch, const char *argument)
     return NULL;
 }
 
-Object *get_obj_list(const Character * ch, const char *argument, Object * list)
+Object *get_obj_list(const Character *ch, const char *argument, Object *list)
 {
     char arg[BUF_SIZ];
     Object *obj;
@@ -697,7 +697,7 @@ Object *get_obj_list(const Character * ch, const char *argument, Object * list)
 /*
  * Find an obj in player's equipment.
  */
-Object *get_obj_wear(const Character * ch, const char *argument)
+Object *get_obj_wear(const Character *ch, const char *argument)
 {
     char arg[BUF_SIZ];
     Object *obj;
@@ -719,7 +719,7 @@ Object *get_obj_wear(const Character * ch, const char *argument)
     return NULL;
 }
 
-Object *get_obj_here(const Character * ch, const char *argument)
+Object *get_obj_here(const Character *ch, const char *argument)
 {
     Object *obj;
 

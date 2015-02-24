@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,23 +22,23 @@
 #include <stdlib.h>
 #include <math.h>
 #include <inttypes.h>
-#include <muddled/flag.h>
-#include <muddled/player.h>
-#include <muddled/string.h>
-#include <muddled/character.h>
-#include <muddled/log.h>
-#include <muddled/class.h>
+#include "muddled/flag.h"
+#include "muddled/player.h"
+#include "muddled/string.h"
+#include "muddled/character.h"
+#include "muddled/log.h"
+#include "muddled/class.h"
 #include <stdio.h>
-#include <muddled/room.h>
-#include <muddled/account.h>
-#include <muddled/macro.h>
-#include <muddled/util.h>
-#include <muddled/race.h>
-#include <muddled/connection.h>
-#include <muddled/lookup.h>
-#include <muddled/engine.h>
-#include <muddled/explored.h>
-#include <muddled/channel.h>
+#include "muddled/room.h"
+#include "muddled/account.h"
+#include "muddled/macro.h"
+#include "muddled/util.h"
+#include "muddled/race.h"
+#include "muddled/connection.h"
+#include "muddled/lookup.h"
+#include "muddled/engine.h"
+#include "muddled/explored.h"
+#include "muddled/channel.h"
 
 Character *first_player = 0;
 
@@ -51,7 +51,7 @@ const Lookup plr_flags[] =
     {0, 0}
 };
 
-Player *new_player(Connection * conn)
+Player *new_player(Connection *conn)
 {
 
     Player *p = (Player *) alloc_mem(1, sizeof(Player));
@@ -81,7 +81,7 @@ Player *new_player(Connection * conn)
 
 }
 
-void destroy_player(Player * p)
+void destroy_player(Player *p)
 {
 
     free_str(p->title);
@@ -98,7 +98,7 @@ void destroy_player(Player * p)
 
 }
 
-int delete_player(Character * ch)
+int delete_player(Character *ch)
 {
 
     char buf[BUF_SIZ];
@@ -119,7 +119,7 @@ int delete_player(Character * ch)
 
 }
 
-static int save_explored(sql_stmt * stmt, int index, field_map * table)
+static int save_explored(sql_stmt *stmt, int index, field_map *table)
 {
 
     const char *rle = get_explored_rle(*((Flag **) table->value));
@@ -127,7 +127,7 @@ static int save_explored(sql_stmt * stmt, int index, field_map * table)
     return sql_bind_text(stmt, index, rle, strlen(rle), 0);
 }
 
-int save_player(Character * ch)
+int save_player(Character *ch)
 {
     if (ch->pc == 0)
     {
@@ -192,7 +192,7 @@ int save_player(Character * ch)
 
 }
 
-void load_player_columns(Account * acc, Character * ch, sql_stmt * stmt)
+void load_player_columns(Account *acc, Character *ch, sql_stmt *stmt)
 {
 
     int i, cols = sql_column_count(stmt);
@@ -310,7 +310,7 @@ void load_player_columns(Account * acc, Character * ch, sql_stmt * stmt)
 
 }
 
-Character *load_player_by_id(Connection * conn, identifier_t charId)
+Character *load_player_by_id(Connection *conn, identifier_t charId)
 {
 
     char buf[400];
@@ -358,7 +358,7 @@ Character *load_player_by_id(Connection * conn, identifier_t charId)
 
 }
 
-Character *load_player_by_name(Connection * conn, const char *name)
+Character *load_player_by_name(Connection *conn, const char *name)
 {
 
     char buf[400];
@@ -408,7 +408,7 @@ Character *load_player_by_name(Connection * conn, const char *name)
 Character *get_player_by_id(int id)
 {
 
-    for (Character * ch = first_player; ch != 0; ch = ch->next_player)
+    for (Character *ch = first_player; ch != 0; ch = ch->next_player)
     {
 
         if (ch->id == id)
@@ -432,7 +432,7 @@ Character *player_lookup(const char *arg)
     else
     {
 
-        for (Character * nch = first_player; nch != 0;
+        for (Character *nch = first_player; nch != 0;
                 nch = nch->next_player)
         {
 
@@ -447,7 +447,7 @@ Character *player_lookup(const char *arg)
 
 }
 
-long exp_to_level(const Character * ch)
+long exp_to_level(const Character *ch)
 {
 
     if (!ch->pc)
@@ -470,7 +470,7 @@ long exp_to_level(const Character * ch)
 
 }
 
-bool is_drunk(Character * ch)
+bool is_drunk(Character *ch)
 {
 
     return ch->pc->condition[COND_DRUNK] > 10;

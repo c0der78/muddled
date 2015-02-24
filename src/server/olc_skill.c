@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,13 +22,13 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include <muddled/skill.h>
-#include <muddled/string.h>
-#include <muddled/lookup.h>
-#include <muddled/engine.h>
-#include <muddled/class.h>
+#include "../muddled/skill.h"
+#include "../muddled/string.h"
+#include "../muddled/lookup.h"
+#include "../muddled/engine.h"
+#include "../muddled/class.h"
 
-Editor *build_skill_editor(Skill * skill)
+Editor *build_skill_editor(Skill *skill)
 {
 
     Editor *editor = new_editor();
@@ -43,7 +43,7 @@ Editor *build_skill_editor(Skill * skill)
 
 }
 
-void skill_editor_menu(Client * conn)
+void skill_editor_menu(Client *conn)
 {
 
     clear_screen(conn);
@@ -97,7 +97,7 @@ void skill_editor_menu(Client * conn)
 
 }
 
-void skill_edit_list(Client * conn)
+void skill_edit_list(Client *conn)
 {
 
     int count = 0;
@@ -118,7 +118,7 @@ void skill_edit_list(Client * conn)
 
 }
 
-void skill_editor(Client * conn, const char *argument)
+void skill_editor(Client *conn, const char *argument)
 {
 
     char arg[100];

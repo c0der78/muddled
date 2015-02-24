@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -21,15 +21,15 @@
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include <muddled/room.h>
-#include <muddled/string.h>
-#include <muddled/engine.h>
-#include <muddled/exit.h>
-#include <muddled/macro.h>
-#include <muddled/lookup.h>
-#include <muddled/account.h>
+#include "../muddled/room.h"
+#include "../muddled/string.h"
+#include "../muddled/engine.h"
+#include "../muddled/exit.h"
+#include "../muddled/macro.h"
+#include "../muddled/lookup.h"
+#include "../muddled/account.h"
 
-Editor *build_room_editor(Room * room)
+Editor *build_room_editor(Room *room)
 {
     Editor *editor = new_editor();
 
@@ -42,7 +42,7 @@ Editor *build_room_editor(Room * room)
     return editor;
 }
 
-void room_editor_menu(Client * conn)
+void room_editor_menu(Client *conn)
 {
     clear_screen(conn);
 
@@ -78,10 +78,10 @@ void room_editor_menu(Client * conn)
     string_editor_preview(conn, "~YF) ~CReset", room->reset);
 }
 
-void room_edit_list(Client * conn, Area * area)
+void room_edit_list(Client *conn, Area *area)
 {
     int count = 0;
-    for (Room * room = area->rooms; room != 0; room = room->next_in_area)
+    for (Room *room = area->rooms; room != 0; room = room->next_in_area)
     {
         writelnf(conn, "%2d) %-12.12s ", room->id, room->name);
         if (++count % 4 == 0)
@@ -91,7 +91,7 @@ void room_edit_list(Client * conn, Area * area)
         writeln(conn, "");
 }
 
-void room_editor(Client * conn, const char *argument)
+void room_editor(Client *conn, const char *argument)
 {
     char arg[100];
 

@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	           Many thanks to creators of muds before me.                     *
+ *             Many thanks to creators of muds before me.                     *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -42,9 +42,9 @@ typedef struct account_forum AccountForum;
 #define ACCOUNT_TABLE "account"
 #define ACCOUNT_FORUM_TABLE "account_forum"
 
-#include <muddled/flag.h>
-#include <muddled/forum.h>
-#include <muddled/connection.h>
+#include "flag.h"
+#include "forum.h"
+#include "connection.h"
 #include <time.h>
 
 /*!

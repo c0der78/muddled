@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -20,26 +20,26 @@
  ******************************************************************************/
 #include <unistd.h>
 #include <inttypes.h>
-#include <muddled/nonplayer.h>
-#include <muddled/character.h>
-#include <muddled/area.h>
-#include <muddled/object.h>
-#include <muddled/player.h>
-#include <muddled/affect.h>
-#include <muddled/macro.h>
-#include <muddled/string.h>
-#include <muddled/log.h>
-#include <muddled/room.h>
-#include <muddled/util.h>
-#include <muddled/hint.h>
-#include <muddled/skill.h>
-#include <muddled/fight.h>
-#include <muddled/lookup.h>
-#include <muddled/account.h>
+#include "../muddled/nonplayer.h"
+#include "../muddled/character.h"
+#include "../muddled/area.h"
+#include "../muddled/object.h"
+#include "../muddled/player.h"
+#include "../muddled/affect.h"
+#include "../muddled/macro.h"
+#include "../muddled/string.h"
+#include "../muddled/log.h"
+#include "../muddled/room.h"
+#include "../muddled/util.h"
+#include "../muddled/hint.h"
+#include "../muddled/skill.h"
+#include "../muddled/fight.h"
+#include "../muddled/lookup.h"
+#include "../muddled/account.h"
 #include "update.h"
 #include "client.h"
 
-void reset_room(Room * room)
+void reset_room(Room *room)
 {
     static const char *delims = "(),";
 
@@ -86,7 +86,7 @@ void reset_room(Room * room)
             }
             int count = 0;
 
-            for (Character * rch = room->characters; rch;
+            for (Character *rch = room->characters; rch;
                     rch = rch->next_in_room)
                 if (rch->id == id)
                     count++;
@@ -117,7 +117,7 @@ void reset_room(Room * room)
             }
             int count = 0;
 
-            for (Object * obj = room->objects; obj;
+            for (Object *obj = room->objects; obj;
                     obj = obj->next_content)
                 if (obj->id == id)
                     count++;
@@ -153,7 +153,7 @@ void reset_room(Room * room)
             }
             int count = 0;
 
-            for (Object * obj = lastNPC->carrying; obj;
+            for (Object *obj = lastNPC->carrying; obj;
                     obj = obj->next_content)
                 if (obj->id == id)
                     count++;
@@ -230,9 +230,9 @@ void reset_room(Room * room)
     }
 }
 
-void reset_area(Area * area)
+void reset_area(Area *area)
 {
-    for (Room * room = area->rooms; room != 0; room = room->next_in_area)
+    for (Room *room = area->rooms; room != 0; room = room->next_in_area)
     {
         reset_room(room);
     }
@@ -240,14 +240,14 @@ void reset_area(Area * area)
 
 void area_update()
 {
-    for (Area * area = first_area; area != 0; area = area->next)
+    for (Area *area = first_area; area != 0; area = area->next)
     {
         reset_area(area);
     }
 
 }
 
-long hit_gain(Character * ch)
+long hit_gain(Character *ch)
 {
     long gain;
     // int number;
@@ -331,7 +331,7 @@ long hit_gain(Character * ch)
     return UMIN(gain, ch->maxHit - ch->hit);
 }
 
-long mana_gain(Character * ch)
+long mana_gain(Character *ch)
 {
     long gain;
     // int number;
@@ -413,7 +413,7 @@ long mana_gain(Character * ch)
     return UMIN(gain, ch->maxMana - ch->mana);
 }
 
-long move_gain(Character * ch)
+long move_gain(Character *ch)
 {
     long gain;
 
@@ -466,7 +466,7 @@ long move_gain(Character * ch)
     return UMIN(gain, ch->maxMove - ch->move);
 }
 
-void gain_condition(Character * ch, int iCond, int value)
+void gain_condition(Character *ch, int iCond, int value)
 {
     if (value == 0 || !ch || !ch->pc || ch->level >= LEVEL_IMMORTAL)
         return;
@@ -541,7 +541,7 @@ void gain_condition(Character * ch, int iCond, int value)
 
 void character_update()
 {
-    for (Character * ch = first_character; ch != 0; ch = ch->next)
+    for (Character *ch = first_character; ch != 0; ch = ch->next)
     {
         if (ch->pc)
         {
@@ -587,7 +587,7 @@ void character_update()
         }
         gain_condition(ch, COND_DRUNK, -1);
         gain_condition(ch, COND_THIRST, -1);
-        gain_condition(ch, COND_HUNGER,	/* ch->size > SIZE_MEDIUM ? -2 : */
+        gain_condition(ch, COND_HUNGER, /* ch->size > SIZE_MEDIUM ? -2 : */
                        -1);
 
         for (Affect * paf_next, *paf = ch->affects; paf; paf = paf_next)
@@ -622,7 +622,7 @@ void character_update()
 
 void hint_update()
 {
-    for (Character * ch = first_player; ch != 0; ch = ch->next_player)
+    for (Character *ch = first_player; ch != 0; ch = ch->next_player)
     {
         if (!is_set(ch->pc->account->flags, PLR_HINTS))
             continue;

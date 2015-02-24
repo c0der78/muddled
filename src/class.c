@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,12 +18,12 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include <muddled/class.h>
-#include <muddled/db.h>
-#include <muddled/log.h>
-#include <muddled/engine.h>
-#include <muddled/string.h>
-#include <muddled/character.h>
+#include "muddled/class.h"
+#include "muddled/db.h"
+#include "muddled/log.h"
+#include "muddled/engine.h"
+#include "muddled/string.h"
+#include "muddled/character.h"
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -42,7 +42,7 @@ Class *new_class()
     return c;
 }
 
-void destroy_class(Class * c)
+void destroy_class(Class *c)
 {
     free_str(c->name);
     free_str(c->description);
@@ -171,7 +171,7 @@ bool is_valid_class(int index)
     return index >= 0 && index < max_class;
 }
 
-bool has_class(Character * ch, int classId)
+bool has_class(Character *ch, int classId)
 {
     for (int *i = ch->classes; i && *i != -1; i++)
     {
@@ -181,7 +181,7 @@ bool has_class(Character * ch, int classId)
     return false;
 }
 
-const char *class_short(Character * ch)
+const char *class_short(Character *ch)
 {
     if (ch->classes == 0 || *ch->classes == -1)
     {
@@ -213,7 +213,7 @@ const char *class_short(Character * ch)
     return buf[i];
 }
 
-const char *class_who(Character * ch)
+const char *class_who(Character *ch)
 {
     static char buf[100];
 
@@ -239,7 +239,7 @@ const char *class_who(Character * ch)
     return buf;
 }
 
-int class_count(const Character * ch)
+int class_count(const Character *ch)
 {
     int count = 0;
 

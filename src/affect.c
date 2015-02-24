@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,18 +18,18 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include <muddled/affect.h>
-#include <muddled/engine.h>
-#include <muddled/log.h>
-#include <muddled/character.h>
-#include <muddled/nonplayer.h>
-#include <muddled/object.h>
-#include <muddled/room.h>
+#include "muddled/affect.h"
+#include "muddled/engine.h"
+#include "muddled/log.h"
+#include "muddled/character.h"
+#include "muddled/nonplayer.h"
+#include "muddled/object.h"
+#include "muddled/room.h"
 #include <stdio.h>
 #include <inttypes.h>
-#include <muddled/db.h>
-#include <muddled/string.h>
-#include <muddled/lookup.h>
+#include "muddled/db.h"
+#include "muddled/string.h"
+#include "muddled/lookup.h"
 #include <assert.h>
 
 const Lookup affect_flags[] =
@@ -65,7 +65,7 @@ const Lookup affect_flags[] =
     {0, 0}
 };
 
-static int affect_mod(Affect * paf, bool fRemove)
+static int affect_mod(Affect *paf, bool fRemove)
 {
     int mod = paf->modifier;
 
@@ -75,7 +75,7 @@ static int affect_mod(Affect * paf, bool fRemove)
     return mod;
 }
 
-void affect_apply_stat(Affect * aff, void *obj, bool fRemove, int stat)
+void affect_apply_stat(Affect *aff, void *obj, bool fRemove, int stat)
 {
     Character *ch = (Character *) obj;
 
@@ -85,7 +85,7 @@ void affect_apply_stat(Affect * aff, void *obj, bool fRemove, int stat)
 
 }
 
-void affect_apply_resist(Affect * paf, void *obj, bool fRemove, int arg)
+void affect_apply_resist(Affect *paf, void *obj, bool fRemove, int arg)
 {
     Character *ch = (Character *) obj;
 
@@ -94,7 +94,7 @@ void affect_apply_resist(Affect * paf, void *obj, bool fRemove, int arg)
     ch->resists[arg] = affect_mod(paf, fRemove);
 }
 
-void affect_apply_resists(Affect * paf, void *obj, bool fRemove)
+void affect_apply_resists(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
@@ -105,37 +105,37 @@ void affect_apply_resists(Affect * paf, void *obj, bool fRemove)
     }
 }
 
-void affect_apply_str(Affect * paf, void *obj, bool fRemove)
+void affect_apply_str(Affect *paf, void *obj, bool fRemove)
 {
     affect_apply_stat(paf, obj, fRemove, STAT_STR);
 }
 
-void affect_apply_dex(Affect * aff, void *obj, bool fRemove)
+void affect_apply_dex(Affect *aff, void *obj, bool fRemove)
 {
     affect_apply_stat(aff, obj, fRemove, STAT_DEX);
 }
 
-void affect_apply_int(Affect * paf, void *obj, bool fRemove)
+void affect_apply_int(Affect *paf, void *obj, bool fRemove)
 {
     affect_apply_stat(paf, obj, fRemove, STAT_INT);
 }
 
-void affect_apply_wis(Affect * paf, void *obj, bool fRemove)
+void affect_apply_wis(Affect *paf, void *obj, bool fRemove)
 {
     affect_apply_stat(paf, obj, fRemove, STAT_WIS);
 }
 
-void affect_apply_con(Affect * paf, void *obj, bool fRemove)
+void affect_apply_con(Affect *paf, void *obj, bool fRemove)
 {
     affect_apply_stat(paf, obj, fRemove, STAT_CON);
 }
 
-void affect_apply_luck(Affect * paf, void *obj, bool fRemove)
+void affect_apply_luck(Affect *paf, void *obj, bool fRemove)
 {
     affect_apply_stat(paf, obj, fRemove, STAT_LUCK);
 }
 
-void affect_apply_sex(Affect * paf, void *obj, bool fRemove)
+void affect_apply_sex(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
@@ -144,41 +144,41 @@ void affect_apply_sex(Affect * paf, void *obj, bool fRemove)
     ch->sex = (sex_t) s;
 }
 
-void affect_apply_level(Affect * paf, void *affected, bool fRemove)
+void affect_apply_level(Affect *paf, void *affected, bool fRemove)
 {
     Character *ch = (Character *) affected;
     ch->level += affect_mod(paf, fRemove);
 }
 
-void affect_apply_mana(Affect * paf, void *obj, bool fRemove)
+void affect_apply_mana(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
     ch->maxMana += affect_mod(paf, fRemove);
 }
 
-void affect_apply_move(Affect * paf, void *obj, bool fRemove)
+void affect_apply_move(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
     ch->maxMove += affect_mod(paf, fRemove);
 }
 
-void affect_apply_hit(Affect * paf, void *obj, bool fRemove)
+void affect_apply_hit(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
     ch->maxHit += affect_mod(paf, fRemove);
 }
 
-void affect_apply_size(Affect * paf, void *obj, bool fRemove)
+void affect_apply_size(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
     ch->size += URANGE(SIZE_TINY, affect_mod(paf, fRemove), SIZE_HUGE);
 }
 
-void affect_apply_align(Affect * paf, void *obj, bool fRemove)
+void affect_apply_align(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
@@ -191,19 +191,19 @@ void affect_apply_align(Affect * paf, void *obj, bool fRemove)
 const Lookup affect_callbacks[] =
 {
     {"none", 0},
-    {"strength", (uintptr_t) & affect_apply_str},
-    {"dexterity", (uintptr_t) & affect_apply_dex},
-    {"intelligence", (uintptr_t) & affect_apply_int},
-    {"wisdom", (uintptr_t) & affect_apply_wis},
-    {"constitution", (uintptr_t) & affect_apply_con},
-    {"luck", (uintptr_t) & affect_apply_luck},
-    {"sex", (uintptr_t) & affect_apply_sex},
-    {"level", (uintptr_t) & affect_apply_level},
-    {"mana", (uintptr_t) & affect_apply_mana},
-    {"hit", (uintptr_t) & affect_apply_hit},
-    {"move", (uintptr_t) & affect_apply_move},
-    {"size", (uintptr_t) & affect_apply_size},
-    {"align", (uintptr_t) & affect_apply_align},
+    {"strength", (uintptr_t) &affect_apply_str},
+    {"dexterity", (uintptr_t) &affect_apply_dex},
+    {"intelligence", (uintptr_t) &affect_apply_int},
+    {"wisdom", (uintptr_t) &affect_apply_wis},
+    {"constitution", (uintptr_t) &affect_apply_con},
+    {"luck", (uintptr_t) &affect_apply_luck},
+    {"sex", (uintptr_t) &affect_apply_sex},
+    {"level", (uintptr_t) &affect_apply_level},
+    {"mana", (uintptr_t) &affect_apply_mana},
+    {"hit", (uintptr_t) &affect_apply_hit},
+    {"move", (uintptr_t) &affect_apply_move},
+    {"size", (uintptr_t) &affect_apply_size},
+    {"align", (uintptr_t) &affect_apply_align},
     {0, 0}
 };
 
@@ -216,12 +216,12 @@ Affect *new_affect()
     return aff;
 }
 
-void destroy_affect(Affect * aff)
+void destroy_affect(Affect *aff)
 {
     free_mem(aff);
 }
 
-void affect_remove(Character * ch, Affect * paf)
+void affect_remove(Character *ch, Affect *paf)
 {
     if (ch->affects == 0)
     {
@@ -233,7 +233,7 @@ void affect_remove(Character * ch, Affect * paf)
     UNLINK(ch->affects, Affect, paf, next);
 }
 
-void affect_remove_obj(Object * obj, Affect * paf)
+void affect_remove_obj(Object *obj, Affect *paf)
 {
     if (obj->affects == 0)
     {
@@ -248,12 +248,12 @@ void affect_remove_obj(Object * obj, Affect * paf)
     UNLINK(obj->affects, Affect, paf, next);
 }
 
-const char *affect_name(Affect * paf)
+const char *affect_name(Affect *paf)
 {
     return lookup_name(affect_callbacks, (uintptr_t) paf->callback);
 }
 
-void affect_modify(Character * ch, Affect * paf, bool fAdd)
+void affect_modify(Character *ch, Affect *paf, bool fAdd)
 {
     if (ch && paf && paf->callback)
     {
@@ -275,10 +275,10 @@ void affect_modify(Character * ch, Affect * paf, bool fAdd)
     return;
 }
 
-Affect *affect_find(Affect * paf, identifier_t sn)
+Affect *affect_find(Affect *paf, identifier_t sn)
 {
 
-    for (Affect * paf_find = paf; paf_find; paf_find = paf_find->next)
+    for (Affect *paf_find = paf; paf_find; paf_find = paf_find->next)
     {
         if (paf_find->from == sn)
             return paf_find;
@@ -287,7 +287,7 @@ Affect *affect_find(Affect * paf, identifier_t sn)
     return 0;
 }
 
-void affect_to_char(Character * ch, Affect * paf)
+void affect_to_char(Character *ch, Affect *paf)
 {
     LINK(ch->affects, paf, next);
 
@@ -296,7 +296,7 @@ void affect_to_char(Character * ch, Affect * paf)
     return;
 }
 
-void affect_to_obj(Object * obj, Affect * paf)
+void affect_to_obj(Object *obj, Affect *paf)
 {
     LINK(obj->affects, paf, next);
 
@@ -304,7 +304,7 @@ void affect_to_obj(Object * obj, Affect * paf)
         affect_modify(obj->carriedBy, paf, true);
 }
 
-bool is_affected(Character * ch, identifier_t sn)
+bool is_affected(Character *ch, identifier_t sn)
 {
     if (!ch)
         return false;
@@ -390,7 +390,7 @@ Affect *load_affect_by_id(identifier_t id)
     return paf;
 }
 
-int save_affect(Affect * paf)
+int save_affect(Affect *paf)
 {
     field_map affect_values[] =
     {

@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,17 +19,17 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/character.h>
-#include <muddled/util.h>
-#include <muddled/room.h>
-#include <muddled/macro.h>
-#include <muddled/nonplayer.h>
-#include <muddled/player.h>
-#include <muddled/skill.h>
-#include <muddled/log.h>
-#include <muddled/fight.h>
-#include <muddled/class.h>
-#include <muddled/channel.h>
+#include "muddled/character.h"
+#include "muddled/util.h"
+#include "muddled/room.h"
+#include "muddled/macro.h"
+#include "muddled/nonplayer.h"
+#include "muddled/player.h"
+#include "muddled/skill.h"
+#include "muddled/log.h"
+#include "muddled/fight.h"
+#include "muddled/class.h"
+#include "muddled/channel.h"
 
 const Lookup dam_types[] =
 {
@@ -55,7 +55,7 @@ const Lookup dam_types[] =
 };
 
 void
-dam_message(Character * ch, Character * victim, long dam, int dt, dam_t type)
+dam_message(Character *ch, Character *victim, long dam, int dt, dam_t type)
 {
 
     const char *attack = (dt >= 0
@@ -88,7 +88,7 @@ dam_message(Character * ch, Character * victim, long dam, int dt, dam_t type)
 
 }
 
-long xp_compute(Character * gch, Character * victim, int total_levels)
+long xp_compute(Character *gch, Character *victim, int total_levels)
 {
 
     long xp;
@@ -381,7 +381,7 @@ long xp_compute(Character * gch, Character * victim, int total_levels)
 
 }
 
-void advance_level(Character * ch, bool hide)
+void advance_level(Character *ch, bool hide)
 {
 
     long add_hp;
@@ -458,7 +458,7 @@ void advance_level(Character * ch, bool hide)
 
 }
 
-void gain_exp(Character * ch, long gain)
+void gain_exp(Character *ch, long gain)
 {
 
     if (!ch->pc || is_immortal(ch))
@@ -494,7 +494,7 @@ void gain_exp(Character * ch, long gain)
     }
 }
 
-bool damage(Character * ch, Character * victim, long dam, int dt, dam_t type)
+bool damage(Character *ch, Character *victim, long dam, int dt, dam_t type)
 {
 
     dam_message(ch, victim, dam, dt, type);
@@ -546,7 +546,7 @@ bool damage(Character * ch, Character * victim, long dam, int dt, dam_t type)
 
 }
 
-void one_hit(Character * ch, Character * victim, int dt, dam_t type)
+void one_hit(Character *ch, Character *victim, int dt, dam_t type)
 {
 
     if (victim == ch || !ch || !victim)
@@ -592,7 +592,7 @@ void one_hit(Character * ch, Character * victim, int dt, dam_t type)
 
 }
 
-void multi_hit(Character * ch, Character * victim, int dt, dam_t type)
+void multi_hit(Character *ch, Character *victim, int dt, dam_t type)
 {
 
     one_hit(ch, victim, dt, type);

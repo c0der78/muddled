@@ -22,10 +22,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <syslog.h>
-#include <muddled/log.h>
-#include <muddled/engine.h>
-#include <muddled/flag.h>
-#include <muddled/util.h>
+#include "muddled/log.h"
+#include "muddled/engine.h"
+#include "muddled/flag.h"
+#include "muddled/util.h"
 #include <errno.h>
 #include "config.h"
 

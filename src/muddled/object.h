@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -24,12 +24,12 @@
 
 typedef struct object Object;
 
-#include <muddled/variant.h>
-#include <muddled/hashmap.h>
-#include <muddled/db.h>
-#include <muddled/affect.h>
+#include "variant.h"
+#include "hashmap.h"
+#include "db.h"
+#include "affect.h"
 
-#define MAX_OBJ_VAL	4
+#define MAX_OBJ_VAL 4
 
 typedef enum
 {
@@ -213,4 +213,4 @@ extern const Lookup object_flags[];
 extern const Lookup weapon_types[];
 extern const Lookup weapon_flags[];
 extern const Lookup container_flags[];
-#endif				/* // #ifndef OBJECT_H */
+#endif              /* // #ifndef OBJECT_H */

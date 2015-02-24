@@ -21,16 +21,16 @@
 
 #include "client.h"
 #include "command.h"
-#include <muddled/character.h>
-#include <muddled/player.h>
-#include <muddled/room.h>
-#include <muddled/engine.h>
-#include <muddled/log.h>
-#include <muddled/account.h>
-#include <muddled/connection.h>
-#include <muddled/util.h>
-#include <muddled/string.h>
-#include <muddled/buffer.h>
+#include "../muddled/character.h"
+#include "../muddled/player.h"
+#include "../muddled/room.h"
+#include "../muddled/engine.h"
+#include "../muddled/log.h"
+#include "../muddled/account.h"
+#include "../muddled/connection.h"
+#include "../muddled/util.h"
+#include "../muddled/string.h"
+#include "../muddled/buffer.h"
 
 DOFUN(color)
 {

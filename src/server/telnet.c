@@ -20,11 +20,11 @@
  ******************************************************************************/
 
 #include "telnet.h"
-#include <muddled/connection.h>
-#include <muddled/string.h>
+#include "../muddled/connection.h"
+#include "../muddled/string.h"
 #include <stdbool.h>
-#include <muddled/log.h>
-#include <muddled/macro.h>
+#include "../muddled/log.h"
+#include "../muddled/macro.h"
 
 ssize_t send_telopt(const Client *conn, unsigned char cmd, unsigned char opt)
 {

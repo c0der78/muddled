@@ -23,10 +23,10 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <muddled/character.h>
-#include <muddled/string.h>
-#include <muddled/grid.h>
-#include <muddled/buffer.h>
+#include "muddled/character.h"
+#include "muddled/string.h"
+#include "muddled/grid.h"
+#include "muddled/buffer.h"
 
 void grid_init_border(Border *border)
 {

@@ -3,21 +3,21 @@
 #define HASHMAP_H_INCLUDED
 
 #include <stdbool.h>
-#include <muddled/engine.h>
-#include <muddled/variant.h>
+#include "engine.h"
+#include "variant.h"
 
 typedef struct
 {
-    void *data;
-    int flags;
-    identifier_t key;
+	void *data;
+	int flags;
+	identifier_t key;
 } hash_entry;
 
 /** Hashmap structure (forward declaration) */
 typedef struct s_hashmap
 {
-    hash_entry *table;
-    long size, count, pos;
+	hash_entry *table;
+	long size, count, pos;
 } hashmap;
 
 /** Creates a new hashmap near the given size. */

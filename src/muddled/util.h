@@ -22,7 +22,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <muddled/character.h>
+#include "character.h"
 #include <stdbool.h>
 #include <time.h>
 

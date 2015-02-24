@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,13 +22,13 @@
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include <muddled/string.h>
-#include <muddled/engine.h>
-#include <muddled/area.h>
-#include <muddled/lookup.h>
-#include <muddled/macro.h>
+#include "../muddled/string.h"
+#include "../muddled/engine.h"
+#include "../muddled/area.h"
+#include "../muddled/lookup.h"
+#include "../muddled/macro.h"
 
-Editor *build_area_editor(Area * area)
+Editor *build_area_editor(Area *area)
 {
 
     Editor *editor = new_editor();
@@ -43,7 +43,7 @@ Editor *build_area_editor(Area * area)
 
 }
 
-void area_editor_menu(Client * conn)
+void area_editor_menu(Client *conn)
 {
 
     clear_screen(conn);
@@ -63,12 +63,12 @@ void area_editor_menu(Client * conn)
 
 }
 
-void area_edit_list(Client * conn)
+void area_edit_list(Client *conn)
 {
 
     int count = 0;
 
-    for (Area * area = first_area; area != 0; area = area->next)
+    for (Area *area = first_area; area != 0; area = area->next)
     {
 
         writelnf(conn, "%2d) %12.12s ", area->id, area->name);
@@ -83,7 +83,7 @@ void area_edit_list(Client * conn)
 
 }
 
-void area_editor(Client * conn, const char *argument)
+void area_editor(Client *conn, const char *argument)
 {
 
     char arg[100];

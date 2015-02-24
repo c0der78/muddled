@@ -19,19 +19,19 @@
  ******************************************************************************/
 
 #include "client.h"
-#include <muddled/room.h>
+#include "../muddled/room.h"
 #include "olc.h"
 #include <stdlib.h>
 #include <string.h>
-#include <muddled/string.h>
-#include <muddled/macro.h>
-#include <muddled/room.h>
-#include <muddled/exit.h>
-#include <muddled/lookup.h>
-#include <muddled/race.h>
+#include "../muddled/string.h"
+#include "../muddled/macro.h"
+#include "../muddled/room.h"
+#include "../muddled/exit.h"
+#include "../muddled/lookup.h"
+#include "../muddled/race.h"
 #include "telnet.h"
 #include <ctype.h>
-#include <muddled/engine.h>
+#include "../muddled/engine.h"
 
 Editor *new_editor()
 {

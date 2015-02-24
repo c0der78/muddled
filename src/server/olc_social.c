@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,12 +22,12 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include <muddled/social.h>
-#include <muddled/string.h>
-#include <muddled/lookup.h>
-#include <muddled/macro.h>
+#include "../muddled/social.h"
+#include "../muddled/string.h"
+#include "../muddled/lookup.h"
+#include "../muddled/macro.h"
 
-Editor *build_social_editor(Social * social)
+Editor *build_social_editor(Social *social)
 {
 
     Editor *editor = new_editor();
@@ -42,7 +42,7 @@ Editor *build_social_editor(Social * social)
 
 }
 
-void social_editor_menu(Client * conn)
+void social_editor_menu(Client *conn)
 {
 
     clear_screen(conn);
@@ -82,12 +82,12 @@ void social_editor_menu(Client * conn)
 
 }
 
-void social_edit_list(Client * conn)
+void social_edit_list(Client *conn)
 {
 
     int count = 0;
 
-    for (Social * social = first_social; social != 0; social = social->next)
+    for (Social *social = first_social; social != 0; social = social->next)
     {
 
         writef(conn, "%2d) %-12.12s ", social->id, social->name);
@@ -102,7 +102,7 @@ void social_edit_list(Client * conn)
 
 }
 
-void social_editor(Client * conn, const char *argument)
+void social_editor(Client *conn, const char *argument)
 {
 
     char arg[100];

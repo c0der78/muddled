@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -63,13 +63,13 @@ typedef enum
     MAX_COND
 } condition_t;
 
-#include <muddled/flag.h>
-#include <muddled/affect.h>
-#include <muddled/player.h>
-#include <muddled/nonplayer.h>
-#include <muddled/race.h>
-#include <muddled/fight.h>
-#include <muddled/room.h>
+#include "flag.h"
+#include "affect.h"
+#include "player.h"
+#include "nonplayer.h"
+#include "race.h"
+#include "fight.h"
+#include "room.h"
 
 struct character
 {
@@ -137,6 +137,6 @@ bool is_playing(const Character *);
 bool is_player(const Character *);
 Character *get_char_world(Character *, const char *);
 
-#define MAX_ALIGN	2500
+#define MAX_ALIGN   2500
 
-#endif				/* // #ifndef CHARACTER_H */
+#endif              /* // #ifndef CHARACTER_H */

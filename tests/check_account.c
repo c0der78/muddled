@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,7 +18,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include <muddyengine/account.h>
+#include "../src/muddled/account.h"
 
 START_TEST(test_account_new)
 {

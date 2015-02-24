@@ -21,24 +21,24 @@
 #include <fcntl.h>
 #include "server.h"
 #include <sys/wait.h>
-#include <muddled/player.h>
-#include <muddled/macro.h>
-#include <muddled/db.h>
-#include <muddled/script.h>
-#include <muddled/log.h>
-#include <muddled/account.h>
-#include <muddled/help.h>
-#include <muddled/engine.h>
-#include <muddled/hint.h>
-#include <muddled/race.h>
-#include <muddled/skill.h>
+#include "../muddled/player.h"
+#include "../muddled/macro.h"
+#include "../muddled/db.h"
+#include "../muddled/script.h"
+#include "../muddled/log.h"
+#include "../muddled/account.h"
+#include "../muddled/help.h"
+#include "../muddled/engine.h"
+#include "../muddled/hint.h"
+#include "../muddled/race.h"
+#include "../muddled/skill.h"
 #include <signal.h>
-#include <muddled/social.h>
-#include <muddled/class.h>
-#include <muddled/area.h>
-#include <muddled/forum.h>
+#include "../muddled/social.h"
+#include "../muddled/class.h"
+#include "../muddled/area.h"
+#include "../muddled/forum.h"
 #include "client.h"
-#include <muddled/channel.h>
+#include "../muddled/channel.h"
 
 #include <sys/time.h>
 
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
     init_signals();
 
-    initialize_engine(DB_FILE, Stringify(ROOT_DIR));
+    initialize_engine(DB_FILE, ROOT_DIR);
 
     initialize_channels();
 
@@ -94,7 +94,7 @@ void parse_options(int argc, char *argv[])
             reboot_file = optarg;
             break;
         case 'i':
-            server_import(Stringify(ROOT_DIR), optarg);
+            server_import(ROOT_DIR, optarg);
             exit(EXIT_SUCCESS);
         default:
             break;

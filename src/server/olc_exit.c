@@ -20,11 +20,11 @@
  ******************************************************************************/
 
 #include "client.h"
-#include <muddled/flag.h>
-#include <muddled/exit.h>
-#include <muddled/room.h>
-#include <muddled/string.h>
-#include <muddled/lookup.h>
+#include "../muddled/flag.h"
+#include "../muddled/exit.h"
+#include "../muddled/room.h"
+#include "../muddled/string.h"
+#include "../muddled/lookup.h"
 #include <stdlib.h>
 #include "telnet.h"
 #include "olc.h"

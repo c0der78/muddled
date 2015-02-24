@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,17 +19,17 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/social.h>
-#include <muddled/macro.h>
-#include <muddled/db.h>
+#include "muddled/social.h"
+#include "muddled/macro.h"
+#include "muddled/db.h"
 #include <stdio.h>
 #include <inttypes.h>
-#include <muddled/log.h>
-#include <muddled/engine.h>
-#include <muddled/character.h>
-#include <muddled/flag.h>
-#include <muddled/lookup.h>
-#include <muddled/util.h>
+#include "muddled/log.h"
+#include "muddled/engine.h"
+#include "muddled/character.h"
+#include "muddled/flag.h"
+#include "muddled/lookup.h"
+#include "muddled/util.h"
 #include <ctype.h>
 
 Social *first_social = 0;
@@ -67,7 +67,7 @@ Social *new_social()
 
 }
 
-void destroy_social(Social * soc)
+void destroy_social(Social *soc)
 {
 
     free_str(soc->name);
@@ -96,7 +96,7 @@ void destroy_social(Social * soc)
 
 }
 
-int interpret_social(Character * ch, const char *command, const char *argument)
+int interpret_social(Character *ch, const char *command, const char *argument)
 {
 
     char arg[BUF_SIZ];
@@ -376,7 +376,7 @@ int load_socials()
 
 }
 
-int save_social(Social * soc)
+int save_social(Social *soc)
 {
     field_map social_values[] =
     {
@@ -424,7 +424,7 @@ void save_socials()
 
     db_begin_transaction();
 
-    for (Social * soc = first_social; soc; soc = soc->next)
+    for (Social *soc = first_social; soc; soc = soc->next)
     {
 
         save_social(soc);
@@ -443,7 +443,7 @@ Social *social_lookup(const char *arg)
 
         int id = atoi(arg);
 
-        for (Social * soc = first_social; soc; soc = soc->next)
+        for (Social *soc = first_social; soc; soc = soc->next)
         {
 
             if (soc->id == id)
@@ -455,7 +455,7 @@ Social *social_lookup(const char *arg)
     else
     {
 
-        for (Social * soc = first_social; soc; soc = soc->next)
+        for (Social *soc = first_social; soc; soc = soc->next)
         {
 
             if (!str_prefix(arg, soc->name))

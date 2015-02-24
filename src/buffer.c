@@ -22,9 +22,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include <muddled/log.h>
-#include <muddled/engine.h>
-#include <muddled/buffer.h>
+#include "muddled/log.h"
+#include "muddled/engine.h"
+#include "muddled/buffer.h"
 
 #define MAX_BUF     16384
 #define MAX_BUF_LIST    10

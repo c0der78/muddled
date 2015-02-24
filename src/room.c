@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,20 +18,20 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include <muddled/room.h>
+#include "muddled/room.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include <muddled/string.h>
-#include <muddled/db.h>
-#include <muddled/log.h>
-#include <muddled/area.h>
-#include <muddled/exit.h>
-#include <muddled/macro.h>
-#include <muddled/lookup.h>
-#include <muddled/engine.h>
-#include <muddled/util.h>
-#include <muddled/explored.h>
+#include "muddled/string.h"
+#include "muddled/db.h"
+#include "muddled/log.h"
+#include "muddled/area.h"
+#include "muddled/exit.h"
+#include "muddled/macro.h"
+#include "muddled/lookup.h"
+#include "muddled/engine.h"
+#include "muddled/util.h"
+#include "muddled/explored.h"
 
 Room *room_hash[ID_HASH] = { 0 };
 
@@ -79,7 +79,7 @@ Room *new_room()
     return room;
 }
 
-void destroy_room(Room * room)
+void destroy_room(Room *room)
 {
     free_str(room->name);
     free_str(room->description);
@@ -102,7 +102,7 @@ void destroy_room(Room * room)
     free_mem(room);
 }
 
-void load_room_columns(Room * room, sql_stmt * stmt)
+void load_room_columns(Room *room, sql_stmt *stmt)
 {
     int count = sql_column_count(stmt);
     for (int i = 0; i < count; i++)
@@ -159,7 +159,7 @@ void load_room_columns(Room * room, sql_stmt * stmt)
     // load_reset(room);
 }
 
-int load_rooms(Area * area)
+int load_rooms(Area *area)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -235,7 +235,7 @@ Room *load_room(identifier_t id)
     return room;
 }
 
-int save_room_only(Room * room)
+int save_room_only(Room *room)
 {
     field_map room_values[] =
     {
@@ -270,7 +270,7 @@ int save_room_only(Room * room)
     return 1;
 }
 
-int save_room(Room * room)
+int save_room(Room *room)
 {
     save_room_only(room);
 
@@ -289,7 +289,7 @@ Room *get_room_by_id(identifier_t id)
 {
     identifier_t hash = id % ID_HASH;
 
-    for (Room * room = room_hash[hash]; room != 0; room = room->next)
+    for (Room *room = room_hash[hash]; room != 0; room = room->next)
     {
         if (room->id == id)
             return room;
@@ -305,7 +305,7 @@ Room *room_lookup(const char *arg)
     }
     for (int i = 0; i < ID_HASH; i++)
     {
-        for (Room * room = room_hash[i]; room != 0; room = room->next)
+        for (Room *room = room_hash[i]; room != 0; room = room->next)
         {
             if (!str_prefix(arg, strip_color(room->name)))
                 return room;
@@ -319,7 +319,7 @@ Room *get_default_room()
 
     for (int i = 0; i < ID_HASH; i++)
     {
-        for (Room * room = room_hash[i]; room != 0; room = room->next)
+        for (Room *room = room_hash[i]; room != 0; room = room->next)
             return room;
     }
 

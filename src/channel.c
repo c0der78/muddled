@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,20 +19,20 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/channel.h>
-#include <muddled/string.h>
-#include <muddled/character.h>
-#include <muddled/player.h>
-#include <muddled/util.h>
-#include <muddled/connection.h>
-#include <muddled/room.h>
-#include <muddled/engine.h>
-#include <muddled/social.h>
-#include <muddled/account.h>
+#include "muddled/channel.h"
+#include "muddled/string.h"
+#include "muddled/character.h"
+#include "muddled/player.h"
+#include "muddled/util.h"
+#include "muddled/connection.h"
+#include "muddled/room.h"
+#include "muddled/engine.h"
+#include "muddled/social.h"
+#include "muddled/account.h"
 #include <stdarg.h>
-#include <muddled/object.h>
-#include <muddled/log.h>
-#include <muddled/forum.h>
+#include "muddled/object.h"
+#include "muddled/log.h"
+#include "muddled/forum.h"
 #include <stdio.h>
 
 int gcn_chat = 0;
@@ -79,8 +79,8 @@ void initialize_channels()
 }
 
 bool
-channel_viewable(const Character * ch, const Character * victim,
-                 const Channel * chan)
+channel_viewable(const Character *ch, const Character *victim,
+                 const Channel *chan)
 {
 
     switch (chan->type)
@@ -102,7 +102,7 @@ channel_viewable(const Character * ch, const Character * victim,
 
 }
 
-const char *format_channel(const Channel * chan, const Character * ch)
+const char *format_channel(const Channel *chan, const Character *ch)
 {
 
     static char buf[OUT_SIZ];
@@ -164,7 +164,7 @@ char is_nose(char nose)
 
 }
 
-const char *say_verb(const char *word, Character * ch, Character * viewer,
+const char *say_verb(const char *word, Character *ch, Character *viewer,
                      int S)
 {
 
@@ -308,8 +308,8 @@ const char *say_verb(const char *word, Character * ch, Character * viewer,
 
 }
 
-const char *get_chan_soc_string(Character * ch, Character * victim,
-                                Character * vch, Object * obj, Social * soc)
+const char *get_chan_soc_string(Character *ch, Character *victim,
+                                Character *vch, Object *obj, Social *soc)
 {
     if (!victim && !obj)
     {
@@ -347,8 +347,8 @@ const char *get_chan_soc_string(Character * ch, Character * victim,
 }
 
 void
-channel_social(Character * ch, Character * victim, Object * obj,
-               Social * soc, const Channel * chan)
+channel_social(Character *ch, Character *victim, Object *obj,
+               Social *soc, const Channel *chan)
 {
     Character *pch;
     const char *type;
@@ -379,7 +379,7 @@ channel_social(Character * ch, Character * victim, Object * obj,
     }
 }
 
-int interpret_channel(Character * ch, int gcn, const char *argument)
+int interpret_channel(Character *ch, int gcn, const char *argument)
 {
 
     const Channel *chan = &channel_table[gcn];
@@ -537,7 +537,7 @@ int interpret_channel(Character * ch, int gcn, const char *argument)
         writelnf(ch, "%s You %s '%s'~x", format,
                  say_verb(argument, ch, 0, 0), argument);
 
-        for (Character * pch = first_player; pch != 0;
+        for (Character *pch = first_player; pch != 0;
                 pch = pch->next_player)
         {
 
@@ -563,7 +563,7 @@ int interpret_channel(Character * ch, int gcn, const char *argument)
 
 }
 
-void announce(Character * ch, info_t type, const char *message, ...)
+void announce(Character *ch, info_t type, const char *message, ...)
 {
 
     char buf[BUF_SIZ], buf2[BUF_SIZ];
@@ -611,7 +611,7 @@ void announce(Character * ch, info_t type, const char *message, ...)
 
     sprintf(buf, "%s~W:~x %s~x", iType, buf2);
 
-    for (Character * p = first_player; p; p = p->next_player)
+    for (Character *p = first_player; p; p = p->next_player)
     {
 
         if (!p->pc->conn->is_playing(ch->pc->conn))

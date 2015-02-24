@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -26,13 +26,13 @@ typedef struct OLC OLC;
 typedef struct Editor Editor;
 
 #include "client.h"
-#include <muddled/character.h>
-#include <muddled/room.h>
-#include <muddled/help.h>
-#include <muddled/object.h>
-#include <muddled/area.h>
-#include <muddled/skill.h>
-#include <muddled/social.h>
+#include "../muddled/character.h"
+#include "../muddled/room.h"
+#include "../muddled/help.h"
+#include "../muddled/object.h"
+#include "../muddled/area.h"
+#include "../muddled/skill.h"
+#include "../muddled/social.h"
 
 void room_editor(Client *, const char *);
 void exit_editor(Client *, const char *);
@@ -92,10 +92,10 @@ void social_edit_list(Client *);
 
 struct Editor
 {
-    void (*edit) (Client *, const char *);
-    void (*show) (Client *);
-    void *data;
-    Editor *next;
+	void (*edit) (Client *, const char *);
+	void (*show) (Client *);
+	void *data;
+	Editor *next;
 };
 
 #define EDIT_CHANGED 1
@@ -112,4 +112,4 @@ void finish_editing(Client *);
 void olc_syntax(Client *, const char *, ...)
 __attribute__ ((format(printf, 2, 3)));
 
-#endif				/* // #ifndef OLC_H */
+#endif              /* // #ifndef OLC_H */

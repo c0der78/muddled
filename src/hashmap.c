@@ -1,5 +1,5 @@
 
-#include <muddled/hashmap.h>
+#include "muddled/hashmap.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -49,7 +49,7 @@ static unsigned long findPrimeGreaterThan(unsigned long val)
     return val;
 }
 
-static void rehash(hashmap * hm)
+static void rehash(hashmap *hm)
 {
     long size = hm->size;
     hash_entry *table = hm->table;
@@ -96,7 +96,7 @@ hashmap *new_hashmap(long startsize)
     return hm;
 }
 
-void hm_foreach(hashmap * hash, void (*foreach) (void *data))
+void hm_foreach(hashmap *hash, void (*foreach) (void *data))
 {
     if (hash->count)
     {
@@ -111,7 +111,7 @@ void hm_foreach(hashmap * hash, void (*foreach) (void *data))
     }
 }
 
-void *hm_start(hashmap * hm)
+void *hm_start(hashmap *hm)
 {
     hm->pos = 0;
 
@@ -122,7 +122,7 @@ void *hm_start(hashmap * hm)
     return 0;
 }
 
-void *hm_next(hashmap * hm)
+void *hm_next(hashmap *hm)
 {
     if (++hm->pos < hm->size)
         return hm->table[hm->pos].data;
@@ -130,17 +130,17 @@ void *hm_next(hashmap * hm)
     return 0;
 }
 
-bool hm_hasnext(hashmap * hm)
+bool hm_hasnext(hashmap *hm)
 {
     return hm->pos < hm->size && hm->table[hm->pos].data;
 }
 
-void sm_insert(hashmap * hash, const void *data, const char *key)
+void sm_insert(hashmap *hash, const void *data, const char *key)
 {
     hm_insert(hash, data, hash_key(key));
 }
 
-void hm_insert(hashmap * hash, const void *data, identifier_t key)
+void hm_insert(hashmap *hash, const void *data, identifier_t key)
 {
     identifier_t index, i, step;
 
@@ -184,12 +184,12 @@ void hm_insert(hashmap * hash, const void *data, identifier_t key)
     while (1);
 }
 
-void *sm_remove(hashmap * hash, const char *key)
+void *sm_remove(hashmap *hash, const char *key)
 {
     return hm_remove(hash, hash_key(key));
 }
 
-void *hm_remove(hashmap * hash, identifier_t key)
+void *hm_remove(hashmap *hash, identifier_t key)
 {
     identifier_t index, i, step;
 
@@ -208,11 +208,11 @@ void *hm_remove(hashmap * hash, identifier_t key)
                     --hash->count;
                     return hash->table[index].data;
                 }
-                else	/* in, but not active (i.e. deleted) */
+                else    /* in, but not active (i.e. deleted) */
                     return 0;
             }
         }
-        else		/* found an empty place (can't be in) */
+        else        /* found an empty place (can't be in) */
             return 0;
 
         index = (index + step) % hash->size;
@@ -223,12 +223,12 @@ void *hm_remove(hashmap * hash, identifier_t key)
     return 0;
 }
 
-void *sm_get(hashmap * hash, const char *key)
+void *sm_get(hashmap *hash, const char *key)
 {
     return hm_get(hash, hash_key(key));
 }
 
-void *hm_get(hashmap * hash, identifier_t key)
+void *hm_get(hashmap *hash, identifier_t key)
 {
     if (hash->count)
     {
@@ -253,12 +253,12 @@ void *hm_get(hashmap * hash, identifier_t key)
     return 0;
 }
 
-long hm_count(hashmap * hash)
+long hm_count(hashmap *hash)
 {
     return hash->count;
 }
 
-void destroy_hashmap(hashmap * hash)
+void destroy_hashmap(hashmap *hash)
 {
     free(hash->table);
     free(hash);

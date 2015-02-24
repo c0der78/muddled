@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -39,7 +39,7 @@ typedef enum
     CHANNEL_WHO
 } channel_arg_t;
 
-#include <muddled/character.h>
+#include "character.h"
 
 struct channel
 {
@@ -82,4 +82,4 @@ extern const Lookup channel_flags[];
 void announce(Character *, info_t, const char *, ...)
 __attribute__ ((format(printf, 3, 4)));
 
-#endif				/* // #ifndef CHANNEL_H */
+#endif              /* // #ifndef CHANNEL_H */

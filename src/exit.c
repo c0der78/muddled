@@ -19,17 +19,17 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/flag.h>
-#include <muddled/exit.h>
+#include "muddled/flag.h"
+#include "muddled/exit.h"
 #include <stdlib.h>
 #include <inttypes.h>
-#include <muddled/db.h>
+#include "muddled/db.h"
 #include <stdio.h>
-#include <muddled/room.h>
-#include <muddled/log.h>
-#include <muddled/lookup.h>
-#include <muddled/string.h>
-#include <muddled/engine.h>
+#include "muddled/room.h"
+#include "muddled/log.h"
+#include "muddled/lookup.h"
+#include "muddled/string.h"
+#include "muddled/engine.h"
 
 const Lookup direction_table[] =
 {

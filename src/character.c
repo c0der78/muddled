@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -23,24 +23,24 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include <muddled/engine.h>
-#include <muddled/string.h>
-#include <muddled/character.h>
-#include <muddled/object.h>
-#include <muddled/log.h>
-#include <muddled/db.h>
-#include <muddled/player.h>
-#include <muddled/nonplayer.h>
-#include <muddled/connection.h>
-#include <muddled/macro.h>
-#include <muddled/flag.h>
-#include <muddled/room.h>
-#include <muddled/race.h>
-#include <muddled/util.h>
-#include <muddled/account.h>
-#include <muddled/class.h>
-#include <muddled/affect.h>
-#include <muddled/lookup.h>
+#include "muddled/engine.h"
+#include "muddled/string.h"
+#include "muddled/character.h"
+#include "muddled/object.h"
+#include "muddled/log.h"
+#include "muddled/db.h"
+#include "muddled/player.h"
+#include "muddled/nonplayer.h"
+#include "muddled/connection.h"
+#include "muddled/macro.h"
+#include "muddled/flag.h"
+#include "muddled/room.h"
+#include "muddled/race.h"
+#include "muddled/util.h"
+#include "muddled/account.h"
+#include "muddled/class.h"
+#include "muddled/affect.h"
+#include "muddled/lookup.h"
 
 Character *first_character = 0;
 
@@ -66,7 +66,7 @@ const Lookup position_table[] =
     {0, 0}
 };
 
-static void writef_line_to_char(const Character * ch, const char *fmt, ...)
+static void writef_line_to_char(const Character *ch, const char *fmt, ...)
 {
     va_list args;
 
@@ -80,7 +80,7 @@ static void writef_line_to_char(const Character * ch, const char *fmt, ...)
     writeln(ch->pc->conn, "");
 }
 
-static void write_line_to_char(const Character * ch, const char *arg)
+static void write_line_to_char(const Character *ch, const char *arg)
 {
     if (ch->pc == 0)
         return;
@@ -88,7 +88,7 @@ static void write_line_to_char(const Character * ch, const char *arg)
     writeln(ch->pc->conn, arg);
 }
 
-static void writef_to_char(const Character * ch, const char *fmt, ...)
+static void writef_to_char(const Character *ch, const char *fmt, ...)
 {
     va_list args;
 
@@ -100,7 +100,7 @@ static void writef_to_char(const Character * ch, const char *fmt, ...)
     va_end(args);
 }
 
-static void write_to_char(const Character * ch, const char *arg)
+static void write_to_char(const Character *ch, const char *arg)
 {
     if (ch->pc == 0 || ch->pc->conn == 0)
         return;
@@ -108,7 +108,7 @@ static void write_to_char(const Character * ch, const char *arg)
     write(ch->pc->conn, arg);
 }
 
-static void page_to_char(Character * ch, const char *arg)
+static void page_to_char(Character *ch, const char *arg)
 {
     if (!ch || !ch->pc || !ch->pc->conn)
         return;
@@ -116,7 +116,7 @@ static void page_to_char(Character * ch, const char *arg)
     ch->pc->conn->page(ch->pc->conn, arg);
 }
 
-static void titlef_to_char(const Character * ch, const char *fmt, ...)
+static void titlef_to_char(const Character *ch, const char *fmt, ...)
 {
     va_list args;
 
@@ -128,7 +128,7 @@ static void titlef_to_char(const Character * ch, const char *fmt, ...)
     va_end(args);
 }
 
-static void title_to_char(const Character * ch, const char *arg)
+static void title_to_char(const Character *ch, const char *arg)
 {
     if (ch->pc == 0 || !ch->pc->conn)
         return;
@@ -167,7 +167,7 @@ Character *new_char()
     return ch;
 }
 
-void destroy_char(Character * ch)
+void destroy_char(Character *ch)
 {
     free_str(ch->name);
 
@@ -190,7 +190,7 @@ void destroy_char(Character * ch)
     free_mem(ch);
 }
 
-void extract_char(Character * ch, bool fPull)
+void extract_char(Character *ch, bool fPull)
 {
 
     for (Object * obj_next, *obj = ch->carrying; obj != NULL;
@@ -219,7 +219,7 @@ void extract_char(Character * ch, bool fPull)
     destroy_char(ch);
 }
 
-int load_char_objs(Character * ch)
+int load_char_objs(Character *ch)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -269,7 +269,7 @@ int load_char_objs(Character * ch)
     return total;
 }
 
-static int save_char_classes(sql_stmt * stmt, int index, field_map * table)
+static int save_char_classes(sql_stmt *stmt, int index, field_map *table)
 {
     int *data = *((int **)table->value);
 
@@ -287,7 +287,7 @@ static int save_char_classes(sql_stmt * stmt, int index, field_map * table)
     return sql_bind_text(stmt, index, buf, len, 0);
 }
 
-static int read_char_classes(void *arg, sql_stmt * stmt, int i)
+static int read_char_classes(void *arg, sql_stmt *stmt, int i)
 {
     const char *pstr = strtok((char *)sql_column_str(stmt, i), ",");
     int total = 0;
@@ -313,7 +313,7 @@ static int read_char_classes(void *arg, sql_stmt * stmt, int i)
 }
 
 int
-load_char_column(Character * ch, sql_stmt * stmt, const char *colname, int i)
+load_char_column(Character *ch, sql_stmt *stmt, const char *colname, int i)
 {
     if (!str_cmp(colname, "name"))
     {
@@ -418,7 +418,7 @@ load_char_column(Character * ch, sql_stmt * stmt, const char *colname, int i)
     return 0;
 }
 
-int delete_character(Character * ch)
+int delete_character(Character *ch)
 {
     char buf[BUF_SIZ];
 
@@ -433,7 +433,7 @@ int delete_character(Character * ch)
     return 1;
 }
 
-int save_char_objs(Character * ch)
+int save_char_objs(Character *ch)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -515,7 +515,7 @@ int save_char_objs(Character * ch)
     return 1;
 }
 
-int save_character(Character * ch, const Lookup * flag_table)
+int save_character(Character *ch, const Lookup *flag_table)
 {
     static const int CharSaveVersion = 1;
 
@@ -574,7 +574,7 @@ int save_character(Character * ch, const Lookup * flag_table)
     }
 }
 
-int load_char_affects(Character * ch)
+int load_char_affects(Character *ch)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -613,7 +613,7 @@ int load_char_affects(Character * ch)
     return total;
 }
 
-int save_char_affects(Character * ch)
+int save_char_affects(Character *ch)
 {
     char buf[400];
     sql_stmt *stmt;
@@ -719,37 +719,37 @@ int save_char_affects(Character * ch)
     return 1;
 }
 
-short scrwidth(const Character * ch)
+short scrwidth(const Character *ch)
 {
     return !ch->pc || !ch->pc->conn ? 80 : ch->pc->conn->scrWidth;
 }
 
-short scrheight(const Character * ch)
+short scrheight(const Character *ch)
 {
     return !ch->pc || !ch->pc->conn ? 24 : ch->pc->conn->scrHeight;
 }
 
-bool is_immortal(const Character * ch)
+bool is_immortal(const Character *ch)
 {
     return (ch->level >= LEVEL_IMMORTAL);
 }
 
-bool is_implementor(const Character * ch)
+bool is_implementor(const Character *ch)
 {
     return (ch->level >= MAX_LEVEL);
 }
 
-bool is_playing(const Character * ch)
+bool is_playing(const Character *ch)
 {
     return ch->pc && ch->pc->conn && ch->pc->conn->is_playing(ch->pc->conn);
 }
 
-bool is_player(const Character * ch)
+bool is_player(const Character *ch)
 {
     return ch->pc && !is_immortal(ch);
 }
 
-Character *get_char_world(Character * ch, const char *argument)
+Character *get_char_world(Character *ch, const char *argument)
 {
     char arg[BUF_SIZ];
     long number;

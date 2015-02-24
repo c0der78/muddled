@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -23,13 +23,13 @@
 
 typedef struct hint Hint;
 
-#include <muddled/engine.h>
+#include "engine.h"
 
 struct hint
 {
-    identifier_t id;
-    const char *text;
-    short level;
+	identifier_t id;
+	const char *text;
+	short level;
 };
 
 extern Hint *hint_table;
@@ -40,4 +40,4 @@ void destroy_hint(Hint *);
 int load_hints();
 int save_hint(Hint *);
 
-#endif				/* // #ifndef HINT_H */
+#endif              /* // #ifndef HINT_H */

@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -21,12 +21,12 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include <muddled/help.h>
-#include <muddled/string.h>
-#include <muddled/lookup.h>
-#include <muddled/macro.h>
+#include "../muddled/help.h"
+#include "../muddled/string.h"
+#include "../muddled/lookup.h"
+#include "../muddled/macro.h"
 
-Editor *build_help_editor(Help * help)
+Editor *build_help_editor(Help *help)
 {
     Editor *editor = new_editor();
 
@@ -37,7 +37,7 @@ Editor *build_help_editor(Help * help)
     return editor;
 }
 
-void help_editor_menu(Client * conn)
+void help_editor_menu(Client *conn)
 {
     clear_screen(conn);
 
@@ -61,10 +61,10 @@ void help_editor_menu(Client * conn)
     writelnf(conn, "~YE) ~CRelated: ~W%s~x", help_related_string(help));
 }
 
-void help_edit_list(Client * conn)
+void help_edit_list(Client *conn)
 {
     int count = 0;
-    for (Help * help = first_help; help != 0; help = help->next)
+    for (Help *help = first_help; help != 0; help = help->next)
     {
         writef(conn, "%2d) %-12.12s ", help->id, help->keywords);
         if (++count % 4 == 0)
@@ -74,7 +74,7 @@ void help_edit_list(Client * conn)
         writeln(conn, "");
 }
 
-void help_editor(Client * conn, const char *argument)
+void help_editor(Client *conn, const char *argument)
 {
     char arg[100];
 

@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,33 +22,33 @@
 #include "command.h"
 #include <string.h>
 #include <ctype.h>
-#include <muddled/engine.h>
-#include <muddled/string.h>
-#include <muddled/character.h>
-#include <muddled/area.h>
-#include <muddled/player.h>
-#include <muddled/log.h>
-#include <muddled/flag.h>
-#include <muddled/room.h>
-#include <muddled/area.h>
-#include <muddled/explored.h>
-#include <muddled/account.h>
-#include <muddled/class.h>
-#include <muddled/connection.h>
-#include <muddled/race.h>
-#include <muddled/nonplayer.h>
-#include <muddled/object.h>
-#include <muddled/util.h>
-#include <muddled/help.h>
-#include <muddled/map.h>
+#include "../muddled/engine.h"
+#include "../muddled/string.h"
+#include "../muddled/character.h"
+#include "../muddled/area.h"
+#include "../muddled/player.h"
+#include "../muddled/log.h"
+#include "../muddled/flag.h"
+#include "../muddled/room.h"
+#include "../muddled/area.h"
+#include "../muddled/explored.h"
+#include "../muddled/account.h"
+#include "../muddled/class.h"
+#include "../muddled/connection.h"
+#include "../muddled/race.h"
+#include "../muddled/nonplayer.h"
+#include "../muddled/object.h"
+#include "../muddled/util.h"
+#include "../muddled/help.h"
+#include "../muddled/map.h"
 #include "server.h"
-#include <muddled/grid.h>
-#include <muddled/buffer.h>
-#include <muddled/affect.h>
-#include <muddled/skill.h>
+#include "../muddled/grid.h"
+#include "../muddled/buffer.h"
+#include "../muddled/affect.h"
+#include "../muddled/skill.h"
 #include "update.h"
-#include <muddled/lookup.h>
-#include <muddled/social.h>
+#include "../muddled/lookup.h"
+#include "../muddled/social.h"
 
 int compare_commands(const void *a, const void *b)
 {
@@ -64,7 +64,7 @@ DOFUN(commands)
     {
         writelnf(ch, "%s all 		- list all commands", do_name);
 
-        for (const Lookup * t = command_types; t->name != 0; t++)
+        for (const Lookup *t = command_types; t->name != 0; t++)
             writelnf(ch, "%s %-13s	- list all %s commands",
                      do_name, t->name, t->name);
 
@@ -115,7 +115,7 @@ DOFUN(commands)
 
 }
 
-void show_char_to_char_1(Character * victim, Character * ch)
+void show_char_to_char_1(Character *victim, Character *ch)
 {
 
     char buf[BUF_SIZ];
@@ -269,7 +269,7 @@ DOFUN(look)
 
         char buf[100] = { 0 };
 
-        for (const Lookup * t = direction_table; t->name != 0; t++)
+        for (const Lookup *t = direction_table; t->name != 0; t++)
         {
 
             if (ch->inRoom->exits[t->value] == 0)
@@ -291,7 +291,7 @@ DOFUN(look)
 
         writeln(ch, "~x");
 
-        for (Character * rch = ch->inRoom->characters; rch != 0;
+        for (Character *rch = ch->inRoom->characters; rch != 0;
                 rch = rch->next_in_room)
         {
 
@@ -313,7 +313,7 @@ DOFUN(look)
 
         }
 
-        for (Object * obj = ch->inRoom->objects; obj != 0;
+        for (Object *obj = ch->inRoom->objects; obj != 0;
                 obj = obj->next_content)
         {
 
@@ -374,7 +374,7 @@ DOFUN(who)
 
     Buffer *buffer = new_buf();
 
-    for (Character * wch = first_player; wch != 0; wch = wch->next_player)
+    for (Character *wch = first_player; wch != 0; wch = wch->next_player)
     {
 
         writelnf(buffer, "~W[~Y%02d ~R%3.3s ~B%3.3s~W] %s %s",
@@ -872,7 +872,7 @@ DOFUN(socials)
     }
     Grid *grid = new_grid(scrwidth(ch), 5);
 
-    for (Social * s = first_social; s; s = s->next)
+    for (Social *s = first_social; s; s = s->next)
     {
 
         grid_add_default(grid, s->name);
@@ -889,7 +889,7 @@ DOFUN(areas)
 {
     Grid *grid = new_grid(scrwidth(ch), 2);
 
-    for (Area * a = first_area; a; a = a->next)
+    for (Area *a = first_area; a; a = a->next)
     {
         grid_add_default(grid, a->name);
     }

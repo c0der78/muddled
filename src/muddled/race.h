@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -24,22 +24,22 @@
 
 typedef struct race Race;
 
-#include <muddled/engine.h>
+#include "engine.h"
 
 struct race
 {
-    identifier_t id;
-    Race *next;
-    const char *name;
-    const char *description;
-    Flag *flags;
-    int stats[MAX_STAT];
-    int statMods[MAX_STAT];
+	identifier_t id;
+	Race *next;
+	const char *name;
+	const char *description;
+	Flag *flags;
+	int stats[MAX_STAT];
+	int statMods[MAX_STAT];
 };
 
 enum
 {
-    RACE_PC
+	RACE_PC
 };
 
 extern Race *first_race;
@@ -49,4 +49,4 @@ int load_races();
 int save_races();
 
 extern const Lookup race_flags[];
-#endif				/* // #ifndef RACE_H */
+#endif              /* // #ifndef RACE_H */

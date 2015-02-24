@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -24,17 +24,17 @@
 
 typedef struct clazz Class;
 
-#include <muddled/character.h>
+#include "character.h"
 #include  <stdbool.h>
 
 struct clazz
 {
-    identifier_t id;
-    const char *name;
-    const char *description;
-    bool fMana;
-    short thac0;
-    short thac32;
+	identifier_t id;
+	const char *name;
+	const char *description;
+	bool fMana;
+	short thac0;
+	short thac32;
 };
 
 extern Class *class_table;
@@ -51,4 +51,4 @@ bool has_class(Character *, int);
 const char *class_short(Character *);
 const char *class_who(Character *);
 
-#endif				/* // #ifndef CLASS_H */
+#endif              /* // #ifndef CLASS_H */

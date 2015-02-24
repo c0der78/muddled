@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,12 +18,12 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include <muddyengine/db.h>
-#include <muddyengine/string.h>
-#include <muddyengine/macro.h>
-#include <muddyengine/engine.h>
-#include <muddyengine/util.h>
-#include <muddyengine/log.h>
+#include "../src/muddled/db.h"
+#include "../src/muddled/string.h"
+#include "../src/muddled/macro.h"
+#include "../src/muddled/engine.h"
+#include "../src/muddled/util.h"
+#include "../src/muddled/log.h"
 #include <inttypes.h>
 
 #define DBNAME "test"
@@ -37,12 +37,12 @@ void test_db_setup()
     sprintf(buf, "create table if not exists "DBNAME"(testId integer not null primary key autoincrement,"
             "name varchar, intval integer)");
 
-    if(sql_exec(buf) != SQL_OK)
+    if (sql_exec(buf) != SQL_OK)
     {
         fail("Could not create "DBNAME" table");
     }
 
-    if(sql_exec("delete from " DBNAME) != SQL_OK)
+    if (sql_exec("delete from " DBNAME) != SQL_OK)
         fail("could not delete from table");
 }
 
@@ -112,7 +112,7 @@ char buf[BUF_SIZ];
 
 sprintf(buf, "update "DBNAME" set intval=%d where %s=%"PRId64" and name='%s' and intval='%d'", check, tablenameid(DBNAME), T.id, T.name, T.value);
 
-if(sql_exec(buf) != SQL_OK)
+if (sql_exec(buf) != SQL_OK)
 {
     fail("could not update saved data entry");
 }

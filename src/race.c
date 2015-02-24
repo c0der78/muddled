@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -18,17 +18,17 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include <muddled/flag.h>
-#include <muddled/string.h>
-#include <muddled/db.h>
-#include <muddled/engine.h>
-#include <muddled/macro.h>
-#include <muddled/log.h>
-#include <muddled/lookup.h>
+#include "muddled/flag.h"
+#include "muddled/string.h"
+#include "muddled/db.h"
+#include "muddled/engine.h"
+#include "muddled/macro.h"
+#include "muddled/log.h"
+#include "muddled/lookup.h"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <stdio.h>
-#include <muddled/race.h>
+#include "muddled/race.h"
 
 Race *first_race = 0;
 
@@ -41,7 +41,7 @@ const Lookup race_flags[] =
 Race *get_race_by_id(identifier_t id)
 {
 
-    for (Race * r = first_race; r != 0; r = r->next)
+    for (Race *r = first_race; r != 0; r = r->next)
     {
         if (r->id == id)
             return r;
@@ -58,7 +58,7 @@ Race *race_lookup(const char *arg)
     {
         return get_race_by_id(atoi(arg));
     }
-    for (Race * r = first_race; r != 0; r = r->next)
+    for (Race *r = first_race; r != 0; r = r->next)
     {
         if (!str_prefix(arg, r->name))
             return r;
@@ -78,7 +78,7 @@ Race *new_race()
     return race;
 }
 
-void destroy_race(Race * race)
+void destroy_race(Race *race)
 {
     free_str(race->name);
     free_str(race->description);
@@ -155,7 +155,7 @@ int load_races()
     return total;
 }
 
-int save_race(Race * race)
+int save_race(Race *race)
 {
     field_map race_values[] =
     {

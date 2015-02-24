@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,14 +19,14 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/macro.h>
+#include "muddled/macro.h"
 #include <ctype.h>
 #include <string.h>
-#include <muddled/string.h>
-#include <muddled/color.h>
+#include "muddled/string.h"
+#include "muddled/color.h"
 #include <stdio.h>
-#include <muddled/engine.h>
-#include <muddled/log.h>
+#include "muddled/engine.h"
+#include "muddled/log.h"
 #include <stdarg.h>
 #include <regex.h>
 
@@ -61,12 +61,12 @@ int match(const char *string, const char *pattern)
 
 char *trim(char *b)
 {
-    char *e = strrchr(b, '\0');	/* Find the final null */
-    while (b < e && isspace(*b))	/* Scan forward */
+    char *e = strrchr(b, '\0'); /* Find the final null */
+    while (b < e && isspace(*b))    /* Scan forward */
         ++b;
-    while (e > b && isspace(*(e - 1)))	/* scan back from end */
+    while (e > b && isspace(*(e - 1)))  /* scan back from end */
         --e;
-    *e = '\0';		/* terminate new string */
+    *e = '\0';      /* terminate new string */
     return b;
 }
 
@@ -215,7 +215,7 @@ bool is_name(const char *str, const char *namelist)
     /*
      * we need ALL parts of string to match part of namelist
      */
-    for (;;)  		/* start parsing string */
+    for (;;)        /* start parsing string */
     {
 
         str = one_argument(str, part);
@@ -228,16 +228,16 @@ bool is_name(const char *str, const char *namelist)
          */
         list = namelist;
 
-        for (;;)  	/* start parsing namelist */
+        for (;;)    /* start parsing namelist */
         {
 
             list = one_argument(list, name);
 
-            if (name[0] == '\0')	/* this name was not found */
+            if (name[0] == '\0')    /* this name was not found */
                 return false;
 
             if (!str_prefix(string, name))
-                return true;	/* full pattern match */
+                return true;    /* full pattern match */
 
             if (!str_prefix(part, name))
                 break;

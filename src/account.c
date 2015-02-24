@@ -18,19 +18,19 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <stdio.h>
-#include <muddled/account.h>
-#include <muddled/string.h>
-#include <muddled/db.h>
-#include <muddled/log.h>
-#include <muddled/character.h>
-#include <muddled/player.h>
-#include <muddled/engine.h>
+#include "muddled/account.h"
+#include "muddled/string.h"
+#include "muddled/db.h"
+#include "muddled/log.h"
+#include "muddled/character.h"
+#include "muddled/player.h"
+#include "muddled/engine.h"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <assert.h>
-#include <muddled/forum.h>
-#include <muddled/lookup.h>
-#include <muddled/flag.h>
+#include "muddled/forum.h"
+#include "muddled/lookup.h"
+#include "muddled/flag.h"
 
 const Lookup account_flags[] =
 {

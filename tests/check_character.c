@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -21,12 +21,12 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <muddyengine/character.h>
-#include <muddyengine/connection.h>
-#include <muddyengine/nonplayer.h>
-#include <muddyengine/engine.h>
-#include <muddyengine/player.h>
-#include <muddyengine/string.h>
+#include "../src/muddled/character.h"
+#include "../src/muddled/connection.h"
+#include "../src/muddled/nonplayer.h"
+#include "../src/muddled/engine.h"
+#include "../src/muddled/player.h"
+#include "../src/muddled/string.h"
 
 static Character *tch = 0;
 char buffer[BUF_SIZ] = {0};
@@ -52,7 +52,7 @@ void char_write_setup()
 void char_write_teardown()
 {
 
-    if(tch->pc->conn)
+    if (tch->pc->conn)
         free_mem(tch->pc->conn);
 
     extract_char(tch, true);
@@ -79,9 +79,9 @@ void parse_format_string(Character *to, char *orig, ...)
     Character *vict;
     char *out = buf;
 
-    for(const char *pstr = orig; *pstr; pstr++)
+    for (const char *pstr = orig; *pstr; pstr++)
     {
-        if(*pstr != '%')
+        if (*pstr != '%')
         {
             *out++ = *pstr;
             continue;
@@ -89,14 +89,14 @@ void parse_format_string(Character *to, char *orig, ...)
 
         const char *i;
 
-        switch(*++pstr)
+        switch (*++pstr)
         {
         case 'N':
         case 'n':
-            vict = va_arg(args, Character*);
+            vict = va_arg(args, Character *);
             fail_if(vict == 0, "'N' is null");
             i = vict->npc->shortDescr;
-            while( ( *out = *i) != 0)
+            while ( ( *out = *i) != 0)
                 out++, i++;
 
             break;

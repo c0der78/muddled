@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -20,15 +20,15 @@
 #include <check.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <muddyengine/hashmap.h>
+#include "../src/muddled/hashmap.h"
 
 static int check = 6;
 
 void hashmap_foreach(void *data)
 {
-    int d = *(int*) data;
+    int d = *(int *) data;
 
-    fail_if(d +1 != check);
+    fail_if(d + 1 != check);
 
     check--;
 }
@@ -58,9 +58,9 @@ START_TEST(test_iterate)
 
     check = 5;
 
-    for(void * data = hm_start(map); hm_hasnext(map); data = hm_next(map))
+    for (void *data = hm_start(map); hm_hasnext(map); data = hm_next(map))
     {
-        fail_if(*(int*)data != check);
+        fail_if(*(int *)data != check);
 
         check--;
     }

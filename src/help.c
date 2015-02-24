@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,15 +19,15 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/help.h>
+#include "muddled/help.h"
 #include <stdlib.h>
 #include <inttypes.h>
-#include <muddled/string.h>
-#include <muddled/db.h>
+#include "muddled/string.h"
+#include "muddled/db.h"
 #include <stdio.h>
-#include <muddled/log.h>
-#include <muddled/macro.h>
-#include <muddled/engine.h>
+#include "muddled/log.h"
+#include "muddled/macro.h"
+#include "muddled/engine.h"
 
 const char *greeting = 0;
 
@@ -60,7 +60,7 @@ Help *new_help()
 
 }
 
-void destroy_help(Help * help)
+void destroy_help(Help *help)
 {
 
     free_str(help->keywords);
@@ -73,7 +73,7 @@ void destroy_help(Help * help)
 
 }
 
-int load_help_column(Help * help, sql_stmt * stmt, const char *colname, int i)
+int load_help_column(Help *help, sql_stmt *stmt, const char *colname, int i)
 {
 
     if (!str_cmp(colname, "keywords"))
@@ -129,7 +129,7 @@ int load_help_column(Help * help, sql_stmt * stmt, const char *colname, int i)
 int load_related_helps()
 {
 
-    for (Help * help = first_help; help; help = help->next)
+    for (Help *help = first_help; help; help = help->next)
     {
 
         char buf[400];
@@ -154,7 +154,7 @@ int load_related_helps()
 
             int related = sql_column_int(stmt, 1);
 
-            for (Help * rel = first_help; help; help = help->next)
+            for (Help *rel = first_help; help; help = help->next)
             {
 
                 if (rel->id == related)
@@ -240,7 +240,7 @@ int load_helps()
 
 }
 
-int save_help(Help * help)
+int save_help(Help *help)
 {
     field_map help_values[] =
     {
@@ -282,7 +282,7 @@ Help *help_find(const char *keyword)
 
     int id = atoi(keyword);
 
-    for (Help * help = first_help; help != 0; help = help->next)
+    for (Help *help = first_help; help != 0; help = help->next)
     {
 
         if ((id != 0 && id == help->id)
@@ -298,7 +298,7 @@ Help *help_find(const char *keyword)
 Help *help_match(const char *keyword)
 {
 
-    for (Help * help = first_help; help != 0; help = help->next)
+    for (Help *help = first_help; help != 0; help = help->next)
     {
         char arg[BUF_SIZ];
 
@@ -319,12 +319,12 @@ Help *help_match(const char *keyword)
 
 }
 
-const char *help_related_string(Help * help)
+const char *help_related_string(Help *help)
 {
 
     static char buf[BUF_SIZ] = { 0 };
 
-    for (Help * rel = help->related; rel; rel = rel->next_related)
+    for (Help *rel = help->related; rel; rel = rel->next_related)
     {
 
         strcat(buf, ", ");

@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,14 +19,14 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include <muddled/character.h>
-#include <muddled/area.h>
-#include <muddled/flag.h>
-#include <muddled/player.h>
-#include <muddled/room.h>
-#include <muddled/string.h>
-#include <muddled/log.h>
-#include <muddled/explored.h>
+#include "muddled/character.h"
+#include "muddled/area.h"
+#include "muddled/flag.h"
+#include "muddled/player.h"
+#include "muddled/room.h"
+#include "muddled/string.h"
+#include "muddled/log.h"
+#include "muddled/explored.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -48,7 +48,7 @@ int bitcount(int c)
 
 }
 
-bool is_explorable(Room * room)
+bool is_explorable(Room *room)
 {
 
     return !is_set(room->flags, ROOM_NOEXPLORE) && room->area
@@ -56,7 +56,7 @@ bool is_explorable(Room * room)
 
 }
 
-int roomcount(Flag * explored)
+int roomcount(Flag *explored)
 {
 
     int pIndex = 0, count = 0;
@@ -72,7 +72,7 @@ int roomcount(Flag * explored)
 
 }
 
-void update_explored(Flag * explored)
+void update_explored(Flag *explored)
 {
 
     Room *pRoom;
@@ -101,7 +101,7 @@ void update_explored(Flag * explored)
 
 }
 
-int areacount(Flag * explored, Area * area)
+int areacount(Flag *explored, Area *area)
 {
 
     Room *pRoom;
@@ -122,7 +122,7 @@ int areacount(Flag * explored, Area * area)
 
 }
 
-int arearooms(Area * area)
+int arearooms(Area *area)
 {
 
     int count = 0;
@@ -144,7 +144,7 @@ int arearooms(Area * area)
 
 }
 
-const char *get_explored_rle(Flag * explored)
+const char *get_explored_rle(Flag *explored)
 {
 
     int bit = 0;
@@ -162,7 +162,7 @@ const char *get_explored_rle(Flag * explored)
     for (hash = 0; hash < ID_HASH; hash++)
     {
 
-        for (Room * pRoom = room_hash[hash]; pRoom != 0;
+        for (Room *pRoom = room_hash[hash]; pRoom != 0;
                 pRoom = pRoom->next)
         {
 
@@ -193,7 +193,7 @@ const char *get_explored_rle(Flag * explored)
 
 }
 
-void convert_explored_rle(Flag * explored, const char *str)
+void convert_explored_rle(Flag *explored, const char *str)
 {
 
     int index = 0;

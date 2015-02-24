@@ -7,7 +7,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -19,8 +19,8 @@
  ******************************************************************************/
 #include <check.h>
 #include <stdlib.h>
-#include <muddyengine/flag.h>
-#include <muddyengine/lookup.h>
+#include "../src/muddled/flag.h"
+#include "../src/muddled/lookup.h"
 
 const Lookup test_flags[] =
 {
@@ -39,9 +39,9 @@ START_TEST(test_set_bit)
 
     set_bit(flags, 10);
 
-    fail_if(flags->size != (10/sizeof(bit_t))+1, "flags size was not correct");
+    fail_if(flags->size != (10 / sizeof(bit_t)) + 1, "flags size was not correct");
 
-    fail_unless(flags->bits[10/sizeof(bit_t)] & (1 << (10 % sizeof(bit_t))), "bit was not set");
+    fail_unless(flags->bits[10 / sizeof(bit_t)] & (1 << (10 % sizeof(bit_t))), "bit was not set");
 
     destroy_flags(flags);
 

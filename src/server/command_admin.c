@@ -20,23 +20,23 @@
  ******************************************************************************/
 
 #include "client.h"
-#include <muddled/character.h>
-#include <muddled/player.h>
-#include <muddled/account.h>
-#include <muddled/help.h>
-#include <muddled/room.h>
+#include "../muddled/character.h"
+#include "../muddled/player.h"
+#include "../muddled/account.h"
+#include "../muddled/help.h"
+#include "../muddled/room.h"
 #include <libgen.h>
 #include "server.h"
 #include "olc.h"
 #include "command.h"
-#include <muddled/object.h>
-#include <muddled/social.h>
-#include <muddled/area.h>
-#include <muddled/string.h>
-#include <muddled/skill.h>
-#include <muddled/nonplayer.h>
-#include <muddled/buffer.h>
-#include <muddled/util.h>
+#include "../muddled/object.h"
+#include "../muddled/social.h"
+#include "../muddled/area.h"
+#include "../muddled/string.h"
+#include "../muddled/skill.h"
+#include "../muddled/nonplayer.h"
+#include "../muddled/buffer.h"
+#include "../muddled/util.h"
 #include "importer.h"
 
 DOFUN(edit)

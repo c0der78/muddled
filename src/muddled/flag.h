@@ -8,7 +8,7 @@
  *                                  |___/                                     *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -25,7 +25,7 @@
 typedef long long bit_t;
 typedef struct flag Flag;
 
-#include <muddled/lookup.h>
+#include "lookup.h"
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -34,8 +34,8 @@ typedef struct flag Flag;
  */
 struct flag
 {
-    int *bits;
-    size_t size;
+	int *bits;
+	size_t size;
 };
 
 Flag *new_flag();
@@ -76,4 +76,4 @@ int parse_flags(Flag *, const char *, const Lookup *);
  */
 int flag_toint(Flag *);
 
-#endif				/* // #ifndef FLAG_H */
+#endif              /* // #ifndef FLAG_H */

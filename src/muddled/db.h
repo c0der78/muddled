@@ -23,7 +23,7 @@
 
 #include <sqlite3.h>
 #include <stdint.h>
-#include <muddled/flag.h>
+#include "flag.h"
 
 #define sql         sqlite3
 #define sql_stmt    sqlite3_stmt

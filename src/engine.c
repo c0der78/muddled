@@ -19,21 +19,21 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <stdio.h>
-#include <muddled/lookup.h>
-#include <muddled/engine.h>
-#include <muddled/db.h>
-#include <muddled/string.h>
-#include <muddled/log.h>
-#include <muddled/script.h>
-#include <muddled/forum.h>
-#include <muddled/race.h>
-#include <muddled/class.h>
-#include <muddled/skill.h>
-#include <muddled/area.h>
-#include <muddled/social.h>
-#include <muddled/social.h>
-#include <muddled/help.h>
-#include <muddled/hint.h>
+#include "muddled/lookup.h"
+#include "muddled/engine.h"
+#include "muddled/db.h"
+#include "muddled/string.h"
+#include "muddled/log.h"
+#include "muddled/script.h"
+#include "muddled/forum.h"
+#include "muddled/race.h"
+#include "muddled/class.h"
+#include "muddled/skill.h"
+#include "muddled/area.h"
+#include "muddled/social.h"
+#include "muddled/social.h"
+#include "muddled/help.h"
+#include "muddled/hint.h"
 #include "config.h"
 
 Engine engine_info;

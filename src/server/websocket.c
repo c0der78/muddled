@@ -20,12 +20,17 @@
  ******************************************************************************/
 
 #include <stdbool.h>
-
+#include <syslog.h>
 #include "websocket.h"
 #include "client.h"
 
 short websocket_port = 3779;
 struct libwebsocket_context *websocket_context = NULL;
+
+extern void lws_set_log_level   (   int     level,
+                                    void(*)(int level, const char *line)
+                                )   ;
+extern int log_level;
 
 Client *first_websocket;
 
@@ -158,6 +163,26 @@ bool write_to_websocket(struct libwebsocket *websocket, char *txt, size_t len)
     return status > 0;
 }
 
+static void lwsl_syslog(int level, const char *msg)
+{
+    switch (level)
+    {
+    case LLL_ERR:
+        syslog(LOG_ERR, "%s", msg);
+        break;
+    case LLL_WARN:
+    case LLL_NOTICE:
+        syslog(LOG_NOTICE, "%s", msg);
+        break;
+    case LLL_INFO:
+        syslog(LOG_INFO, "%s", msg);
+        break;
+    default:
+        syslog(LOG_DEBUG, "%s", msg);
+        break;
+    }
+}
+
 struct libwebsocket_context *create_websocket(int port)
 {
     struct lws_context_creation_info info;
@@ -173,6 +198,8 @@ struct libwebsocket_context *create_websocket(int port)
     info.uid = -1;
     info.options = 0;
     info.user = NULL;
+
+    lws_set_log_level(log_level, lwsl_syslog);
 
     return libwebsocket_create_context(&info);
 }
