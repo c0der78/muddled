@@ -50,7 +50,7 @@ void test_db_teardown()
 {
     db_close();
 
-    if(system("rm -rf muddytest.db") == -1)
+    if (system("rm -rf muddytest.db") == -1)
     {
         perror("system rm");
     }
@@ -113,7 +113,7 @@ START_TEST(test_field_map)
 
     char buf[BUF_SIZ];
 
-    sprintf(buf, "update "DBNAME" set intval=%d where %s=%"PRId64" and name='%s' and intval='%d'", check, tablenameid(DBNAME), T.id, T.name, T.value);
+    sprintf(buf, "update "DBNAME" set intval=%d where %s=%ld and name='%s' and intval='%d'", check, tablenameid(DBNAME), T.id, T.name, T.value);
 
     if (sql_exec(buf) != SQL_OK)
     {

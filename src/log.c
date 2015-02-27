@@ -17,7 +17,7 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#define _BSD_SOURCE
+#include "config.h"
 #include <syslog.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -27,7 +27,8 @@
 #include "flag.h"
 #include "util.h"
 #include <errno.h>
-#include "config.h"
+
+extern void vsyslog(int priority, const char *message, va_list args);
 
 void log_info(const char *format, ...)
 {

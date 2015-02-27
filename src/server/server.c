@@ -50,7 +50,7 @@ const char *reboot_file = 0;
 time_t startup_time = 0;
 time_t last_reboot = 0;
 
-extern char *mktemp(const char *);
+extern char *mktemp(char *);
 
 void initialize_server()
 {

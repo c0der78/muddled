@@ -44,9 +44,6 @@ extern char *strrchr(const char *, int);
 extern char *strchr(const char *, int);
 #endif
 extern char *strstr(const char *, const char *);
-#ifndef isascii
-extern int isascii(int);
-#endif
 
 END_DECL
 
