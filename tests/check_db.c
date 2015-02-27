@@ -50,7 +50,10 @@ void test_db_teardown()
 {
     db_close();
 
-    system("rm -rf muddytest.db");
+    if(system("rm -rf muddytest.db") == -1)
+    {
+        perror("system rm");
+    }
 }
 
 START_TEST(test_escape_sql_str)
@@ -84,7 +87,7 @@ START_TEST(test_field_map)
 {
     struct test
     {
-        sql_int64 id;
+        long id;
         const char *name;
         int value;
     };

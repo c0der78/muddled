@@ -351,7 +351,7 @@ void import_commit(bool load)
         // save_room_only(tmp->room);
 
         for (TmpReset *sub_next = 0, *sub = tmp->subresets; sub;
-                sub = sub->next_sub)
+                sub = sub_next)
         {
             sub_next = sub->next;
             free_mem(sub);
@@ -521,14 +521,12 @@ bool import_rom_olc_area(FILE *fp)
 {
     Area *pArea;
     const char *word;
-    bool fMatch;
 
     pArea = new_area();
 
     for (;;)
     {
         word = feof(fp) ? "End" : fread_word(fp);
-        fMatch = false;
 
         switch (UPPER(word[0]))
         {
@@ -536,7 +534,6 @@ bool import_rom_olc_area(FILE *fp)
             if (!str_cmp(word, "Credits"))
             {
                 free_str(fread_string(fp));
-                fMatch = true;
                 break;
             }
             break;
@@ -544,7 +541,6 @@ bool import_rom_olc_area(FILE *fp)
             if (!str_cmp(word, "Name"))
             {
                 pArea->name = fread_string(fp);
-                fMatch = true;
                 break;
             }
             break;
@@ -552,7 +548,6 @@ bool import_rom_olc_area(FILE *fp)
             if (!str_cmp(word, "Security"))
             {
                 fread_number(fp);
-                fMatch = true;
                 break;
             }
             break;
@@ -561,14 +556,12 @@ bool import_rom_olc_area(FILE *fp)
             {
                 fread_number(fp);
                 fread_number(fp);
-                fMatch = true;
                 break;
             }
             break;
         case 'E':
             if (!str_cmp(word, "End"))
             {
-                fMatch = true;
                 set_bit(pArea->flags, AREA_CHANGED);
                 LINK(import_areas, pArea, next);
                 area_last = pArea;
@@ -579,7 +572,6 @@ bool import_rom_olc_area(FILE *fp)
             if (!str_cmp(word, "Builders"))
             {
                 free_str(fread_string(fp));
-                fMatch = true;
                 break;
             }
             break;
@@ -900,10 +892,9 @@ bool import_rom_mobiles(FILE *fp)
             if (letter == 'F')
             {
                 const char *word;
-                long vector;
 
                 word = fread_word(fp);
-                vector = fread_flag(fp);
+                fread_flag(fp);
 
                 if (!str_prefix(word, "act"))
                     /*

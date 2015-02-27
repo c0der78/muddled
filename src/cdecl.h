@@ -33,10 +33,20 @@ extern char *strcpy(char *, const char *);
 #ifndef strncpy
 extern char *strncpy(char *, const char *, size_t);
 #endif
+#ifndef strcmp
 extern int strcmp(const char *, const char *);
+#endif
+#ifndef strcasecmp
+extern int strcasecmp(const char *, const char *);
+#endif
 extern char *strrchr(const char *, int);
+#ifndef strchr
 extern char *strchr(const char *, int);
+#endif
 extern char *strstr(const char *, const char *);
+#ifndef isascii
+extern int isascii(int);
+#endif
 
 END_DECL
 

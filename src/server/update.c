@@ -217,11 +217,9 @@ void reset_room(Room *room)
                           room->id);
                 continue;
             }
-            int max = 1;
-
             if ((tmp = strtok(0, delims)) != 0)
             {
-                max = atoi(tmp);
+                /* int max = atoi(tmp);*/
             }
             obj_to_obj(obj, lastOBJ);
             continue;

@@ -569,7 +569,7 @@ void note_read(Character *ch, const char *argument)
 
         }
 
-        if (p == 0)
+        if (lastRead == 0)
         {
 
             writeln(ch, "No note found.");
@@ -578,7 +578,7 @@ void note_read(Character *ch, const char *argument)
         else
         {
 
-            show_note_to_char(ch, p, count);
+            show_note_to_char(ch, lastRead, count);
 
         }
 

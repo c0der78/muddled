@@ -509,8 +509,10 @@ bool parse_input_buffer(Client *conn)
     /*
      * if (k == 0) conn->incomm[k++] = ' ';
      */
-
-    conn->incomm[k] = 0;
+     if(k < ARG_SIZ)
+        conn->incomm[k] = 0;
+    else
+        conn->incomm[ARG_SIZ-1] = 0;
 
     if (k > 1 || conn->incomm[0] == '!')
     {

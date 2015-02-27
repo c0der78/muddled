@@ -16,8 +16,12 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include "server.h"
 #include <sys/wait.h>
 #include "../player.h"
@@ -156,8 +160,12 @@ void handle_sig(int sig)
            IN, OUT, ERR
            } */
         open("/dev/null", O_RDWR);
-        dup(0);
-        dup(0);
+        
+        if(dup(0) == -1 || dup(0) == -1)
+        {
+            perror("dup");
+            abort();
+        }
 
         default_action.sa_handler = SIG_DFL;
         sigaction(sig, &default_action, NULL);

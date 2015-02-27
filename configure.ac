@@ -10,16 +10,20 @@ AM_INIT_AUTOMAKE
 
 LT_INIT
 
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CC
 
-AC_SUBST(X_CFLAGS, "-std=c11 -pedantic -Wall -Werror")
+AM_PROG_CC_C_O
+
+AC_SUBST(X_CFLAGS, "-std=c99 -pedantic -Wall -Werror -D_XOPEN_SOURCE=700")
 
 # Checks for libraries.
 AC_CHECK_LIB(websockets, libwebsocket_create_context)
 AC_CHECK_LIB(sqlite3, sqlite3_open)
+AC_CHECK_LIB(crypt, crypt)
+AC_CHECK_LIB(m, sqrt)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdbool.h arpa/inet.h fcntl.h inttypes.h netdb.h netinet/in.h stddef.h stdint.h stdlib.h string.h sys/socket.h sys/time.h unistd.h])

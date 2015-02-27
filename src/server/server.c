@@ -18,6 +18,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <unistd.h>
+#include <stdlib.h>
 #include <libgen.h>
 #include <sys/time.h>
 #include <stdlib.h>
@@ -48,6 +49,8 @@ const char *reboot_file = 0;
 
 time_t startup_time = 0;
 time_t last_reboot = 0;
+
+extern char *mktemp(const char *);
 
 void initialize_server()
 {
