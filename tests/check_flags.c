@@ -19,8 +19,8 @@
  ******************************************************************************/
 #include <check.h>
 #include <stdlib.h>
-#include "../src/muddled/flag.h"
-#include "../src/muddled/lookup.h"
+#include "../src/flag.h"
+#include "../src/lookup.h"
 
 const Lookup test_flags[] =
 {

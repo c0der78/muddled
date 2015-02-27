@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -19,14 +18,14 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include "muddled/character.h"
-#include "muddled/area.h"
-#include "muddled/flag.h"
-#include "muddled/player.h"
-#include "muddled/room.h"
-#include "muddled/string.h"
-#include "muddled/log.h"
-#include "muddled/explored.h"
+#include "character.h"
+#include "area.h"
+#include "flag.h"
+#include "player.h"
+#include "room.h"
+#include "string.h"
+#include "log.h"
+#include "explored.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

@@ -1,10 +1,9 @@
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -21,24 +20,24 @@
 #include <fcntl.h>
 #include "server.h"
 #include <sys/wait.h>
-#include "../muddled/player.h"
-#include "../muddled/macro.h"
-#include "../muddled/db.h"
-#include "../muddled/script.h"
-#include "../muddled/log.h"
-#include "../muddled/account.h"
-#include "../muddled/help.h"
-#include "../muddled/engine.h"
-#include "../muddled/hint.h"
-#include "../muddled/race.h"
-#include "../muddled/skill.h"
+#include "../player.h"
+#include "../macro.h"
+#include "../db.h"
+#include "../script.h"
+#include "../log.h"
+#include "../account.h"
+#include "../help.h"
+#include "../engine.h"
+#include "../hint.h"
+#include "../race.h"
+#include "../skill.h"
 #include <signal.h>
-#include "../muddled/social.h"
-#include "../muddled/class.h"
-#include "../muddled/area.h"
-#include "../muddled/forum.h"
+#include "../social.h"
+#include "../class.h"
+#include "../area.h"
+#include "../forum.h"
 #include "client.h"
-#include "../muddled/channel.h"
+#include "../channel.h"
 
 #include <sys/time.h>
 

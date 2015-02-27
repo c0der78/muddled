@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -22,9 +21,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include "muddled/log.h"
-#include "muddled/engine.h"
-#include "muddled/buffer.h"
+#include "log.h"
+#include "engine.h"
+#include "buffer.h"
 
 #define MAX_BUF     16384
 #define MAX_BUF_LIST    10
@@ -124,8 +123,6 @@ Buffer *new_buf_size(int size)
         log_error("new_buf: buffer size %d too large.", size);
 
         abort();
-
-        // abort();
     }
     buffer->string = (char *)alloc_mem(buffer->size, sizeof(char));
 

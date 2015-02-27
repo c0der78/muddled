@@ -14,7 +14,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 # Checks for programs.
 AC_PROG_CC
 
-AC_SUBST(X_CFLAGS, "-std=c99 -Wall -Werror")
+AC_SUBST(X_CFLAGS, "-std=c99 -Wall")
 
 # Checks for libraries.
 AC_CHECK_LIB(websockets, libwebsocket_create_context)
@@ -32,7 +32,7 @@ AC_TYPE_SSIZE_T
 AC_FUNC_FORK
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([atexit gethostbyaddr gettimeofday inet_ntoa isascii memmove memset pow regcomp select socket sqrt strcasecmp strchr strerror strrchr strstr strtoul])
+AC_CHECK_FUNCS([atexit gethostbyaddr gettimeofday inet_ntoa isascii memmove memset memcpy strcat strncat strlen pow regcomp select socket sqrt strcasecmp strchr strerror strrchr strstr strtoul])
 
 AC_CONFIG_FILES([Makefile src/Makefile src/server/Makefile tests/Makefile])
 

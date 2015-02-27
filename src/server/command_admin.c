@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -20,23 +19,23 @@
  ******************************************************************************/
 
 #include "client.h"
-#include "../muddled/character.h"
-#include "../muddled/player.h"
-#include "../muddled/account.h"
-#include "../muddled/help.h"
-#include "../muddled/room.h"
+#include "../character.h"
+#include "../player.h"
+#include "../account.h"
+#include "../help.h"
+#include "../room.h"
 #include <libgen.h>
 #include "server.h"
 #include "olc.h"
 #include "command.h"
-#include "../muddled/object.h"
-#include "../muddled/social.h"
-#include "../muddled/area.h"
-#include "../muddled/string.h"
-#include "../muddled/skill.h"
-#include "../muddled/nonplayer.h"
-#include "../muddled/buffer.h"
-#include "../muddled/util.h"
+#include "../object.h"
+#include "../social.h"
+#include "../area.h"
+#include "../string.h"
+#include "../skill.h"
+#include "../nonplayer.h"
+#include "../buffer.h"
+#include "../util.h"
 #include "importer.h"
 
 DOFUN(edit)

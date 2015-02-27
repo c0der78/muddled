@@ -20,9 +20,9 @@
 #include <check.h>
 #include <stdlib.h>
 #include "check_engine.h"
-#include "../src/muddled/engine.h"
-#include "../src/muddled/script.h"
-#include "../src/muddled/db.h"
+#include "../src/engine.h"
+#include "../src/script.h"
+#include "../src/db.h"
 
 int main()
 {

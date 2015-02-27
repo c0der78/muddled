@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -21,18 +20,18 @@
 
 #include "client.h"
 #include "command.h"
-#include "../muddled/channel.h"
+#include "../channel.h"
 #include <ctype.h>
-#include "../muddled/util.h"
-#include "../muddled/character.h"
-#include "../muddled/engine.h"
-#include "../muddled/grid.h"
-#include "../muddled/forum.h"
-#include "../muddled/account.h"
-#include "../muddled/string.h"
-#include "../muddled/connection.h"
-#include "../muddled/player.h"
-#include "../muddled/room.h"
+#include "../util.h"
+#include "../character.h"
+#include "../engine.h"
+#include "../grid.h"
+#include "../forum.h"
+#include "../account.h"
+#include "../string.h"
+#include "../connection.h"
+#include "../player.h"
+#include "../room.h"
 #include "olc.h"
 
 DOFUN(say)

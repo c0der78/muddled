@@ -18,7 +18,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include "../src/muddled/area.h"
+#include "../src/area.h"
 
 START_TEST(test_area_new)
 {

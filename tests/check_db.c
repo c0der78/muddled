@@ -18,12 +18,12 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include "../src/muddled/engine.h"
-#include "../src/muddled/db.h"
-#include "../src/muddled/string.h"
-#include "../src/muddled/macro.h"
-#include "../src/muddled/util.h"
-#include "../src/muddled/log.h"
+#include "../src/engine.h"
+#include "../src/db.h"
+#include "../src/string.h"
+#include "../src/macro.h"
+#include "../src/util.h"
+#include "../src/log.h"
 #include <inttypes.h>
 
 #define DBNAME "test"

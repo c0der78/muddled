@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -22,23 +21,23 @@
 #include <stdlib.h>
 #include <math.h>
 #include <inttypes.h>
-#include "muddled/flag.h"
-#include "muddled/player.h"
-#include "muddled/string.h"
-#include "muddled/character.h"
-#include "muddled/log.h"
-#include "muddled/class.h"
+#include "flag.h"
+#include "player.h"
+#include "string.h"
+#include "character.h"
+#include "log.h"
+#include "class.h"
 #include <stdio.h>
-#include "muddled/room.h"
-#include "muddled/account.h"
-#include "muddled/macro.h"
-#include "muddled/util.h"
-#include "muddled/race.h"
-#include "muddled/connection.h"
-#include "muddled/lookup.h"
-#include "muddled/engine.h"
-#include "muddled/explored.h"
-#include "muddled/channel.h"
+#include "room.h"
+#include "account.h"
+#include "macro.h"
+#include "util.h"
+#include "race.h"
+#include "connection.h"
+#include "lookup.h"
+#include "engine.h"
+#include "explored.h"
+#include "channel.h"
 
 Character *first_player = 0;
 

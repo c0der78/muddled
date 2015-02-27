@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -26,8 +25,8 @@
 #include <ctype.h>
 #include <assert.h>
 #include <unistd.h>
-#include "../muddled/engine.h"
-#include "../muddled/class.h"
+#include "../engine.h"
+#include "../class.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -37,23 +36,23 @@
 #include <crypt.h>
 #endif
 #include <errno.h>
-#include "../muddled/connection.h"
-#include "../muddled/log.h"
-#include "../muddled/character.h"
-#include "../muddled/string.h"
-#include "../muddled/nonplayer.h"
+#include "../connection.h"
+#include "../log.h"
+#include "../character.h"
+#include "../string.h"
+#include "../nonplayer.h"
 #include "command.h"
-#include "../muddled/player.h"
+#include "../player.h"
 #include "telnet.h"
-#include "../muddled/room.h"
-#include "../muddled/account.h"
-#include "../muddled/color.h"
-#include "../muddled/race.h"
-#include "../muddled/macro.h"
-#include "../muddled/util.h"
-#include "../muddled/lookup.h"
-#include "../muddled/help.h"
-#include "../muddled/channel.h"
+#include "../room.h"
+#include "../account.h"
+#include "../color.h"
+#include "../race.h"
+#include "../macro.h"
+#include "../util.h"
+#include "../lookup.h"
+#include "../help.h"
+#include "../channel.h"
 #include "client.h"
 #include "olc.h"
 #include "server.h"

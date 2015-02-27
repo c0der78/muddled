@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *    (C) 2010 by Ryan Jennings <c0der78@gmail.com> (www.arg3.net)            *
  *             Many thanks to creators of muds before me.                     *
@@ -22,11 +21,11 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include "../muddled/engine.h"
-#include "../muddled/string.h"
-#include "../muddled/lookup.h"
-#include "../muddled/macro.h"
-#include "../muddled/log.h"
+#include "../engine.h"
+#include "../string.h"
+#include "../lookup.h"
+#include "../macro.h"
+#include "../log.h"
 
 Editor *build_engine_editor(Engine *eng)
 {

@@ -19,10 +19,10 @@
  ******************************************************************************/
 #include <check.h>
 #include <stdbool.h>
-#include "../src/muddled/engine.h"
-#include "../src/muddled/db.h"
-#include "../src/muddled/lookup.h"
-#include "../src/muddled/object.h"
+#include "../src/engine.h"
+#include "../src/db.h"
+#include "../src/lookup.h"
+#include "../src/object.h"
 
 
 START_TEST(test_obj_values)

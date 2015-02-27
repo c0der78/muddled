@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -19,17 +18,17 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include "muddled/skill.h"
-#include "muddled/db.h"
-#include "muddled/string.h"
-#include "muddled/spellfun.h"
-#include "muddled/engine.h"
-#include "muddled/log.h"
-#include "muddled/class.h"
-#include "muddled/character.h"
-#include "muddled/lookup.h"
-#include "muddled/affect.h"
-#include "muddled/util.h"
+#include "skill.h"
+#include "db.h"
+#include "string.h"
+#include "spellfun.h"
+#include "engine.h"
+#include "log.h"
+#include "class.h"
+#include "character.h"
+#include "lookup.h"
+#include "affect.h"
+#include "util.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
@@ -39,13 +38,13 @@ Skill *skill_table = 0;
 int max_skill = 0;
 
 #define DEFINE_GSNS
-#include "muddled/gsn.h"
+#include "gsn.h"
 #undef DEFINE_GSNS
 
 const struct gsn_type gsn_table[] =
 {
 #define IN_GSN_TABLE
-#include "muddled/gsn.h"
+#include "gsn.h"
 #undef IN_GSN_TABLE
     {0, 0}
 };
@@ -53,7 +52,7 @@ const struct gsn_type gsn_table[] =
 const struct spellfun_type spellfun_table[] =
 {
 #define IN_SPELL_TABLE
-#include "muddled/spellfun.h"
+#include "spellfun.h"
 #undef IN_SPELL_TABLE
     {0, 0}
 };

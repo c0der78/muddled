@@ -18,11 +18,11 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include "../src/muddled/flag.h"
-#include "../src/muddled/explored.h"
-#include "../src/muddled/room.h"
-#include "../src/muddled/area.h"
-#include "../src/muddled/log.h"
+#include "../src/flag.h"
+#include "../src/explored.h"
+#include "../src/room.h"
+#include "../src/area.h"
+#include "../src/log.h"
 #include <stdio.h>
 
 int bitcount(int);

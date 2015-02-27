@@ -1,14 +1,13 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
- *	               Many thanks to creators of muds before me.                 *
+ *                 Many thanks to creators of muds before me.                 *
  *                                                                            *
  *        In order to use any part of this Mud, you must comply with the      *
  *     license in 'license.txt'.  In particular, you may not remove either    *
@@ -22,23 +21,23 @@
 #ifndef TELNET_H
 #define TELNET_H
 
-#define IAC	255
+#define IAC 255
 
-#define	DONT	254
-#define DO	253
-#define WONT	252
-#define WILL	251
-#define SB	250
+#define DONT    254
+#define DO  253
+#define WONT    252
+#define WILL    251
+#define SB  250
 
-#define SE  	240
+#define SE      240
 
 #define SEND    1
-#define IS  	0
+#define IS      0
 
-#define TELOPT_ECHO	1
+#define TELOPT_ECHO 1
 #define TELOPT_TTYPE    24
-#define TELOPT_NAWS	31
-#define TELOPT_TSPEED	32
+#define TELOPT_NAWS 31
+#define TELOPT_TSPEED   32
 
 #include <string.h>
 #include "client.h"
@@ -55,4 +54,4 @@ void restore_cursor(Client *);
 
 void clear_screen(Client *);
 
-#endif				/* // #ifndef TELNET_H */
+#endif              /* // #ifndef TELNET_H */

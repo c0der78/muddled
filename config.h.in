@@ -40,6 +40,9 @@
    to 0 otherwise. */
 #undef HAVE_MALLOC
 
+/* Define to 1 if you have the `memcpy' function. */
+#undef HAVE_MEMCPY
+
 /* Define to 1 if you have the `memmove' function. */
 #undef HAVE_MEMMOVE
 
@@ -89,6 +92,9 @@
 /* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
 
+/* Define to 1 if you have the `strcat' function. */
+#undef HAVE_STRCAT
+
 /* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
 
@@ -100,6 +106,12 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strlen' function. */
+#undef HAVE_STRLEN
+
+/* Define to 1 if you have the `strncat' function. */
+#undef HAVE_STRNCAT
 
 /* Define to 1 if you have the `strrchr' function. */
 #undef HAVE_STRRCHR

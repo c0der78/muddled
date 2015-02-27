@@ -21,12 +21,12 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include "../src/muddled/character.h"
-#include "../src/muddled/connection.h"
-#include "../src/muddled/nonplayer.h"
-#include "../src/muddled/engine.h"
-#include "../src/muddled/player.h"
-#include "../src/muddled/string.h"
+#include "../src/character.h"
+#include "../src/connection.h"
+#include "../src/nonplayer.h"
+#include "../src/engine.h"
+#include "../src/player.h"
+#include "../src/string.h"
 
 static Character *tch = 0;
 char buffer[BUF_SIZ] = {0};

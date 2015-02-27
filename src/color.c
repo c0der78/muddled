@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -19,15 +18,15 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include "muddled/color.h"
+#include "color.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <assert.h>
-#include "muddled/flag.h"
-#include "muddled/character.h"
-#include "muddled/macro.h"
-#include "muddled/util.h"
-#include "muddled/buffer.h"
+#include "flag.h"
+#include "character.h"
+#include "macro.h"
+#include "util.h"
+#include "buffer.h"
 
 static bool is_valid_attr(short a)
 {

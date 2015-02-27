@@ -18,9 +18,9 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include "../src/muddled/color.h"
-#include "../src/muddled/character.h"
-#include "../src/muddled/flag.h"
+#include "../src/color.h"
+#include "../src/character.h"
+#include "../src/flag.h"
 
 START_TEST(test_make_color)
 {

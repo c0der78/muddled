@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -26,15 +25,15 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <errno.h>
-#include "../muddled/macro.h"
-#include "../muddled/log.h"
-#include "../muddled/macro.h"
-#include "../muddled/character.h"
-#include "../muddled/string.h"
-#include "../muddled/player.h"
-#include "../muddled/account.h"
-#include "../muddled/engine.h"
-#include "../muddled/util.h"
+#include "../macro.h"
+#include "../log.h"
+#include "../macro.h"
+#include "../character.h"
+#include "../string.h"
+#include "../player.h"
+#include "../account.h"
+#include "../engine.h"
+#include "../util.h"
 #include "telnet.h"
 #include "config.h"
 #include "client.h"

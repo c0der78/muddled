@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -22,23 +21,23 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include "client.h"
-#include "../muddled/engine.h"
-#include "../muddled/exit.h"
-#include "../muddled/character.h"
-#include "../muddled/room.h"
-#include "../muddled/connection.h"
-#include "../muddled/account.h"
-#include "../muddled/player.h"
-#include "../muddled/string.h"
-#include "../muddled/gsn.h"
-#include "../muddled/fight.h"
-#include "../muddled/channel.h"
-#include "../muddled/log.h"
-#include "../muddled/skill.h"
-#include "../muddled/util.h"
-#include "../muddled/object.h"
-#include "../muddled/string.h"
-#include "../muddled/social.h"
+#include "../engine.h"
+#include "../exit.h"
+#include "../character.h"
+#include "../room.h"
+#include "../connection.h"
+#include "../account.h"
+#include "../player.h"
+#include "../string.h"
+#include "../gsn.h"
+#include "../fight.h"
+#include "../channel.h"
+#include "../log.h"
+#include "../skill.h"
+#include "../util.h"
+#include "../object.h"
+#include "../string.h"
+#include "../social.h"
 #include "command.h"
 
 const Command cmd_table[] =

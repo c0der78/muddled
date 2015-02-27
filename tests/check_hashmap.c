@@ -20,7 +20,7 @@
 #include <check.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../src/muddled/hashmap.h"
+#include "../src/hashmap.h"
 
 static int check = 6;
 

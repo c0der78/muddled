@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -18,18 +17,18 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include "muddled/affect.h"
-#include "muddled/engine.h"
-#include "muddled/log.h"
-#include "muddled/character.h"
-#include "muddled/nonplayer.h"
-#include "muddled/object.h"
-#include "muddled/room.h"
+#include "affect.h"
+#include "engine.h"
+#include "log.h"
+#include "character.h"
+#include "nonplayer.h"
+#include "object.h"
+#include "room.h"
 #include <stdio.h>
 #include <inttypes.h>
-#include "muddled/db.h"
-#include "muddled/string.h"
-#include "muddled/lookup.h"
+#include "db.h"
+#include "string.h"
+#include "lookup.h"
 #include <assert.h>
 
 const Lookup affect_flags[] =

@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -26,13 +25,13 @@ typedef struct OLC OLC;
 typedef struct Editor Editor;
 
 #include "client.h"
-#include "../muddled/character.h"
-#include "../muddled/room.h"
-#include "../muddled/help.h"
-#include "../muddled/object.h"
-#include "../muddled/area.h"
-#include "../muddled/skill.h"
-#include "../muddled/social.h"
+#include "../character.h"
+#include "../room.h"
+#include "../help.h"
+#include "../object.h"
+#include "../area.h"
+#include "../skill.h"
+#include "../social.h"
 
 void room_editor(Client *, const char *);
 void exit_editor(Client *, const char *);

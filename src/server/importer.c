@@ -18,29 +18,29 @@
 *                            around, comes around.                           *
 ******************************************************************************/
 
-#include "../muddled/engine.h"
+#include "../engine.h"
 #include "importer.h"
 #include "config.h"
 #include <libgen.h>
 #include <inttypes.h>
-#include "../muddled/string.h"
-#include "../muddled/log.h"
-#include "../muddled/area.h"
-#include "../muddled/room.h"
-#include "../muddled/class.h"
-#include "../muddled/exit.h"
-#include "../muddled/character.h"
-#include "../muddled/nonplayer.h"
-#include "../muddled/help.h"
-#include "../muddled/db.h"
-#include "../muddled/flag.h"
-#include "../muddled/lookup.h"
-#include "../muddled/object.h"
-#include "../muddled/affect.h"
-#include "../muddled/social.h"
-#include "../muddled/race.h"
-#include "../muddled/skill.h"
-#include "../muddled/hashmap.h"
+#include "../string.h"
+#include "../log.h"
+#include "../area.h"
+#include "../room.h"
+#include "../class.h"
+#include "../exit.h"
+#include "../character.h"
+#include "../nonplayer.h"
+#include "../help.h"
+#include "../db.h"
+#include "../flag.h"
+#include "../lookup.h"
+#include "../object.h"
+#include "../affect.h"
+#include "../social.h"
+#include "../race.h"
+#include "../skill.h"
+#include "../hashmap.h"
 #include <ctype.h>
 
 #define A           1

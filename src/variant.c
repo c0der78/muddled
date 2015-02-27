@@ -1,4 +1,4 @@
-#include "muddled/variant.h"
+#include "variant.h"
 #include <assert.h>
 
 void vset_char(variant_t *v, char value)

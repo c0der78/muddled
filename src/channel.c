@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -19,20 +18,20 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include "muddled/channel.h"
-#include "muddled/string.h"
-#include "muddled/character.h"
-#include "muddled/player.h"
-#include "muddled/util.h"
-#include "muddled/connection.h"
-#include "muddled/room.h"
-#include "muddled/engine.h"
-#include "muddled/social.h"
-#include "muddled/account.h"
+#include "channel.h"
+#include "string.h"
+#include "character.h"
+#include "player.h"
+#include "util.h"
+#include "connection.h"
+#include "room.h"
+#include "engine.h"
+#include "social.h"
+#include "account.h"
 #include <stdarg.h>
-#include "muddled/object.h"
-#include "muddled/log.h"
-#include "muddled/forum.h"
+#include "object.h"
+#include "log.h"
+#include "forum.h"
 #include <stdio.h>
 
 int gcn_chat = 0;

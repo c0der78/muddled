@@ -1,10 +1,9 @@
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -18,22 +17,22 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include "muddled/log.h"
-#include "muddled/flag.h"
-#include "muddled/object.h"
-#include "muddled/string.h"
+#include "log.h"
+#include "flag.h"
+#include "object.h"
+#include "string.h"
 #include <stdio.h>
 #include <inttypes.h>
 #include <stdlib.h>
-#include "muddled/area.h"
-#include "muddled/engine.h"
-#include "muddled/macro.h"
-#include "muddled/character.h"
-#include "muddled/util.h"
-#include "muddled/buffer.h"
-#include "muddled/class.h"
-#include "muddled/player.h"
-#include "muddled/room.h"
+#include "area.h"
+#include "engine.h"
+#include "macro.h"
+#include "character.h"
+#include "util.h"
+#include "buffer.h"
+#include "class.h"
+#include "player.h"
+#include "room.h"
 
 Object *first_object = 0;
 

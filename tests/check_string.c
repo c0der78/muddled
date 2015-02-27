@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include "../src/muddled/string.h"
-#include "../src/muddled/engine.h"
+#include "../src/string.h"
+#include "../src/engine.h"
 
 START_TEST(test_str_cmp)
 {

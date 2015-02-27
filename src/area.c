@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -21,17 +20,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include "muddled/flag.h"
-#include "muddled/area.h"
-#include "muddled/log.h"
-#include "muddled/string.h"
-#include "muddled/db.h"
-#include "muddled/nonplayer.h"
-#include "muddled/room.h"
-#include "muddled/exit.h"
-#include "muddled/object.h"
-#include "muddled/macro.h"
-#include "muddled/lookup.h"
+#include "flag.h"
+#include "area.h"
+#include "log.h"
+#include "string.h"
+#include "db.h"
+#include "nonplayer.h"
+#include "room.h"
+#include "exit.h"
+#include "object.h"
+#include "macro.h"
+#include "lookup.h"
 
 Area *first_area = 0;
 int max_area = 0;

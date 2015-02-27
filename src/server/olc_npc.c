@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -22,19 +21,19 @@
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include "../muddled/character.h"
-#include "../muddled/nonplayer.h"
-#include "../muddled/string.h"
-#include "../muddled/lookup.h"
-#include "../muddled/room.h"
-#include "../muddled/area.h"
-#include "../muddled/macro.h"
+#include "../character.h"
+#include "../nonplayer.h"
+#include "../string.h"
+#include "../lookup.h"
+#include "../room.h"
+#include "../area.h"
+#include "../macro.h"
 #include <stdlib.h>
-#include "../muddled/engine.h"
-#include "../muddled/flag.h"
-#include "../muddled/account.h"
-#include "../muddled/log.h"
-#include "../muddled/util.h"
+#include "../engine.h"
+#include "../flag.h"
+#include "../account.h"
+#include "../log.h"
+#include "../util.h"
 
 Editor *build_npc_editor(Character *npc)
 {

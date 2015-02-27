@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -21,16 +20,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include "muddled/nonplayer.h"
-#include "muddled/db.h"
-#include "muddled/string.h"
-#include "muddled/log.h"
-#include "muddled/engine.h"
-#include "muddled/character.h"
-#include "muddled/area.h"
-#include "muddled/lookup.h"
-#include "muddled/macro.h"
-#include "muddled/race.h"
+#include "nonplayer.h"
+#include "db.h"
+#include "string.h"
+#include "log.h"
+#include "engine.h"
+#include "character.h"
+#include "area.h"
+#include "lookup.h"
+#include "macro.h"
+#include "race.h"
 
 const Lookup npc_flags[] =
 {

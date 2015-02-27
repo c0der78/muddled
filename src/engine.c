@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -19,21 +18,21 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <stdio.h>
-#include "muddled/lookup.h"
-#include "muddled/engine.h"
-#include "muddled/db.h"
-#include "muddled/string.h"
-#include "muddled/log.h"
-#include "muddled/script.h"
-#include "muddled/forum.h"
-#include "muddled/race.h"
-#include "muddled/class.h"
-#include "muddled/skill.h"
-#include "muddled/area.h"
-#include "muddled/social.h"
-#include "muddled/social.h"
-#include "muddled/help.h"
-#include "muddled/hint.h"
+#include "lookup.h"
+#include "engine.h"
+#include "db.h"
+#include "string.h"
+#include "log.h"
+#include "script.h"
+#include "forum.h"
+#include "race.h"
+#include "class.h"
+#include "skill.h"
+#include "area.h"
+#include "social.h"
+#include "social.h"
+#include "help.h"
+#include "hint.h"
 #include "config.h"
 
 Engine engine_info;

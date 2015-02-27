@@ -18,7 +18,7 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
-#include "../src/muddled/account.h"
+#include "../src/account.h"
 
 START_TEST(test_account_new)
 {

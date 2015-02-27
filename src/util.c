@@ -1,11 +1,10 @@
 
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -26,20 +25,20 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdbool.h>
-#include "muddled/character.h"
-#include "muddled/nonplayer.h"
-#include "muddled/room.h"
-#include "muddled/object.h"
-#include "muddled/engine.h"
-#include "muddled/string.h"
-#include "muddled/macro.h"
-#include "muddled/flag.h"
-#include "muddled/player.h"
-#include "muddled/log.h"
-#include "muddled/util.h"
-#include "muddled/explored.h"
-#include "muddled/lookup.h"
-#include "muddled/affect.h"
+#include "character.h"
+#include "nonplayer.h"
+#include "room.h"
+#include "object.h"
+#include "engine.h"
+#include "string.h"
+#include "macro.h"
+#include "flag.h"
+#include "player.h"
+#include "log.h"
+#include "util.h"
+#include "explored.h"
+#include "lookup.h"
+#include "affect.h"
 #include <ctype.h>
 
 long number_mm(void)

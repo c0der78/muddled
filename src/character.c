@@ -1,10 +1,9 @@
 /******************************************************************************
- *         __  __           _     _         ____  _       _                   *
- *        |  \/  |_   _  __| | __| |_   _  |  _ \| | __ _(_)_ __  ___         *
- *        | |\/| | | | |/ _` |/ _` | | | | | |_) | |/ _` | | '_ \/ __|        *
- *        | |  | | |_| | (_| | (_| | |_| | |  __/| | (_| | | | | \__ \        *
- *        |_|  |_|\__,_|\__,_|\__,_|\__, | |_|   |_|\__,_|_|_| |_|___/        *
- *                                  |___/                                     *
+ *                                       _     _ _          _                 *
+ *                   _ __ ___  _   _  __| | __| | | ___  __| |                *
+ *                  | '_ ` _ \| | | |/ _` |/ _` | |/ _ \/ _` |                *
+ *                  | | | | | | |_| | (_| | (_| | |  __/ (_| |                *
+ *                  |_| |_| |_|\__,_|\__,_|\__,_|_|\___|\__,_|                *
  *                                                                            *
  *         (C) 2010 by Ryan Jennings <c0der78@gmail.com> www.arg3.com         *
  *                 Many thanks to creators of muds before me.                 *
@@ -23,24 +22,24 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include "muddled/engine.h"
-#include "muddled/string.h"
-#include "muddled/character.h"
-#include "muddled/object.h"
-#include "muddled/log.h"
-#include "muddled/db.h"
-#include "muddled/player.h"
-#include "muddled/nonplayer.h"
-#include "muddled/connection.h"
-#include "muddled/macro.h"
-#include "muddled/flag.h"
-#include "muddled/room.h"
-#include "muddled/race.h"
-#include "muddled/util.h"
-#include "muddled/account.h"
-#include "muddled/class.h"
-#include "muddled/affect.h"
-#include "muddled/lookup.h"
+#include "engine.h"
+#include "string.h"
+#include "character.h"
+#include "object.h"
+#include "log.h"
+#include "db.h"
+#include "player.h"
+#include "nonplayer.h"
+#include "connection.h"
+#include "macro.h"
+#include "flag.h"
+#include "room.h"
+#include "race.h"
+#include "util.h"
+#include "account.h"
+#include "class.h"
+#include "affect.h"
+#include "lookup.h"
 
 Character *first_character = 0;
 
