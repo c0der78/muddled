@@ -23,10 +23,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <ctype.h>
 #include <assert.h>
 #include <unistd.h>
 #include "../muddled/engine.h"
-#include <ctype.h>
 #include "../muddled/class.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -58,6 +58,10 @@
 #include "olc.h"
 #include "server.h"
 #include "websocket.h"
+
+#ifndef FNDELAY
+#define FNDELAY O_NONBLOCK
+#endif
 
 void show_string(Client *, const char *);
 

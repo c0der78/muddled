@@ -74,7 +74,7 @@ void db_close();
 int db_open(const char *, const char *);
 int sql_query(const char *, int, sql_stmt **);
 int sql_insert_query(field_map *, const char *);
-int sql_update_query(field_map *, const char *, sql_int64);
+int sql_update_query(field_map *, const char *, identifier_t);
 int sql_select_query(field_map *, const char *, sql_callback_t, const char *);
 
 const char *sql_column_str(sql_stmt *, int);
@@ -117,11 +117,11 @@ int db_save_lookup(sql_stmt *, int, field_map *);
  * tableName the name of the table @param id the current id of the value
  * @return the identifier of the value
  */
-sql_int64 db_save(field_map *, const char *, sql_int64);
-int db_load_by_id(field_map *, const char *, sql_int64);
+identifier_t db_save(field_map *, const char *, identifier_t);
+int db_load_by_id(field_map *, const char *, identifier_t);
 int db_load_all(const char *, sql_callback_t, const char *, ...) __attribute__ ((format(printf, 3, 4)));
 int sql_load_columns(sql_stmt *stmt, field_map *table);
-int db_delete(const char *tablename, sql_int64);
+int db_delete(const char *tablename, identifier_t);
 
 /*
  * field map functions

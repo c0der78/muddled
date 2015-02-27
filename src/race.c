@@ -20,7 +20,6 @@
  ******************************************************************************/
 #include "muddled/flag.h"
 #include "muddled/string.h"
-#include "muddled/db.h"
 #include "muddled/engine.h"
 #include "muddled/macro.h"
 #include "muddled/log.h"

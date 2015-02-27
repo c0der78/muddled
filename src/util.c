@@ -508,16 +508,14 @@ const char *objview(const Object *obj, const Character *looker)
 
 }
 
-void
-act(int type, const Character *ch, const void *arg1, const void *arg2,
-    const char *orig)
+void act(int type, const Character *ch, const void *arg1, const void *arg2,
+         const char *orig)
 {
     act_pos(type, POS_RESTING, ch, arg1, arg2, orig);
 }
 
-void
-act_pos(int type, position_t minPos, const Character *ch,
-        const void *arg1, const void *arg2, const char *orig)
+void act_pos(int type, position_t minPos, const Character *ch,
+             const void *arg1, const void *arg2, const char *orig)
 {
 
     Character *vch = (Character *) arg2;

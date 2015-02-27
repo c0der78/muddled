@@ -18,10 +18,11 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#define _BSD_SOURCE
+#include <syslog.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include <syslog.h>
 #include "muddled/log.h"
 #include "muddled/engine.h"
 #include "muddled/flag.h"

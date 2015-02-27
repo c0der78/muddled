@@ -54,6 +54,8 @@ typedef double money_t;
 #define LEVEL_GROUPS    5
 #define EXP_TABLE_SIZ   ((MAX_PLAYABLE_LEVEL / LEVEL_GROUPS) + 1)
 
+typedef __int64_t identifier_t;
+
 #include <time.h>
 #include "flag.h"
 #include "macro.h"
@@ -64,8 +66,6 @@ extern const char *months[];
 extern const char *seasons[];
 
 extern const float exp_table[EXP_TABLE_SIZ];
-
-typedef sql_int64 identifier_t;
 
 typedef enum
 {

@@ -17,7 +17,7 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#include "muddled/db.h"
+
 #include "muddled/log.h"
 #include "muddled/flag.h"
 #include "muddled/object.h"

@@ -18,10 +18,10 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 #include <check.h>
+#include "../src/muddled/engine.h"
 #include "../src/muddled/db.h"
 #include "../src/muddled/string.h"
 #include "../src/muddled/macro.h"
-#include "../src/muddled/engine.h"
 #include "../src/muddled/util.h"
 #include "../src/muddled/log.h"
 #include <inttypes.h>

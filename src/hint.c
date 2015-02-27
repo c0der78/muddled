@@ -19,7 +19,6 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#include "muddled/db.h"
 #include "muddled/hint.h"
 #include "muddled/engine.h"
 #include <stdlib.h>

@@ -19,6 +19,7 @@
  ******************************************************************************/
 #include <check.h>
 #include <stdbool.h>
+#include "../src/muddled/engine.h"
 #include "../src/muddled/db.h"
 #include "../src/muddled/lookup.h"
 #include "../src/muddled/object.h"

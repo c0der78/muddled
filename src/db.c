@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "muddled/db.h"
 #include "muddled/log.h"
 #include "muddled/engine.h"
 #include "muddled/string.h"
@@ -215,7 +214,7 @@ const char *escape_sql_str(const char *pstr)
     return buf;
 }
 
-sql_int64 db_save(field_map *table, const char *tableName, sql_int64 id)
+identifier_t db_save(field_map *table, const char *tableName, identifier_t id)
 {
     if (id == 0)
     {
@@ -256,7 +255,7 @@ int db_load_all(const char *tableName, sql_callback_t callback, const char *cons
     return 1;
 }
 
-int db_load_by_id(field_map *table, const char *tablename, sql_int64 id)
+int db_load_by_id(field_map *table, const char *tablename, identifier_t id)
 {
     char buf[1024] = {0};
 
@@ -378,7 +377,7 @@ void db_read_int_array(int max, void *arg, sql_stmt *stmt, int i)
     }
 }
 
-int db_delete(const char *tablename, sql_int64 id)
+int db_delete(const char *tablename, identifier_t id)
 {
     char buf[BUF_SIZ] = {0};
 
@@ -444,7 +443,7 @@ int sql_insert_query(field_map *table, const char *tablename)
     return sql_finalize(stmt);
 }
 
-int sql_update_query(field_map *table, const char *tablename, sql_int64 id)
+int sql_update_query(field_map *table, const char *tablename, identifier_t id)
 {
     char buf[OUT_SIZ] = { 0 };
     char params[OUT_SIZ] = { 0 };

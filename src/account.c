@@ -293,26 +293,6 @@ int save_account(Account *acc)
 
 int delete_account(Account *acc)
 {
-
-    /*char buf[500];
-
-    sprintf(buf, "delete from account where accountId=%" PRId64, acc->id);
-
-    log_debug("deleting account %s", acc->login);
-
-    if (sql_exec(buf) != SQL_OK) {
-        log_data("could not exec sql statement");
-        return 0;
-    }
-    sprintf(buf, "delete from account_forum where accountId=%" PRId64,
-        acc->id);
-
-    if (sql_exec(buf) != SQL_OK) {
-        log_data("could not exec sql statement");
-        return 0;
-    }
-    return 1;*/
-
     return db_delete(ACCOUNT_TABLE, acc->id) == SQL_OK;
 }
 

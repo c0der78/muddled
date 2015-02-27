@@ -346,9 +346,8 @@ const char *get_chan_soc_string(Character *ch, Character *victim,
     }
 }
 
-void
-channel_social(Character *ch, Character *victim, Object *obj,
-               Social *soc, const Channel *chan)
+void channel_social(Character *ch, Character *victim, Object *obj,
+                    Social *soc, const Channel *chan)
 {
     Character *pch;
     const char *type;
@@ -360,21 +359,17 @@ channel_social(Character *ch, Character *victim, Object *obj,
         if (pch == ch || pch == victim
                 || channel_viewable(ch, pch, chan))
         {
-            /*
-             * const char *string = get_chan_soc_string(ch,
-             * victim, pch, obj, soc);
-             *
-             * if (d->connected == CON_PLAYING) { const char *msg;
-             *
-             * if (fRand) msg = FORMATF("%s %s (%s){x", type,
-             * string, soc->getName()); else msg = FORMATF("%s
-             * %s{x", type, string);
-             *
-             * perform_act(msg, ch, obj, victim, false, vch, true,
-             * true); } update_last_data(ch, vch, chan,
-             * perform_act_string(string, ch, obj, victim,
-             * false), CHANNEL_SOCIAL);
-             */
+            const char *string = get_chan_soc_string(ch,
+                                 victim, pch, obj, soc);
+
+            char msg[BUFSIZ + 1] = {0};
+
+            snprintf(msg, BUFSIZ, "%s %s", type, string);
+
+            act(TO_VICT | TO_WORLD, ch, obj, victim, msg);
+            act(TO_NOTVICT | TO_WORLD, ch, obj, pch, msg);
+            act(TO_CHAR | TO_WORLD, ch, obj, victim, msg);
+
         }
     }
 }
