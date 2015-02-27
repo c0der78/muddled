@@ -17,11 +17,14 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <stdio.h>
-#include "lookup.h"
 #include "engine.h"
+#include "lookup.h"
 #include "db.h"
-#include "string.h"
+#include "str.h"
 #include "log.h"
 #include "script.h"
 #include "forum.h"
@@ -33,7 +36,6 @@
 #include "social.h"
 #include "help.h"
 #include "hint.h"
-#include "config.h"
 
 Engine engine_info;
 

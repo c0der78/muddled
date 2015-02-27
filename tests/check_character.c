@@ -17,16 +17,19 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <check.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include "../src/engine.h"
 #include "../src/character.h"
 #include "../src/connection.h"
 #include "../src/nonplayer.h"
-#include "../src/engine.h"
 #include "../src/player.h"
-#include "../src/string.h"
+#include "../src/str.h"
 
 static Character *tch = 0;
 char buffer[BUF_SIZ] = {0};

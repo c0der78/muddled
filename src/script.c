@@ -17,12 +17,13 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
-#include <stdlib.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "script.h"
 #include "log.h"
 
-#ifdef HAVE_LUA
+#ifdef HAVE_LIBLUA
 
 lua_State *lua_instance = 0;
 

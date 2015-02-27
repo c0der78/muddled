@@ -27,6 +27,7 @@ typedef struct note Note;
 
 #include "character.h"
 #include "engine.h"
+#include "cdecl.h"
 #include <time.h>
 
 typedef enum
@@ -74,6 +75,8 @@ enum
 
 #define FORUM_ERROR -1
 
+BEGIN_DECL
+
 Note *new_note();
 void destroy_note(Note *);
 int lookup_forum_by_name(const char *);
@@ -94,5 +97,7 @@ void save_forums();
 int load_forums();
 Note *last_note(Character *, Forum *);
 int delete_note(Forum *, Note *);
+
+END_DECL
 
 #endif              /* // #ifndef FORUM_H */

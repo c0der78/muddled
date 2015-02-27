@@ -21,6 +21,8 @@
 #ifndef MUDDLED_FIGHT_H
 #define MUDDLED_FIGHT_H
 
+#include "cdecl.h"
+
 typedef enum
 {
     DAM_UNDEFINED = -1,
@@ -45,9 +47,14 @@ typedef enum
     MAX_DAM
 } dam_t;
 
+BEGIN_DECL
+
 void multi_hit(Character *, Character *, int, dam_t);
 
 bool damage(Character *, Character *, long, int, dam_t);
 
+END_DECL
+
 extern const Lookup dam_types[];
+
 #endif              /* // #ifndef FIGHT_H */

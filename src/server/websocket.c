@@ -17,8 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
-#include <stdbool.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <syslog.h>
 #include "websocket.h"
 #include "client.h"

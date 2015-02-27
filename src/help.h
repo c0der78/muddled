@@ -45,6 +45,8 @@ struct help
     Help *next_related;
 };
 
+BEGIN_DECL
+
 Help *new_help();
 void destroy_help(Help *);
 int load_helps();
@@ -52,6 +54,9 @@ Help *help_find(const char *);
 Help *help_match(const char *);
 int save_help(Help *);
 const char *help_related_string(Help *);
+
+END_DECL
+
 extern Help *first_help;
 extern const char *greeting;
 

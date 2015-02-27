@@ -17,7 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "client.h"
 #include "command.h"
 #include "../channel.h"
@@ -28,7 +30,7 @@
 #include "../grid.h"
 #include "../forum.h"
 #include "../account.h"
-#include "../string.h"
+#include "../str.h"
 #include "../connection.h"
 #include "../player.h"
 #include "../room.h"

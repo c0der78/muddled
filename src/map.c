@@ -17,7 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "character.h"
 #include "player.h"
 #include "room.h"
@@ -25,7 +27,7 @@
 #include "color.h"
 #include "util.h"
 #include "explored.h"
-#include "string.h"
+#include "str.h"
 #include <stdio.h>
 
 char map_chars[5] = "|-|-";

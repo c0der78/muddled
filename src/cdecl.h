@@ -1,7 +1,11 @@
 #ifndef MUDDLED_C_DECL_H
 #define MUDDLED_C_DECL_H
 
-/* Kinda miffed and confused why I need this on OSX */
+#include <stdlib.h>
+
+#ifdef HAVE_STDBOOL_H
+#include <stdbool.h>
+#endif
 
 #ifdef __cplusplus
 #define BEGIN_DECL extern "C" {
@@ -11,7 +15,10 @@
 #define END_DECL
 #endif
 
+
 BEGIN_DECL
+
+/* Kinda miffed and confused why I need this on OSX */
 
 extern char *strtok(char *, const char *);
 #ifndef memcpy

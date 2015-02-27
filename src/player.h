@@ -56,9 +56,13 @@ enum
 };
 
 extern Character *first_player;
+
+extern const Lookup plr_flags[];
+
+BEGIN_DECL
+
 Player *new_player(Connection *);
 void destroy_player(Player *);
-extern const Lookup plr_flags[];
 Character *load_player_by_id(Connection *, identifier_t);
 Character *player_lookup(const char *);
 Character *load_player_by_name(Connection *, const char *);
@@ -66,5 +70,7 @@ int save_player(Character *);
 int delete_player(Character *);
 bool is_drunk(Character *);
 long exp_to_level(const Character *);
+
+END_DECL
 
 #endif              /* // #ifndef PLAYER_H */

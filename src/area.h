@@ -29,6 +29,7 @@
  */
 typedef struct area Area;
 
+#include "cdecl.h"
 #include "character.h"
 #include "room.h"
 #include "flag.h"
@@ -66,6 +67,8 @@ enum
 /*!
  * @group Memory Management
  */
+
+BEGIN_DECL
 
 /*!
  * creates a new area @return the newly allocate area
@@ -128,6 +131,8 @@ Area *area_lookup(const char *);
  * default area
  */
 Area *get_default_area();
+
+END_DECL
 
 /*!
  * @constant first_area the linked-list of loaded areas

@@ -17,10 +17,13 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <check.h>
 #include "../src/engine.h"
 #include "../src/db.h"
-#include "../src/string.h"
+#include "../src/str.h"
 #include "../src/macro.h"
 #include "../src/util.h"
 #include "../src/log.h"

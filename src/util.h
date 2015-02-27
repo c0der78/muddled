@@ -22,7 +22,6 @@
 #define MUDDLED_UTIL_H
 
 #include "character.h"
-#include <stdbool.h>
 #include <time.h>
 
 struct timezone_type

@@ -17,6 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <unistd.h>
 #include <stdlib.h>
 #include <libgen.h>
@@ -26,14 +29,14 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <errno.h>
+#include "../engine.h"
 #include "../macro.h"
 #include "../log.h"
 #include "../macro.h"
 #include "../character.h"
-#include "../string.h"
+#include "../str.h"
 #include "../player.h"
 #include "../account.h"
-#include "../engine.h"
 #include "../util.h"
 #include "telnet.h"
 #include "config.h"

@@ -16,16 +16,18 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
-#include "log.h"
-#include "flag.h"
-#include "object.h"
-#include "string.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <stdio.h>
 #include <inttypes.h>
 #include <stdlib.h>
-#include "area.h"
 #include "engine.h"
+#include "log.h"
+#include "flag.h"
+#include "object.h"
+#include "str.h"
+#include "area.h"
 #include "macro.h"
 #include "character.h"
 #include "util.h"

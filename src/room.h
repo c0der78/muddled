@@ -87,6 +87,8 @@ extern const Lookup room_flags[];
 
 #define DEFAULT_ROOM 1
 
+BEGIN_DECL
+
 Room *new_room();
 void destroy_room(Room *);
 int load_rooms(Area *);
@@ -96,5 +98,7 @@ int save_room_only(Room *);
 Room *room_lookup(const char *);
 Room *get_room_by_id(identifier_t);
 Room *get_default_room();
+
+END_DECL
 
 #endif              /* // #ifndef ROOM_H */

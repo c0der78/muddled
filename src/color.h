@@ -21,23 +21,20 @@
 #ifndef MUDDLED_COLOR_H
 #define MUDDLED_COLOR_H
 
-#include <string.h>
-#include <stdbool.h>
+#include "cdecl.h"
 
 typedef struct
 {
-
     short attr;
-
     short value;
-
 }  color_t;
 
+BEGIN_DECL
 const char *make_terminal_color(color_t *);
 const char *make_html_color(color_t *);
 const char *finish_html_color();
-
 const char *convert_color_code(const char *, color_t *);
+END_DECL
 
 #define COLOR_CODE '~'
 #define BLACK   30

@@ -52,15 +52,19 @@ enum
     NPC_STAY_AREA
 };
 
+extern const Lookup npc_flags[];
+
+BEGIN_DECL
+
 NPC *new_npc();
 void destroy_npc(NPC *);
 
-extern const Lookup npc_flags[];
 Character *load_npc(identifier_t);
 int load_npcs(Area *);
 int save_npc(Character *);
 Character *get_npc_by_id(identifier_t);
 Character *npc_lookup(const char *);
 int delete_npc(Character *);
+END_DECL
 
 #endif              /* // #ifndef NONPLAYER_H */

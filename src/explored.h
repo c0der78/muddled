@@ -22,6 +22,9 @@
 #define MUDDLED_EXPLORED_H_
 
 #include "area.h"
+#include "cdecl.h"
+
+BEGIN_DECL
 
 int roomcount(Flag *);
 
@@ -36,5 +39,7 @@ const char *get_explored_rle(Flag *);
 void convert_explored_rle(Flag *, const char *);
 
 bool is_explorable(Room *);
+
+END_DECL
 
 #endif

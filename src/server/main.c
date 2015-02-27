@@ -22,8 +22,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "server.h"
+#include <signal.h>
 #include <sys/wait.h>
+#include "server.h"
 #include "../player.h"
 #include "../macro.h"
 #include "../db.h"
@@ -35,7 +36,6 @@
 #include "../hint.h"
 #include "../race.h"
 #include "../skill.h"
-#include <signal.h>
 #include "../social.h"
 #include "../class.h"
 #include "../area.h"
@@ -160,8 +160,8 @@ void handle_sig(int sig)
            IN, OUT, ERR
            } */
         open("/dev/null", O_RDWR);
-        
-        if(dup(0) == -1 || dup(0) == -1)
+
+        if (dup(0) == -1 || dup(0) == -1)
         {
             perror("dup");
             abort();

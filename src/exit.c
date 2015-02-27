@@ -17,7 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "flag.h"
 #include "exit.h"
 #include <stdlib.h>
@@ -27,7 +29,7 @@
 #include "room.h"
 #include "log.h"
 #include "lookup.h"
-#include "string.h"
+#include "str.h"
 #include "engine.h"
 
 const Lookup direction_table[] =

@@ -17,16 +17,18 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
 #include <syslog.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include "log.h"
+#include <errno.h>
 #include "engine.h"
+#include "log.h"
 #include "flag.h"
 #include "util.h"
-#include <errno.h>
 
 extern void vsyslog(int priority, const char *message, va_list args);
 

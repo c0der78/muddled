@@ -21,12 +21,12 @@
 #ifndef MUDDLED_FLAG_H
 #define MUDDLED_FLAG_H
 
+#include "cdecl.h"
+
 typedef long long bit_t;
 typedef struct flag Flag;
 
 #include "lookup.h"
-#include <stdbool.h>
-#include <stddef.h>
 
 /*!
  * A bitvector structure with unlimited number of bits
@@ -36,6 +36,8 @@ struct flag
     int *bits;
     size_t size;
 };
+
+BEGIN_DECL
 
 Flag *new_flag();
 Flag *init_flag(int);
@@ -74,5 +76,7 @@ int parse_flags(Flag *, const char *, const Lookup *);
  * @return the flag as an integer
  */
 int flag_toint(Flag *);
+
+END_DECL
 
 #endif              /* // #ifndef FLAG_H */

@@ -20,6 +20,7 @@
 #ifndef MUDDLED_LOG_H
 #define MUDDLED_LOG_H
 
+BEGIN_DECL
 
 void log_info(const char *, ...) __attribute__((format(printf, 1, 2)));
 
@@ -35,5 +36,6 @@ void log_trace(const char *, ...) __attribute__((format(printf, 1, 2)));
 
 void log_bug(const char *, ...) __attribute__((format(printf, 1, 2)));
 
+END_DECL
 
 #endif              /* // #ifndef LOG_H */

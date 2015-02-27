@@ -21,8 +21,14 @@
 #ifndef MUDDLED_SCRIPT_H
 #define MUDDLED_SCRIPT_H
 
+#include "cdecl.h"
+
+BEGIN_DECL
+
 void init_lua();
 
 void close_lua();
+
+END_DECL
 
 #endif              /* // #ifndef SCRIPT_H */

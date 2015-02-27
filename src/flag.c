@@ -17,6 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "flag.h"
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +27,7 @@
 #include "log.h"
 #include "engine.h"
 #include "lookup.h"
-#include "string.h"
+#include "str.h"
 
 Flag *new_flag()
 {

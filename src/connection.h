@@ -24,8 +24,6 @@
 typedef struct connection Connection;
 
 #include "account.h"
-#include <stdarg.h>
-#include <stdbool.h>
 
 /*
  * To implement a connection, create a structure that has these fields in the same order,

@@ -17,6 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "affect.h"
 #include "engine.h"
 #include "log.h"
@@ -27,7 +30,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include "db.h"
-#include "string.h"
+#include "str.h"
 #include "lookup.h"
 #include <assert.h>
 

@@ -22,16 +22,20 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 #include <stdarg.h>
+#include "cdecl.h"
 
 typedef enum
 {
-	ALIGN_LEFT,
-	ALIGN_CENTER,
-	ALIGN_RIGHT,
-	ALIGN_INDENT
+    ALIGN_LEFT,
+    ALIGN_CENTER,
+    ALIGN_RIGHT,
+    ALIGN_INDENT
 } align_t;
+
+extern const char str_empty[];
+
+BEGIN_DECL
 
 const char *capitalize(const char *);
 char *trim(char *);
@@ -73,9 +77,11 @@ int count_lines(const char *);
 
 long number_argument(const char *, char *);
 long multi_argument(const char *, char *);
-extern const char str_empty[];
+
 int strpos(const char *, int);
 const char *formatf(const char *, ...)
 __attribute__ ((format(printf, 1, 2)));
+
+END_DECL
 
 #endif

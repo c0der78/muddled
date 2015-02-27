@@ -26,7 +26,7 @@ typedef struct buffer Buffer;
 #define MAX_TEMP_BUF 5
 #define TEMP_BUF_SIZ BUFSIZ
 
-char *get_temp_buf();
+#include "cdecl.h"
 
 struct buffer
 {
@@ -47,6 +47,10 @@ struct buffer
 
 };
 
+BEGIN_DECL
+
+char *get_temp_buf();
+
 Buffer *new_buf();
 
 void destroy_buf(Buffer *);
@@ -66,5 +70,7 @@ __attribute__ ((format(printf, 2, 3)));
 void clear_buf(Buffer *);
 
 char *buf_string(Buffer *);
+
+END_DECL
 
 #endif              /* // #ifndef BUFFER_H */

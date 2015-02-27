@@ -2,7 +2,6 @@
 #ifndef MUDDLED_HASHMAP_H
 #define MUDDLED_HASHMAP_H
 
-#include <stdbool.h>
 #include "engine.h"
 #include "variant.h"
 
@@ -19,6 +18,8 @@ typedef struct s_hashmap
     hash_entry *table;
     long size, count, pos;
 } hashmap;
+
+BEGIN_DECL
 
 /** Creates a new hashmap near the given size. */
 extern hashmap *new_hashmap(long startsize);
@@ -46,5 +47,7 @@ extern long hm_count(hashmap *);
 
 /** Removes the hashmap structure. */
 extern void destroy_hashmap(hashmap *);
+
+END_DECL
 
 #endif

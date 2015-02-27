@@ -17,8 +17,10 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <check.h>
-#include <stdbool.h>
 #include "../src/engine.h"
 #include "../src/db.h"
 #include "../src/lookup.h"
@@ -27,13 +29,13 @@
 
 START_TEST(test_obj_values)
 {
-	Object *obj = new_object();
+    Object *obj = new_object();
 
-	vset_int(&obj->value[0], value_lookup(dam_types, "bash"));
+    vset_int(&obj->value[0], value_lookup(dam_types, "bash"));
 
-	dam_t value = vget_int(&obj->value[0]);
+    dam_t value = vget_int(&obj->value[0]);
 
-	fail_if(value != DAM_BASH);
+    fail_if(value != DAM_BASH);
 
 }
 END_TEST
@@ -41,12 +43,12 @@ END_TEST
 
 Suite *object_suite (void)
 {
-	Suite *s = suite_create ("Objects");
+    Suite *s = suite_create ("Objects");
 
-	TCase *tc_writing = tcase_create("Core");
-	tcase_add_test (tc_writing, test_obj_values);
-	suite_add_tcase(s, tc_writing);
+    TCase *tc_writing = tcase_create("Core");
+    tcase_add_test (tc_writing, test_obj_values);
+    suite_add_tcase(s, tc_writing);
 
-	return s;
+    return s;
 }
 

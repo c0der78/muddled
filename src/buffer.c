@@ -17,12 +17,14 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include "log.h"
 #include "engine.h"
+#include "log.h"
 #include "buffer.h"
 
 #define MAX_BUF     16384

@@ -129,6 +129,9 @@ struct object
 };
 
 extern Object *first_object;
+
+BEGIN_DECL
+
 Object *new_object();
 void destroy_object(Object *);
 
@@ -153,6 +156,8 @@ void show_list_to_char(Object *, Character *, bool, bool);
 int wear_type_to_flag(int);
 
 bool can_wear(Object *, wear_type);
+
+END_DECL
 
 enum
 {

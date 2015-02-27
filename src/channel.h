@@ -39,6 +39,7 @@ typedef enum
 } channel_arg_t;
 
 #include "character.h"
+#include "cdecl.h"
 
 struct channel
 {
@@ -71,14 +72,18 @@ extern int gcn_admin;
 
 extern const Channel channel_table[];
 
+extern const Lookup channel_flags[];
+
+BEGIN_DECL
 int interpret_channel(Character *, int gcn, const char *);
 
 void initialize_channels();
 
 const char *say_verb(const char *, Character *, Character *, int);
 
-extern const Lookup channel_flags[];
 void announce(Character *, info_t, const char *, ...)
 __attribute__ ((format(printf, 3, 4)));
+
+END_DECL
 
 #endif              /* // #ifndef CHANNEL_H */

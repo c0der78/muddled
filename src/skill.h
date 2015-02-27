@@ -59,13 +59,19 @@ struct spellfun_type
     const char *name;
 };
 
-Skill *new_skill();
-void destroy_skill(Skill *);
-
 extern const struct gsn_type gsn_table[];
 extern const struct spellfun_type spellfun_table[];
 extern Skill *skill_table;
 extern int max_skill;
+
+extern const Lookup skill_flags[];
+#define GSN_UNDEFINED -1
+
+BEGIN_DECL
+
+Skill *new_skill();
+void destroy_skill(Skill *);
+
 SpellFun *spellfun_lookup(const char *);
 const char *spellfun_name(SpellFun *);
 int *gsn_lookup(const char *);
@@ -75,7 +81,7 @@ bool valid_skill(identifier_t id);
 int load_skills();
 int save_skill(Skill *);
 
-extern const Lookup skill_flags[];
-#define GSN_UNDEFINED -1
+END_DECL
+
 
 #endif              /* // #ifndef SKILL_H */

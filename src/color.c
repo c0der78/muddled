@@ -17,11 +17,13 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
-#include "color.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <stdio.h>
 #include <ctype.h>
 #include <assert.h>
+#include "color.h"
 #include "flag.h"
 #include "character.h"
 #include "macro.h"

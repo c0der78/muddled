@@ -17,8 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -30,16 +31,15 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <stdbool.h>
 #include <fcntl.h>
-#ifdef HAVE_LIBCRYPT
+#ifdef HAVE_CRYPT_H
 #include <crypt.h>
 #endif
 #include <errno.h>
 #include "../connection.h"
 #include "../log.h"
 #include "../character.h"
-#include "../string.h"
+#include "../str.h"
 #include "../nonplayer.h"
 #include "command.h"
 #include "../player.h"
@@ -509,10 +509,10 @@ bool parse_input_buffer(Client *conn)
     /*
      * if (k == 0) conn->incomm[k++] = ' ';
      */
-     if(k < ARG_SIZ)
+    if (k < ARG_SIZ)
         conn->incomm[k] = 0;
     else
-        conn->incomm[ARG_SIZ-1] = 0;
+        conn->incomm[ARG_SIZ - 1] = 0;
 
     if (k > 1 || conn->incomm[0] == '!')
     {

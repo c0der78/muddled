@@ -17,8 +17,11 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "flag.h"
-#include "string.h"
+#include "str.h"
 #include "engine.h"
 #include "macro.h"
 #include "log.h"

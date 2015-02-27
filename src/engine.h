@@ -130,6 +130,7 @@ extern time_t current_time;
 extern const Lookup engine_flags[];
 extern const Lookup stat_table[];
 
+BEGIN_DECL
 FILE *engine_open_file(const char *, const char *);
 FILE *engine_open_file_in_dir(const char *, const char *, const char *);
 
@@ -143,5 +144,7 @@ void *alloc_mem(size_t, size_t);
 void free_mem(void *);
 
 void initialize_engine(const char *db_file, const char *root_path);
+
+END_DECL
 
 #endif              /* // #ifndef ENGINE_H */

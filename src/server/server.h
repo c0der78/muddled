@@ -21,7 +21,8 @@
 #ifndef MUDDLED_SERVER_H
 #define MUDDLED_SERVER_H
 
-#include <stdbool.h>
+#include "../cdecl.h"
+
 #include <time.h>
 
 extern short server_port;

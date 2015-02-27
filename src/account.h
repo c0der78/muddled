@@ -21,8 +21,10 @@
  * ! @header Structure, methods and constants related to accounts @ignore
  * __ACCOUNT_H_
  */
-#ifndef __ACCOUNT_H_
-#define __ACCOUNT_H_
+#ifndef MUDDLED_ACCOUNT_H_
+#define MUDDLED_ACCOUNT_H_
+
+#include "cdecl.h"
 
 /*!
  * @typedef Account
@@ -125,6 +127,8 @@ extern const Lookup account_flags[];
  * @group Memory Management
  */
 
+BEGIN_DECL
+
 /*!
  * creates a new account @return a newly allocated account
  */
@@ -203,5 +207,7 @@ bool account_forum_is_subscribed(Account *);
  * account to set value for @param time the created time of the last note
  */
 void account_forum_set_last_note(Account *, time_t);
+
+END_DECL
 
 #endif

@@ -17,6 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <unistd.h>
 #include <inttypes.h>
 #include "../nonplayer.h"
@@ -26,7 +29,7 @@
 #include "../player.h"
 #include "../affect.h"
 #include "../macro.h"
-#include "../string.h"
+#include "../str.h"
 #include "../log.h"
 #include "../room.h"
 #include "../util.h"

@@ -17,17 +17,20 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#include <stdio.h>
+#include <inttypes.h>
+#include "engine.h"
 #include "lookup.h"
-#include "string.h"
+#include "str.h"
 #include "flag.h"
 #include "race.h"
 #include "log.h"
 #include "db.h"
-#include "engine.h"
 #include "affect.h"
 #include "help.h"
-#include <stdio.h>
-#include <inttypes.h>
 
 void synch_table(const char *tablename, const Lookup *table)
 {

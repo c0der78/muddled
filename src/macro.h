@@ -20,9 +20,6 @@
 #ifndef MUDDLED_MACRO_H
 #define MUDDLED_MACRO_H
 
-#include <stdlib.h>
-#include <stdbool.h>
-
 #define xstr(var) #var
 #define Stringify(var) xstr(var)
 

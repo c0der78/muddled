@@ -17,7 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <ctype.h>
 #include <stdarg.h>
 #include "client.h"
@@ -28,7 +30,7 @@
 #include "../connection.h"
 #include "../account.h"
 #include "../player.h"
-#include "../string.h"
+#include "../str.h"
 #include "../gsn.h"
 #include "../fight.h"
 #include "../channel.h"
@@ -36,7 +38,7 @@
 #include "../skill.h"
 #include "../util.h"
 #include "../object.h"
-#include "../string.h"
+#include "../str.h"
 #include "../social.h"
 #include "command.h"
 

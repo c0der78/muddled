@@ -149,7 +149,7 @@ am_libmuddled_la_OBJECTS = libmuddled_la-account.lo \
 	libmuddled_la-object.lo libmuddled_la-player.lo \
 	libmuddled_la-race.lo libmuddled_la-room.lo \
 	libmuddled_la-script.lo libmuddled_la-skill.lo \
-	libmuddled_la-social.lo libmuddled_la-string.lo \
+	libmuddled_la-social.lo libmuddled_la-str.lo \
 	libmuddled_la-util.lo libmuddled_la-variant.lo
 libmuddled_la_OBJECTS = $(am_libmuddled_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -341,8 +341,8 @@ top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libmuddled.la
 libmuddled_la_LDFLAGS = $(LIBMUDDLED_LA_LDFLAGS) $(LIBS) -version-info 0:0:0
 subdirheadersdir = $(pkgincludedir)/muddled
-subdirheaders_HEADERS = account.h affect.h area.h buffer.h channel.h character.h class.h color.h connection.h db.h engine.h exit.h explored.h fight.h flag.h forum.h grid.h gsn.h hashmap.h help.h hint.h log.h lookup.h macro.h map.h nonplayer.h object.h player.h race.h room.h script.h skill.h social.h spellfun.h string.h util.h variant.h
-libmuddled_la_SOURCES = account.c affect.c area.c buffer.c channel.c character.c class.c color.c db.c engine.c exit.c explored.c fight.c flag.c forum.c grid.c hashmap.c help.c hint.c log.c lookup.c map.c nonplayer.c object.c player.c race.c room.c script.c skill.c social.c string.c util.c variant.c
+subdirheaders_HEADERS = account.h affect.h area.h buffer.h channel.h character.h class.h color.h connection.h db.h engine.h exit.h explored.h fight.h flag.h forum.h grid.h gsn.h hashmap.h help.h hint.h log.h lookup.h macro.h map.h nonplayer.h object.h player.h race.h room.h script.h skill.h social.h spellfun.h str.h util.h variant.h
+libmuddled_la_SOURCES = account.c affect.c area.c buffer.c channel.c character.c class.c color.c db.c engine.c exit.c explored.c fight.c flag.c forum.c grid.c hashmap.c help.c hint.c log.c lookup.c map.c nonplayer.c object.c player.c race.c room.c script.c skill.c social.c str.c util.c variant.c
 libmuddled_la_CFLAGS = $(LIBMUDDLED_LA_CFLAGS) @X_CFLAGS@
 all: all-am
 
@@ -452,7 +452,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmuddled_la-script.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmuddled_la-skill.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmuddled_la-social.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmuddled_la-string.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmuddled_la-str.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmuddled_la-util.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmuddled_la-variant.Plo@am__quote@
 
@@ -687,12 +687,12 @@ libmuddled_la-social.lo: social.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmuddled_la_CFLAGS) $(CFLAGS) -c -o libmuddled_la-social.lo `test -f 'social.c' || echo '$(srcdir)/'`social.c
 
-libmuddled_la-string.lo: string.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmuddled_la_CFLAGS) $(CFLAGS) -MT libmuddled_la-string.lo -MD -MP -MF $(DEPDIR)/libmuddled_la-string.Tpo -c -o libmuddled_la-string.lo `test -f 'string.c' || echo '$(srcdir)/'`string.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmuddled_la-string.Tpo $(DEPDIR)/libmuddled_la-string.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='string.c' object='libmuddled_la-string.lo' libtool=yes @AMDEPBACKSLASH@
+libmuddled_la-str.lo: str.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmuddled_la_CFLAGS) $(CFLAGS) -MT libmuddled_la-str.lo -MD -MP -MF $(DEPDIR)/libmuddled_la-str.Tpo -c -o libmuddled_la-str.lo `test -f 'str.c' || echo '$(srcdir)/'`str.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmuddled_la-str.Tpo $(DEPDIR)/libmuddled_la-str.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='str.c' object='libmuddled_la-str.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmuddled_la_CFLAGS) $(CFLAGS) -c -o libmuddled_la-string.lo `test -f 'string.c' || echo '$(srcdir)/'`string.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmuddled_la_CFLAGS) $(CFLAGS) -c -o libmuddled_la-str.lo `test -f 'str.c' || echo '$(srcdir)/'`str.c
 
 libmuddled_la-util.lo: util.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmuddled_la_CFLAGS) $(CFLAGS) -MT libmuddled_la-util.lo -MD -MP -MF $(DEPDIR)/libmuddled_la-util.Tpo -c -o libmuddled_la-util.lo `test -f 'util.c' || echo '$(srcdir)/'`util.c

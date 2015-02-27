@@ -35,6 +35,7 @@ typedef enum
 } direction_t;
 
 #include "room.h"
+#include "cdecl.h"
 
 struct exit
 {
@@ -58,6 +59,8 @@ enum
     EXIT_LOCKED
 };
 
+BEGIN_DECL
+
 Exit *new_exit();
 void destroy_exit(Exit *);
 int load_exits(Room *);
@@ -65,4 +68,7 @@ int save_exit(Exit *, direction_t);
 void finalize_exits();
 extern const Lookup direction_table[];
 extern const Lookup exit_flags[];
+
+END_DECL
+
 #endif              /* // #ifndef EXIT_H */

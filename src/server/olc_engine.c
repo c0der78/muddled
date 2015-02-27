@@ -17,12 +17,14 @@
  *     benefitting.  We hope that you share your changes too.  What goes      *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
 #include "../engine.h"
-#include "../string.h"
+#include "../str.h"
 #include "../lookup.h"
 #include "../macro.h"
 #include "../log.h"

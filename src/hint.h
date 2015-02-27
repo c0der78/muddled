@@ -34,9 +34,11 @@ struct hint
 extern Hint *hint_table;
 extern int max_hint;
 
+BEGIN_DECL
 Hint *new_hint();
 void destroy_hint(Hint *);
 int load_hints();
 int save_hint(Hint *);
+END_DECL
 
 #endif              /* // #ifndef HINT_H */

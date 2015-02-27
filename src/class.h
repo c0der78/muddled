@@ -24,7 +24,10 @@
 typedef struct clazz Class;
 
 #include "character.h"
+#include "cdecl.h"
+#ifdef HAVE_STDBOOL_H
 #include  <stdbool.h>
+#endif
 
 struct clazz
 {
@@ -38,6 +41,8 @@ struct clazz
 
 extern Class *class_table;
 extern int max_class;
+
+BEGIN_DECL
 Class *new_class();
 void destroy_class(Class *);
 
@@ -49,5 +54,6 @@ int get_class_by_id(identifier_t);
 bool has_class(Character *, int);
 const char *class_short(Character *);
 const char *class_who(Character *);
+END_DECL
 
 #endif              /* // #ifndef CLASS_H */

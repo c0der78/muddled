@@ -28,9 +28,9 @@
  */
 typedef struct affect Affect;
 
+#include "cdecl.h"
 #include "character.h"
 #include "engine.h"
-#include <stdbool.h>
 
 /*!
  * @typedef affect_callback @param affect the affect being called from
@@ -119,6 +119,8 @@ enum
  * @group Memory Management
  */
 
+BEGIN_DECL
+
 /*!
  * creates a new affect @return the newly allocated affect
  */
@@ -158,6 +160,8 @@ void affect_modify(Character *, Affect *, bool);
 void affect_remove(Character *, Affect *);
 const char *affect_name(Affect *);
 bool is_affected(Character *, identifier_t);
+
+END_DECL
 
 /*!
  * @constant affect_callbacks the table used to lookup affect callbacks

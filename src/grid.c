@@ -17,13 +17,15 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "character.h"
-#include "string.h"
+#include "str.h"
 #include "grid.h"
 #include "buffer.h"
 

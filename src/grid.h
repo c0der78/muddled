@@ -22,7 +22,7 @@
 #define MUDDLED_GRID_H
 
 #include "engine.h"
-#include "string.h"
+#include "str.h"
 
 typedef struct gridcell GridCell;
 
@@ -100,6 +100,8 @@ enum
     BORDER_INLINE = (1 << 2)
 };
 
+BEGIN_DECL
+
 Grid *new_grid(int, int);
 
 void destroy_grid(Grid *);
@@ -133,5 +135,7 @@ __attribute__ ((format(printf, 3, 4)));
 void grid_print(Grid *, Character *);
 
 void grid_set_next_row(Grid *, int);
+
+END_DECL
 
 #endif              /* */

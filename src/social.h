@@ -23,7 +23,7 @@
 typedef struct social Social;
 
 #include <stdlib.h>
-#include "string.h"
+#include "str.h"
 #include "character.h"
 
 struct social
@@ -45,6 +45,9 @@ struct social
 };
 
 extern Social *first_social;
+
+BEGIN_DECL
+
 Social *new_social();
 void destroy_social(Social *);
 int load_socials();
@@ -52,5 +55,7 @@ int save_social(Social *);
 void save_socials();
 int interpret_social(Character *, const char *, const char *);
 Social *social_lookup(const char *);
+
+END_DECL
 
 #endif              /* // #ifndef SOCIAL_H */

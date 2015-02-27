@@ -62,6 +62,7 @@ typedef enum
     MAX_COND
 } condition_t;
 
+#include "cdecl.h"
 #include "flag.h"
 #include "affect.h"
 #include "player.h"
@@ -115,9 +116,10 @@ struct character
 };
 
 extern const Lookup sex_table[];
-
 extern const Lookup position_table[];
 extern Character *first_character;
+
+BEGIN_DECL
 Character *new_char();
 void destroy_char(Character *);
 short scrwidth(const Character *);
@@ -135,6 +137,7 @@ int save_char_affects(Character *);
 bool is_playing(const Character *);
 bool is_player(const Character *);
 Character *get_char_world(Character *, const char *);
+END_DECL
 
 #define MAX_ALIGN   2500
 

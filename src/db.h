@@ -23,6 +23,7 @@
 #include <sqlite3.h>
 #include <stdint.h>
 #include "flag.h"
+#include "cdecl.h"
 
 #define sql         sqlite3
 #define sql_stmt    sqlite3_stmt
@@ -59,6 +60,7 @@ typedef struct field_map
 typedef int (*custom_field_t) (sql_stmt *, int, const field_map *);
 typedef void (*sql_callback_t) (sql_stmt *);
 
+BEGIN_DECL
 const char *tablenameid(const char *tablename);
 const char *escape_sql_str(const char *);
 int db_save_int_array(sql_stmt *, int, const field_map *);
@@ -82,6 +84,28 @@ int sql_column_index(sql_stmt *, const char *);
 int sql_col_int(sql_stmt *, const char *);
 
 int db_save_lookup(sql_stmt *, int, field_map *);
+
+/*!
+ * saves a record @param table the dbvalues structure to save @param
+ * tableName the name of the table @param id the current id of the value
+ * @return the identifier of the value
+ */
+identifier_t db_save(field_map *, const char *, identifier_t);
+int db_load_by_id(field_map *, const char *, identifier_t);
+int db_load_all(const char *, sql_callback_t, const char *, ...) __attribute__ ((format(printf, 3, 4)));
+int sql_load_columns(sql_stmt *stmt, field_map *table);
+int db_delete(const char *tablename, identifier_t);
+
+/*
+ * field map functions
+ */
+int fm_int(const field_map *);
+float fm_float(const field_map *);
+double fm_double(const field_map *);
+const char *fm_str(const field_map *);
+Flag *fm_flag(const field_map *);
+
+END_DECL
 
 #define sql_step            sqlite3_step
 #define sql_finalize        sqlite3_finalize
@@ -111,25 +135,5 @@ int db_save_lookup(sql_stmt *, int, field_map *);
 #define sql_column_value    sqlite3_column_value
 #define sql_column_name     sqlite3_column_name
 #define sql_column_count    sqlite3_column_count
-
-/*!
- * saves a record @param table the dbvalues structure to save @param
- * tableName the name of the table @param id the current id of the value
- * @return the identifier of the value
- */
-identifier_t db_save(field_map *, const char *, identifier_t);
-int db_load_by_id(field_map *, const char *, identifier_t);
-int db_load_all(const char *, sql_callback_t, const char *, ...) __attribute__ ((format(printf, 3, 4)));
-int sql_load_columns(sql_stmt *stmt, field_map *table);
-int db_delete(const char *tablename, identifier_t);
-
-/*
- * field map functions
- */
-int fm_int(const field_map *);
-float fm_float(const field_map *);
-double fm_double(const field_map *);
-const char *fm_str(const field_map *);
-Flag *fm_flag(const field_map *);
 
 #endif              /* // #ifndef DB_H */

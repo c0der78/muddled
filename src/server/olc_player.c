@@ -17,13 +17,15 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
 #include "../character.h"
 #include "../player.h"
-#include "../string.h"
+#include "../str.h"
 #include "../lookup.h"
 #include "../room.h"
 #include "../area.h"

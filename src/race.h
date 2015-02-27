@@ -42,10 +42,15 @@ enum
 };
 
 extern Race *first_race;
+
+BEGIN_DECL
+
 Race *race_lookup(const char *);
 Race *get_race_by_id(identifier_t);
 int load_races();
 int save_races();
+
+END_DECL
 
 extern const Lookup race_flags[];
 #endif              /* // #ifndef RACE_H */

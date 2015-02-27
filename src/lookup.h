@@ -31,6 +31,7 @@ struct lookup
     uintptr_t value;
 };
 
+BEGIN_DECL
 int index_lookup(const Lookup *, const char *);
 
 uintptr_t value_lookup(const Lookup *, const char *);
@@ -42,5 +43,7 @@ const char *lookup_names(const Lookup *);
 const char *lookup_name(const Lookup *, uintptr_t);
 
 void synchronize_tables();
+
+END_DECL
 
 #endif              /* // #ifndef LOOKUP_H */
