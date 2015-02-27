@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef HELP_H
-#define HELP_H
+#ifndef MUDDLED_HELP_H
+#define MUDDLED_HELP_H
 
 typedef struct help Help;
 

@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef COMMAND_H
-#define COMMAND_H
+#ifndef MUDDLED_COMMAND_H
+#define MUDDLED_COMMAND_H
 
 #include "../character.h"
 #include "../lookup.h"

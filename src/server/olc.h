@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef OLC_H
-#define OLC_H
+#ifndef MUDDLED_OLC_H
+#define MUDDLED_OLC_H
 
 typedef struct OLC OLC;
 
@@ -91,10 +91,10 @@ void social_edit_list(Client *);
 
 struct Editor
 {
-	void (*edit) (Client *, const char *);
-	void (*show) (Client *);
-	void *data;
-	Editor *next;
+    void (*edit) (Client *, const char *);
+    void (*show) (Client *);
+    void *data;
+    Editor *next;
 };
 
 #define EDIT_CHANGED 1

@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef MUDDLED_SCRIPT_H
+#define MUDDLED_SCRIPT_H
 
 void init_lua();
 

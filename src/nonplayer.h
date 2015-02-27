@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef NONPLAYER_H
-#define NONPLAYER_H
+#ifndef MUDDLED_NONPLAYER_H
+#define MUDDLED_NONPLAYER_H
 
 typedef struct npc NPC;
 

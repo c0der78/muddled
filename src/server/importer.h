@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef __IMPORTER_H_
-#define __IMPORTER_H_
+#ifndef MUDDLED_IMPORTER_H_
+#define MUDDLED_IMPORTER_H_
 
 #include <stdbool.h>
 #include <stdio.h>

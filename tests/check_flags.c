@@ -19,6 +19,7 @@
  ******************************************************************************/
 #include <check.h>
 #include <stdlib.h>
+#include "../src/cdecl.h"
 #include "../src/flag.h"
 #include "../src/lookup.h"
 
@@ -74,7 +75,6 @@ START_TEST(test_format_flags)
 
     const char *expected = "bit2,bit4,bit5";
     const char *result = format_flags(flags, test_flags);
-
 
     fail_if(strcmp(result, expected), "flag string was not what was expected");
 

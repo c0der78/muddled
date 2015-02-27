@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef WEBSOCKET_H
-#define WEBSOCKET_H
+#ifndef MUDDLED_WEBSOCKET_H
+#define MUDDLED_WEBSOCKET_H
 
 #include <libwebsockets.h>
 #include <stdbool.h>

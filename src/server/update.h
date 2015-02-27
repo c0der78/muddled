@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef UPDATE_H
-#define UPDATE_H
+#ifndef MUDDLED_UPDATE_H
+#define MUDDLED_UPDATE_H
 
 #define PULSE_PER_SECOND    4
 #define PULSE_AREA      (120 * PULSE_PER_SECOND)

@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef LOG_H
-#define LOG_H
+#ifndef MUDDLED_LOG_H
+#define MUDDLED_LOG_H
 
 
 void log_info(const char *, ...) __attribute__((format(printf, 1, 2)));

@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef MUDDLED_CLIENT_H
+#define MUDDLED_CLIENT_H
 
 typedef struct Client Client;
 

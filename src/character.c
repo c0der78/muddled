@@ -16,6 +16,7 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
+#include "config.h"
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -268,7 +269,7 @@ int load_char_objs(Character *ch)
     return total;
 }
 
-static int save_char_classes(sql_stmt *stmt, int index, field_map *table)
+static int save_char_classes(sql_stmt *stmt, int index, const field_map *table)
 {
     int *data = *((int **)table->value);
 
@@ -518,6 +519,9 @@ int save_character(Character *ch, const Lookup *flag_table)
 {
     static const int CharSaveVersion = 1;
 
+    const int maxStat = MAX_STAT;
+    const int maxDam = MAX_DAM;
+
     field_map char_values[] =
     {
         {"version", &CharSaveVersion, SQL_INT},
@@ -535,19 +539,19 @@ int save_character(Character *ch, const Lookup *flag_table)
         {"gold", &ch->gold, SQL_DOUBLE},
         {"position", &ch->position, SQL_LOOKUP, position_table},
         {"flags", &ch->flags, SQL_FLAG, flag_table},
-        {"classes", &ch->classes, SQL_CUSTOM, save_char_classes},
+        {"classes", &ch->classes, SQL_CUSTOM, NULL, NULL, 0, save_char_classes},
         {
-            "stats", &ch->stats, SQL_ARRAY, db_save_int_array,
-            (void *)MAX_STAT
+            "stats", &ch->stats, SQL_ARRAY, NULL, &maxStat, 0, db_save_int_array
+
         },
         {"alignment", &ch->alignment, SQL_INT},
         {
-            "resists", &ch->resists, SQL_ARRAY, db_save_int_array,
-            (void *)MAX_DAM
+            "resists", &ch->resists, SQL_ARRAY, NULL, &maxDam, 0, db_save_int_array
+
         },
         {"size", &ch->size, SQL_FLOAT},
         {"level", &ch->level, SQL_INT},
-        {0, 0, 0}
+        {0}
     };
 
     if (ch->id == 0)

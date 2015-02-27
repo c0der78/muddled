@@ -2877,6 +2877,7 @@ END
   fi
 fi
 
+
 case `pwd` in
   *\ * | *\	*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&5
@@ -12716,7 +12717,7 @@ fi
 
 
 
-X_CFLAGS="-std=c99 -Wall"
+X_CFLAGS="-std=c11 -pedantic -Wall -Werror"
 
 
 # Checks for libraries.

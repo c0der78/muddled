@@ -20,8 +20,8 @@
  * @header Structure, methods and constants related to accounts @ignore
  * __AFFECT_H_
  */
-#ifndef __AFFECT_H_
-#define __AFFECT_H_
+#ifndef MUDDLED_AFFECT_H_
+#define MUDDLED_AFFECT_H_
 
 /*!
  * @typedef Affect

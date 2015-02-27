@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef MUDDLED_COLOR_H
+#define MUDDLED_COLOR_H
 
 #include <string.h>
 #include <stdbool.h>
@@ -27,9 +27,9 @@
 typedef struct
 {
 
-	short attr;
+    short attr;
 
-	short value;
+    short value;
 
 }  color_t;
 

@@ -198,7 +198,8 @@ struct libwebsocket_context *create_websocket(int port)
     info.options = 0;
     info.user = NULL;
 
-    lws_set_log_level(log_level, lwsl_syslog);
+    lws_set_log_level(LLL_NOTICE, lwsl_syslog);
 
     return libwebsocket_create_context(&info);
 }
+

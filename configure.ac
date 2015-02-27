@@ -7,6 +7,7 @@ AC_CONFIG_SRCDIR([src/engine.c])
 AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE
+
 LT_INIT
 
 AC_CONFIG_MACRO_DIRS([m4])
@@ -14,7 +15,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 # Checks for programs.
 AC_PROG_CC
 
-AC_SUBST(X_CFLAGS, "-std=c99 -Wall")
+AC_SUBST(X_CFLAGS, "-std=c11 -pedantic -Wall -Werror")
 
 # Checks for libraries.
 AC_CHECK_LIB(websockets, libwebsocket_create_context)

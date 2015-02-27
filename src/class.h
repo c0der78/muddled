@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef CLASS_H
-#define CLASS_H
+#ifndef MUDDLED_CLASS_H
+#define MUDDLED_CLASS_H
 
 typedef struct clazz Class;
 
@@ -28,12 +28,12 @@ typedef struct clazz Class;
 
 struct clazz
 {
-	identifier_t id;
-	const char *name;
-	const char *description;
-	bool fMana;
-	short thac0;
-	short thac32;
+    identifier_t id;
+    const char *name;
+    const char *description;
+    bool fMana;
+    short thac0;
+    short thac32;
 };
 
 extern Class *class_table;

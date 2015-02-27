@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef MUDDLED_OBJECT_H
+#define MUDDLED_OBJECT_H
 
 typedef struct object Object;
 

@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef CHANNEL_H
-#define CHANNEL_H
+#ifndef MUDDLED_CHANNEL_H
+#define MUDDLED_CHANNEL_H
 
 typedef struct channel Channel;
 

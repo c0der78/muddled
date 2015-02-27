@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef MUDDLED_PLAYER_H
+#define MUDDLED_PLAYER_H
 
 typedef struct player Player;
 

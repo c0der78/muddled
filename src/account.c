@@ -18,18 +18,18 @@
  ******************************************************************************/
 
 #include "config.h"
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include <inttypes.h>
+#include <assert.h>
+#include "engine.h"
 #include "account.h"
 #include "string.h"
 #include "db.h"
 #include "log.h"
 #include "character.h"
 #include "player.h"
-#include "engine.h"
-#include <stdlib.h>
-#include <inttypes.h>
-#include <assert.h>
 #include "forum.h"
 #include "lookup.h"
 #include "flag.h"

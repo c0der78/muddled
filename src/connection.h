@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef MUDDLED_CONNECTION_H
+#define MUDDLED_CONNECTION_H
 
 typedef struct connection Connection;
 

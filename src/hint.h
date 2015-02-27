@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef HINT_H
-#define HINT_H
+#ifndef MUDDLED_HINT_H
+#define MUDDLED_HINT_H
 
 typedef struct hint Hint;
 
@@ -26,9 +26,9 @@ typedef struct hint Hint;
 
 struct hint
 {
-	identifier_t id;
-	const char *text;
-	short level;
+    identifier_t id;
+    const char *text;
+    short level;
 };
 
 extern Hint *hint_table;

@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef __EXPLORED_H_
-#define __EXPLORED_H_
+#ifndef MUDDLED_EXPLORED_H_
+#define MUDDLED_EXPLORED_H_
 
 #include "area.h"
 

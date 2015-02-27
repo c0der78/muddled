@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef MUDDLED_SERVER_H
+#define MUDDLED_SERVER_H
 
 #include <stdbool.h>
 #include <time.h>

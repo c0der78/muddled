@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef EXIT_H
-#define EXIT_H
+#ifndef MUDDLED_EXIT_H
+#define MUDDLED_EXIT_H
 
 typedef struct exit Exit;
 

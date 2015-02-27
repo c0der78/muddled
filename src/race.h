@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef RACE_H
-#define RACE_H
+#ifndef MUDDLED_RACE_H
+#define MUDDLED_RACE_H
 
 typedef struct race Race;
 
@@ -27,18 +27,18 @@ typedef struct race Race;
 
 struct race
 {
-	identifier_t id;
-	Race *next;
-	const char *name;
-	const char *description;
-	Flag *flags;
-	int stats[MAX_STAT];
-	int statMods[MAX_STAT];
+    identifier_t id;
+    Race *next;
+    const char *name;
+    const char *description;
+    Flag *flags;
+    int stats[MAX_STAT];
+    int statMods[MAX_STAT];
 };
 
 enum
 {
-	RACE_PC
+    RACE_PC
 };
 
 extern Race *first_race;

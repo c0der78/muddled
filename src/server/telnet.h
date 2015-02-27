@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef TELNET_H
-#define TELNET_H
+#ifndef MUDDLED_TELNET_H
+#define MUDDLED_TELNET_H
 
 #define IAC 255
 

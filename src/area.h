@@ -21,8 +21,8 @@
  * @header Structure, methods and constants related to areas @ignore
  * __AREA_H_
  */
-#ifndef __AREA_H_
-#define __AREA_H_
+#ifndef MUDDLED_AREA_H_
+#define MUDDLED_AREA_H_
 
 /*!
  * @typedef Area
@@ -43,13 +43,13 @@ typedef struct area Area;
  */
 struct area
 {
-	identifier_t id;
-	Area *next;
-	const char *name;
-	Character *npcs;
-	Room *rooms;
-	Object *objects;
-	Flag *flags;
+    identifier_t id;
+    Area *next;
+    const char *name;
+    Character *npcs;
+    Room *rooms;
+    Object *objects;
+    Flag *flags;
 };
 
 /*!
@@ -59,8 +59,8 @@ struct area
  */
 enum
 {
-	AREA_NOEXPLORE,
-	AREA_CHANGED
+    AREA_NOEXPLORE,
+    AREA_CHANGED
 };
 
 /*!

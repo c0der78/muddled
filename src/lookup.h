@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef LOOKUP_H
-#define LOOKUP_H
+#ifndef MUDDLED_LOOKUP_H
+#define MUDDLED_LOOKUP_H
 
 #include <stdint.h>
 
@@ -27,8 +27,8 @@ typedef struct lookup Lookup;
 
 struct lookup
 {
-	const char *name;
-	uintptr_t value;
+    const char *name;
+    uintptr_t value;
 };
 
 int index_lookup(const Lookup *, const char *);

@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef MUDDLED_UTIL_H
+#define MUDDLED_UTIL_H
 
 #include "character.h"
 #include <stdbool.h>
@@ -28,14 +28,14 @@
 struct timezone_type
 {
 
-	const char *name;   /* Name of the time zone */
+    const char *name;   /* Name of the time zone */
 
-	const char *zone;   /* Cities or Zones in zone crossing */
+    const char *zone;   /* Cities or Zones in zone crossing */
 
-	int gmt_offset;     /* Difference in hours from Greenwich Mean
+    int gmt_offset;     /* Difference in hours from Greenwich Mean
                  * Time */
 
-	int dst_offset;     /* Day Light Savings Time offset */
+    int dst_offset;     /* Day Light Savings Time offset */
 
 };
 

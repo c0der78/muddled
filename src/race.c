@@ -155,18 +155,18 @@ int load_races()
 
 int save_race(Race *race)
 {
+    const int maxStat = MAX_STAT;
+
     field_map race_values[] =
     {
         {"name", &race->name, SQL_TEXT},
         {"sumary", &race->description, SQL_TEXT},
         {"flags", &race->flags, SQL_FLAG, race_flags},
         {
-            "stats", &race->stats, SQL_ARRAY, db_save_int_array,
-            (void *)MAX_STAT
+            "stats", &race->stats, SQL_ARRAY,  NULL, &maxStat, 0, db_save_int_array
         },
         {
-            "statMods", &race->statMods, SQL_ARRAY, db_save_int_array,
-            (void *)MAX_STAT
+            "statMods", &race->statMods, SQL_ARRAY,  NULL, &maxStat, 0, db_save_int_array
         },
         {0}
     };

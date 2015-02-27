@@ -203,7 +203,7 @@ void import_cleanup()
 
         destroy_area(area);
     }
-};
+}
 
 bool import_rom_area_list(const char *dir, FILE *fpList)
 {
@@ -1361,11 +1361,13 @@ Flag *rom_convert_affect_flags(long bits)
     return flags;
 }
 
-void *convert_affect_location(int location)
+typedef void (*AffectCallback)(Affect *, void *, bool);
+
+AffectCallback convert_affect_location(int location)
 {
     static const struct
     {
-        void *callback;
+        AffectCallback callback;
         int location;
     } convert[] =
     {

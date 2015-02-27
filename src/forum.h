@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef FORUM_H
-#define FORUM_H
+#ifndef MUDDLED_FORUM_H
+#define MUDDLED_FORUM_H
 
 typedef struct forum Forum;
 

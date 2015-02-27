@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef MACRO_H
-#define MACRO_H
+#ifndef MUDDLED_MACRO_H
+#define MUDDLED_MACRO_H
 
 #include <stdlib.h>
 #include <stdbool.h>

@@ -434,7 +434,7 @@ int load_skills()
 
 }
 
-static int save_gsn(sql_stmt *stmt, int index, field_map *table)
+static int save_gsn(sql_stmt *stmt, int index, const field_map *table)
 {
 
     const char *name = gsn_name(*((int **)table->value));
@@ -443,7 +443,7 @@ static int save_gsn(sql_stmt *stmt, int index, field_map *table)
 
 }
 
-static int save_skillspell(sql_stmt *stmt, int index, field_map *table)
+static int save_skillspell(sql_stmt *stmt, int index, const field_map *table)
 {
 
     const char *name = spellfun_name(*((SpellFun **) table->value));
@@ -464,8 +464,8 @@ int save_skill(Skill *skill)
         {"minPos", &skill->minPos, SQL_INT},
         {"mana", &skill->mana, SQL_INT},
         {"wait", &skill->wait, SQL_INT},
-        {"gsn", &skill->pgsn, SQL_CUSTOM, save_gsn},
-        {"spell", &skill->spellfun, SQL_CUSTOM, save_skillspell},
+        {"gsn", &skill->pgsn, SQL_CUSTOM,  NULL, NULL, 0, save_gsn},
+        {"spell", &skill->spellfun, SQL_CUSTOM, NULL, NULL, 0, save_skillspell},
         {"flags", &skill->flags, SQL_FLAG, skill_flags},
         {0}
     };

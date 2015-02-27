@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef SOCIAL_H
-#define SOCIAL_H
+#ifndef MUDDLED_SOCIAL_H
+#define MUDDLED_SOCIAL_H
 
 typedef struct social Social;
 

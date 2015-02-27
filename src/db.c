@@ -182,7 +182,7 @@ const char *fm_str(const field_map *field)
 
 void fm_custom(field_map *field, sql_stmt *stmt, int i)
 {
-    custom_field_t *func =  (custom_field_t *) field->arg1;
+    custom_field_t *func =  (custom_field_t *) field->funk;
     assert(func != 0);
     (*func) (stmt, i, field);
 }
@@ -313,7 +313,7 @@ int sql_bind_table_value(sql_stmt *stmt, int index, field_map *field)
     }
     case SQL_CUSTOM:
     {
-        custom_field_t func = (custom_field_t) (field->arg1);
+        custom_field_t func = (custom_field_t) (field->funk);
         assert(func != 0);
         return (*func) (stmt, index, field);
     }

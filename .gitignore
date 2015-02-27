@@ -8,3 +8,16 @@ build
 autom4te.cache
 *~
 build
+*.o
+*.lo
+.deps
+Makefile
+config.log
+libtool
+.libs
+muddled
+muddled_test
+stamp-h1
+*.la
+config.h
+config.status

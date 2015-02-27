@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef MUDDLED_MAP_H
+#define MUDDLED_MAP_H
 
 void draw_map(Character *, const char *);
 

@@ -30,7 +30,7 @@
 
 void test_db_setup()
 {
-    db_open("muddytest", NULL);
+    db_open("muddytest.db", NULL);
 
     char buf[BUF_SIZ];
 
@@ -50,7 +50,7 @@ void test_db_teardown()
 {
     db_close();
 
-    system("rm -rf muddytest.db3");
+    system("rm -rf muddytest.db");
 }
 
 START_TEST(test_escape_sql_str)
@@ -81,46 +81,46 @@ START_TEST(test_get_rowid_in_transaction)
 END_TEST
 
 START_TEST(test_field_map)
-
-struct test
 {
-    sql_int64 id;
-    const char *name;
-    int value;
-};
+    struct test
+    {
+        sql_int64 id;
+        const char *name;
+        int value;
+    };
 
-struct test T;
+    struct test T;
 
-T.id = 0;
-T.name = str_dup("testA");
-T.value = number_percent();
+    T.id = 0;
+    T.name = str_dup("testA");
+    T.value = number_percent();
 
-field_map table[] =
-{
-    {"name", &T.name, SQL_TEXT},
-    {"intval", &T.value, SQL_INT},
-    {0}
-};
+    field_map table[] =
+    {
+        {"name", &T.name, SQL_TEXT},
+        {"intval", &T.value, SQL_INT},
+        {0}
+    };
 
-fail_if(T.value != fm_int(&table[1]));
+    fail_if(T.value != fm_int(&table[1]));
 
-T.id = db_save(table, DBNAME, T.id);
+    T.id = db_save(table, DBNAME, T.id);
 
-int check = number_percent();
+    int check = number_percent();
 
-char buf[BUF_SIZ];
+    char buf[BUF_SIZ];
 
-sprintf(buf, "update "DBNAME" set intval=%d where %s=%"PRId64" and name='%s' and intval='%d'", check, tablenameid(DBNAME), T.id, T.name, T.value);
+    sprintf(buf, "update "DBNAME" set intval=%d where %s=%"PRId64" and name='%s' and intval='%d'", check, tablenameid(DBNAME), T.id, T.name, T.value);
 
-if (sql_exec(buf) != SQL_OK)
-{
-    fail("could not update saved data entry");
+    if (sql_exec(buf) != SQL_OK)
+    {
+        fail("could not update saved data entry");
+    }
+
+    db_load_by_id(table, DBNAME, T.id);
+
+    fail_if(T.value != check);
 }
-
-db_load_by_id(table, DBNAME, T.id);
-
-fail_if(T.value != check);
-
 END_TEST
 
 Suite *database_suite ()

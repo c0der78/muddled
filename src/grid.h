@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef __GRID_H_
-#define __GRID_H_
+#ifndef MUDDLED_GRID_H
+#define MUDDLED_GRID_H
 
 #include "engine.h"
 #include "string.h"

@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef ROOM_H
-#define ROOM_H
+#ifndef MUDDLED_ROOM_H
+#define MUDDLED_ROOM_H
 
 typedef struct room Room;
 

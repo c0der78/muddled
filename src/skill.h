@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef SKILL_H
-#define SKILL_H
+#ifndef MUDDLED_SKILL_H
+#define MUDDLED_SKILL_H
 
 typedef struct skill Skill;
 

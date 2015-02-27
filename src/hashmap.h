@@ -1,6 +1,6 @@
 
-#ifndef HASHMAP_H_INCLUDED
-#define HASHMAP_H_INCLUDED
+#ifndef MUDDLED_HASHMAP_H
+#define MUDDLED_HASHMAP_H
 
 #include <stdbool.h>
 #include "engine.h"
@@ -8,16 +8,16 @@
 
 typedef struct
 {
-	void *data;
-	int flags;
-	identifier_t key;
+    void *data;
+    int flags;
+    identifier_t key;
 } hash_entry;
 
 /** Hashmap structure (forward declaration) */
 typedef struct s_hashmap
 {
-	hash_entry *table;
-	long size, count, pos;
+    hash_entry *table;
+    long size, count, pos;
 } hashmap;
 
 /** Creates a new hashmap near the given size. */

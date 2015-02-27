@@ -21,8 +21,8 @@
  * @header Structure, methods and constants related to variants @ignore
  * __VARIANT_H_
  */
-#ifndef __VARIANT_H_
-#define __VARIANT_H_
+#ifndef MUDDLED_VARIANT_H
+#define MUDDLED_VARIANT_H
 
 /*!
  * @enum Variable Types @abstract definitions for variable types @constant

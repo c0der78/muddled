@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef BUFFER_H
-#define BUFFER_H
+#ifndef MUDDLED_BUFFER_H
+#define MUDDLED_BUFFER_H
 
 typedef struct buffer Buffer;
 
@@ -31,19 +31,19 @@ char *get_temp_buf();
 struct buffer
 {
 
-	short state;        /* error state of the buffer */
+    short state;        /* error state of the buffer */
 
-	int size;       /* size in k */
+    int size;       /* size in k */
 
-	char *string;       /* buffer's string */
+    char *string;       /* buffer's string */
 
-	bool(*write) (Buffer *, const char *);
+    bool(*write) (Buffer *, const char *);
 
-	bool(*writeln) (Buffer *, const char *);
+    bool(*writeln) (Buffer *, const char *);
 
-	bool(*writef) (Buffer *, const char *, ...);
+    bool(*writef) (Buffer *, const char *, ...);
 
-	bool(*writelnf) (Buffer *, const char *, ...);
+    bool(*writelnf) (Buffer *, const char *, ...);
 
 };
 

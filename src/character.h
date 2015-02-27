@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef CHARACTER_H
-#define CHARACTER_H
+#ifndef MUDDLED_CHARACTER_H
+#define MUDDLED_CHARACTER_H
 
 typedef struct character Character;
 

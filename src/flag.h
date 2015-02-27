@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef FLAG_H
-#define FLAG_H
+#ifndef MUDDLED_FLAG_H
+#define MUDDLED_FLAG_H
 
 typedef long long bit_t;
 typedef struct flag Flag;
@@ -33,8 +33,8 @@ typedef struct flag Flag;
  */
 struct flag
 {
-	int *bits;
-	size_t size;
+    int *bits;
+    size_t size;
 };
 
 Flag *new_flag();

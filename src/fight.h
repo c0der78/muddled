@@ -18,8 +18,8 @@
  *                            around, comes around.                           *
  ******************************************************************************/
 
-#ifndef FIGHT_H
-#define FIGHT_H
+#ifndef MUDDLED_FIGHT_H
+#define MUDDLED_FIGHT_H
 
 typedef enum
 {

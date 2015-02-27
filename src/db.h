@@ -17,8 +17,8 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifndef DB_H
-#define DB_H
+#ifndef MUDDLED_DB_H
+#define MUDDLED_DB_H
 
 #include <sqlite3.h>
 #include <stdint.h>
@@ -47,12 +47,13 @@
 
 typedef struct field_map
 {
-	const char *name;
-	const void *value;
-	int type;
-	const void *arg1;
-	const void *arg2;
-	int flags;
+    const char *name;
+    const void *value;
+    int type;
+    const void *arg1;
+    const void *arg2;
+    int flags;
+    int (*funk)(sqlite3_stmt *, int, const struct field_map *);
 } field_map;
 
 typedef int (*custom_field_t) (sql_stmt *, int, const field_map *);
