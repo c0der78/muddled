@@ -22,8 +22,7 @@
 
 #include <sqlite3.h>
 #include <stdint.h>
-#include "flag.h"
-#include "cdecl.h"
+#include "typedef.h"
 
 #define sql         sqlite3
 #define sql_stmt    sqlite3_stmt

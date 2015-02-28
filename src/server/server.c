@@ -29,15 +29,16 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <errno.h>
-#include "../engine.h"
-#include "../macro.h"
-#include "../log.h"
-#include "../macro.h"
-#include "../character.h"
-#include "../str.h"
-#include "../player.h"
-#include "../account.h"
-#include "../util.h"
+#include "engine.h"
+#include "macro.h"
+#include "log.h"
+#include "macro.h"
+#include "character.h"
+#include "str.h"
+#include "player.h"
+#include "account.h"
+#include "util.h"
+#include "private.h"
 #include "telnet.h"
 #include "config.h"
 #include "client.h"
@@ -199,7 +200,7 @@ void initialize_server()
                     LINK(first_client, conn, next);
                     test_telopts(conn);
 
-                    writeln(conn, "Reality warps briefly and you feel a change in the world.");
+                    xwriteln(conn, "Reality warps briefly and you feel a change in the world.");
 
                     set_playing(conn);
                 }

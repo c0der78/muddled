@@ -23,10 +23,10 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include "../help.h"
-#include "../str.h"
-#include "../lookup.h"
-#include "../macro.h"
+#include "help.h"
+#include "str.h"
+#include "lookup.h"
+#include "macro.h"
 
 Editor *build_help_editor(Help *help)
 {
@@ -49,18 +49,18 @@ void help_editor_menu(Client *conn)
 
     Help *help = (Help *) conn->editing->data;
 
-    writelnf(conn, "   ~CId: ~W%d", help->id);
+    xwritelnf(conn, "   ~CId: ~W%d", help->id);
 
-    writelnf(conn, "~YA) ~CKeywords: ~W%s~x", help->keywords);
+    xwritelnf(conn, "~YA) ~CKeywords: ~W%s~x", help->keywords);
 
     string_editor_preview(conn, "~YB) ~CText", help->text);
 
-    writelnf(conn, "~YC) ~CSyntax: ~W%s~x", help->syntax);
+    xwritelnf(conn, "~YC) ~CSyntax: ~W%s~x", help->syntax);
 
-    writelnf(conn, "~YD) ~CCategory: ~W%s~x",
-             help_categories[help->category].name);
+    xwritelnf(conn, "~YD) ~CCategory: ~W%s~x",
+              help_categories[help->category].name);
 
-    writelnf(conn, "~YE) ~CRelated: ~W%s~x", help_related_string(help));
+    xwritelnf(conn, "~YE) ~CRelated: ~W%s~x", help_related_string(help));
 }
 
 void help_edit_list(Client *conn)
@@ -68,12 +68,12 @@ void help_edit_list(Client *conn)
     int count = 0;
     for (Help *help = first_help; help != 0; help = help->next)
     {
-        writef(conn, "%2d) %-12.12s ", help->id, help->keywords);
+        xwritef(conn, "%2d) %-12.12s ", help->id, help->keywords);
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
     }
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 }
 
 void help_editor(Client *conn, const char *argument)
@@ -98,7 +98,7 @@ void help_editor(Client *conn, const char *argument)
     {
         save_help(help);
 
-        writeln(conn, "~CHelp saved.~x");
+        xwriteln(conn, "~CHelp saved.~x");
 
         return;
     }
@@ -111,7 +111,7 @@ void help_editor(Client *conn, const char *argument)
     {
         if (!argument || !*argument)
         {
-            writeln(conn, "~CChange keywords to what?~x");
+            xwriteln(conn, "~CChange keywords to what?~x");
             return;
         }
         free_str(help->keywords);
@@ -142,15 +142,15 @@ void help_editor(Client *conn, const char *argument)
     {
         if (!argument || !*argument || argument[0] == '?')
         {
-            writelnf(conn, "~Cvalid categories: ~W%s~x",
-                     lookup_names(help_categories));
+            xwritelnf(conn, "~Cvalid categories: ~W%s~x",
+                      lookup_names(help_categories));
             return;
         }
         long cat = value_lookup(help_categories, argument);
 
         if (cat == -1)
         {
-            writeln(conn, "~CInvalid category.~x");
+            xwriteln(conn, "~CInvalid category.~x");
             return;
         }
         help->category = (help_category) cat;
@@ -163,14 +163,14 @@ void help_editor(Client *conn, const char *argument)
     {
         if (nullstr(argument))
         {
-            writeln(conn, "~CYou must provide a help to relate.~x");
+            xwriteln(conn, "~CYou must provide a help to relate.~x");
             return;
         }
         Help *rel = help_find(argument);
 
         if (rel == 0)
         {
-            writeln(conn, "~CRelated help not found.~x");
+            xwriteln(conn, "~CRelated help not found.~x");
             return;
         }
         LINK(help->related, rel, next_related);

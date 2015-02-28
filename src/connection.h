@@ -21,9 +21,8 @@
 #ifndef MUDDLED_CONNECTION_H
 #define MUDDLED_CONNECTION_H
 
-typedef struct connection Connection;
-
-#include "account.h"
+#include <stdarg.h>
+#include "typedef.h"
 
 /*
  * To implement a connection, create a structure that has these fields in the same order,

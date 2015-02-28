@@ -20,20 +20,21 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdlib.h>
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include "../db.h"
-#include "../object.h"
-#include "../str.h"
-#include "../lookup.h"
-#include "../room.h"
-#include "../area.h"
-#include <stdlib.h>
-#include "../engine.h"
-#include "../account.h"
-#include "../macro.h"
-#include "../util.h"
+#include "db.h"
+#include "object.h"
+#include "str.h"
+#include "lookup.h"
+#include "room.h"
+#include "area.h"
+#include "engine.h"
+#include "account.h"
+#include "macro.h"
+#include "util.h"
+#include "private.h"
 
 Editor *build_object_editor(Object *object)
 {
@@ -61,24 +62,24 @@ void object_editor_menu(Client *conn)
 
     conn->titlef(conn, "Object Editor - object %d", object->id);
 
-    writelnf(conn, "~C   Id: ~W%d", object->id);
+    xwritelnf(conn, "~C   Id: ~W%d", object->id);
 
-    writelnf(conn, "~YA) ~CType: ~W%s~x", object_types[object->type].name);
+    xwritelnf(conn, "~YA) ~CType: ~W%s~x", object_types[object->type].name);
 
-    writelnf(conn, "~YB) ~CName: ~W%s~x", object->name);
+    xwritelnf(conn, "~YB) ~CName: ~W%s~x", object->name);
 
-    writelnf(conn, "~YC) ~CShort Description: ~W%s~x", object->shortDescr);
+    xwritelnf(conn, "~YC) ~CShort Description: ~W%s~x", object->shortDescr);
 
-    writelnf(conn, "~YD) ~CLong Description: ~W%s~x", object->longDescr);
+    xwritelnf(conn, "~YD) ~CLong Description: ~W%s~x", object->longDescr);
 
     string_editor_preview(conn, "~YE) ~CDescription", object->description);
 
-    writelnf(conn, "~YF) ~CWeight: ~W%.1f~x", object->weight);
+    xwritelnf(conn, "~YF) ~CWeight: ~W%.1f~x", object->weight);
 
-    writelnf(conn, "~YG) ~CCondition: ~W%.1f~x", object->condition);
+    xwritelnf(conn, "~YG) ~CCondition: ~W%.1f~x", object->condition);
 
-    writelnf(conn, "~YH) ~CWear Loc: ~W%s~x",
-             lookup_name(wear_flags, object->wearFlags));
+    xwritelnf(conn, "~YH) ~CWear Loc: ~W%s~x",
+              lookup_name(wear_flags, object->wearFlags));
 
 }
 
@@ -90,15 +91,15 @@ void object_edit_list(Client *conn, Area *area)
     for (Object *obj = area->objects; obj != 0; obj = obj->next_in_area)
     {
 
-        writelnf(conn, "%2d) %-12.12s ", obj->id, obj->shortDescr);
+        xwritelnf(conn, "%2d) %-12.12s ", obj->id, obj->shortDescr);
 
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
 
     }
 
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 
 }
 
@@ -140,7 +141,7 @@ void object_editor(Client *conn, const char *argument)
 
         save_object(object);
 
-        writeln(conn, "~CNPC saved.~x");
+        xwriteln(conn, "~CNPC saved.~x");
 
         return;
 
@@ -165,8 +166,8 @@ void object_editor(Client *conn, const char *argument)
         if (type == -1)
         {
 
-            writelnf(conn, "~CValid types are: ~W%s~x",
-                     lookup_names(object_types));
+            xwritelnf(conn, "~CValid types are: ~W%s~x",
+                      lookup_names(object_types));
 
             return;
 
@@ -184,7 +185,7 @@ void object_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CYou must provide a name to set.~x");
+            xwriteln(conn, "~CYou must provide a name to set.~x");
 
             return;
 
@@ -216,8 +217,8 @@ void object_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn,
-                    "~CYou must provide a short description.~x");
+            xwriteln(conn,
+                     "~CYou must provide a short description.~x");
 
             return;
 
@@ -235,8 +236,8 @@ void object_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn,
-                    "~CYou must provide a long description.~x");
+            xwriteln(conn,
+                     "~CYou must provide a long description.~x");
 
             return;
 
@@ -254,7 +255,7 @@ void object_editor(Client *conn, const char *argument)
         if (!argument || !*argument || is_number(argument) != 2)
         {
 
-            writeln(conn, "~CYou must specify a decimal number.~x");
+            xwriteln(conn, "~CYou must specify a decimal number.~x");
 
             return;
 
@@ -272,7 +273,7 @@ void object_editor(Client *conn, const char *argument)
         if (!argument || !*argument || is_number(argument) != 2)
         {
 
-            writeln(conn, "~CYou must specify a decimal number.~x");
+            xwriteln(conn, "~CYou must specify a decimal number.~x");
 
             return;
 
@@ -282,8 +283,8 @@ void object_editor(Client *conn, const char *argument)
         if (cond < 0.0 || cond > 100.0)
         {
 
-            writeln(conn,
-                    "~CValid ranges for condition is 0.0 to 100.0.~x");
+            xwriteln(conn,
+                     "~CValid ranges for condition is 0.0 to 100.0.~x");
 
             return;
 
@@ -303,8 +304,8 @@ void object_editor(Client *conn, const char *argument)
         if (loc == -1)
         {
 
-            writelnf(conn, "~CValid locations are: ~W%s~x",
-                     lookup_names(wear_flags));
+            xwritelnf(conn, "~CValid locations are: ~W%s~x",
+                      lookup_names(wear_flags));
 
             return;
 

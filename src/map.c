@@ -20,6 +20,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdio.h>
 #include "character.h"
 #include "player.h"
 #include "room.h"
@@ -28,7 +29,7 @@
 #include "util.h"
 #include "explored.h"
 #include "str.h"
-#include <stdio.h>
+#include "private.h"
 
 char map_chars[5] = "|-|-";
 
@@ -638,8 +639,8 @@ void show_map(Character *ch, const char *text, bool smallMap)
     }
 
     if (!smallMap)
-        writelnf(ch, "%s\n\r%s%s", fillstr(NULL, scrwidth(ch)), buf,
-                 fillstr(NULL, scrwidth(ch)));
+        xwritelnf(ch, "%s\n\r%s%s", fillstr(NULL, scrwidth(ch)), buf,
+                  fillstr(NULL, scrwidth(ch)));
 
     else
     {
@@ -702,7 +703,7 @@ void show_map(Character *ch, const char *text, bool smallMap)
             while (!alldesc);
 
         }
-        write(ch, buf);
+        xwrite(ch, buf);
 
     }
 

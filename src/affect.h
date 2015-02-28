@@ -20,69 +20,11 @@
  * @header Structure, methods and constants related to accounts @ignore
  * __AFFECT_H_
  */
-#ifndef MUDDLED_AFFECT_H_
-#define MUDDLED_AFFECT_H_
+#ifndef MUDDLED_AFFECT_H
+#define MUDDLED_AFFECT_H
 
-/*!
- * @typedef Affect
- */
-typedef struct affect Affect;
+#include "typedef.h"
 
-#include "cdecl.h"
-#include "character.h"
-#include "engine.h"
-
-/*!
- * @typedef affect_callback @param affect the affect being called from
- * @param affected the object being affected @param remove true if the affect
- * should be removed @param arg an extra argument if needed
- */
-typedef void affect_callback(Affect *, void *, bool);
-
-/*!
- * @typedef Affect @abstract Represents an affect that can be applied to
- * things in the world @field type a skill id if the affect comes from a
- * skill @field level the level of the affect @field duration the current
- * duration of the affect @field perm_duration the duration when the affect
- * was first created @field modifier the modifier value of the affect @field
- * callback the callback method when the affect is applied
- */
-struct affect
-{
-    Affect *next;
-    identifier_t id;
-    int from;
-    int level;
-    int duration;
-    int perm_duration;
-    int modifier;
-    Flag *flags;
-    affect_callback *callback;
-};
-
-/*!
- * @enum Affect Flags @abstract @constant AFF_BLIND causes blindness
- * @constant AFF_INVISIBLE makes affected invisible @constant AFF_DETECT_EVIL
- * makes affected able to recognize evil @constant AFF_DETECT_INVIS makes
- * affected able to see invisible @constant AFF_DETECT_MAGIC makes affected
- * able to detect magic @constant AFF_DETECT_HIDDEN makes affected able to
- * see hidden things @constant AFF_DETECT_GOOD makes affected able to
- * recognize good @constant AFF_SANCTUARY applies a protective barrier to the
- * affected @constant AFF_FAERIE_FIRE causes weakness aura around affected
- * @constant AFF_INFRARED allows affected to see in the dark @constant
- * AFF_CURSE affected is cursed @constant AFF_POISION affected is poisoned
- * @constant AFF_PROTECT_EVIL affected is protected from evil @constant
- * AFF_PROTECT_GOOD affected is protected from good @constant AFF_SNEAK
- * affected is sneaking @constant AFF_HIDE affected is hiding @constant
- * AFF_SLEEP affected is sleeping @constant AFF_CHARM affected is charmed
- * @constant AFF_FLYING affected is flying @constant AFF_PASS_DOOR affected
- * is able to pass through doors @constant AFF_HASTE affected is moving
- * hastily @constant AFF_CALM affected is calmed @constant AFF_PLAGUE
- * affected by the plague @constant AFF_WEAKEN affected is weakened @constant
- * AFF_DARK_VISION affected can see in the dark @constant AFF_BERSERK
- * affected by rage @constant AFF_REGENERATION affected heals more quickly
- * @constant AFF_SLOW affected is moving slowly @discussion
- */
 enum
 {
     AFF_BLIND,
@@ -164,7 +106,7 @@ bool is_affected(Character *, identifier_t);
 END_DECL
 
 /*!
- * @constant affect_callbacks the table used to lookup affect callbacks
+ * @constant AffectCallbacks the table used to lookup affect callbacks
  */
 extern const Lookup affect_callbacks[];
 /*!
@@ -175,20 +117,20 @@ extern const Lookup affect_flags[];
 /*!
  * @group Callbacks
  */
-affect_callback affect_apply_resists;
-affect_callback affect_apply_str;
-affect_callback affect_apply_int;
-affect_callback affect_apply_wis;
-affect_callback affect_apply_dex;
-affect_callback affect_apply_con;
-affect_callback affect_apply_luck;
-affect_callback affect_apply_sex;
-affect_callback affect_apply_level;
-affect_callback affect_apply_mana;
-affect_callback affect_apply_move;
-affect_callback affect_apply_hit;
-affect_callback affect_apply_size;
-affect_callback affect_apply_align;
+AffectCallback affect_apply_resists;
+AffectCallback affect_apply_str;
+AffectCallback affect_apply_int;
+AffectCallback affect_apply_wis;
+AffectCallback affect_apply_dex;
+AffectCallback affect_apply_con;
+AffectCallback affect_apply_luck;
+AffectCallback affect_apply_sex;
+AffectCallback affect_apply_level;
+AffectCallback affect_apply_mana;
+AffectCallback affect_apply_move;
+AffectCallback affect_apply_hit;
+AffectCallback affect_apply_size;
+AffectCallback affect_apply_align;
 /*!
  * @group Callbacks
  */

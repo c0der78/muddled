@@ -70,19 +70,19 @@ int websocket_server_callback(struct libwebsocket_context *context,
         if (greeting == 0)
         {
 
-            writelnf(info->client, "Welcome to %s!", engine_info.name);
+            xwritelnf(info->client, "Welcome to %s!", engine_info.name);
 
-            writeln(info->client, "");
+            xwriteln(info->client, "");
 
         }
         else
         {
 
-            writeln(info->client, greeting);
+            xwriteln(info->client, greeting);
 
         }
 
-        write(info->client, "Login: ");
+        xwrite(info->client, "Login: ");
 
         libwebsocket_callback_on_writable(context, wsi);
         break;
@@ -90,7 +90,7 @@ int websocket_server_callback(struct libwebsocket_context *context,
     case LWS_CALLBACK_RECEIVE:   // the funny part
     {
         (*info->client->handler) (info->client, (char *)in);
-        /*info->conn->buffered_writer::writeln();
+        /*info->conn->buffered_writer::xwriteln();
         info->conn->process_input((char *) in);*/
         libwebsocket_callback_on_writable(context, wsi);
         break;

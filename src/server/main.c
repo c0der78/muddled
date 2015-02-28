@@ -25,23 +25,24 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include "server.h"
-#include "../player.h"
-#include "../macro.h"
-#include "../db.h"
-#include "../script.h"
-#include "../log.h"
-#include "../account.h"
-#include "../help.h"
-#include "../engine.h"
-#include "../hint.h"
-#include "../race.h"
-#include "../skill.h"
-#include "../social.h"
-#include "../class.h"
-#include "../area.h"
-#include "../forum.h"
 #include "client.h"
-#include "../channel.h"
+#include "player.h"
+#include "macro.h"
+#include "db.h"
+#include "script.h"
+#include "log.h"
+#include "account.h"
+#include "help.h"
+#include "engine.h"
+#include "hint.h"
+#include "race.h"
+#include "skill.h"
+#include "social.h"
+#include "class.h"
+#include "area.h"
+#include "forum.h"
+#include "channel.h"
+#include "private.h"
 
 #include <sys/time.h>
 
@@ -133,8 +134,8 @@ void handle_sig(int sig)
             }
             save_player(ch);
 
-            writelnf(c, "\007~R%s has crashed, please hold on.~x",
-                     engine_info.name);
+            xwritelnf(c, "\007~R%s has crashed, please hold on.~x",
+                      engine_info.name);
         }
 
         /*success - proceed with fork / copyover plan.Otherwise will go to
@@ -192,8 +193,8 @@ void handle_sig(int sig)
                 close_client(c);
                 continue;
             }
-            writeln(c,
-                    "\007\007~R** Character not saved properly. Shutting down gracefully.. **~x");
+            xwriteln(c,
+                     "\007\007~R** Character not saved properly. Shutting down gracefully.. **~x");
             close_client(c);
             continue;
         }

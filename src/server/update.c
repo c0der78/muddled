@@ -22,22 +22,23 @@
 #endif
 #include <unistd.h>
 #include <inttypes.h>
-#include "../nonplayer.h"
-#include "../character.h"
-#include "../area.h"
-#include "../object.h"
-#include "../player.h"
-#include "../affect.h"
-#include "../macro.h"
-#include "../str.h"
-#include "../log.h"
-#include "../room.h"
-#include "../util.h"
-#include "../hint.h"
-#include "../skill.h"
-#include "../fight.h"
-#include "../lookup.h"
-#include "../account.h"
+#include "nonplayer.h"
+#include "character.h"
+#include "area.h"
+#include "object.h"
+#include "player.h"
+#include "affect.h"
+#include "macro.h"
+#include "str.h"
+#include "log.h"
+#include "room.h"
+#include "util.h"
+#include "hint.h"
+#include "skill.h"
+#include "fight.h"
+#include "lookup.h"
+#include "account.h"
+#include "private.h"
 #include "update.h"
 #include "client.h"
 
@@ -480,7 +481,7 @@ void gain_condition(Character *ch, int iCond, int value)
             && ch->inRoom->sector == SECT_DESERT)
     {
         value *= 2;
-        writeln(ch, "You feel the ~Ydesert ~Rheat~x...");
+        xwriteln(ch, "You feel the ~Ydesert ~Rheat~x...");
     }
     if (condition < 0)
         value /= 2;
@@ -495,17 +496,17 @@ void gain_condition(Character *ch, int iCond, int value)
         case COND_HUNGER:
             if (condition < -42 && value < 0)
             {
-                writeln(ch, "You are starving!");
+                xwriteln(ch, "You are starving!");
                 act(TO_ROOM, ch, 0, 0, "$n is starving!");
             }
             else if (condition < -30)
-                writeln(ch, "You are dying of starvation.");
+                xwriteln(ch, "You are dying of starvation.");
             else if (condition < -20)
-                writeln(ch, "You are extremely hungry.");
+                xwriteln(ch, "You are extremely hungry.");
             else if (condition < -10)
-                writeln(ch, "You are really hungry.");
+                xwriteln(ch, "You are really hungry.");
             else
-                writeln(ch, "You are hungry.");
+                xwriteln(ch, "You are hungry.");
             if (ch->position == POS_SLEEPING)
                 return;
 
@@ -514,25 +515,25 @@ void gain_condition(Character *ch, int iCond, int value)
         case COND_THIRST:
             if (condition < -40 && value < 0)
             {
-                writeln(ch, "You are dying of thirst!");
+                xwriteln(ch, "You are dying of thirst!");
                 act(TO_ROOM, ch, 0, 0,
                     "$n is dying of thirst!");
             }
             else if (condition < -30)
-                writeln(ch, "You are dying of dehydration.");
+                xwriteln(ch, "You are dying of dehydration.");
             else if (condition < -20)
-                writeln(ch, "You are extremely dehydrated.");
+                xwriteln(ch, "You are extremely dehydrated.");
             else if (condition < -10)
-                writeln(ch, "You are dehydrating.");
+                xwriteln(ch, "You are dehydrating.");
             else
-                writeln(ch, "You are thirsty.");
+                xwriteln(ch, "You are thirsty.");
             if (ch->position == POS_SLEEPING)
                 return;
             break;
 
         case COND_DRUNK:
             if (condition != 0)
-                writeln(ch, "You are sober.");
+                xwriteln(ch, "You are sober.");
             break;
         }
     }
@@ -555,16 +556,16 @@ void character_update()
                     "TICK", "TOCK"
                 };
                 if (number_range(0, 100) < 50)
-                    writelnf(ch, "~?[%s] %s!~x",
-                             str_time(-1,
-                                      ch->pc->account->
-                                      timezone, "%I:%M:%S"),
-                             mesg[number_range(0, 10) <
-                                  5 ? 0 : 1]);
+                    xwritelnf(ch, "~?[%s] %s!~x",
+                              str_time(-1,
+                                       ch->pc->account->
+                                       timezone, "%I:%M:%S"),
+                              mesg[number_range(0, 10) <
+                                   5 ? 0 : 1]);
                 else
-                    writelnf(ch, "~?%s!~x",
-                             mesg[number_range(0, 10) <
-                                  5 ? 0 : 1]);
+                    xwritelnf(ch, "~?%s!~x",
+                              mesg[number_range(0, 10) <
+                                   5 ? 0 : 1]);
             }
         }
         if (ch->position < POS_STUNNED)
@@ -609,9 +610,9 @@ void character_update()
                             && !nullstr(skill_table[paf->from].
                                         msgOff))
                     {
-                        writeln(ch,
-                                skill_table[paf->from].
-                                msgOff);
+                        xwriteln(ch,
+                                 skill_table[paf->from].
+                                 msgOff);
                     }
                 }
                 affect_remove(ch, paf);
@@ -629,7 +630,7 @@ void hint_update()
 
         long pos = number_range(0, max_hint - 1);
 
-        writelnf(ch, "~?%s~x", hint_table[pos].text);
+        xwritelnf(ch, "~?%s~x", hint_table[pos].text);
     }
 }
 

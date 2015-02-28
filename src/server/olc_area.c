@@ -23,11 +23,11 @@
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include "../str.h"
-#include "../engine.h"
-#include "../area.h"
-#include "../lookup.h"
-#include "../macro.h"
+#include "str.h"
+#include "engine.h"
+#include "area.h"
+#include "lookup.h"
+#include "macro.h"
 
 Editor *build_area_editor(Area *area)
 {
@@ -55,12 +55,12 @@ void area_editor_menu(Client *conn)
 
     conn->titlef(conn, "Area Editor - Area %d", area->id);
 
-    writelnf(conn, "~C   Id: ~W%d~x", area->id);
+    xwritelnf(conn, "~C   Id: ~W%d~x", area->id);
 
-    writelnf(conn, "~YA) ~CName: ~W%s~x", area->name);
+    xwritelnf(conn, "~YA) ~CName: ~W%s~x", area->name);
 
-    writelnf(conn, "~YB) ~CFlags: ~W%s~x",
-             format_flags(area->flags, area_flags));
+    xwritelnf(conn, "~YB) ~CFlags: ~W%s~x",
+              format_flags(area->flags, area_flags));
 
 }
 
@@ -72,15 +72,15 @@ void area_edit_list(Client *conn)
     for (Area *area = first_area; area != 0; area = area->next)
     {
 
-        writelnf(conn, "%2d) %12.12s ", area->id, area->name);
+        xwritelnf(conn, "%2d) %12.12s ", area->id, area->name);
 
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
 
     }
 
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 
 }
 
@@ -122,7 +122,7 @@ void area_editor(Client *conn, const char *argument)
 
         save_area(area);
 
-        writeln(conn, "~CArea saved.~x");
+        xwriteln(conn, "~CArea saved.~x");
 
         return;
 
@@ -133,7 +133,7 @@ void area_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CYou must provide a name to set.~x");
+            xwriteln(conn, "~CYou must provide a name to set.~x");
 
             return;
 

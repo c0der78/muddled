@@ -20,19 +20,20 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "affect.h"
+#include <assert.h>
+#include <stdio.h>
+#include <inttypes.h>
 #include "engine.h"
+#include "affect.h"
 #include "log.h"
 #include "character.h"
 #include "nonplayer.h"
 #include "object.h"
 #include "room.h"
-#include <stdio.h>
-#include <inttypes.h>
 #include "db.h"
 #include "str.h"
 #include "lookup.h"
-#include <assert.h>
+#include "private.h"
 
 const Lookup affect_flags[] =
 {
@@ -190,7 +191,7 @@ void affect_apply_align(Affect *paf, void *obj, bool fRemove)
                MAX_ALIGN);
 }
 
-const Lookup affect_callbacks[] =
+const Lookup AffectCallbacks[] =
 {
     {"none", 0},
     {"strength", (uintptr_t) &affect_apply_str},
@@ -252,7 +253,7 @@ void affect_remove_obj(Object *obj, Affect *paf)
 
 const char *affect_name(Affect *paf)
 {
-    return lookup_name(affect_callbacks, (uintptr_t) paf->callback);
+    return lookup_name(AffectCallbacks, (uintptr_t) paf->callback);
 }
 
 void affect_modify(Character *ch, Affect *paf, bool fAdd)
@@ -373,8 +374,8 @@ Affect *load_affect_by_id(identifier_t id)
             {
 
                 paf->callback =
-                    (affect_callback *)
-                    value_lookup(affect_callbacks,
+                    (AffectCallback *)
+                    value_lookup(AffectCallbacks,
                                  sql_column_str(stmt, i));
 
             }
@@ -401,7 +402,7 @@ int save_affect(Affect *paf)
         {"modifier", &paf->modifier, SQL_INT},
         {"level", &paf->level, SQL_INT},
         {"flags", &paf->flags, SQL_FLAG, affect_flags},
-        {"type", &paf->callback, SQL_FLAG, affect_callbacks},
+        {"type", &paf->callback, SQL_FLAG, AffectCallbacks},
         {0}
     };
 

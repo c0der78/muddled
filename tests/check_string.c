@@ -21,8 +21,8 @@
 #include "config.h"
 #endif
 #include <check.h>
-#include "../src/engine.h"
-#include "../src/str.h"
+#include "engine.h"
+#include "str.h"
 
 START_TEST(test_str_cmp)
 {

@@ -20,6 +20,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdlib.h>
+#include <stdio.h>
+#include <inttypes.h>
 #include "skill.h"
 #include "db.h"
 #include "str.h"
@@ -31,9 +34,7 @@
 #include "lookup.h"
 #include "affect.h"
 #include "util.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <inttypes.h>
+#include "private.h"
 
 Skill *skill_table = 0;
 
@@ -499,7 +500,7 @@ int save_skill(Skill *skill)
 SPELL(magic_missile)
 {
 
-    writeln(ch, "Got magic missile");
+    xwriteln(ch, "Got magic missile");
 
 }
 
@@ -509,7 +510,7 @@ SPELL(energy_shield)
     if (is_affected(ch, sn))
     {
 
-        writeln(ch, "You already surrounded with an energy shield.");
+        xwriteln(ch, "You already surrounded with an energy shield.");
 
         return;
 
@@ -528,7 +529,7 @@ SPELL(energy_shield)
 
     affect_to_char(ch, paf);
 
-    writeln(ch, "You surround yourself with an energy shield.");
+    xwriteln(ch, "You surround yourself with an energy shield.");
 
     act(TO_ROOM, ch, 0, 0, "$n surrounds $mself with an energy shield.");
 

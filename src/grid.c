@@ -28,6 +28,7 @@
 #include "str.h"
 #include "grid.h"
 #include "buffer.h"
+#include "private.h"
 
 void grid_init_border(Border *border)
 {
@@ -94,9 +95,7 @@ void destroy_grid(Grid *grid)
 
     for (int i = 0; i < grid->rowcount; i++)
     {
-
         free_mem(grid->rows[i].cells);
-
     }
     free_mem(grid->rows);
 
@@ -316,8 +315,8 @@ void grid_print(Grid *grid, Character *ch)
             if (border->flags & BORDER_LEFT)
             {
 
-                writef(buf, "%s%c~x", border->color,
-                       border->vertical);
+                xwritef(buf, "%s%c~x", border->color,
+                        border->vertical);
 
                 width_adjust++;
 
@@ -325,7 +324,7 @@ void grid_print(Grid *grid, Character *ch)
             if (cell->left_margin > 0)
             {
 
-                writef(buf, "%*s", cell->left_margin, " ");
+                xwritef(buf, "%*s", cell->left_margin, " ");
 
             }
             if (border->flags & BORDER_RIGHT)
@@ -347,28 +346,28 @@ void grid_print(Grid *grid, Character *ch)
                 colwidth += loss;
 
             }
-            write(buf,
-                  align_string(cell->align, colwidth, cell->color,
-                               (border->flags & BORDER_INLINE) ?
-                               &border->horizontal : 0,
-                               cell->value));
+            xwrite(buf,
+                   align_string(cell->align, colwidth, cell->color,
+                                (border->flags & BORDER_INLINE) ?
+                                &border->horizontal : 0,
+                                cell->value));
 
             if (cell->right_margin > 0)
             {
 
-                writef(buf, "%*s", cell->right_margin, " ");
+                xwritef(buf, "%*s", cell->right_margin, " ");
 
             }
             if (border->flags & BORDER_RIGHT)
             {
 
-                writef(buf, "%s%c~x", border->color,
-                       border->vertical);
+                xwritef(buf, "%s%c~x", border->color,
+                        border->vertical);
 
             }
         }
 
-        writeln(buf, "");
+        xwriteln(buf, "");
 
     }
 

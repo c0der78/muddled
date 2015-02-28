@@ -20,22 +20,23 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdlib.h>
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include "../character.h"
-#include "../nonplayer.h"
-#include "../str.h"
-#include "../lookup.h"
-#include "../room.h"
-#include "../area.h"
-#include "../macro.h"
-#include <stdlib.h>
-#include "../engine.h"
-#include "../flag.h"
-#include "../account.h"
-#include "../log.h"
-#include "../util.h"
+#include "character.h"
+#include "nonplayer.h"
+#include "str.h"
+#include "lookup.h"
+#include "room.h"
+#include "area.h"
+#include "macro.h"
+#include "engine.h"
+#include "flag.h"
+#include "account.h"
+#include "log.h"
+#include "util.h"
+#include "private.h"
 
 Editor *build_npc_editor(Character *npc)
 {
@@ -65,18 +66,18 @@ void npc_editor_menu(Client *conn)
 
     character_editor_menu(conn, npc);
 
-    writelnf(conn, "~YF) ~CShort Description: ~W%s~x",
-             npc->npc->shortDescr);
+    xwritelnf(conn, "~YF) ~CShort Description: ~W%s~x",
+              npc->npc->shortDescr);
 
-    writelnf(conn, "~YG) ~CLong Description: ~W%s~x", npc->npc->longDescr);
+    xwritelnf(conn, "~YG) ~CLong Description: ~W%s~x", npc->npc->longDescr);
 
-    writelnf(conn, "~YH) ~CPosition: ~W%s~x",
-             position_table[npc->npc->startPosition].name);
+    xwritelnf(conn, "~YH) ~CPosition: ~W%s~x",
+              position_table[npc->npc->startPosition].name);
 
-    writelnf(conn, "~YI) ~CFlags: ~W%s~x",
-             format_flags(npc->flags, npc_flags));
+    xwritelnf(conn, "~YI) ~CFlags: ~W%s~x",
+              format_flags(npc->flags, npc_flags));
 
-    writelnf(conn, "~YJ) ~CAlignment: ~W%d~x", npc->alignment);
+    xwritelnf(conn, "~YJ) ~CAlignment: ~W%d~x", npc->alignment);
 
 }
 
@@ -88,15 +89,15 @@ void npc_edit_list(Client *conn, Area *area)
     for (Character *vch = area->npcs; vch != 0; vch = vch->next_in_area)
     {
 
-        writelnf(conn, "%2d) %-12.12s ", vch->id, vch->npc->shortDescr);
+        xwritelnf(conn, "%2d) %-12.12s ", vch->id, vch->npc->shortDescr);
 
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
 
     }
 
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 
 }
 
@@ -141,7 +142,7 @@ void npc_editor(Client *conn, const char *argument)
 
         save_npc(npc);
 
-        writeln(conn, "~CNPC saved.~x");
+        xwriteln(conn, "~CNPC saved.~x");
 
         return;
 
@@ -151,7 +152,7 @@ void npc_editor(Client *conn, const char *argument)
 
         delete_npc(npc);
 
-        writeln(conn, "~CNPC deleted.~x");
+        xwriteln(conn, "~CNPC deleted.~x");
 
         extract_char(npc, true);
 
@@ -169,8 +170,8 @@ void npc_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn,
-                    "~CYou must provide a short description.~x");
+            xwriteln(conn,
+                     "~CYou must provide a short description.~x");
 
             return;
 
@@ -188,8 +189,8 @@ void npc_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn,
-                    "~CYou must provide a long description.~x");
+            xwriteln(conn,
+                     "~CYou must provide a long description.~x");
 
             return;
 
@@ -207,8 +208,8 @@ void npc_editor(Client *conn, const char *argument)
         if (!argument || !*argument || argument[0] == '?')
         {
 
-            writelnf(conn, "~CValid positions are: ~W%s~x",
-                     lookup_names(position_table));
+            xwritelnf(conn, "~CValid positions are: ~W%s~x",
+                      lookup_names(position_table));
 
             return;
 
@@ -218,7 +219,7 @@ void npc_editor(Client *conn, const char *argument)
         if (p == -1)
         {
 
-            writeln(conn, "~CThat is not a valid position.~x");
+            xwriteln(conn, "~CThat is not a valid position.~x");
 
             return;
 
@@ -247,8 +248,8 @@ void npc_editor(Client *conn, const char *argument)
         if (a < -MAX_ALIGN || a > MAX_ALIGN)
         {
 
-            writelnf(conn, "~CValue must be between %d and %d.~x",
-                     -MAX_ALIGN, MAX_ALIGN);
+            xwritelnf(conn, "~CValue must be between %d and %d.~x",
+                      -MAX_ALIGN, MAX_ALIGN);
 
             return;
 

@@ -35,10 +35,6 @@
 
 #include "cdecl.h"
 
-typedef struct engine Engine;
-
-typedef double money_t;
-
 #define BUF_SIZ     512
 
 #define ARG_SIZ     1024
@@ -55,8 +51,6 @@ typedef double money_t;
 
 #define LEVEL_GROUPS    5
 #define EXP_TABLE_SIZ   ((MAX_PLAYABLE_LEVEL / LEVEL_GROUPS) + 1)
-
-typedef __int64_t identifier_t;
 
 #include <time.h>
 #include "flag.h"

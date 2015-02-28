@@ -21,10 +21,10 @@
 #include "config.h"
 #endif
 #include <check.h>
-#include "../src/engine.h"
-#include "../src/db.h"
-#include "../src/lookup.h"
-#include "../src/object.h"
+#include "engine.h"
+#include "db.h"
+#include "lookup.h"
+#include "object.h"
 
 
 START_TEST(test_obj_values)

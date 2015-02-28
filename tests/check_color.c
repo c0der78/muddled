@@ -21,9 +21,9 @@
 #include "config.h"
 #endif
 #include <check.h>
-#include "../src/color.h"
-#include "../src/character.h"
-#include "../src/flag.h"
+#include "color.h"
+#include "character.h"
+#include "flag.h"
 
 START_TEST(test_make_color)
 {

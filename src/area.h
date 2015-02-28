@@ -24,40 +24,8 @@
 #ifndef MUDDLED_AREA_H_
 #define MUDDLED_AREA_H_
 
-/*!
- * @typedef Area
- */
-typedef struct area Area;
+#include "typedef.h"
 
-#include "cdecl.h"
-#include "character.h"
-#include "room.h"
-#include "flag.h"
-#include "object.h"
-
-/*!
- * @typedef Area @abstract Represent an area in the world containing
- * explorable content @field id the unique identifier @field name the name of
- * the area @field npcs a list of non player characters @field rooms a list
- * of rooms in the area @field objects a list of objects in the area @field
- * flags flags affecting behaviour of the area
- */
-struct area
-{
-    identifier_t id;
-    Area *next;
-    const char *name;
-    Character *npcs;
-    Room *rooms;
-    Object *objects;
-    Flag *flags;
-};
-
-/*!
- * @enum Area Flags @abstract flags for controlling areas @constant
- * AREA_NOEXPLORE do not record this area in exploring statistics @constant
- * AREA_CHANGED area is changed and needs to be saved @discussion
- */
 enum
 {
     AREA_NOEXPLORE,

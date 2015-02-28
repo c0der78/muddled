@@ -34,6 +34,7 @@
 #include "forum.h"
 #include "lookup.h"
 #include "flag.h"
+#include "private.h"
 
 const Lookup account_flags[] =
 {
@@ -427,3 +428,4 @@ int load_account_forums(Account *acc)
     }
     return 1;
 }
+

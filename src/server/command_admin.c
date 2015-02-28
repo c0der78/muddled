@@ -20,24 +20,25 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "client.h"
-#include "../character.h"
-#include "../player.h"
-#include "../account.h"
-#include "../help.h"
-#include "../room.h"
 #include <libgen.h>
+#include "character.h"
+#include "player.h"
+#include "account.h"
+#include "help.h"
+#include "room.h"
+#include "object.h"
+#include "social.h"
+#include "area.h"
+#include "str.h"
+#include "skill.h"
+#include "nonplayer.h"
+#include "buffer.h"
+#include "util.h"
+#include "private.h"
 #include "server.h"
 #include "olc.h"
+#include "client.h"
 #include "command.h"
-#include "../object.h"
-#include "../social.h"
-#include "../area.h"
-#include "../str.h"
-#include "../skill.h"
-#include "../nonplayer.h"
-#include "../buffer.h"
-#include "../util.h"
 #include "importer.h"
 
 DOFUN(edit)
@@ -57,10 +58,10 @@ DOFUN(edit)
                    "object", "area", "player", "skill", "engine", 0);
 
         /*
-         * writeln(ch, "Syntax: %s room [?]", name); writeln(ch, " %s help
-         * [?]", name); writeln(ch, " %s npc [?]", name); writeln(ch, " %s
-         * object [?]", name); writeln(ch, " %s area [?]", name);
-         * writeln(ch, " %s player [?]", name);
+         * xwriteln(ch, "Syntax: %s room [?]", name); xwriteln(ch, " %s help
+         * [?]", name); xwriteln(ch, " %s npc [?]", name); xwriteln(ch, " %s
+         * object [?]", name); xwriteln(ch, " %s area [?]", name);
+         * xwriteln(ch, " %s player [?]", name);
          */
         return;
 
@@ -114,7 +115,7 @@ DOFUN(edit)
             if (room == 0)
             {
 
-                writeln(conn, "No such room!");
+                xwriteln(conn, "No such room!");
 
                 return;
 
@@ -133,10 +134,10 @@ DOFUN(edit)
                    "room list	- lists rooms in area", 0);
 
         /*
-         * writeln(conn, "Syntax: edit room - edit the current room");
-         * writeln(conn, " edit room create - create a room for the
-         * current area"); writeln(conn, " edit room id# - edit a specific
-         * room"); writeln(conn, " edit room list - lists rooms in area");
+         * xwriteln(conn, "Syntax: edit room - edit the current room");
+         * xwriteln(conn, " edit room create - create a room for the
+         * current area"); xwriteln(conn, " edit room id# - edit a specific
+         * room"); xwriteln(conn, " edit room list - lists rooms in area");
          */
         return;
 
@@ -180,7 +181,7 @@ DOFUN(edit)
         if (help == 0)
         {
 
-            writeln(conn, "No such help.");
+            xwriteln(conn, "No such help.");
 
             return;
 
@@ -231,7 +232,7 @@ DOFUN(edit)
         if (social == 0)
         {
 
-            writeln(conn, "No such social.");
+            xwriteln(conn, "No such social.");
 
             return;
 
@@ -282,7 +283,7 @@ DOFUN(edit)
         if (skill == 0)
         {
 
-            writeln(conn, "No such skill.");
+            xwriteln(conn, "No such skill.");
 
             return;
 
@@ -329,7 +330,7 @@ DOFUN(edit)
             if (vch == 0)
             {
 
-                writeln(conn, "No such player.");
+                xwriteln(conn, "No such player.");
 
                 return;
 
@@ -385,7 +386,7 @@ DOFUN(edit)
         if (vch == 0)
         {
 
-            writeln(conn, "No such npc.");
+            xwriteln(conn, "No such npc.");
 
             return;
 
@@ -438,7 +439,7 @@ DOFUN(edit)
         if (obj == 0)
         {
 
-            writeln(conn, "No such object.");
+            xwriteln(conn, "No such object.");
 
             return;
 
@@ -491,7 +492,7 @@ DOFUN(edit)
         if (area == 0)
         {
 
-            writeln(conn, "No such area.");
+            xwriteln(conn, "No such area.");
 
             return;
 
@@ -523,12 +524,12 @@ DOFUN(shutdown)
     if (!is_implementor(ch))
     {
 
-        writeln(ch, "You do not have permission to do that.");
+        xwriteln(ch, "You do not have permission to do that.");
 
         return;
 
     }
-    writeln(ch, "Shutting down server...");
+    xwriteln(ch, "Shutting down server...");
 
     act_pos(TO_WORLD, POS_DEAD, ch, 0, 0, "$n has shutdown the server...");
 
@@ -542,12 +543,12 @@ DOFUN(reboot)
     if (!is_implementor(ch))
     {
 
-        writeln(ch, "You do not have permission to do that.");
+        xwriteln(ch, "You do not have permission to do that.");
 
         return;
 
     }
-    writeln(ch, "Rebooting server...");
+    xwriteln(ch, "Rebooting server...");
 
     act_pos(TO_WORLD, POS_DEAD, ch, 0, 0, "$n has rebooted the server...");
 
@@ -577,7 +578,7 @@ DOFUN(force)
 
         pulse_tick = 0;
 
-        writeln(ch, "Game tick forced.");
+        xwriteln(ch, "Game tick forced.");
 
         return;
 
@@ -594,10 +595,10 @@ DOFUN(sockets)
     for (Client *c = first_client; c; c = c->next)
     {
 
-        writelnf(buf, "~W%s~x - ~C%s~x (~G%s~x) ~B%s~x", getip(c),
-                 c->host, c->termType,
-                 c->account->playing ? c->account->playing->
-                 name : "Unknown");
+        xwritelnf(buf, "~W%s~x - ~C%s~x (~G%s~x) ~B%s~x", getip(c),
+                  c->host, c->termType,
+                  c->account->playing ? c->account->playing->
+                  name : "Unknown");
 
     }
 
@@ -615,7 +616,7 @@ DOFUN(goto)
     if (loc == 0)
     {
 
-        writeln(ch, "Unable to find that location.");
+        xwriteln(ch, "Unable to find that location.");
 
         return;
 
@@ -655,7 +656,7 @@ DOFUN(import)
         if (nullstr(argument))
         {
 
-            writeln(ch, "Please specify a file to import.");
+            xwriteln(ch, "Please specify a file to import.");
 
             return;
 
@@ -665,8 +666,8 @@ DOFUN(import)
         if (fp == 0)
         {
 
-            writelnf(ch, "Could not open %s for reading.",
-                     argument);
+            xwritelnf(ch, "Could not open %s for reading.",
+                      argument);
 
             return;
 
@@ -676,12 +677,12 @@ DOFUN(import)
 
             if (!import_rom_area_list
                     (dirname((char *)argument), fp))
-                writeln(ch, "Could not import areas.");
+                xwriteln(ch, "Could not import areas.");
 
             else
             {
 
-                writeln(ch, "Areas imported.");
+                xwriteln(ch, "Areas imported.");
 
             }
 
@@ -690,12 +691,12 @@ DOFUN(import)
         {
 
             if (!import_rom_file(fp))
-                writeln(ch, "Could not import file.");
+                xwriteln(ch, "Could not import file.");
 
             else
             {
 
-                writeln(ch, "File imported.");
+                xwriteln(ch, "File imported.");
 
             }
 
@@ -707,7 +708,7 @@ DOFUN(import)
     if (!str_cmp(arg, "commit"))
     {
         import_commit(true);
-        writeln(ch, "Import committed.");
+        xwriteln(ch, "Import committed.");
         return;
     }
     do_import(do_name, ch, str_empty);
@@ -736,7 +737,7 @@ DOFUN(db)
         if (nullstr(argument))
         {
 
-            writeln(ch, "Valid types are: socials areas");
+            xwriteln(ch, "Valid types are: socials areas");
 
             return;
 
@@ -746,7 +747,7 @@ DOFUN(db)
 
             save_socials();
 
-            writeln(ch, "Socials saved.");
+            xwriteln(ch, "Socials saved.");
 
             return;
 
@@ -766,7 +767,7 @@ DOFUN(db)
 
             }
 
-            writeln(ch, "Areas saved.");
+            xwriteln(ch, "Areas saved.");
 
             return;
 

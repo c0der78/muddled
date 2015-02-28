@@ -24,18 +24,17 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include "../src/engine.h"
-#include "../src/character.h"
-#include "../src/connection.h"
-#include "../src/nonplayer.h"
-#include "../src/player.h"
-#include "../src/str.h"
+#include "engine.h"
+#include "character.h"
+#include "connection.h"
+#include "nonplayer.h"
+#include "player.h"
+#include "str.h"
 
 static Character *tch = 0;
 char buffer[BUF_SIZ] = {0};
 
-
-void test_writeln(Connection *conn, const char *fmt)
+void test_xwriteln(Connection *conn, const char *fmt)
 {
     strcpy(buffer, fmt);
 }
@@ -44,7 +43,7 @@ void char_write_setup()
 {
     tch = new_char();
     Connection *c = (Connection *) malloc(sizeof(Connection));
-    c->writeln = test_writeln;
+    c->writeln = test_xwriteln;
     tch->npc = new_npc();
     tch->npc->shortDescr = str_dup("testChar");
     tch->pc = new_player(c);
@@ -54,7 +53,6 @@ void char_write_setup()
 
 void char_write_teardown()
 {
-
     if (tch->pc->conn)
         free_mem(tch->pc->conn);
 
@@ -64,13 +62,13 @@ void char_write_teardown()
 }
 
 
-START_TEST(test_char_writeln)
+START_TEST(test_char_xwriteln)
 {
     fail_if(tch == 0, "tch was not initialized");
 
-    writeln(tch, "test");
+    xwriteln(tch, "test");
 
-    fail_if(strcmp(buffer, "test"), "writeln buffer was incorrect");
+    fail_if(strcmp(buffer, "test"), "xwriteln buffer was incorrect");
 }
 END_TEST
 
@@ -108,7 +106,7 @@ void parse_format_string(Character *to, char *orig, ...)
 
     va_end(args);
 
-    writeln(to, buf);
+    xwriteln(to, buf);
 }
 
 START_TEST(test_char_format)
@@ -126,7 +124,7 @@ Suite *character_suite (void)
 
     TCase *tc_writing = tcase_create("Writing");
     tcase_add_checked_fixture (tc_writing, char_write_setup, char_write_teardown);
-    tcase_add_test (tc_writing, test_char_writeln);
+    tcase_add_test (tc_writing, test_char_xwriteln);
     tcase_add_test (tc_writing, test_char_format);
     suite_add_tcase(s, tc_writing);
 

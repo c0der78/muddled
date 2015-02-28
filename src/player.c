@@ -23,13 +23,13 @@
 #include <stdlib.h>
 #include <math.h>
 #include <inttypes.h>
+#include <stdio.h>
 #include "flag.h"
 #include "player.h"
 #include "str.h"
 #include "character.h"
 #include "log.h"
 #include "class.h"
-#include <stdio.h>
 #include "room.h"
 #include "account.h"
 #include "macro.h"
@@ -40,6 +40,7 @@
 #include "engine.h"
 #include "explored.h"
 #include "channel.h"
+#include "private.h"
 
 Character *first_player = 0;
 

@@ -21,8 +21,6 @@
 #ifndef MUDDLED_ROOM_H
 #define MUDDLED_ROOM_H
 
-typedef struct room Room;
-
 #include "character.h"
 #include "area.h"
 #include "engine.h"

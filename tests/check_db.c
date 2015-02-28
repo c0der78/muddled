@@ -21,12 +21,12 @@
 #include "config.h"
 #endif
 #include <check.h>
-#include "../src/engine.h"
-#include "../src/db.h"
-#include "../src/str.h"
-#include "../src/macro.h"
-#include "../src/util.h"
-#include "../src/log.h"
+#include "engine.h"
+#include "db.h"
+#include "str.h"
+#include "macro.h"
+#include "util.h"
+#include "log.h"
 #include <inttypes.h>
 
 #define DBNAME "test"

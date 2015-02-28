@@ -34,6 +34,7 @@
 #include "object.h"
 #include "macro.h"
 #include "lookup.h"
+#include "private.h"
 
 Area *first_area = 0;
 int max_area = 0;

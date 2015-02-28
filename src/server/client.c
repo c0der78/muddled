@@ -26,8 +26,6 @@
 #include <ctype.h>
 #include <assert.h>
 #include <unistd.h>
-#include "../engine.h"
-#include "../class.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -36,23 +34,26 @@
 #include <crypt.h>
 #endif
 #include <errno.h>
-#include "../connection.h"
-#include "../log.h"
-#include "../character.h"
-#include "../str.h"
-#include "../nonplayer.h"
-#include "command.h"
-#include "../player.h"
+#include "engine.h"
+#include "class.h"
+#include "connection.h"
+#include "log.h"
+#include "character.h"
+#include "str.h"
+#include "nonplayer.h"
+#include "player.h"
+#include "room.h"
+#include "account.h"
+#include "color.h"
+#include "race.h"
+#include "macro.h"
+#include "util.h"
+#include "lookup.h"
+#include "help.h"
+#include "channel.h"
+#include "private.h"
 #include "telnet.h"
-#include "../room.h"
-#include "../account.h"
-#include "../color.h"
-#include "../race.h"
-#include "../macro.h"
-#include "../util.h"
-#include "../lookup.h"
-#include "../help.h"
-#include "../channel.h"
+#include "command.h"
 #include "client.h"
 #include "olc.h"
 #include "server.h"
@@ -191,7 +192,7 @@ static void page_to_client(Client *conn, const char *txt)
     if (conn->scrHeight == 0)
     {
 
-        write(conn, txt);
+        xwrite(conn, txt);
 
         return;
 
@@ -209,7 +210,7 @@ static void page_to_client(Client *conn, const char *txt)
 static void vtitle_to_client(Client *conn, const char *title, va_list args)
 {
 
-    writeln(conn, valign_string(ALIGN_CENTER, conn->scrWidth, "~W~!B", client_has_color(conn) ? 0 : "-", title, args));
+    xwriteln(conn, valign_string(ALIGN_CENTER, conn->scrWidth, "~W~!B", client_has_color(conn) ? 0 : "-", title, args));
 
 }
 
@@ -229,7 +230,7 @@ static void titlef_to_client(Client *conn, const char *title, ...)
 static void title_to_client(Client *conn, const char *title)
 {
 
-    writeln(conn, align_string(ALIGN_CENTER, conn->scrWidth, "~W~!B", client_has_color(conn) ? 0 : "-", title));
+    xwriteln(conn, align_string(ALIGN_CENTER, conn->scrWidth, "~W~!B", client_has_color(conn) ? 0 : "-", title));
 
 }
 
@@ -398,19 +399,19 @@ void initialize_client(int control)
     if (greeting == 0)
     {
 
-        writelnf(c, "Welcome to %s!", engine_info.name);
+        xwritelnf(c, "Welcome to %s!", engine_info.name);
 
-        writeln(c, "");
+        xwriteln(c, "");
 
     }
     else
     {
 
-        writeln(c, greeting);
+        xwriteln(c, greeting);
 
     }
 
-    write(c, "Login: ");
+    xwrite(c, "Login: ");
 
 }
 
@@ -458,7 +459,7 @@ bool parse_input_buffer(Client *conn)
         if (k >= sizeof(conn->inbuf) - 4)
         {
 
-            writeln(conn, "Line too long.");
+            xwriteln(conn, "Line too long.");
 
             for (; conn->inbuf[i] != 0; i++)
             {
@@ -545,7 +546,7 @@ bool parse_input_buffer(Client *conn)
 
                 conn->repeat = 0;
 
-                writeln(conn, "\n\r*** I WARNED YOU!!! ***");
+                xwriteln(conn, "\n\r*** I WARNED YOU!!! ***");
 
                 strcpy(conn->incomm, "quit");
 
@@ -601,7 +602,7 @@ bool read_line_from_client(Client *conn)
 
         log_error("input overflow for %s", getip(conn));
 
-        writeln(conn, "\n\r*** PUT A LID ON IT!!! ***\n\r");
+        xwriteln(conn, "\n\r*** PUT A LID ON IT!!! ***\n\r");
 
         return false;
 
@@ -677,9 +678,9 @@ void pager_prompt(Client *conn)
         if (*ptr == '\n')
             total_lines++;
 
-    writef(conn,
-           "\n\r(%d%%) (H)elp, (R)efresh page, (P)revious page, or hit ENTER: ",
-           100 * shown_lines / total_lines);
+    xwritef(conn,
+            "\n\r(%d%%) (H)elp, (R)efresh page, (P)revious page, or hit ENTER: ",
+            100 * shown_lines / total_lines);
 
 }
 
@@ -702,7 +703,7 @@ void bust_a_prompt(Client *conn)
             || !conn->account->playing->pc)
     {
 
-        write(conn, "> ");
+        xwrite(conn, "> ");
 
         return;
 
@@ -836,7 +837,7 @@ void bust_a_prompt(Client *conn)
 
     *pbuf++ = ' ';
 
-    write(conn, buf);
+    xwrite(conn, buf);
 
 }
 
@@ -1025,11 +1026,11 @@ bool process_output(Client *conn, bool fPrompt)
                 else
                     strcpy(wound, "is bleeding to death.");
 
-                writelnf(conn, "~R%s %s~x", NAME(victim),
-                         wound);
+                xwritelnf(conn, "~R%s %s~x", NAME(victim),
+                          wound);
 
             }
-            writeln(conn, "");
+            xwriteln(conn, "");
 
             bust_a_prompt(conn);
 
@@ -1101,17 +1102,17 @@ void show_string(Client *conn, const char *input)
 
     case 'H':       /* Show some help */
 
-        writeln(conn, "Pager help:");
+        xwriteln(conn, "Pager help:");
 
-        writeln(conn, "C or Enter     next page");
+        xwriteln(conn, "C or Enter     next page");
 
-        writeln(conn, "R              refresh this page");
+        xwriteln(conn, "R              refresh this page");
 
-        writeln(conn, "B              previous page");
+        xwriteln(conn, "B              previous page");
 
-        writeln(conn, "H or ?         help");
+        xwriteln(conn, "H or ?         help");
 
-        writeln(conn, "Any other keys exit.");
+        xwriteln(conn, "Any other keys exit.");
 
         return;
 
@@ -1174,7 +1175,7 @@ void show_string(Client *conn, const char *input)
 
             *scan = '\0';
 
-            write(conn, buffer);
+            xwrite(conn, buffer);
 
             for (chk = conn->showstr_point; isspace((int)*chk); chk++)
             {
@@ -1255,30 +1256,30 @@ void client_display_account_menu(Client *conn)
 
     conn->title(conn, "Account Menu");
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    writeln(conn, "~Y(C)~Create new player");
+    xwriteln(conn, "~Y(C)~Create new player");
 
-    writeln(conn, "~Y(D)~Celete account");
+    xwriteln(conn, "~Y(D)~Celete account");
 
-    writeln(conn, "~Y(E)~Cxit game\n");
+    xwriteln(conn, "~Y(E)~Cxit game\n");
 
     if (conn->account->players != 0)
     {
 
-        writeln(conn, "Players:");
+        xwriteln(conn, "Players:");
 
         for (AccountPlayer *ch = conn->account->players; ch != 0;
                 ch = ch->next)
         {
 
-            writelnf(conn, " ~Y%2d) ~W%s ~C(Lvl %d)~x", ++count,
-                     ch->name, ch->level);
+            xwritelnf(conn, " ~Y%2d) ~W%s ~C(Lvl %d)~x", ++count,
+                      ch->name, ch->level);
 
         }
 
     }
-    write(conn, "\n\r~CYour selection?~x ");
+    xwrite(conn, "\n\r~CYour selection?~x ");
 
 }
 
@@ -1322,8 +1323,8 @@ void set_playing(Client *conn)
         act(TO_ROOM, ch, 0, 0,
             "~?The nebula orion flickers and $n materializes from the fourth dimension...~x");
 
-        writeln(conn,
-                "~?You materialize from the fourth dimension...~x");
+        xwriteln(conn,
+                 "~?You materialize from the fourth dimension...~x");
 
         do_look(str_empty, ch, str_empty);
 
@@ -1344,13 +1345,13 @@ void client_display_sex_menu(Client *conn)
     for (const Lookup *t = sex_table; t->name != 0; t++)
     {
 
-        writelnf(conn, "~Y%d) ~W%s", ++count, capitalize(t->name));
+        xwritelnf(conn, "~Y%d) ~W%s", ++count, capitalize(t->name));
 
     }
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    write(conn, "~CWhat is your sex? ");
+    xwrite(conn, "~CWhat is your sex? ");
 
 }
 
@@ -1362,7 +1363,7 @@ void client_confirm_delete_char(Client *conn, const char *argument)
 
         set_playing(conn);
 
-        writeln(conn, "Delete canceled.");
+        xwriteln(conn, "Delete canceled.");
 
         return;
 
@@ -1373,7 +1374,7 @@ void client_confirm_delete_char(Client *conn, const char *argument)
 
         set_playing(conn);
 
-        writeln(conn, "~CPasswords don't match. Delete cancelled.");
+        xwriteln(conn, "~CPasswords don't match. Delete cancelled.");
 
         return;
 
@@ -1393,11 +1394,11 @@ void client_delete_char(Connection *conn)
 
     Client *cl = (Client *) conn;
 
-    writelnf(conn, "~RAre you sure you want to delete '%s'?~x",
-             cl->account->playing->name);
+    xwritelnf(conn, "~RAre you sure you want to delete '%s'?~x",
+              cl->account->playing->name);
 
-    write(conn,
-          "~CEnter your account password to continue, or hit return to cancel: ~x");
+    xwrite(conn,
+           "~CEnter your account password to continue, or hit return to cancel: ~x");
 
     cl->handler = client_confirm_delete_char;
 
@@ -1415,13 +1416,13 @@ void client_display_class_menu(Client *conn)
     for (int i = 0; i < max_class; i++)
     {
 
-        writelnf(conn, "~W%12s~C: %s~x", class_table[i].name,
-                 class_table[i].description);
+        xwritelnf(conn, "~W%12s~C: %s~x", class_table[i].name,
+                  class_table[i].description);
 
     }
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    writeln(conn, "~CWhat is your class? ~x");
+    xwriteln(conn, "~CWhat is your class? ~x");
 
 }
 
@@ -1431,8 +1432,8 @@ void client_get_class(Client *conn, const char *argument)
     if (!argument || !*argument)
     {
 
-        write(conn,
-              "~CPlease specify which class your character shall be: ~x");
+        xwrite(conn,
+               "~CPlease specify which class your character shall be: ~x");
 
         return;
 
@@ -1442,7 +1443,7 @@ void client_get_class(Client *conn, const char *argument)
     if (c == -1)
     {
 
-        writeln(conn, "~CThat is not a valid class.~x");
+        xwriteln(conn, "~CThat is not a valid class.~x");
 
         return;
 
@@ -1485,13 +1486,13 @@ void client_display_race_menu(Client *conn)
     for (Race *race = first_race; race != 0; race = race->next)
     {
 
-        writelnf(conn, "~W%12s~C: %s~x", race->name, race->description);
+        xwritelnf(conn, "~W%12s~C: %s~x", race->name, race->description);
 
     }
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    write(conn, "~CWhat is your race? ~x");
+    xwrite(conn, "~CWhat is your race? ~x");
 
 }
 
@@ -1501,8 +1502,8 @@ void client_get_race(Client *conn, const char *argument)
     if (!argument || !*argument)
     {
 
-        write(conn,
-              "~CPlease specify which race your character shall be: ~x");
+        xwrite(conn,
+               "~CPlease specify which race your character shall be: ~x");
 
         return;
 
@@ -1512,7 +1513,7 @@ void client_get_race(Client *conn, const char *argument)
     if (race == 0)
     {
 
-        writeln(conn, "~CThat is not a valid race.~x");
+        xwriteln(conn, "~CThat is not a valid race.~x");
 
         return;
 
@@ -1534,8 +1535,8 @@ void client_get_char_sex(Client *conn, const char *argument)
     if (!argument || !*argument)
     {
 
-        writeln(conn,
-                "~CPlease specify which sex your character shall be:~x ");
+        xwriteln(conn,
+                 "~CPlease specify which sex your character shall be:~x ");
 
         return;
 
@@ -1560,8 +1561,8 @@ void client_get_char_sex(Client *conn, const char *argument)
         if (t->name == 0)
         {
 
-            writelnf(conn, "~CValid sexes are: ~W%s~x",
-                     lookup_names(sex_table));
+            xwritelnf(conn, "~CValid sexes are: ~W%s~x",
+                      lookup_names(sex_table));
 
             return;
 
@@ -1577,8 +1578,8 @@ void client_get_char_sex(Client *conn, const char *argument)
         if (sex == -1)
         {
 
-            writelnf(conn, "~CValid sexes are: ~W%s~x",
-                     lookup_names(sex_table));
+            xwritelnf(conn, "~CValid sexes are: ~W%s~x",
+                      lookup_names(sex_table));
 
             return;
 
@@ -1609,8 +1610,8 @@ void client_create_new_char(Client *conn, const char *argument)
             || strlen(argument) < 3)
     {
 
-        writeln(conn,
-                "Please enter a name between 3 and 12 characters.");
+        xwriteln(conn,
+                 "Please enter a name between 3 and 12 characters.");
 
         return;
 
@@ -1621,8 +1622,8 @@ void client_create_new_char(Client *conn, const char *argument)
         if (!isalpha((int)*str))
         {
 
-            writeln(conn,
-                    "You can only use letters for your characters name.");
+            xwriteln(conn,
+                     "You can only use letters for your characters name.");
 
             return;
 
@@ -1652,15 +1653,15 @@ void client_confirm_account_delete(Client *conn, const char *argument)
             (conn->account->password, crypt(argument, conn->account->login)))
     {
 
-        writeln(conn,
-                "Incorrect password.  Account deletion cancelled.");
+        xwriteln(conn,
+                 "Incorrect password.  Account deletion cancelled.");
 
         conn->handler = client_account_menu;
 
         return;
 
     }
-    writeln(conn, "Sorry to see you go! Safe travels!");
+    xwriteln(conn, "Sorry to see you go! Safe travels!");
 
     delete_account(conn->account);
 
@@ -1700,16 +1701,16 @@ void client_account_menu(Client *conn, const char *argument)
             if (conn->account->playing == 0)
             {
 
-                writeln(conn,
-                        "There was a problem loading that character.");
+                xwriteln(conn,
+                         "There was a problem loading that character.");
 
             }
             else
             {
 
-                writelnf(conn,
-                         "The nebula orion flashes and %s materializes from the 4th dimension...",
-                         ch->name);
+                xwritelnf(conn,
+                          "The nebula orion flashes and %s materializes from the 4th dimension...",
+                          ch->name);
 
                 announce(conn->account->playing, INFO_JOIN,
                          "$n has entered the realms.");
@@ -1731,7 +1732,7 @@ void client_account_menu(Client *conn, const char *argument)
 
     case 'C':
 
-        write(conn, "~CWhat is your new characters name?~x ");
+        xwrite(conn, "~CWhat is your new characters name?~x ");
 
         conn->handler = client_create_new_char;
 
@@ -1739,10 +1740,10 @@ void client_account_menu(Client *conn, const char *argument)
 
     case 'D':
 
-        writeln(conn,
-                "~CAre you sure you want to delete your account?~x");
+        xwriteln(conn,
+                 "~CAre you sure you want to delete your account?~x");
 
-        write(conn, "~CEnter your password to confirm:~x ");
+        xwrite(conn, "~CEnter your password to confirm:~x ");
 
         conn->handler = client_confirm_account_delete;
 
@@ -1752,7 +1753,7 @@ void client_account_menu(Client *conn, const char *argument)
 
     case 'E':
 
-        writeln(conn, "~GGood-bye!~x");
+        xwriteln(conn, "~GGood-bye!~x");
 
         conn->handler = 0;
 
@@ -1760,7 +1761,7 @@ void client_account_menu(Client *conn, const char *argument)
 
     default:
 
-        writeln(conn, "~CHuh? What is your selection?~x ");
+        xwriteln(conn, "~CHuh? What is your selection?~x ");
 
         break;
 
@@ -1780,23 +1781,23 @@ void update_login_count()
 void client_display_timezones(Client *conn)
 {
 
-    writelnf(conn, "~C%-6s %-30s (%s)", "Name", "City/Zone Crosses",
-             "Time~x");
+    xwritelnf(conn, "~C%-6s %-30s (%s)", "Name", "City/Zone Crosses",
+              "Time~x");
 
     time_t current_time = time(0);
 
-    writelnf(conn, "~C%s~x", fillstr("-", conn->scrWidth));
+    xwritelnf(conn, "~C%s~x", fillstr("-", conn->scrWidth));
 
     for (int i = 0; timezones[i].name != 0; i++)
     {
 
-        writelnf(conn, "%-6s %-30s (%s)", timezones[i].name,
-                 timezones[i].zone, str_time(current_time, i, NULL));
+        xwritelnf(conn, "%-6s %-30s (%s)", timezones[i].name,
+                  timezones[i].zone, str_time(current_time, i, NULL));
 
     }
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    write(conn, "~CWhat is your timezone?~x ");
+    xwrite(conn, "~CWhat is your timezone?~x ");
 
 }
 
@@ -1808,7 +1809,7 @@ void client_get_timezone(Client *conn, const char *argument)
     if (zone == -1)
     {
 
-        writeln(conn, "That is not a valid timezone.");
+        xwriteln(conn, "That is not a valid timezone.");
 
         return;
 
@@ -1829,7 +1830,7 @@ void client_create_account_email(Client *conn, const char *argument)
     if (!argument || !*argument || !is_valid_email(argument))
     {
 
-        write(conn, "That is not a valid email address. Try again: ");
+        xwrite(conn, "That is not a valid email address. Try again: ");
 
         return;
 
@@ -1851,9 +1852,9 @@ void client_confirm_account_password(Client *conn, const char *argument)
             (conn->account->password, crypt(argument, conn->account->login)))
     {
 
-        writeln(conn, "Passwords don't match.  Let's try again.");
+        xwriteln(conn, "Passwords don't match.  Let's try again.");
 
-        write(conn, "Please enter your new password: ");
+        xwrite(conn, "Please enter your new password: ");
 
         conn->handler = client_create_account_password;
 
@@ -1862,9 +1863,9 @@ void client_confirm_account_password(Client *conn, const char *argument)
     }
     send_telopt(conn, WONT, TELOPT_ECHO);
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    write(conn, "What is your email address? ");
+    xwrite(conn, "What is your email address? ");
 
     conn->handler = client_create_account_email;
 
@@ -1876,8 +1877,8 @@ void client_create_account_password(Client *conn, const char *argument)
     if (!argument || !*argument || strlen(argument) < 6)
     {
 
-        writeln(conn,
-                "Your password must be at least 6 symbols or more.");
+        xwriteln(conn,
+                 "Your password must be at least 6 symbols or more.");
 
         return;
 
@@ -1885,7 +1886,7 @@ void client_create_account_password(Client *conn, const char *argument)
     free_str_dup(&conn->account->password,
                  crypt(argument, conn->account->login));
 
-    write(conn, "Please re-enter your password: ");
+    xwrite(conn, "Please re-enter your password: ");
 
     conn->handler = client_confirm_account_password;
 
@@ -1899,8 +1900,8 @@ void client_create_account(Client *conn, const char *argument)
 
     case 'Y':
 
-        writelnf(conn, "Please enter a password for %s: ",
-                 conn->account->login);
+        xwritelnf(conn, "Please enter a password for %s: ",
+                  conn->account->login);
 
         conn->handler = client_create_account_password;
 
@@ -1910,7 +1911,7 @@ void client_create_account(Client *conn, const char *argument)
 
     case 'N':
 
-        write(conn, "Ok, what is your account login then? ");
+        xwrite(conn, "Ok, what is your account login then? ");
 
         conn->handler = client_get_account_name;
 
@@ -1918,7 +1919,7 @@ void client_create_account(Client *conn, const char *argument)
 
     default:
 
-        write(conn, "Please enter 'Y' or  'N': ");
+        xwrite(conn, "Please enter 'Y' or  'N': ");
 
         break;
 
@@ -1938,15 +1939,15 @@ void client_get_account_password(Client *conn, const char *argument)
 
             send_telopt(conn, WONT, TELOPT_ECHO);
 
-            write(conn,
-                  "Too many password attempts.  Disconnecting.");
+            xwrite(conn,
+                   "Too many password attempts.  Disconnecting.");
 
             conn->handler = 0;
 
             return;
 
         }
-        write(conn, "Incorrect password, try again: ");
+        xwrite(conn, "Incorrect password, try again: ");
 
         conn->password_retries++;
 
@@ -1984,8 +1985,8 @@ void client_get_account_password(Client *conn, const char *argument)
         if (conn->account->playing == 0)
         {
 
-            writeln(conn,
-                    "There was a problem loading your character.");
+            xwriteln(conn,
+                     "There was a problem loading your character.");
 
         }
         else
@@ -1994,8 +1995,8 @@ void client_get_account_password(Client *conn, const char *argument)
             act(TO_ROOM, conn->account->playing, 0, 0,
                 "~?The nebula orion flashes and $n materializes from the fourth dimension...~x");
 
-            writeln(conn,
-                    "~?You materialize from the fourth dimension...~x");
+            xwriteln(conn,
+                     "~?You materialize from the fourth dimension...~x");
 
             set_playing(conn);
 
@@ -2014,7 +2015,7 @@ void client_get_account_name(Client *conn, const char *argument)
     if (!argument || !*argument)
     {
 
-        write(conn, "Please enter your account login: ");
+        xwrite(conn, "Please enter your account login: ");
 
         return;
 
@@ -2026,10 +2027,10 @@ void client_get_account_name(Client *conn, const char *argument)
 
         conn->account->login = str_dup(argument);
 
-        writeln(conn, "Hmmm, we have no record of that account.");
+        xwriteln(conn, "Hmmm, we have no record of that account.");
 
-        writef(conn, "Would you like to create one for %s? (Y/N) ",
-               argument);
+        xwritef(conn, "Would you like to create one for %s? (Y/N) ",
+                argument);
 
         conn->handler = client_create_account;
 
@@ -2037,7 +2038,7 @@ void client_get_account_name(Client *conn, const char *argument)
     else
     {
 
-        write(conn, "Please enter your password: ");
+        xwrite(conn, "Please enter your password: ");
 
         conn->handler = client_get_account_password;
 

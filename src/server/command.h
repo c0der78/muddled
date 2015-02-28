@@ -20,8 +20,8 @@
 #ifndef MUDDLED_COMMAND_H
 #define MUDDLED_COMMAND_H
 
-#include "../character.h"
-#include "../lookup.h"
+#include "character.h"
+#include "lookup.h"
 
 typedef struct Command Command;
 

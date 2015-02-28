@@ -25,13 +25,13 @@ typedef struct OLC OLC;
 typedef struct Editor Editor;
 
 #include "client.h"
-#include "../character.h"
-#include "../room.h"
-#include "../help.h"
-#include "../object.h"
-#include "../area.h"
-#include "../skill.h"
-#include "../social.h"
+#include "character.h"
+#include "room.h"
+#include "help.h"
+#include "object.h"
+#include "area.h"
+#include "skill.h"
+#include "social.h"
 
 void room_editor(Client *, const char *);
 void exit_editor(Client *, const char *);

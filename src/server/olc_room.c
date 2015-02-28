@@ -23,13 +23,14 @@
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include "../room.h"
-#include "../str.h"
-#include "../engine.h"
-#include "../exit.h"
-#include "../macro.h"
-#include "../lookup.h"
-#include "../account.h"
+#include "room.h"
+#include "str.h"
+#include "engine.h"
+#include "exit.h"
+#include "macro.h"
+#include "lookup.h"
+#include "account.h"
+#include "private.h"
 
 Editor *build_room_editor(Room *room)
 {
@@ -54,18 +55,18 @@ void room_editor_menu(Client *conn)
 
     conn->titlef(conn, "Room Editor - Room %d", room->id);
 
-    writelnf(conn, "~C   Id: ~W%d", room->id);
-    writelnf(conn, "~YA) ~CName: ~W%s~x", room->name);
+    xwritelnf(conn, "~C   Id: ~W%d", room->id);
+    xwritelnf(conn, "~YA) ~CName: ~W%s~x", room->name);
 
     int count = 0;
 
     string_editor_preview(conn, "~YB) ~CDescription", room->description);
 
-    writelnf(conn, "~YC) ~CSector: ~W%s~x",
-             sector_table[room->sector].name);
+    xwritelnf(conn, "~YC) ~CSector: ~W%s~x",
+              sector_table[room->sector].name);
 
-    writelnf(conn, "~YD) ~CFlags: ~W%s~x",
-             format_flags(room->flags, room_flags));
+    xwritelnf(conn, "~YD) ~CFlags: ~W%s~x",
+              format_flags(room->flags, room_flags));
 
     for (int i = 0; i < MAX_DIR; i++)
     {
@@ -75,7 +76,7 @@ void room_editor_menu(Client *conn)
         count++;
     }
 
-    writelnf(conn, "~RE) ~CExits: ~W%d exits.~x", count);
+    xwritelnf(conn, "~RE) ~CExits: ~W%d exits.~x", count);
 
     string_editor_preview(conn, "~YF) ~CReset", room->reset);
 }
@@ -85,12 +86,12 @@ void room_edit_list(Client *conn, Area *area)
     int count = 0;
     for (Room *room = area->rooms; room != 0; room = room->next_in_area)
     {
-        writelnf(conn, "%2d) %-12.12s ", room->id, room->name);
+        xwritelnf(conn, "%2d) %-12.12s ", room->id, room->name);
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
     }
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 }
 
 void room_editor(Client *conn, const char *argument)
@@ -120,21 +121,21 @@ void room_editor(Client *conn, const char *argument)
     {
         if (!argument || !*argument)
         {
-            writeln(conn, "~CDig an exit in which direction?~x");
+            xwriteln(conn, "~CDig an exit in which direction?~x");
             return;
         }
         long dir = value_lookup(direction_table, argument);
 
         if (dir == -1)
         {
-            writelnf(conn, "~C'%s' is not a valid direction.~x",
-                     argument);
+            xwritelnf(conn, "~C'%s' is not a valid direction.~x",
+                      argument);
             return;
         }
         if (room->exits[dir] != 0)
         {
-            writeln(conn,
-                    "~CThere is already an exit in that direction.~x");
+            xwriteln(conn,
+                     "~CThere is already an exit in that direction.~x");
             return;
         }
         room->exits[dir] = new_exit();
@@ -152,14 +153,14 @@ void room_editor(Client *conn, const char *argument)
     {
         save_room(room);
 
-        writeln(conn, "~CRoom saved.~x");
+        xwriteln(conn, "~CRoom saved.~x");
         return;
     }
     if (!str_cmp(arg, "A") || !str_cmp(arg, "name"))
     {
         if (!argument || !*argument)
         {
-            writeln(conn, "~CYou must provide a name to set.~x");
+            xwriteln(conn, "~CYou must provide a name to set.~x");
             return;
         }
         free_str_dup(&room->name, argument);
@@ -182,8 +183,8 @@ void room_editor(Client *conn, const char *argument)
 
         if (sec == -1)
         {
-            writelnf(conn, "~CValid sectors are: ~W%s~x",
-                     lookup_names(sector_table));
+            xwritelnf(conn, "~CValid sectors are: ~W%s~x",
+                      lookup_names(sector_table));
             return;
         }
         room->sector = (sector_t) sec;

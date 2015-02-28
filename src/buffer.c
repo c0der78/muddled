@@ -26,6 +26,7 @@
 #include "engine.h"
 #include "log.h"
 #include "buffer.h"
+#include "private.h"
 
 #define MAX_BUF     16384
 #define MAX_BUF_LIST    10

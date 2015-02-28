@@ -21,10 +21,10 @@
 #include "config.h"
 #endif
 #include "telnet.h"
-#include "../connection.h"
-#include "../str.h"
-#include "../log.h"
-#include "../macro.h"
+#include "connection.h"
+#include "str.h"
+#include "log.h"
+#include "macro.h"
 
 ssize_t send_telopt(const Client *conn, unsigned char cmd, unsigned char opt)
 {
@@ -68,21 +68,21 @@ void set_cursor(Client *conn, int r, int c)
 {
 
     if (!conn->websocket)
-        writef(conn, "\0337\033[%d;%dH", r, c);
+        xwritef(conn, "\0337\033[%d;%dH", r, c);
 
 }
 
 void restore_cursor(Client *conn)
 {
     if (!conn->websocket)
-        write(conn, "\0338");
+        xwrite(conn, "\0338");
 
 }
 
 void clear_screen(Client *conn)
 {
     if (!conn->websocket)
-        write(conn, "\033[2J");
+        xwrite(conn, "\033[2J");
 
 }
 

@@ -20,18 +20,19 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdio.h>
+#include <inttypes.h>
+#include <ctype.h>
 #include "social.h"
 #include "macro.h"
 #include "db.h"
-#include <stdio.h>
-#include <inttypes.h>
 #include "log.h"
 #include "engine.h"
 #include "character.h"
 #include "flag.h"
 #include "lookup.h"
 #include "util.h"
-#include <ctype.h>
+#include "private.h"
 
 Social *first_social = 0;
 
@@ -124,8 +125,8 @@ int interpret_social(Character *ch, const char *command, const char *argument)
     if (ch->position > soc->minPosition)
     {
 
-        writelnf(ch, "You can't do that while your %s.",
-                 position_table[ch->position].name);
+        xwritelnf(ch, "You can't do that while your %s.",
+                  position_table[ch->position].name);
 
         return 1;
 
@@ -147,7 +148,7 @@ int interpret_social(Character *ch, const char *command, const char *argument)
     else if ((victim = get_char_room(ch, arg)) == NULL)
     {
 
-        writeln(ch, "They aren't here.");
+        xwriteln(ch, "They aren't here.");
 
     }
     else if (victim == ch)

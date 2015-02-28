@@ -21,8 +21,6 @@
 #ifndef MUDDLED_NONPLAYER_H
 #define MUDDLED_NONPLAYER_H
 
-typedef struct npc NPC;
-
 #include "character.h"
 #include "area.h"
 

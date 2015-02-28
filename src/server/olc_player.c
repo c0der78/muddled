@@ -23,17 +23,17 @@
 #include "client.h"
 #include "olc.h"
 #include "telnet.h"
-#include "../character.h"
-#include "../player.h"
-#include "../str.h"
-#include "../lookup.h"
-#include "../room.h"
-#include "../area.h"
+#include "character.h"
+#include "player.h"
+#include "str.h"
+#include "lookup.h"
+#include "room.h"
+#include "area.h"
 #include <stdlib.h>
-#include "../engine.h"
-#include "../flag.h"
-#include "../macro.h"
-#include "../util.h"
+#include "engine.h"
+#include "flag.h"
+#include "macro.h"
+#include "util.h"
 
 Editor *build_player_editor(Character *player)
 {
@@ -63,23 +63,23 @@ void player_editor_menu(Client *conn)
 
     character_editor_menu(conn, player);
 
-    writelnf(conn, "~YG) ~CTitle: ~W%s~x", player->pc->title);
+    xwritelnf(conn, "~YG) ~CTitle: ~W%s~x", player->pc->title);
 
-    writelnf(conn, "~YH) ~CFlags: ~W%s~x",
-             format_flags(player->flags, plr_flags));
+    xwritelnf(conn, "~YH) ~CFlags: ~W%s~x",
+              format_flags(player->flags, plr_flags));
 
-    writelnf(conn, "~YI) ~CPrompt: ~W%s~x", player->pc->prompt);
+    xwritelnf(conn, "~YI) ~CPrompt: ~W%s~x", player->pc->prompt);
 
-    writelnf(conn, "~YJ) ~CAlignment: ~W%d~x", player->alignment);
+    xwritelnf(conn, "~YJ) ~CAlignment: ~W%d~x", player->alignment);
 
-    writelnf(conn,
-             "~YK) ~CStats: ~WStr[%d] Int[%d] Wis[%d] Dex[%d] Con[%d] Luck[%d]~x",
-             getCurrStat(player, STAT_STR),
-             getCurrStat(player,
-                         STAT_INT),
-             getCurrStat(player, STAT_WIS), getCurrStat(player,
-                     STAT_DEX),
-             getCurrStat(player, STAT_CON), getCurrStat(player, STAT_LUCK));
+    xwritelnf(conn,
+              "~YK) ~CStats: ~WStr[%d] Int[%d] Wis[%d] Dex[%d] Con[%d] Luck[%d]~x",
+              getCurrStat(player, STAT_STR),
+              getCurrStat(player,
+                          STAT_INT),
+              getCurrStat(player, STAT_WIS), getCurrStat(player,
+                      STAT_DEX),
+              getCurrStat(player, STAT_CON), getCurrStat(player, STAT_LUCK));
 
 }
 
@@ -91,15 +91,15 @@ void player_edit_list(Client *conn)
     for (Character *vch = first_player; vch != 0; vch = vch->next_player)
     {
 
-        writelnf(conn, "%2d) %-12.12s ", vch->id, vch->name);
+        xwritelnf(conn, "%2d) %-12.12s ", vch->id, vch->name);
 
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
 
     }
 
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 
 }
 
@@ -144,7 +144,7 @@ void player_editor(Client *conn, const char *argument)
 
         save_player(player);
 
-        writeln(conn, "~CPlayer saved.~x");
+        xwriteln(conn, "~CPlayer saved.~x");
 
         return;
 
@@ -158,7 +158,7 @@ void player_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CYou must provide a title.~x");
+            xwriteln(conn, "~CYou must provide a title.~x");
 
             return;
 
@@ -198,8 +198,8 @@ void player_editor(Client *conn, const char *argument)
         if (a < -MAX_ALIGN || a > MAX_ALIGN)
         {
 
-            writelnf(conn, "~CValue must be between %d and %d.~x",
-                     -MAX_ALIGN, MAX_ALIGN);
+            xwritelnf(conn, "~CValue must be between %d and %d.~x",
+                      -MAX_ALIGN, MAX_ALIGN);
 
             return;
 
@@ -223,8 +223,8 @@ void player_editor(Client *conn, const char *argument)
         if (v == -1)
         {
 
-            writelnf(conn, "~CValid stats are: %s~x",
-                     lookup_names(stat_table));
+            xwritelnf(conn, "~CValid stats are: %s~x",
+                      lookup_names(stat_table));
 
             return;
 
@@ -234,8 +234,8 @@ void player_editor(Client *conn, const char *argument)
         if (a > getMaxTrain(player))
         {
 
-            writelnf(conn, "Stat cannot be higher than %d for %s.",
-                     getMaxTrain(player), player->name);
+            xwritelnf(conn, "Stat cannot be higher than %d for %s.",
+                      getMaxTrain(player), player->name);
 
             return;
 

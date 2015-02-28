@@ -21,8 +21,6 @@
 #ifndef MUDDLED_PLAYER_H
 #define MUDDLED_PLAYER_H
 
-typedef struct player Player;
-
 #include "account.h"
 #include "character.h"
 #include "connection.h"

@@ -31,6 +31,7 @@
 #include "fight.h"
 #include "class.h"
 #include "channel.h"
+#include "private.h"
 
 const Lookup dam_types[] =
 {
@@ -450,9 +451,9 @@ void advance_level(Character *ch, bool hide)
     if (!hide)
     {
 
-        writelnf(ch,
-                 "You gain %d hit point%s, %d mana, %d move.",
-                 add_hp, add_hp == 1 ? "" : "s", add_mana, add_move);
+        xwritelnf(ch,
+                  "You gain %d hit point%s, %d mana, %d move.",
+                  add_hp, add_hp == 1 ? "" : "s", add_mana, add_move);
 
     }
     return;
@@ -474,7 +475,7 @@ void gain_exp(Character *ch, long gain)
     while (ch->level < MAX_PLAYABLE_LEVEL && ch->pc->experience >= tolvl)
     {
 
-        writeln(ch, "You raise a level!!  ");
+        xwriteln(ch, "You raise a level!!  ");
 
         ch->level += 1;
 
@@ -518,7 +519,7 @@ bool damage(Character *ch, Character *victim, long dam, int dt, dam_t type)
 
         long xp = xp_compute(ch, victim, ch->level);
 
-        writelnf(ch, "~GYou gain %d experience!~x", xp);
+        xwritelnf(ch, "~GYou gain %d experience!~x", xp);
 
         gain_exp(ch, xp);
 

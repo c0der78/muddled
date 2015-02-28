@@ -33,6 +33,7 @@
 #include "lookup.h"
 #include "macro.h"
 #include "race.h"
+#include "private.h"
 
 const Lookup npc_flags[] =
 {

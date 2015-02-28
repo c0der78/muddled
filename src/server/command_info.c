@@ -20,36 +20,37 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "command.h"
 #include <string.h>
 #include <ctype.h>
-#include "../engine.h"
-#include "../str.h"
-#include "../character.h"
-#include "../area.h"
-#include "../player.h"
-#include "../log.h"
-#include "../flag.h"
-#include "../room.h"
-#include "../area.h"
-#include "../explored.h"
-#include "../account.h"
-#include "../class.h"
-#include "../connection.h"
-#include "../race.h"
-#include "../nonplayer.h"
-#include "../object.h"
-#include "../util.h"
-#include "../help.h"
-#include "../map.h"
-#include "server.h"
-#include "../grid.h"
-#include "../buffer.h"
-#include "../affect.h"
-#include "../skill.h"
+#include "engine.h"
+#include "str.h"
+#include "character.h"
+#include "area.h"
+#include "player.h"
+#include "log.h"
+#include "flag.h"
+#include "room.h"
+#include "area.h"
+#include "explored.h"
+#include "account.h"
+#include "class.h"
+#include "connection.h"
+#include "race.h"
+#include "nonplayer.h"
+#include "object.h"
+#include "util.h"
+#include "help.h"
+#include "map.h"
+#include "grid.h"
+#include "buffer.h"
+#include "affect.h"
+#include "skill.h"
+#include "lookup.h"
+#include "social.h"
+#include "private.h"
 #include "update.h"
-#include "../lookup.h"
-#include "../social.h"
+#include "server.h"
+#include "command.h"
 
 int compare_commands(const void *a, const void *b)
 {
@@ -63,11 +64,11 @@ DOFUN(commands)
 {
     if (!str_prefix(argument, "help"))
     {
-        writelnf(ch, "%s all 		- list all commands", do_name);
+        xwritelnf(ch, "%s all 		- list all commands", do_name);
 
         for (const Lookup *t = command_types; t->name != 0; t++)
-            writelnf(ch, "%s %-13s	- list all %s commands",
-                     do_name, t->name, t->name);
+            xwritelnf(ch, "%s %-13s	- list all %s commands",
+                      do_name, t->name, t->name);
 
         return;
 
@@ -98,21 +99,21 @@ DOFUN(commands)
                 && !(cmdlist[i].category & command_types[type].value))
             continue;
 
-        writef(ch, "%-*s ", len, cmdlist[i].name);
+        xwritef(ch, "%-*s ", len, cmdlist[i].name);
 
         if (++count % 5 == 0)
         {
 
-            writeln(ch, str_empty);
+            xwriteln(ch, str_empty);
 
         }
     }
 
     if (count % 5 != 0)
-        writeln(ch, str_empty);
+        xwriteln(ch, str_empty);
 
     if (type == -1)
-        writelnf(ch, "See '%s help' for more options.", do_name);
+        xwritelnf(ch, "See '%s help' for more options.", do_name);
 
 }
 
@@ -148,7 +149,7 @@ void show_char_to_char_1(Character *victim, Character *ch)
     if (!nullstr(victim->description))
     {
 
-        writeln(ch, victim->description);
+        xwriteln(ch, victim->description);
 
     }
     else
@@ -193,7 +194,7 @@ void show_char_to_char_1(Character *victim, Character *ch)
 
     buf[0] = UPPER(buf[0]);
 
-    writeln(ch, buf);
+    xwriteln(ch, buf);
 
     found = false;
 
@@ -209,18 +210,18 @@ void show_char_to_char_1(Character *victim, Character *ch)
             if (!found)
             {
 
-                writeln(ch, "");
+                xwriteln(ch, "");
 
                 act(TO_CHAR, ch, 0, victim, "$N is using:");
 
                 found = true;
 
             }
-            writef(ch, "~g<~w%s~g>~w ",
-                   align_string(ALIGN_CENTER, 22, 0, 0,
-                                wear_table[iWear].display));
+            xwritef(ch, "~g<~w%s~g>~w ",
+                    align_string(ALIGN_CENTER, 22, 0, 0,
+                                 wear_table[iWear].display));
 
-            writeln(ch, format_obj_to_char(obj, ch, true));
+            xwriteln(ch, format_obj_to_char(obj, ch, true));
 
         }
     }
@@ -228,9 +229,9 @@ void show_char_to_char_1(Character *victim, Character *ch)
     if (victim != ch && is_immortal(ch))
     {
 
-        writeln(ch, "");
+        xwriteln(ch, "");
 
-        writeln(ch, "You peek at the inventory:");
+        xwriteln(ch, "You peek at the inventory:");
 
         show_list_to_char(victim->carrying, ch, true, true);
 
@@ -253,20 +254,20 @@ DOFUN(look)
             return;
 
         }
-        writelnf(ch, "~G%s~x", ch->inRoom->name);
+        xwritelnf(ch, "~G%s~x", ch->inRoom->name);
 
         if (!ch->pc || !is_set(ch->pc->account->flags, PLR_BRIEF))
         {
 
             if (!ch->pc
                     || is_set(ch->pc->account->flags, PLR_AUTOMAP_OFF))
-                writelnf(ch, "~Y%s~x", ch->inRoom->description);
+                xwritelnf(ch, "~Y%s~x", ch->inRoom->description);
 
             else
                 draw_map(ch, ch->inRoom->description);
 
         }
-        write(ch, "~g[Exits: ");
+        xwrite(ch, "~g[Exits: ");
 
         char buf[100] = { 0 };
 
@@ -288,9 +289,9 @@ DOFUN(look)
         else
             strcpy(buf, "None");
 
-        writelnf(ch, "%s]", buf);
+        xwritelnf(ch, "%s]", buf);
 
-        writeln(ch, "~x");
+        xwriteln(ch, "~x");
 
         for (Character *rch = ch->inRoom->characters; rch != 0;
                 rch = rch->next_in_room)
@@ -302,13 +303,13 @@ DOFUN(look)
             if (!rch->npc)
             {
 
-                writelnf(ch, "~M%s is here.~x", rch->name);
+                xwritelnf(ch, "~M%s is here.~x", rch->name);
 
             }
             else
             {
 
-                writelnf(ch, "~M%s~x", rch->npc->longDescr);
+                xwritelnf(ch, "~M%s~x", rch->npc->longDescr);
 
             }
 
@@ -318,7 +319,7 @@ DOFUN(look)
                 obj = obj->next_content)
         {
 
-            writelnf(ch, "~Y%s~x", obj->longDescr);
+            xwritelnf(ch, "~Y%s~x", obj->longDescr);
 
         }
 
@@ -344,23 +345,23 @@ DOFUN(time)
 
     struct tm *tm = localtime(&t);
 
-    writelnf(ch, "Today is %s, %s day in the Month of the %s, year %d.",
-             weekdays[tm->tm_wday], ordinal_string(tm->tm_wday),
-             months[tm->tm_mon], tm->tm_year);
+    xwritelnf(ch, "Today is %s, %s day in the Month of the %s, year %d.",
+              weekdays[tm->tm_wday], ordinal_string(tm->tm_wday),
+              months[tm->tm_mon], tm->tm_year);
 
-    writelnf(ch, "It is the season of %s.", seasons[tm->tm_mon / 3]);
+    xwritelnf(ch, "It is the season of %s.", seasons[tm->tm_mon / 3]);
 
-    writeln(ch, "");
+    xwriteln(ch, "");
 
     if (last_reboot != 0)
-        writelnf(ch, "Last reboot was on %s.",
-                 str_time(last_reboot, ch->pc->account->timezone, 0));
+        xwritelnf(ch, "Last reboot was on %s.",
+                  str_time(last_reboot, ch->pc->account->timezone, 0));
 
     if (startup_time != 0)
     {
 
-        writelnf(ch, "Startup time was %s.",
-                 str_time(startup_time, ch->pc->account->timezone, 0));
+        xwritelnf(ch, "Startup time was %s.",
+                  str_time(startup_time, ch->pc->account->timezone, 0));
 
     }
 }
@@ -378,9 +379,9 @@ DOFUN(who)
     for (Character *wch = first_player; wch != 0; wch = wch->next_player)
     {
 
-        writelnf(buffer, "~W[~Y%02d ~R%3.3s ~B%3.3s~W] %s %s",
-                 wch->level, capitalize(wch->race->name),
-                 class_who(wch), wch->name, wch->pc->title);
+        xwritelnf(buffer, "~W[~Y%02d ~R%3.3s ~B%3.3s~W] %s %s",
+                  wch->level, capitalize(wch->race->name),
+                  class_who(wch), wch->name, wch->pc->title);
 
     }
 
@@ -563,12 +564,12 @@ DOFUN(explored)
 
         percent = UMIN(rcnt / (rooms / 100.0), 100.0);
 
-        writelnf(ch, "%s has ~G%d~x explorable rooms.",
-                 engine_info.name, max_explorable_room);
+        xwritelnf(ch, "%s has ~G%d~x explorable rooms.",
+                  engine_info.name, max_explorable_room);
 
-        writelnf(ch,
-                 "You have explored ~G%d~x rooms (%.2f%%)~x of the world.",
-                 rcnt, percent);
+        xwritelnf(ch,
+                  "You have explored ~G%d~x rooms (%.2f%%)~x of the world.",
+                  rcnt, percent);
 
         rcnt = areacount(ch->pc->explored, ch->inRoom->area);
 
@@ -576,16 +577,16 @@ DOFUN(explored)
 
         percent = UMIN(rcnt / (rooms / 100.0), 100.0);
 
-        writelnf(ch, "\n\r%s has ~G%.0f~x explorable rooms.",
-                 ch->inRoom->area->name, rooms);
+        xwritelnf(ch, "\n\r%s has ~G%.0f~x explorable rooms.",
+                  ch->inRoom->area->name, rooms);
 
-        writelnf(ch,
-                 "You have explored ~G%d (%.2f%%)~x rooms in this area.",
-                 rcnt, percent);
+        xwritelnf(ch,
+                  "You have explored ~G%d (%.2f%%)~x rooms in this area.",
+                  rcnt, percent);
 
-        writelnf(ch,
-                 "\n\rSee '%s list' to view all area percentages.~x",
-                 do_name);
+        xwritelnf(ch,
+                  "\n\rSee '%s list' to view all area percentages.~x",
+                  do_name);
 
     }
     else if (is_exact_name(argument, "reset"))
@@ -595,7 +596,7 @@ DOFUN(explored)
 
         ch->pc->explored = new_flag();
 
-        writeln(ch, "Your explored rooms were set to 0.");
+        xwriteln(ch, "Your explored rooms were set to 0.");
 
     }
     else if (!str_prefix(argument, "list"))
@@ -640,8 +641,8 @@ DOFUN(explored)
 
             percent = list[c].percent;
 
-            writelnf(output, "~D[~Y%3.0f~y%%~D]~x %s", percent,
-                     pArea->name);
+            xwritelnf(output, "~D[~Y%3.0f~y%%~D]~x %s", percent,
+                      pArea->name);
 
         }
 
@@ -666,7 +667,7 @@ DOFUN(explored)
 DOFUN(inventory)
 {
 
-    writeln(ch, "You are carrying:");
+    xwriteln(ch, "You are carrying:");
 
     show_list_to_char(ch->carrying, ch, true, true);
 
@@ -686,9 +687,9 @@ DOFUN(equipment)
         }
         Object *obj = get_eq_char(ch, wear_table[i].loc);
 
-        writef(ch, "~g<~w%s~g>~w ",
-               align_string(ALIGN_CENTER, 22, 0, 0,
-                            wear_table[i].display));
+        xwritef(ch, "~g<~w%s~g>~w ",
+                align_string(ALIGN_CENTER, 22, 0, 0,
+                             wear_table[i].display));
 
         if (obj)
         {
@@ -699,7 +700,7 @@ DOFUN(equipment)
         else
         {
 
-            writeln(ch, "Nothing");
+            xwriteln(ch, "Nothing");
 
         }
 
@@ -727,7 +728,7 @@ DOFUN(affects)
     if (ch->affects)
     {
 
-        writeln(buffer, "You are affected by the following spells:");
+        xwriteln(buffer, "You are affected by the following spells:");
 
         paf_last = NULL;
 
@@ -738,8 +739,8 @@ DOFUN(affects)
             {
 
                 if (ch->level >= 20)
-                    write(buffer,
-                          "                          ");
+                    xwrite(buffer,
+                           "                          ");
 
                 else
                     continue;
@@ -748,30 +749,30 @@ DOFUN(affects)
             else
             {
 
-                writef(buffer, "Spell: ~c%-19s~x",
-                       valid_skill(paf->from)
-                       ? skill_table[paf->from].
-                       name : "unknown");
+                xwritef(buffer, "Spell: ~c%-19s~x",
+                        valid_skill(paf->from)
+                        ? skill_table[paf->from].
+                        name : "unknown");
 
             }
 
             if (ch->level >= 20)
             {
 
-                writef(buffer, ": modifies %s by %d ",
-                       affect_name(paf), paf->modifier);
+                xwritef(buffer, ": modifies %s by %d ",
+                        affect_name(paf), paf->modifier);
 
                 if (paf->duration == -1)
-                    write(buffer, "permanently~x");
+                    xwrite(buffer, "permanently~x");
 
                 else
-                    writef(buffer, "for %d minutes~x",
-                           (paf->duration *
-                            (PULSE_TICK /
-                             PULSE_PER_SECOND)) / 60);
+                    xwritef(buffer, "for %d minutes~x",
+                            (paf->duration *
+                             (PULSE_TICK /
+                              PULSE_PER_SECOND)) / 60);
 
             }
-            writeln(buffer, "");
+            xwriteln(buffer, "");
 
             paf_last = paf;
 
@@ -779,7 +780,7 @@ DOFUN(affects)
 
         found = true;
 
-        writeln(buffer, "");
+        xwriteln(buffer, "");
 
     }
     /*
@@ -828,7 +829,7 @@ DOFUN(affects)
     if (!found)
     {
 
-        writeln(buffer, "You are not affected by any spells.");
+        xwriteln(buffer, "You are not affected by any spells.");
 
     }
     ch->page(ch, buf_string(buffer));
@@ -842,15 +843,15 @@ DOFUN(resists)
 
     Buffer *buf = new_buf();
 
-    writelnf(buf, "~c%-12s %s", "Type", "Value");
+    xwritelnf(buf, "~c%-12s %s", "Type", "Value");
 
-    writelnf(buf, "~c%s~x", fillstr("-", 19));
+    xwritelnf(buf, "~c%s~x", fillstr("-", 19));
 
     for (int i = 0; i < MAX_DAM; i++)
     {
 
-        writelnf(buf, "~C%-12s  ~W%3d~x", capitalize(dam_types[i].name),
-                 ch->resists[dam_types[i].value]);
+        xwritelnf(buf, "~C%-12s  ~W%3d~x", capitalize(dam_types[i].name),
+                  ch->resists[dam_types[i].value]);
 
     }
 
@@ -866,7 +867,7 @@ DOFUN(socials)
     if (first_social == 0)
     {
 
-        writeln(ch, "No socials found.");
+        xwriteln(ch, "No socials found.");
 
         return;
 
@@ -906,7 +907,7 @@ DOFUN(help)
     if (first_help == 0)
     {
 
-        writeln(ch, "No help found.");
+        xwriteln(ch, "No help found.");
 
         return;
 
@@ -916,17 +917,17 @@ DOFUN(help)
     if (help == 0)
     {
 
-        writelnf(ch, "No help found for '%s'.", argument);
+        xwritelnf(ch, "No help found for '%s'.", argument);
 
         return;
 
     }
     if (!nullstr(help->syntax))
-        writeln(ch, help->syntax);
+        xwriteln(ch, help->syntax);
 
-    writeln(ch, help->text);
+    xwriteln(ch, help->text);
 
     if (help->related)
-        writelnf(ch, "\n\rRelated: %s", help_related_string(help));
+        xwritelnf(ch, "\n\rRelated: %s", help_related_string(help));
 
 }

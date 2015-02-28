@@ -22,9 +22,10 @@
 #endif
 #include <stdio.h>
 #include <time.h>
+#include <inttypes.h>
+#include "engine.h"
 #include "character.h"
 #include "player.h"
-#include "engine.h"
 #include "forum.h"
 #include "str.h"
 #include "log.h"
@@ -33,7 +34,7 @@
 #include "account.h"
 #include "connection.h"
 #include "db.h"
-#include <inttypes.h>
+#include "private.h"
 
 Forum *forum_table = 0;
 
@@ -175,21 +176,21 @@ void show_note_to_char(Character *ch, Note *note, int num)
 
     Buffer *buffer = new_buf();
 
-    writeln(buffer, "");
+    xwriteln(buffer, "");
 
-    writelnf(buffer, "~YForum~x: %s", ch->pc->account->forum->name);
+    xwritelnf(buffer, "~YForum~x: %s", ch->pc->account->forum->name);
 
-    writelnf(buffer, "[~x%4d~x] ~Y%s~x: ~g%s~x", num, note->from,
-             note->subject);
+    xwritelnf(buffer, "[~x%4d~x] ~Y%s~x: ~g%s~x", num, note->from,
+              note->subject);
 
-    writelnf(buffer, "~YDate~x:  %s",
-             str_time(note->date, ch->pc->account->timezone, 0));
+    xwritelnf(buffer, "~YDate~x:  %s",
+              str_time(note->date, ch->pc->account->timezone, 0));
 
-    writelnf(buffer, "~YTo~x:    %s", note->toList);
+    xwritelnf(buffer, "~YTo~x:    %s", note->toList);
 
-    writelnf(buffer, "~g%s~x", fillstr(0, scrwidth(ch)));
+    xwritelnf(buffer, "~g%s~x", fillstr(0, scrwidth(ch)));
 
-    writelnf(buffer, "%s", note->text);
+    xwritelnf(buffer, "%s", note->text);
 
     ch->page(ch, buf_string(buffer));
 
@@ -286,7 +287,7 @@ void next_forum(Character *ch)
     if (i == max_forum)
     {
 
-        write(ch, "End of forums. ");
+        xwrite(ch, "End of forums. ");
 
         i = 0;
 
@@ -313,10 +314,10 @@ void note_check(Character *ch)
     }
 
     if (count < 1)
-        writeln(ch, "You have no new notes on the forum.");
+        xwriteln(ch, "You have no new notes on the forum.");
 
     else
-        writelnf(ch, "You have %d unread note(s) on the forum.", count);
+        xwritelnf(ch, "You have %d unread note(s) on the forum.", count);
 
 }
 
@@ -333,9 +334,9 @@ void show_forum(Character *ch, bool fAll)
 
     count = 0;
 
-    writeln(ch, "~RNum         Name  Unread Last Description~x");
+    xwriteln(ch, "~RNum         Name  Unread Last Description~x");
 
-    writeln(ch, "~R=== ============= ====== ==== ===========~x");
+    xwriteln(ch, "~R=== ============= ====== ==== ===========~x");
 
     for (i = 0; i < max_forum; i++)
     {
@@ -363,43 +364,43 @@ void show_forum(Character *ch, bool fAll)
 
         found = true;
 
-        writelnf(ch, "~W%2d~x> ~G%13s~x [~%c%4d~x] ~G%4d ~Y%s~x",
-                 count, forum_table[i].name,
-                 unread == 0 ? 'r' : 'R',
-                 unread, last, forum_table[i].description);
+        xwritelnf(ch, "~W%2d~x> ~G%13s~x [~%c%4d~x] ~G%4d ~Y%s~x",
+                  count, forum_table[i].name,
+                  unread == 0 ? 'r' : 'R',
+                  unread, last, forum_table[i].description);
 
     }
 
     if (!found)
     {
 
-        writeln(ch, "You have no unread notes on any subscribed forum");
+        xwriteln(ch, "You have no unread notes on any subscribed forum");
 
     }
-    writeln(ch, "");
+    xwriteln(ch, "");
 
-    writef(ch, "Your current forum is ~W%s~x",
-           ch->pc->account->forum->name);
+    xwritef(ch, "Your current forum is ~W%s~x",
+            ch->pc->account->forum->name);
 
     if ((p = last_note(ch, ch->pc->account->forum)) != NULL)
-        writelnf(ch, ". Last message was from ~W%s~x.", p->from);
+        xwritelnf(ch, ". Last message was from ~W%s~x.", p->from);
 
     else
-        writeln(ch, ".");
+        xwriteln(ch, ".");
 
     if (ch->pc->account->forum->readLevel > ch->level)
-        writeln(ch, "You cannot read nor write notes on this forum.");
+        xwriteln(ch, "You cannot read nor write notes on this forum.");
 
     else if (ch->pc->account->forum->writeLevel > ch->level)
-        writeln(ch, "You can only read notes from this forum.");
+        xwriteln(ch, "You can only read notes from this forum.");
 
     else
-        writeln(ch, "You can both read and write on this forum.");
+        xwriteln(ch, "You can both read and write on this forum.");
 
-    writeln(ch, "Use 'forum all' to see all subscribed forums.");
+    xwriteln(ch, "Use 'forum all' to see all subscribed forums.");
 
-    writeln(ch,
-            "Use 'subscribe' to see what forums you are subscribed to.");
+    xwriteln(ch,
+             "Use 'subscribe' to see what forums you are subscribed to.");
 
 }
 

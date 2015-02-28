@@ -23,7 +23,7 @@
 #include <check.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../src/hashmap.h"
+#include "hashmap.h"
 
 static int check = 6;
 

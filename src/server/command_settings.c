@@ -20,18 +20,19 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include "character.h"
+#include "player.h"
+#include "room.h"
+#include "engine.h"
+#include "log.h"
+#include "account.h"
+#include "connection.h"
+#include "util.h"
+#include "str.h"
+#include "buffer.h"
+#include "private.h"
 #include "client.h"
 #include "command.h"
-#include "../character.h"
-#include "../player.h"
-#include "../room.h"
-#include "../engine.h"
-#include "../log.h"
-#include "../account.h"
-#include "../connection.h"
-#include "../util.h"
-#include "../str.h"
-#include "../buffer.h"
 
 DOFUN(color)
 {
@@ -44,7 +45,7 @@ DOFUN(color)
 
         set_bit(ch->pc->account->flags, ACC_COLOR_OFF);
 
-        writeln(ch, "Color off. *sigh*");
+        xwriteln(ch, "Color off. *sigh*");
 
     }
     else
@@ -52,7 +53,7 @@ DOFUN(color)
 
         remove_bit(ch->pc->account->flags, ACC_COLOR_OFF);
 
-        writeln(ch, "~?C~?o~?l~?o~?r ~?O~?n~?!~x");
+        xwriteln(ch, "~?C~?o~?l~?o~?r ~?O~?n~?!~x");
 
     }
 
@@ -67,13 +68,13 @@ DOFUN(save)
     if (!save_player(ch))
     {
 
-        writeln(ch, "There was a problem saving this character.");
+        xwriteln(ch, "There was a problem saving this character.");
 
     }
     else
     {
 
-        writeln(ch, "Character saved.");
+        xwriteln(ch, "Character saved.");
 
     }
 
@@ -90,13 +91,13 @@ DOFUN(title)
     if (!argument || !*argument)
     {
 
-        writeln(ch, "Title cleared.");
+        xwriteln(ch, "Title cleared.");
 
     }
     else
     {
 
-        writeln(ch, "Title set.");
+        xwriteln(ch, "Title set.");
 
     }
 
@@ -113,7 +114,7 @@ DOFUN(autotick)
 
         remove_bit(ch->pc->account->flags, PLR_TICKS_OFF);
 
-        writeln(ch, "You will now be notified of game ticks.");
+        xwriteln(ch, "You will now be notified of game ticks.");
 
     }
     else
@@ -121,7 +122,7 @@ DOFUN(autotick)
 
         set_bit(ch->pc->account->flags, PLR_TICKS_OFF);
 
-        writeln(ch, "You will no longer be notified of game ticks.");
+        xwriteln(ch, "You will no longer be notified of game ticks.");
 
     }
 
@@ -138,7 +139,7 @@ DOFUN(brief)
 
         remove_bit(ch->pc->account->flags, PLR_BRIEF);
 
-        writeln(ch, "You now see room descriptions.");
+        xwriteln(ch, "You now see room descriptions.");
 
     }
     else
@@ -146,7 +147,7 @@ DOFUN(brief)
 
         set_bit(ch->pc->account->flags, PLR_BRIEF);
 
-        writeln(ch, "You no longer see room descriptions.");
+        xwriteln(ch, "You no longer see room descriptions.");
 
     }
 
@@ -165,24 +166,24 @@ DOFUN(timezone)
 
         const char *line = fillstr("~w-~W-", scrwidth(ch));
 
-        writelnf(buf, "%-6s %-30s (%s)", "Name", "City/Zone Crosses",
-                 "Time");
+        xwritelnf(buf, "%-6s %-30s (%s)", "Name", "City/Zone Crosses",
+                  "Time");
 
         time_t current_time = time(0);
 
-        writelnf(buf, "%s~x", line);
+        xwritelnf(buf, "%s~x", line);
 
         for (int i = 0; timezones[i].name != 0; i++)
         {
 
-            writelnf(buf, "%-6s %-30s (%s)", timezones[i].name,
-                     timezones[i].zone, str_time(current_time, i,
-                                                 NULL));
+            xwritelnf(buf, "%-6s %-30s (%s)", timezones[i].name,
+                      timezones[i].zone, str_time(current_time, i,
+                                                  NULL));
 
         }
-        writelnf(buf, "%s~x", line);
+        xwritelnf(buf, "%s~x", line);
 
-        writelnf(buf, "Use '%s <name>' to set your timezone.", do_name);
+        xwritelnf(buf, "Use '%s <name>' to set your timezone.", do_name);
 
         ch->page(ch, buf_string(buf));
 
@@ -196,17 +197,17 @@ DOFUN(timezone)
     if (i == -1)
     {
 
-        writelnf(ch,
-                 "That time zone does not exists.  See '%s' for a list.",
-                 do_name);
+        xwritelnf(ch,
+                  "That time zone does not exists.  See '%s' for a list.",
+                  do_name);
 
         return;
 
     }
     ch->pc->account->timezone = i;
 
-    writelnf(ch, "Your time zone is now %s %s (%s)", timezones[i].name,
-             timezones[i].zone, str_time(time(0), i, NULL));
+    xwritelnf(ch, "Your time zone is now %s %s (%s)", timezones[i].name,
+              timezones[i].zone, str_time(time(0), i, NULL));
 
 }
 
@@ -221,7 +222,7 @@ DOFUN(hints)
 
         remove_bit(ch->pc->account->flags, PLR_HINTS);
 
-        writeln(ch, "You no longer see hints.");
+        xwriteln(ch, "You no longer see hints.");
 
     }
     else
@@ -229,7 +230,7 @@ DOFUN(hints)
 
         set_bit(ch->pc->account->flags, PLR_HINTS);
 
-        writeln(ch, "You now see hints.");
+        xwriteln(ch, "You now see hints.");
 
     }
 
@@ -262,7 +263,7 @@ DOFUN(automap)
 
         remove_bit(ch->pc->account->flags, PLR_AUTOMAP_OFF);
 
-        writeln(ch, "You now see a map in room descriptions.");
+        xwriteln(ch, "You now see a map in room descriptions.");
 
     }
     else
@@ -270,7 +271,7 @@ DOFUN(automap)
 
         set_bit(ch->pc->account->flags, PLR_AUTOMAP_OFF);
 
-        writeln(ch, "You no longer see maps in room descriptions.");
+        xwriteln(ch, "You no longer see maps in room descriptions.");
 
     }
 
@@ -284,6 +285,6 @@ DOFUN(prompt)
 
     free_str_dup(&ch->pc->prompt, argument);
 
-    writeln(ch, "Prompt set.");
+    xwriteln(ch, "Prompt set.");
 
 }

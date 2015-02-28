@@ -23,10 +23,10 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include "../social.h"
-#include "../str.h"
-#include "../lookup.h"
-#include "../macro.h"
+#include "social.h"
+#include "str.h"
+#include "lookup.h"
+#include "macro.h"
 
 Editor *build_social_editor(Social *social)
 {
@@ -54,32 +54,32 @@ void social_editor_menu(Client *conn)
 
     Social *social = (Social *) conn->editing->data;
 
-    writelnf(conn, "   ~CId: ~W%d", social->id);
+    xwritelnf(conn, "   ~CId: ~W%d", social->id);
 
-    writelnf(conn, "~YA) ~CName: ~W%s~x", social->name);
+    xwritelnf(conn, "~YA) ~CName: ~W%s~x", social->name);
 
-    writelnf(conn, "~YB) ~CCharNoArg: ~W%s~x", social->charNoArg);
+    xwritelnf(conn, "~YB) ~CCharNoArg: ~W%s~x", social->charNoArg);
 
-    writelnf(conn, "~YC) ~COthersNoArg: ~W%s~x", social->othersNoArg);
+    xwritelnf(conn, "~YC) ~COthersNoArg: ~W%s~x", social->othersNoArg);
 
-    writelnf(conn, "~YD) ~CCharFound: ~W%s~x", social->charFound);
+    xwritelnf(conn, "~YD) ~CCharFound: ~W%s~x", social->charFound);
 
-    writelnf(conn, "~YE) ~COthersFound: ~W%s~x", social->othersFound);
+    xwritelnf(conn, "~YE) ~COthersFound: ~W%s~x", social->othersFound);
 
-    writelnf(conn, "~YF) ~CVictFound: ~W%s~x", social->victFound);
+    xwritelnf(conn, "~YF) ~CVictFound: ~W%s~x", social->victFound);
 
-    writelnf(conn, "~YG) ~CCharNotFound: ~W%s~x", social->charNotFound);
+    xwritelnf(conn, "~YG) ~CCharNotFound: ~W%s~x", social->charNotFound);
 
-    writelnf(conn, "~YH) ~CCharAuto: ~W%s~x", social->charAuto);
+    xwritelnf(conn, "~YH) ~CCharAuto: ~W%s~x", social->charAuto);
 
-    writelnf(conn, "~YI) ~COthersAuto: ~W%s~x", social->othersAuto);
+    xwritelnf(conn, "~YI) ~COthersAuto: ~W%s~x", social->othersAuto);
 
-    writelnf(conn, "~YJ) ~CCharObjFound: ~W%s~x", social->charObjFound);
+    xwritelnf(conn, "~YJ) ~CCharObjFound: ~W%s~x", social->charObjFound);
 
-    writelnf(conn, "~YK) ~COthersObjFound: ~W%s~x", social->othersObjFound);
+    xwritelnf(conn, "~YK) ~COthersObjFound: ~W%s~x", social->othersObjFound);
 
-    writelnf(conn, "~YL) ~CMin Position: ~W%s~x",
-             position_table[social->minPosition].name);
+    xwritelnf(conn, "~YL) ~CMin Position: ~W%s~x",
+              position_table[social->minPosition].name);
 
 }
 
@@ -91,15 +91,15 @@ void social_edit_list(Client *conn)
     for (Social *social = first_social; social != 0; social = social->next)
     {
 
-        writef(conn, "%2d) %-12.12s ", social->id, social->name);
+        xwritef(conn, "%2d) %-12.12s ", social->id, social->name);
 
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
 
     }
 
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 
 }
 
@@ -141,7 +141,7 @@ void social_editor(Client *conn, const char *argument)
 
         save_social(social);
 
-        writeln(conn, "~CSocial saved.~x");
+        xwriteln(conn, "~CSocial saved.~x");
 
         return;
 
@@ -294,8 +294,8 @@ void social_editor(Client *conn, const char *argument)
         if (val == -1)
         {
 
-            writelnf(conn, "~CValid positions are: ~W%s~x",
-                     lookup_names(position_table));
+            xwritelnf(conn, "~CValid positions are: ~W%s~x",
+                      lookup_names(position_table));
 
             return;
 

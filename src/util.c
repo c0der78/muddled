@@ -26,6 +26,7 @@
 #include <inttypes.h>
 #include <stdarg.h>
 #include <string.h>
+#include <ctype.h>
 #include "character.h"
 #include "nonplayer.h"
 #include "room.h"
@@ -40,7 +41,7 @@
 #include "explored.h"
 #include "lookup.h"
 #include "affect.h"
-#include <ctype.h>
+#include "private.h"
 
 long number_mm(void)
 {
@@ -717,7 +718,7 @@ void act_pos(int type, position_t minPos, const Character *ch,
         if (to->pc)
         {
 
-            writeln(to, buf);
+            xwriteln(to, buf);
 
         }
     }

@@ -20,21 +20,22 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <ctype.h>
+#include "channel.h"
+#include "util.h"
+#include "character.h"
+#include "engine.h"
+#include "grid.h"
+#include "forum.h"
+#include "account.h"
+#include "str.h"
+#include "connection.h"
+#include "player.h"
+#include "room.h"
+#include "private.h"
+#include "olc.h"
 #include "client.h"
 #include "command.h"
-#include "../channel.h"
-#include <ctype.h>
-#include "../util.h"
-#include "../character.h"
-#include "../engine.h"
-#include "../grid.h"
-#include "../forum.h"
-#include "../account.h"
-#include "../str.h"
-#include "../connection.h"
-#include "../player.h"
-#include "../room.h"
-#include "olc.h"
 
 DOFUN(say)
 {
@@ -42,7 +43,7 @@ DOFUN(say)
     if (!argument || !*argument)
     {
 
-        writeln(ch, "Say what?");
+        xwriteln(ch, "Say what?");
 
         return;
 
@@ -72,13 +73,13 @@ DOFUN(admin)
 static void connection_note_text_prompt(Client *conn)
 {
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    writeln(conn,
-            "Enter text. Type ~W\\h~x for help or ~W\\q~x to end note.");
+    xwriteln(conn,
+             "Enter text. Type ~W\\h~x for help or ~W\\q~x to end note.");
 
-    writeln(conn,
-            "~Y=====================================================~x");
+    xwriteln(conn,
+             "~Y=====================================================~x");
 
 }
 
@@ -95,9 +96,9 @@ void connection_note_finish(Client *conn, const char *argument)
 
     case 'C':
 
-        writeln(conn, "Continuing note...");
+        xwriteln(conn, "Continuing note...");
 
-        writeln(conn, conn->account->inProgress->text);
+        xwriteln(conn, conn->account->inProgress->text);
 
         conn->handler = connection_note_text;
 
@@ -105,15 +106,15 @@ void connection_note_finish(Client *conn, const char *argument)
 
     case 'V':
 
-        writeln(conn, "Text of your note so far:");
+        xwriteln(conn, "Text of your note so far:");
 
         if (!nullstr(conn->account->inProgress->text))
-            writeln(conn, conn->account->inProgress->text);
+            xwriteln(conn, conn->account->inProgress->text);
 
         else
-            writeln(conn, "You haven't written a thing!");
+            xwriteln(conn, "You haven't written a thing!");
 
-        write(conn, szFinishPrompt);
+        xwrite(conn, szFinishPrompt);
 
         break;
 
@@ -125,7 +126,7 @@ void connection_note_finish(Client *conn, const char *argument)
 
         finish_note(conn->account->forum, conn->account->inProgress);
 
-        writeln(conn, "Note posted.");
+        xwriteln(conn, "Note posted.");
 
         act(TO_ROOM, conn->account->playing, 0, 0,
             "~G$n finishes $s note.~x");
@@ -136,7 +137,7 @@ void connection_note_finish(Client *conn, const char *argument)
 
     case 'F':
 
-        writeln(conn, "Note cancelled!");
+        xwriteln(conn, "Note cancelled!");
 
         conn->handler = client_command_parser;
 
@@ -147,9 +148,9 @@ void connection_note_finish(Client *conn, const char *argument)
 
     default:        /* invalid response */
 
-        writeln(conn, "Huh? Valid answers are:");
+        xwriteln(conn, "Huh? Valid answers are:");
 
-        write(conn, szFinishPrompt);
+        xwrite(conn, szFinishPrompt);
 
     }
 
@@ -167,9 +168,9 @@ void connection_note_text(Client *conn, const char *argument)
 
     case EDIT_END:
 
-        writeln(conn, "");
+        xwriteln(conn, "");
 
-        write(conn, szFinishPrompt);
+        xwrite(conn, szFinishPrompt);
 
         conn->handler = connection_note_finish;
 
@@ -177,7 +178,7 @@ void connection_note_text(Client *conn, const char *argument)
 
     case EDIT_CHANGED:
 
-        writeln(conn, conn->account->inProgress->text);
+        xwriteln(conn, conn->account->inProgress->text);
 
         return;
 
@@ -207,9 +208,9 @@ void connection_note_expire(Client *conn, const char *argument)
     else if (!is_number(argument))
     {
 
-        writeln(conn, "Write the number of days!");
+        xwriteln(conn, "Write the number of days!");
 
-        write(conn, "~YExpire~w:  ");
+        xwrite(conn, "~YExpire~w:  ");
 
         return;
 
@@ -222,10 +223,10 @@ void connection_note_expire(Client *conn, const char *argument)
         if (days <= 0)
         {
 
-            writeln(conn,
-                    "This is a positive MUD. Use positive numbers only! :)");
+            xwriteln(conn,
+                     "This is a positive MUD. Use positive numbers only! :)");
 
-            write(conn, "~YExpire~w:  ");
+            xwrite(conn, "~YExpire~w:  ");
 
             return;
 
@@ -255,16 +256,16 @@ void connection_note_subject(Client *conn, const char *argument)
     if (!buf[0])
     {
 
-        writeln(conn, "Please find a meaningful subject!");
+        xwriteln(conn, "Please find a meaningful subject!");
 
-        write(conn, "~YSubject~x: ");
+        xwrite(conn, "~YSubject~x: ");
 
     }
     else if (strlen(buf) > 60)
     {
 
-        writeln(conn,
-                "No, no. This is just the Subject. You're note writing the note yet. Twit.");
+        xwriteln(conn,
+                 "No, no. This is just the Subject. You're note writing the note yet. Twit.");
 
     }
     else
@@ -275,16 +276,16 @@ void connection_note_subject(Client *conn, const char *argument)
         if (is_immortal(conn->account->playing))
         {
 
-            writeln(conn, "");
+            xwriteln(conn, "");
 
-            writeln(conn,
-                    "How many days do you want this note to expire in?");
+            xwriteln(conn,
+                     "How many days do you want this note to expire in?");
 
-            writelnf(conn,
-                     "Press Enter for default value for this forum, ~W%d~x days.",
-                     conn->account->forum->purgeDays);
+            xwritelnf(conn,
+                      "Press Enter for default value for this forum, ~W%d~x days.",
+                      conn->account->forum->purgeDays);
 
-            write(conn, "~YExpire~x:  ");
+            xwrite(conn, "~YExpire~x:  ");
 
             conn->handler = connection_note_expire;
 
@@ -296,9 +297,9 @@ void connection_note_subject(Client *conn, const char *argument)
                 current_time +
                 (conn->account->forum->purgeDays * 24 * 60 * 60);
 
-            writelnf(conn, "This note will expire %s",
-                     str_time(conn->account->inProgress->expire,
-                              conn->account->timezone, 0));
+            xwritelnf(conn, "This note will expire %s",
+                      str_time(conn->account->inProgress->expire,
+                               conn->account->timezone, 0));
 
             connection_note_text_prompt(conn);
 
@@ -330,8 +331,8 @@ void connection_note_to(Client *conn, const char *argument)
             conn->account->inProgress->toList =
                 str_dup(conn->account->forum->defaultTo);
 
-            writelnf(conn, "Assumed default recipient: ~W%s~x",
-                     conn->account->inProgress->toList);
+            xwritelnf(conn, "Assumed default recipient: ~W%s~x",
+                      conn->account->inProgress->toList);
 
         }
         else
@@ -354,14 +355,14 @@ void connection_note_to(Client *conn, const char *argument)
 
             conn->account->inProgress->toList = str_dup(buf);
 
-            writeln(conn, "");
+            xwriteln(conn, "");
 
-            writelnf(conn,
-                     "You did not specify %s as recipient, so it was automatically added.",
-                     conn->account->forum->defaultTo);
+            xwritelnf(conn,
+                      "You did not specify %s as recipient, so it was automatically added.",
+                      conn->account->forum->defaultTo);
 
-            writelnf(conn, "~YNew To~x :  %s",
-                     conn->account->inProgress->toList);
+            xwritelnf(conn, "~YNew To~x :  %s",
+                      conn->account->inProgress->toList);
 
         }
         else
@@ -378,11 +379,11 @@ void connection_note_to(Client *conn, const char *argument)
         if (is_exact_name(conn->account->forum->defaultTo, buf))
         {
 
-            writelnf(conn,
-                     "You are not allowed to send notes to %s on this forum. Try again.",
-                     conn->account->forum->defaultTo);
+            xwritelnf(conn,
+                      "You are not allowed to send notes to %s on this forum. Try again.",
+                      conn->account->forum->defaultTo);
 
-            write(conn, "~YTo~x:      ");
+            xwrite(conn, "~YTo~x:      ");
 
             return;
 
@@ -398,9 +399,9 @@ void connection_note_to(Client *conn, const char *argument)
 
     }
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    write(conn, "~YSubject~x: ");
+    xwrite(conn, "~YSubject~x: ");
 
     conn->handler = connection_note_subject;
 
@@ -415,7 +416,7 @@ void note_write(Character *ch, const char *argument)
     if (ch->level < 2)
     {
 
-        writeln(ch, "You can't seem to write a note.");
+        xwriteln(ch, "You can't seem to write a note.");
 
         return;
 
@@ -426,7 +427,7 @@ void note_write(Character *ch, const char *argument)
             || conn->account->forum->type == DEF_READONLY)
     {
 
-        writeln(ch, "You cannot post notes on this forum.");
+        xwriteln(ch, "You cannot post notes on this forum.");
 
         return;
 
@@ -435,9 +436,9 @@ void note_write(Character *ch, const char *argument)
             && nullstr(conn->account->inProgress->text))
     {
 
-        writeln(ch,
-                "Note in progress cancelled because you did not manage to"
-                " write any text before losing link.");
+        xwriteln(ch,
+                 "Note in progress cancelled because you did not manage to"
+                 " write any text before losing link.");
 
         destroy_note(conn->account->inProgress);
 
@@ -461,16 +462,16 @@ void note_write(Character *ch, const char *argument)
     /*
      * Begin writing the note !
      */
-    writelnf(ch, "You are now %s a new note on the ~W%s~x forum.",
-             !nullstr(conn->account->inProgress->
-                      text) ? "continuing" : "posting",
-             ch->pc->conn->account->forum->name);
+    xwritelnf(ch, "You are now %s a new note on the ~W%s~x forum.",
+              !nullstr(conn->account->inProgress->
+                       text) ? "continuing" : "posting",
+              ch->pc->conn->account->forum->name);
 
-    writeln(ch, "Remember to turn off any client alias expansion!");
+    xwriteln(ch, "Remember to turn off any client alias expansion!");
 
-    writelnf(ch, "~YFrom~x:    %s", ch->name);
+    xwritelnf(ch, "~YFrom~x:    %s", ch->name);
 
-    writeln(ch, "");
+    xwriteln(ch, "");
 
     if (nullstr(conn->account->inProgress->text))
     {
@@ -482,33 +483,33 @@ void note_write(Character *ch, const char *argument)
 
         case DEF_NORMAL:
 
-            writelnf(ch,
-                     "If you press Return, default recipient \"~x%s~x\" will be chosen.",
-                     ch->pc->conn->account->forum->defaultTo);
+            xwritelnf(ch,
+                      "If you press Return, default recipient \"~x%s~x\" will be chosen.",
+                      ch->pc->conn->account->forum->defaultTo);
 
             break;
 
         case DEF_INCLUDE:
 
-            writelnf(ch,
-                     "The recipient list MUST include \"~x%s~x\". If not, it will be added automatically.",
-                     ch->pc->conn->account->forum->defaultTo);
+            xwritelnf(ch,
+                      "The recipient list MUST include \"~x%s~x\". If not, it will be added automatically.",
+                      ch->pc->conn->account->forum->defaultTo);
 
             break;
 
         case DEF_EXCLUDE:
 
-            writelnf(ch,
-                     "The recipient of this note must NOT include: \"~C%s~x\".",
-                     ch->pc->conn->account->forum->defaultTo);
+            xwritelnf(ch,
+                      "The recipient of this note must NOT include: \"~C%s~x\".",
+                      ch->pc->conn->account->forum->defaultTo);
 
             break;
 
         }
 
-        writeln(ch, "");
+        xwriteln(ch, "");
 
-        write(ch, "~YTo~x:      ");
+        xwrite(ch, "~YTo~x:      ");
 
         conn->handler = connection_note_to;
 
@@ -516,22 +517,22 @@ void note_write(Character *ch, const char *argument)
     else
     {
 
-        writeln(ch, "");
+        xwriteln(ch, "");
 
-        writelnf(ch, "~YTo~x: %s", conn->account->inProgress->toList);
+        xwritelnf(ch, "~YTo~x: %s", conn->account->inProgress->toList);
 
-        writelnf(ch, "~YExpires~x: %s",
-                 (ch->pc->conn->account->forum->purgeDays ==
-                  -1) ? "Never" :
-                 str_time(conn->account->inProgress->expire,
-                          ch->pc->conn->account->timezone, 0));
+        xwritelnf(ch, "~YExpires~x: %s",
+                  (ch->pc->conn->account->forum->purgeDays ==
+                   -1) ? "Never" :
+                  str_time(conn->account->inProgress->expire,
+                           ch->pc->conn->account->timezone, 0));
 
-        writelnf(ch, "~YSubject~x: %s",
-                 conn->account->inProgress->subject);
+        xwritelnf(ch, "~YSubject~x: %s",
+                  conn->account->inProgress->subject);
 
-        writeln(ch, "~GYou are note so far:~x");
+        xwriteln(ch, "~GYou are note so far:~x");
 
-        writeln(ch, conn->account->inProgress->text);
+        xwriteln(ch, conn->account->inProgress->text);
 
         connection_note_text_prompt(conn);
 
@@ -574,7 +575,7 @@ void note_read(Character *ch, const char *argument)
         if (lastRead == 0)
         {
 
-            writeln(ch, "No note found.");
+            xwriteln(ch, "No note found.");
 
         }
         else
@@ -597,7 +598,7 @@ void note_read(Character *ch, const char *argument)
         if (p == 0 || !is_note_to(ch, p))
         {
 
-            writeln(ch, "No such note.");
+            xwriteln(ch, "No such note.");
 
         }
         else
@@ -631,12 +632,12 @@ void note_read(Character *ch, const char *argument)
             }
         }
 
-        writeln(ch, "No new notes in this forum.");
+        xwriteln(ch, "No new notes in this forum.");
 
         next_forum(ch);
 
-        writelnf(ch, "Changed to next subscribed forum, %s.",
-                 ch->pc->conn->account->forum->name);
+        xwritelnf(ch, "Changed to next subscribed forum, %s.",
+                  ch->pc->conn->account->forum->name);
 
     }
 
@@ -664,7 +665,7 @@ void note_remove(Character *ch, const char *argument)
 
         }
 
-        writeln(ch, "ALL Notes removed!");
+        xwriteln(ch, "ALL Notes removed!");
 
     }
     else
@@ -675,7 +676,7 @@ void note_remove(Character *ch, const char *argument)
         if (!is_number(argument))
         {
 
-            writeln(ch, "Remove which note?");
+            xwriteln(ch, "Remove which note?");
 
             return;
 
@@ -685,7 +686,7 @@ void note_remove(Character *ch, const char *argument)
         if (!p)
         {
 
-            writeln(ch, "No such note.");
+            xwriteln(ch, "No such note.");
 
             return;
 
@@ -693,15 +694,15 @@ void note_remove(Character *ch, const char *argument)
         if (str_cmp(ch->name, p->from) && !is_immortal(ch))
         {
 
-            writeln(ch,
-                    "You are not authorized to remove this note.");
+            xwriteln(ch,
+                     "You are not authorized to remove this note.");
 
             return;
 
         }
         delete_note(ch->pc->account->forum, p);
 
-        writeln(ch, "Note removed!");
+        xwriteln(ch, "Note removed!");
 
     }
 
@@ -730,8 +731,8 @@ void note_list(Character *ch, const char *argument)
                 count++;
 
     }
-    writelnf(ch, "~WNotes on the %s forum:~x",
-             ch->pc->account->forum->name);
+    xwritelnf(ch, "~WNotes on the %s forum:~x",
+              ch->pc->account->forum->name);
 
     grid_addf(grid, ALIGN_LEFT, 1, 0, 0, 0, 0, "~rNum> %-12s Subject",
               "Author");
@@ -814,20 +815,20 @@ void note_catchup(Character *ch, const char *argument)
                 account_forum_set_last_note(ch->pc->account,
                                             p->date);
 
-                writelnf(ch,
-                         "All notes in ~W%s~x forum skipped.",
-                         forum->name);
+                xwritelnf(ch,
+                          "All notes in ~W%s~x forum skipped.",
+                          forum->name);
 
             }
         }
 
         if (c > 0)
-            writelnf(ch,
-                     "All notes in ~W%d~x forum%s were skipped.", c,
-                     c > 1 ? "s" : "");
+            xwritelnf(ch,
+                      "All notes in ~W%d~x forum%s were skipped.", c,
+                      c > 1 ? "s" : "");
 
         else
-            writeln(ch, "There are no new notes to skip.");
+            xwriteln(ch, "There are no new notes to skip.");
 
     }
     /*
@@ -838,7 +839,7 @@ void note_catchup(Character *ch, const char *argument)
     if (!p)
     {
 
-        writeln(ch, "Alas, there are no notes in that forum.");
+        xwriteln(ch, "Alas, there are no notes in that forum.");
 
     }
     else
@@ -846,7 +847,7 @@ void note_catchup(Character *ch, const char *argument)
 
         account_forum_set_last_note(ch->pc->account, p->date);
 
-        writeln(ch, "All messages skipped.");
+        xwriteln(ch, "All messages skipped.");
 
     }
 
@@ -864,7 +865,7 @@ void note_purge(Character *ch, const char *argument)
         check_notes(&forum_table[i]);
 
     }
-    writeln(ch, "Old notes cleaned.");
+    xwriteln(ch, "Old notes cleaned.");
 
 }
 
@@ -877,7 +878,7 @@ void note_reset(Character *ch, const char *argument)
     for (int pos = 0; pos < max_forum; pos++)
         ch->pc->account->forumData[pos].lastNote = 0;
 
-    writeln(ch, "All notes marked as unread.");
+    xwriteln(ch, "All notes marked as unread.");
 
 }
 
@@ -933,42 +934,42 @@ DOFUN(note)
     else
     {
 
-        writelnf(ch,
-                 "Syntax: %s read [again]                - read all notes 1 forum at a time.",
-                 do_name);
+        xwritelnf(ch,
+                  "Syntax: %s read [again]                - read all notes 1 forum at a time.",
+                  do_name);
 
-        writelnf(ch,
-                 "        %s write                       - write a note on your current forum.",
-                 do_name);
+        xwritelnf(ch,
+                  "        %s write                       - write a note on your current forum.",
+                  do_name);
 
-        writelnf(ch,
-                 "        %s list                        - list all notes on your current forum.",
-                 do_name);
+        xwritelnf(ch,
+                  "        %s list                        - list all notes on your current forum.",
+                  do_name);
 
-        writelnf(ch,
-                 "        %s remove [number]             - remove a note.",
-                 do_name);
+        xwritelnf(ch,
+                  "        %s remove [number]             - remove a note.",
+                  do_name);
 
-        writelnf(ch,
-                 "        %s catchup                     - mark all notes on current forum as read.",
-                 do_name);
+        xwritelnf(ch,
+                  "        %s catchup                     - mark all notes on current forum as read.",
+                  do_name);
 
-        writelnf(ch,
-                 "        %s reset                       - mark all notes on all forums as unread.",
-                 do_name);
+        xwritelnf(ch,
+                  "        %s reset                       - mark all notes on all forums as unread.",
+                  do_name);
 
-        writelnf(ch,
-                 "        %s check                       - count how many unread notes you have on all forums.",
-                 do_name);
+        xwritelnf(ch,
+                  "        %s check                       - count how many unread notes you have on all forums.",
+                  do_name);
 
-        writelnf(ch,
-                 "        %s clear                       - clear current note in progress.",
-                 do_name);
+        xwritelnf(ch,
+                  "        %s clear                       - clear current note in progress.",
+                  do_name);
 
         if (is_immortal(ch))
-            writelnf(ch,
-                     "Immortal Only: %s purge - purges expired notes from current forum.",
-                     do_name);
+            xwritelnf(ch,
+                      "Immortal Only: %s purge - purges expired notes from current forum.",
+                      do_name);
 
     }
 
@@ -987,9 +988,9 @@ DOFUN(subscribe)
 
         count = 1;
 
-        writeln(ch, "~RNum         Name Subscribed Description~x");
+        xwriteln(ch, "~RNum         Name Subscribed Description~x");
 
-        writeln(ch, "~R=== ============ ========== ===========~x");
+        xwriteln(ch, "~R=== ============ ========== ===========~x");
 
         for (i = 0; i < max_forum; i++)
         {
@@ -997,12 +998,12 @@ DOFUN(subscribe)
             if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR)
                 continue;
 
-            writelnf(ch, "~W%2d~x> ~g%12s~x [  %-8s~x] %s~x",
-                     count,
-                     forum_table[i].name,
-                     !is_subscribed(ch->pc->account,
-                                    i) ? "~rNO" : "~gYES",
-                     forum_table[i].description);
+            xwritelnf(ch, "~W%2d~x> ~g%12s~x [  %-8s~x] %s~x",
+                      count,
+                      forum_table[i].name,
+                      !is_subscribed(ch->pc->account,
+                                     i) ? "~rNO" : "~gYES",
+                      forum_table[i].description);
 
             count++;
 
@@ -1036,7 +1037,7 @@ DOFUN(subscribe)
     if (i == max_forum)
     {
 
-        writeln(ch, "No such forum.");
+        xwriteln(ch, "No such forum.");
 
         return;
 
@@ -1044,7 +1045,7 @@ DOFUN(subscribe)
     if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR)
     {
 
-        writeln(ch, "No such forum.");
+        xwriteln(ch, "No such forum.");
 
         return;
 
@@ -1052,7 +1053,7 @@ DOFUN(subscribe)
     if (forum_table[i].flags & FORUM_NOUNSUB)
     {
 
-        writeln(ch, "You cannot un-subscribe from that forum.");
+        xwriteln(ch, "You cannot un-subscribe from that forum.");
 
         return;
 
@@ -1062,8 +1063,8 @@ DOFUN(subscribe)
 
         set_subscribed(ch->pc->account, i);
 
-        writelnf(ch, "You are now subscribed to the ~W%s~x forum.",
-                 forum_table[i].name);
+        xwritelnf(ch, "You are now subscribed to the ~W%s~x forum.",
+                  forum_table[i].name);
 
     }
     else
@@ -1071,9 +1072,9 @@ DOFUN(subscribe)
 
         remove_subscribed(ch->pc->account, i);
 
-        writelnf(ch,
-                 "You are no longer subscribed to the ~W%s~x forum.",
-                 forum_table[i].name);
+        xwritelnf(ch,
+                  "You are no longer subscribed to the ~W%s~x forum.",
+                  forum_table[i].name);
 
     }
 
@@ -1110,7 +1111,7 @@ DOFUN(forum)
 
         save_forums();
 
-        writeln(ch, "Forums saved.");
+        xwriteln(ch, "Forums saved.");
 
         return;
 
@@ -1140,7 +1141,7 @@ DOFUN(forum)
     if (i == max_forum)
     {
 
-        writeln(ch, "No such forum.");
+        xwriteln(ch, "No such forum.");
 
         return;
 
@@ -1148,22 +1149,22 @@ DOFUN(forum)
     if (unread_notes(ch, &forum_table[i]) == FORUM_ERROR)
     {
 
-        writeln(ch, "No such forum.");
+        xwriteln(ch, "No such forum.");
 
         return;
 
     }
     ch->pc->account->forum = &forum_table[i];
 
-    writelnf(ch, "Current forum changed to ~W%s~x. %s.",
-             forum_table[i].name,
-             (ch->level <
-              forum_table[i].writeLevel) ?
-             "You can only read here" : "You can both read and write here");
+    xwritelnf(ch, "Current forum changed to ~W%s~x. %s.",
+              forum_table[i].name,
+              (ch->level <
+               forum_table[i].writeLevel) ?
+              "You can only read here" : "You can both read and write here");
 
     if ((p = last_note(ch, &forum_table[i])) != NULL)
-        writelnf(ch, "Last message was from ~W%s~x concerning ~W%s~x.",
-                 p->from, p->subject);
+        xwritelnf(ch, "Last message was from ~W%s~x concerning ~W%s~x.",
+                  p->from, p->subject);
 
 }
 
@@ -1173,7 +1174,7 @@ DOFUN(think)
     if (nullstr(argument))
     {
 
-        writeln(ch, "Think what?");
+        xwriteln(ch, "Think what?");
 
         return;
 
@@ -1198,7 +1199,7 @@ DOFUN(whisper)
     if (nullstr(arg))
     {
 
-        writeln(ch, "Whisper to who?");
+        xwriteln(ch, "Whisper to who?");
 
         return;
 
@@ -1206,7 +1207,7 @@ DOFUN(whisper)
     if (nullstr(argument))
     {
 
-        writeln(ch, "Whisper what?");
+        xwriteln(ch, "Whisper what?");
 
         return;
 
@@ -1214,7 +1215,7 @@ DOFUN(whisper)
     if ((victim = get_char_room(ch, arg)) == NULL)
     {
 
-        writeln(ch, "They aren't here.");
+        xwriteln(ch, "They aren't here.");
 
         return;
 
@@ -1236,7 +1237,7 @@ DOFUN(shout)
     if (nullstr(argument))
     {
 
-        writeln(ch, "Shout what?");
+        xwriteln(ch, "Shout what?");
 
         return;
 

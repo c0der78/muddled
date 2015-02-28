@@ -20,16 +20,17 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <inttypes.h>
 #include "class.h"
 #include "db.h"
 #include "log.h"
 #include "engine.h"
 #include "str.h"
 #include "character.h"
-#include <stdlib.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <inttypes.h>
+#include "private.h"
 
 Class *class_table = 0;
 int max_class = 0;

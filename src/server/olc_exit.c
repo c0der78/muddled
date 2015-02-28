@@ -21,11 +21,11 @@
 #include "config.h"
 #endif
 #include "client.h"
-#include "../flag.h"
-#include "../exit.h"
-#include "../room.h"
-#include "../str.h"
-#include "../lookup.h"
+#include "flag.h"
+#include "exit.h"
+#include "room.h"
+#include "str.h"
+#include "lookup.h"
 #include <stdlib.h>
 #include "telnet.h"
 #include "olc.h"
@@ -73,13 +73,13 @@ void exit_editor_menu(Client *conn)
 
     conn->titlef(conn, "Exit Editor - Room %d", exit->fromRoom->id);
 
-    writelnf(conn, "   ~CId: ~W%d~x", exit->id);
+    xwritelnf(conn, "   ~CId: ~W%d~x", exit->id);
 
-    writelnf(conn, "~YA) ~CToRoom: ~W%d~x",
-             exit->to.room == 0 ? 0 : exit->to.room->id);
+    xwritelnf(conn, "~YA) ~CToRoom: ~W%d~x",
+              exit->to.room == 0 ? 0 : exit->to.room->id);
 
-    writelnf(conn, "~YB) ~CFlags: ~W%d~x",
-             format_flags(exit->flags, exit_flags));
+    xwritelnf(conn, "~YB) ~CFlags: ~W%d~x",
+              format_flags(exit->flags, exit_flags));
 
 }
 
@@ -99,15 +99,15 @@ void exits_editor_menu(Client *conn)
     else
         conn->title(conn, "Exits Editor");
 
-    writeln(conn, "~Y(A)~Cdd an exit.");
+    xwriteln(conn, "~Y(A)~Cdd an exit.");
 
-    writeln(conn, "~Y(D)~Celete an exit.");
+    xwriteln(conn, "~Y(D)~Celete an exit.");
 
-    writeln(conn, "~Y(E)~Cdit an exit.~x");
+    xwriteln(conn, "~Y(E)~Cdit an exit.~x");
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
-    writeln(conn, "~CExits:~x");
+    xwriteln(conn, "~CExits:~x");
 
     int count = 0;
 
@@ -117,10 +117,10 @@ void exits_editor_menu(Client *conn)
         if (exits[t->value] == 0)
             continue;
 
-        writelnf(conn, "  ~Y%d) %s~C -> Room %d (%s)~x", ++count,
-                 capitalize(t->name),
-                 exits[t->value]->to.room->id,
-                 exits[t->value]->to.room->name);
+        xwritelnf(conn, "  ~Y%d) %s~C -> Room %d (%s)~x", ++count,
+                  capitalize(t->name),
+                  exits[t->value]->to.room->id,
+                  exits[t->value]->to.room->name);
 
     }
 
@@ -157,7 +157,7 @@ void exits_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CCreate an exit in which direction?~x");
+            xwriteln(conn, "~CCreate an exit in which direction?~x");
 
             return;
 
@@ -167,8 +167,8 @@ void exits_editor(Client *conn, const char *argument)
         if (dir == -1)
         {
 
-            writelnf(conn, "~C'%s' is not a valid direction.~x",
-                     argument);
+            xwritelnf(conn, "~C'%s' is not a valid direction.~x",
+                      argument);
 
             return;
 
@@ -176,8 +176,8 @@ void exits_editor(Client *conn, const char *argument)
         if (exits[dir] != 0)
         {
 
-            writeln(conn,
-                    "~CThere is already an exit in that direction.~x");
+            xwriteln(conn,
+                     "~CThere is already an exit in that direction.~x");
 
             return;
 
@@ -203,7 +203,7 @@ void exits_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CCreate an exit in which direction?~x");
+            xwriteln(conn, "~CCreate an exit in which direction?~x");
 
             return;
 
@@ -232,8 +232,8 @@ void exits_editor(Client *conn, const char *argument)
         if (dir->name == 0)
         {
 
-            writelnf(conn, "~C'%s' is not a valid direction.~x",
-                     argument);
+            xwritelnf(conn, "~C'%s' is not a valid direction.~x",
+                      argument);
 
             return;
 
@@ -241,8 +241,8 @@ void exits_editor(Client *conn, const char *argument)
         if (exits[dir->value] == 0)
         {
 
-            writeln(conn,
-                    "~CThere is no exit in that direction.~x");
+            xwriteln(conn,
+                     "~CThere is no exit in that direction.~x");
 
             return;
 
@@ -262,8 +262,8 @@ void exits_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn,
-                    "~CWhich direction do you wish to edit?~x");
+            xwriteln(conn,
+                     "~CWhich direction do you wish to edit?~x");
 
             return;
 
@@ -292,8 +292,8 @@ void exits_editor(Client *conn, const char *argument)
         if (dir->name == 0)
         {
 
-            writelnf(conn, "~C'%s' is not a valid direction.~x",
-                     argument);
+            xwritelnf(conn, "~C'%s' is not a valid direction.~x",
+                      argument);
 
             return;
 
@@ -301,8 +301,8 @@ void exits_editor(Client *conn, const char *argument)
         if (exits[dir->value] == 0)
         {
 
-            writeln(conn,
-                    "~CThere is no exit in that direction.~x");
+            xwriteln(conn,
+                     "~CThere is no exit in that direction.~x");
 
             return;
 
@@ -351,8 +351,8 @@ void exit_editor(Client *conn, const char *argument)
         if (!argument || !*argument || !is_number(argument))
         {
 
-            writeln(conn,
-                    "~CPlease specify the id of the room you want to delete.~x");
+            xwriteln(conn,
+                     "~CPlease specify the id of the room you want to delete.~x");
 
             return;
 
@@ -362,7 +362,7 @@ void exit_editor(Client *conn, const char *argument)
         if (r == 0)
         {
 
-            writeln(conn, "~CNo such room.~x");
+            xwriteln(conn, "~CNo such room.~x");
 
             return;
 

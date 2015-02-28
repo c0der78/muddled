@@ -21,48 +21,7 @@
 #ifndef MUDDLED_FORUM_H
 #define MUDDLED_FORUM_H
 
-typedef struct forum Forum;
-
-typedef struct note Note;
-
-#include "character.h"
-#include "engine.h"
-#include "cdecl.h"
-#include <time.h>
-
-typedef enum
-{
-    DEF_NORMAL,
-    DEF_INCLUDE,
-    DEF_EXCLUDE,
-    DEF_READONLY
-} forum_t;
-
-struct forum
-{
-    identifier_t id;
-    const char *name;
-    const char *description;
-    short readLevel;
-    short writeLevel;
-    const char *defaultTo;
-    forum_t type;
-    int purgeDays;
-    Note *notes;
-    int flags;
-};
-
-struct note
-{
-    Note *next;
-    identifier_t id;
-    const char *from;
-    time_t date;
-    const char *toList;
-    const char *subject;
-    const char *text;
-    time_t expire;
-};
+#include "typedef.h"
 
 extern Forum *forum_table;
 extern int max_forum;

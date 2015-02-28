@@ -21,7 +21,8 @@
 #include "config.h"
 #endif
 #include <check.h>
-#include "../src/account.h"
+#include "account.h"
+#include "private.h"
 
 START_TEST(test_account_new)
 {

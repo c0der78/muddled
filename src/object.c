@@ -35,6 +35,7 @@
 #include "class.h"
 #include "player.h"
 #include "room.h"
+#include "private.h"
 
 Object *first_object = 0;
 
@@ -596,20 +597,20 @@ show_list_to_char(Object *list, Character *ch, bool fShort, bool fShowNothing)
         }
         if (prgnShow[iShow] != 1)
         {
-            writef(output, "(%2d) ", prgnShow[iShow]);
+            xwritef(output, "(%2d) ", prgnShow[iShow]);
         }
         else
         {
-            write(output, "     ");
+            xwrite(output, "     ");
         }
 
-        writeln(output, prgpstrShow[iShow]);
+        xwriteln(output, prgpstrShow[iShow]);
         free_str(prgpstrShow[iShow]);
     }
 
     if (fShowNothing && nShow == 0)
     {
-        writeln(ch, "     Nothing.");
+        xwriteln(ch, "     Nothing.");
     }
     ch->page(ch, buf_string(output));
 

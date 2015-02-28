@@ -21,8 +21,6 @@
 #ifndef MUDDLED_RACE_H
 #define MUDDLED_RACE_H
 
-typedef struct race Race;
-
 #include "engine.h"
 
 struct race

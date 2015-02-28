@@ -30,6 +30,8 @@
 #include "log.h"
 #include "db.h"
 #include "affect.h"
+#include "exit.h"
+#include "typedef.h"
 #include "help.h"
 
 void synch_table(const char *tablename, const Lookup *table)

@@ -20,6 +20,8 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdio.h>
+#include <stdarg.h>
 #include "channel.h"
 #include "str.h"
 #include "character.h"
@@ -30,11 +32,10 @@
 #include "engine.h"
 #include "social.h"
 #include "account.h"
-#include <stdarg.h>
 #include "object.h"
 #include "log.h"
 #include "forum.h"
-#include <stdio.h>
+#include "private.h"
 
 int gcn_chat = 0;
 
@@ -397,7 +398,7 @@ int interpret_channel(Character *ch, int gcn, const char *argument)
 
             remove_bit(ch->pc->channels, chan->bit);
 
-            writelnf(ch, "%s channel off.", capitalize(chan->name));
+            xwritelnf(ch, "%s channel off.", capitalize(chan->name));
 
         }
         else
@@ -405,7 +406,7 @@ int interpret_channel(Character *ch, int gcn, const char *argument)
 
             set_bit(ch->pc->channels, chan->bit);
 
-            writelnf(ch, "%s channel on.", capitalize(chan->name));
+            xwritelnf(ch, "%s channel on.", capitalize(chan->name));
 
         }
 
@@ -427,16 +428,16 @@ int interpret_channel(Character *ch, int gcn, const char *argument)
 
         if (nullstr(command))
         {
-            writelnf(ch,
-                     "{W%s + <social> is used for channel based socials.{x",
-                     chan->name);
+            xwritelnf(ch,
+                      "{W%s + <social> is used for channel based socials.{x",
+                      chan->name);
             return 1;
         }
         soc = social_lookup(command);
 
         if (!soc)
         {
-            writeln(ch, "{WWhat kind of social is that?!?!{x");
+            xwriteln(ch, "{WWhat kind of social is that?!?!{x");
             return 1;
         }
         one_argument(arg_left, argx);
@@ -457,14 +458,14 @@ int interpret_channel(Character *ch, int gcn, const char *argument)
             }
             else
             {
-                writeln(ch, "They aren't here.");
+                xwriteln(ch, "They aren't here.");
             }
         }
         else if (victim)
         {
             if (victim != ch && !channel_viewable(ch, victim, chan))
             {
-                writeln(ch, "They can't use that channel.");
+                xwriteln(ch, "They can't use that channel.");
 
             }
             else
@@ -476,62 +477,62 @@ int interpret_channel(Character *ch, int gcn, const char *argument)
     {
         if (nullstr(argument))
         {
-            writelnf(ch, "Syntax: %s ! <argument>", chan->name);
+            xwritelnf(ch, "Syntax: %s ! <argument>", chan->name);
             return 1;
         }
         arg_type = CHANNEL_EMOTE;
-        writelnf(ch, "%s %s %s{x", format, ch->name, argument);
+        xwritelnf(ch, "%s %s %s{x", format, ch->name, argument);
     }
     else if (command[0] == '@')
     {
         if (nullstr(argument))
         {
-            writelnf(ch, "Syntax: %s @ <argument>", chan->name);
+            xwritelnf(ch, "Syntax: %s @ <argument>", chan->name);
             return 1;
         }
         arg_type = CHANNEL_THINK;
-        writelnf(ch, "%s %s . o O ( %s ){x", format, ch->name,
-                 argument);
+        xwritelnf(ch, "%s %s . o O ( %s ){x", format, ch->name,
+                  argument);
     }
     else if (is_exact_name(command, "-who -w -wholist")
              && nullstr(argument))
     {
         arg_type = CHANNEL_WHO;
-        writelnf(ch, "{WPlayers on %s{x", format);
-        writeln(ch, "{C-------------------{x");
+        xwritelnf(ch, "{WPlayers on %s{x", format);
+        xwriteln(ch, "{C-------------------{x");
     }
     else if (is_exact_name(command, "-h -help") && nullstr(argument))
     {
-        writelnf(ch, "Syntax: %s <message>          - send a message",
-                 chan->name);
+        xwritelnf(ch, "Syntax: %s <message>          - send a message",
+                  chan->name);
         if (chan->bit)
-            writelnf(ch,
-                     "      : %s                    - toggle channel on/off",
-                     chan->name);
-        writelnf(ch,
-                 "      : %s -hist              - display channel history",
-                 chan->name);
-        writelnf(ch,
-                 "      : %s -who               - display who is on channel",
-                 chan->name);
-        writelnf(ch,
-                 "      : %s ! <emote>          - send an emote over channel",
-                 chan->name);
-        writelnf(ch,
-                 "      : %s + <social> [args]  - do a social over channel",
-                 chan->name);
-        writelnf(ch,
-                 "      : %s @ <message>        - enclose a message in 'thought bubbles'",
-                 chan->name);
-        writelnf(ch, "      : %s -help              - this message",
-                 chan->name);
+            xwritelnf(ch,
+                      "      : %s                    - toggle channel on/off",
+                      chan->name);
+        xwritelnf(ch,
+                  "      : %s -hist              - display channel history",
+                  chan->name);
+        xwritelnf(ch,
+                  "      : %s -who               - display who is on channel",
+                  chan->name);
+        xwritelnf(ch,
+                  "      : %s ! <emote>          - send an emote over channel",
+                  chan->name);
+        xwritelnf(ch,
+                  "      : %s + <social> [args]  - do a social over channel",
+                  chan->name);
+        xwritelnf(ch,
+                  "      : %s @ <message>        - enclose a message in 'thought bubbles'",
+                  chan->name);
+        xwritelnf(ch, "      : %s -help              - this message",
+                  chan->name);
         return 1;
     }
     else
     {
 
-        writelnf(ch, "%s You %s '%s'~x", format,
-                 say_verb(argument, ch, 0, 0), argument);
+        xwritelnf(ch, "%s You %s '%s'~x", format,
+                  say_verb(argument, ch, 0, 0), argument);
 
         for (Character *pch = first_player; pch != 0;
                 pch = pch->next_player)
@@ -543,10 +544,10 @@ int interpret_channel(Character *ch, int gcn, const char *argument)
             switch (arg_type)
             {
             case CHANNEL_NORMAL:
-                writelnf(pch, "%s %s %s '%s'~x", format,
-                         chview(ch, pch), say_verb(argument, ch,
-                                                   pch, 1),
-                         argument);
+                xwritelnf(pch, "%s %s %s '%s'~x", format,
+                          chview(ch, pch), say_verb(argument, ch,
+                                                    pch, 1),
+                          argument);
                 break;
             default:
                 break;
@@ -633,7 +634,7 @@ void announce(Character *ch, info_t type, const char *message, ...)
         }
 
         if (ch == NULL)
-            writeln(p, buf);
+            xwriteln(p, buf);
 
         else
             act_pos(TO_VICT, POS_DEAD, ch, 0, p, buf);

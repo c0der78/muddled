@@ -21,7 +21,8 @@
 #define MUDDLED_MACRO_H
 
 #define xstr(var) #var
-#define Stringify(var) xstr(var)
+
+#define stringify(var) xstr(var)
 
 #define UPPER(c) (toupper((int)(c)))
 #define LOWER(c) (tolower((int)(c)))
@@ -31,10 +32,10 @@
 
 #define percent(a, b)   (((a) * 100) / b)
 
-#define write(to, arg)      (to)->write((to), (arg))
-#define writeln(to, arg)    (to)->writeln((to), (arg))
-#define writef(to, arg, ...)    (to)->writef((to), (arg), __VA_ARGS__)
-#define writelnf(to, arg, ...)  (to)->writelnf((to), (arg), __VA_ARGS__)
+#define xwrite(to, arg)      (to)->write((to), (arg))
+#define xwriteln(to, arg)    (to)->writeln((to), (arg))
+#define xwritef(to, arg, ...)    (to)->writef((to), (arg), __VA_ARGS__)
+#define xwritelnf(to, arg, ...)  (to)->writelnf((to), (arg), __VA_ARGS__)
 
 #define NAME(ch) ((ch->npc != 0) ? (ch->npc->shortDescr) : (ch->name))
 

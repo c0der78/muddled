@@ -43,6 +43,7 @@
 #include "class.h"
 #include "affect.h"
 #include "lookup.h"
+#include "private.h"
 
 Character *first_character = 0;
 
@@ -79,7 +80,7 @@ static void writef_line_to_char(const Character *ch, const char *fmt, ...)
     ch->pc->conn->vwrite(ch->pc->conn, fmt, args);
     va_end(args);
 
-    writeln(ch->pc->conn, "");
+    ch->pc->conn->writeln(ch->pc->conn, "");
 }
 
 static void write_line_to_char(const Character *ch, const char *arg)
@@ -87,7 +88,7 @@ static void write_line_to_char(const Character *ch, const char *arg)
     if (ch->pc == 0)
         return;
 
-    writeln(ch->pc->conn, arg);
+    xwriteln(ch->pc->conn, arg);
 }
 
 static void writef_to_char(const Character *ch, const char *fmt, ...)
@@ -107,7 +108,7 @@ static void write_to_char(const Character *ch, const char *arg)
     if (ch->pc == 0 || ch->pc->conn == 0)
         return;
 
-    write(ch->pc->conn, arg);
+    ch->pc->conn->writeln(ch->pc->conn, arg);
 }
 
 static void page_to_char(Character *ch, const char *arg)

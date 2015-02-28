@@ -23,11 +23,11 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include "../engine.h"
-#include "../str.h"
-#include "../lookup.h"
-#include "../macro.h"
-#include "../log.h"
+#include "engine.h"
+#include "str.h"
+#include "lookup.h"
+#include "macro.h"
+#include "log.h"
 
 Editor *build_engine_editor(Engine *eng)
 {
@@ -55,12 +55,12 @@ void engine_editor_menu(Client *conn)
 
     Engine *engine = (Engine *) conn->editing->data;
 
-    writelnf(conn, "   ~CId: ~W%d", engine->id);
+    xwritelnf(conn, "   ~CId: ~W%d", engine->id);
 
-    writelnf(conn, "~YA) ~CName: ~W%s~x", engine->name);
+    xwritelnf(conn, "~YA) ~CName: ~W%s~x", engine->name);
 
-    writelnf(conn, "~YB) ~CFlags: ~W%s~x",
-             format_flags(engine->flags, engine_flags));
+    xwritelnf(conn, "~YB) ~CFlags: ~W%s~x",
+              format_flags(engine->flags, engine_flags));
 
 }
 
@@ -94,7 +94,7 @@ void engine_editor(Client *conn, const char *argument)
 
         save_engine();
 
-        writeln(conn, "~CEngine saved.~x");
+        xwriteln(conn, "~CEngine saved.~x");
 
         return;
 
@@ -105,7 +105,7 @@ void engine_editor(Client *conn, const char *argument)
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CChange name to what?~x");
+            xwriteln(conn, "~CChange name to what?~x");
 
             return;
 

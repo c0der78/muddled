@@ -23,9 +23,9 @@
 #include <check.h>
 #include <stdlib.h>
 #include "check_engine.h"
-#include "../src/engine.h"
-#include "../src/script.h"
-#include "../src/db.h"
+#include "engine.h"
+#include "script.h"
+#include "db.h"
 
 int main()
 {

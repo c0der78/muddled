@@ -21,8 +21,6 @@
 #ifndef MUDDLED_OBJECT_H
 #define MUDDLED_OBJECT_H
 
-typedef struct object Object;
-
 #include "variant.h"
 #include "hashmap.h"
 #include "db.h"

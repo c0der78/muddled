@@ -19,20 +19,21 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "client.h"
-#include "../room.h"
-#include "olc.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../str.h"
-#include "../macro.h"
-#include "../room.h"
-#include "../exit.h"
-#include "../lookup.h"
-#include "../race.h"
-#include "telnet.h"
 #include <ctype.h>
-#include "../engine.h"
+#include "client.h"
+#include "room.h"
+#include "olc.h"
+#include "str.h"
+#include "macro.h"
+#include "room.h"
+#include "exit.h"
+#include "lookup.h"
+#include "race.h"
+#include "telnet.h"
+#include "engine.h"
+#
 
 Editor *new_editor()
 {
@@ -56,15 +57,15 @@ void olc_prompt(Client *conn)
     if (conn->editing->show == string_editor_menu)
     {
 
-        writelnf(conn, "~CType \\? for help or \\q to %s:~x ",
-                 conn->editing->next ? "go back" : "quit");
+        xwritelnf(conn, "~CType \\? for help or \\q to %s:~x ",
+                  conn->editing->next ? "go back" : "quit");
 
     }
     else
     {
 
-        writef(conn, "~CSelect an option, ? for help or Q to %s:~x ",
-               conn->editing->next ? "go back" : "quit");
+        xwritef(conn, "~CSelect an option, ? for help or Q to %s:~x ",
+                conn->editing->next ? "go back" : "quit");
 
     }
 
@@ -110,7 +111,7 @@ void string_editor_menu(Client *conn)
 
         str = get_line(str, buf);
 
-        writelnf(conn, "~Y%2d)~x %s", ++count, buf);
+        xwritelnf(conn, "~Y%2d)~x %s", ++count, buf);
 
     }
 
@@ -130,15 +131,15 @@ void string_editor_preview(Client *conn, const char *header, const char *pstr)
 
         pstr = get_line(pstr, buf);
 
-        writelnf(conn, "%s: ~W%2d. %s~x", header, ++count, buf);
+        xwritelnf(conn, "%s: ~W%2d. %s~x", header, ++count, buf);
 
         while (pstr && *pstr != 0 && count < 3)
         {
 
             pstr = get_line(pstr, buf);
 
-            writelnf(conn, "%-*s  ~W%2d. %s~x", len, " ", ++count,
-                     buf);
+            xwritelnf(conn, "%-*s  ~W%2d. %s~x", len, " ", ++count,
+                      buf);
 
         }
 
@@ -146,7 +147,7 @@ void string_editor_preview(Client *conn, const char *header, const char *pstr)
     else
     {
 
-        writelnf(conn, "%s: ~WEmpty~x", header);
+        xwritelnf(conn, "%s: ~WEmpty~x", header);
 
     }
 
@@ -242,13 +243,13 @@ void olc_syntax(Client *conn, const char *arg, ...)
     if (!arg || !*arg)
         return;
 
-    writeln(conn, "~CCommands:~x");
+    xwriteln(conn, "~CCommands:~x");
 
     const char *const defaults[] =
     { "quit", "show", "save", "list", "delete" };
 
     for (i = 0; i < sizeof(defaults) / sizeof(defaults[0]); i++)
-        writelnf(conn, "%10s ", defaults[i]);
+        xwritelnf(conn, "%10s ", defaults[i]);
 
     va_start(args, arg);
 
@@ -259,22 +260,22 @@ void olc_syntax(Client *conn, const char *arg, ...)
 
     i++;
 
-    writef(conn, "%10s ", arg);
+    xwritef(conn, "%10s ", arg);
 
     while ((str = va_arg(args, char *)) != NULL)
     {
 
-        writef(conn, "%10s ", str);
+        xwritef(conn, "%10s ", str);
 
         if (++i % 5 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
 
     }
 
     va_end(args);
 
     if (i % 5 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 
 }
 
@@ -285,19 +286,19 @@ int edit_text(Client *conn, const char **pStr, const char *argument)
     if (!str_cmp(argument, "\\?"))
     {
 
-        writeln(conn, "~CText Editor Help:");
+        xwriteln(conn, "~CText Editor Help:");
 
-        writeln(conn, "~Y\\?~C		- this help");
+        xwriteln(conn, "~Y\\?~C		- this help");
 
-        writeln(conn, "~Y\\q~C		- exit editor");
+        xwriteln(conn, "~Y\\q~C		- exit editor");
 
-        writeln(conn, "~Y\\c~C		- clear all lines");
+        xwriteln(conn, "~Y\\c~C		- clear all lines");
 
-        writeln(conn, "~Y\\d~C		- delete last line");
+        xwriteln(conn, "~Y\\d~C		- delete last line");
 
-        writeln(conn, "~Y\\d#~C		- delete line #");
+        xwriteln(conn, "~Y\\d#~C		- delete line #");
 
-        writeln(conn, "~Y\\i#~C		- insert a line at #~x");
+        xwriteln(conn, "~Y\\i#~C		- insert a line at #~x");
 
         return EDIT_NOCHANGE;
 
@@ -324,9 +325,9 @@ int edit_text(Client *conn, const char **pStr, const char *argument)
             if (line < 1 || line > lines)
             {
 
-                writelnf(conn,
-                         "~CYou can't delete line %d, it doesn't exist.~x",
-                         line);
+                xwritelnf(conn,
+                          "~CYou can't delete line %d, it doesn't exist.~x",
+                          line);
 
                 return EDIT_NOCHANGE;
 
@@ -366,8 +367,8 @@ int edit_text(Client *conn, const char **pStr, const char *argument)
         if (!argument || !*argument || !is_number(argument))
         {
 
-            writeln(conn,
-                    "~CYou must specify a line to insert at.~x");
+            xwriteln(conn,
+                     "~CYou must specify a line to insert at.~x");
 
             return EDIT_NOCHANGE;
 
@@ -377,7 +378,7 @@ int edit_text(Client *conn, const char **pStr, const char *argument)
         if (line < 1 || line > count_lines(*pStr))
         {
 
-            writeln(conn, "~CThat is not a valid insert point.~x");
+            xwriteln(conn, "~CThat is not a valid insert point.~x");
 
             return EDIT_NOCHANGE;
 
@@ -459,19 +460,19 @@ Editor *build_string_editor(const char **pStr)
 void character_editor_menu(Client *conn, Character *ch)
 {
 
-    writelnf(conn, "~C   Id: ~W%d", ch->id);
+    xwritelnf(conn, "~C   Id: ~W%d", ch->id);
 
-    writelnf(conn, "~YA) ~CName: ~W%s~x", ch->name);
+    xwritelnf(conn, "~YA) ~CName: ~W%s~x", ch->name);
 
-    writelnf(conn, "~YB) ~CSex: ~W%s~x", sex_table[ch->sex].name);
+    xwritelnf(conn, "~YB) ~CSex: ~W%s~x", sex_table[ch->sex].name);
 
-    writelnf(conn, "~YC) ~CLevel: ~W%d~x", ch->level);
+    xwritelnf(conn, "~YC) ~CLevel: ~W%d~x", ch->level);
 
     string_editor_preview(conn, "~YD) ~CDescription", ch->description);
 
-    writelnf(conn, "~YE) ~CRace: ~W%s~x", capitalize(ch->race->name));
+    xwritelnf(conn, "~YE) ~CRace: ~W%s~x", capitalize(ch->race->name));
 
-    writelnf(conn, "~YF) ~CGold: ~W%.2f~x", ch->gold);
+    xwritelnf(conn, "~YF) ~CGold: ~W%.2f~x", ch->gold);
 
 }
 
@@ -486,7 +487,7 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CYou must provide a name to set.~x");
+            xwriteln(conn, "~CYou must provide a name to set.~x");
 
             return 1;
 
@@ -518,8 +519,8 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (!argument || !*argument || argument[0] == '?')
         {
 
-            writelnf(conn, "~CValid sexes are: ~W%s~x",
-                     lookup_names(sex_table));
+            xwritelnf(conn, "~CValid sexes are: ~W%s~x",
+                      lookup_names(sex_table));
 
             return 1;
 
@@ -529,7 +530,7 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (s == -1)
         {
 
-            writeln(conn, "~CNo such sex.~x");
+            xwriteln(conn, "~CNo such sex.~x");
 
             return 1;
 
@@ -547,7 +548,7 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CYou must specify a level to set.~x");
+            xwriteln(conn, "~CYou must specify a level to set.~x");
 
             return 1;
 
@@ -557,8 +558,8 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (l == 0 || l >= MAX_LEVEL * 2)
         {
 
-            writelnf(conn, "~CA valid level is between 1 and %d.~x",
-                     MAX_LEVEL * 2);
+            xwritelnf(conn, "~CA valid level is between 1 and %d.~x",
+                      MAX_LEVEL * 2);
 
             return 1;
 
@@ -576,7 +577,7 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (!argument || !*argument)
         {
 
-            writeln(conn, "~CYou must specify a race to set.~x");
+            xwriteln(conn, "~CYou must specify a race to set.~x");
 
             return 1;
 
@@ -586,7 +587,7 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (r == 0)
         {
 
-            writeln(conn, "~CInvalid race.~x");
+            xwriteln(conn, "~CInvalid race.~x");
 
             return 1;
 
@@ -604,8 +605,8 @@ character_editor(Client *conn, Character *ch, const char *arg,
         if (nullstr(argument) || !is_number(argument))
         {
 
-            writeln(conn,
-                    "~CYou must specify a decimal number to set.~x");
+            xwriteln(conn,
+                     "~CYou must specify a decimal number to set.~x");
 
             return 1;
 
@@ -629,8 +630,8 @@ edit_flag(const char *arg, Client *conn, Flag *flags,
     if (nullstr(argument) || argument[0] == '?')
     {
 
-        writelnf(conn, "~CValid flags are: ~W%s~x",
-                 lookup_names(table));
+        xwritelnf(conn, "~CValid flags are: ~W%s~x",
+                  lookup_names(table));
 
         return EDIT_NOCHANGE;
 
@@ -640,7 +641,7 @@ edit_flag(const char *arg, Client *conn, Flag *flags,
     if (res == 0)
     {
 
-        writelnf(conn, "~CNo such flag.  See '%s ?' for a list.", arg);
+        xwritelnf(conn, "~CNo such flag.  See '%s ?' for a list.", arg);
 
         return EDIT_NOCHANGE;
 
@@ -657,7 +658,7 @@ edit_string(const char *arg, Client *conn, const char **str,
     if (nullstr(argument) || argument[0] == '?')
     {
 
-        writeln(conn, "~CYou must provide an argument.~x");
+        xwriteln(conn, "~CYou must provide an argument.~x");
 
         return EDIT_NOCHANGE;
 

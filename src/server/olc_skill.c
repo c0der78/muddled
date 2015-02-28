@@ -23,11 +23,11 @@
 #include "olc.h"
 #include "telnet.h"
 #include "client.h"
-#include "../skill.h"
-#include "../str.h"
-#include "../lookup.h"
-#include "../engine.h"
-#include "../class.h"
+#include "skill.h"
+#include "str.h"
+#include "lookup.h"
+#include "engine.h"
+#include "class.h"
 
 Editor *build_skill_editor(Skill *skill)
 {
@@ -55,46 +55,46 @@ void skill_editor_menu(Client *conn)
 
     Skill *skill = (Skill *) conn->editing->data;
 
-    writelnf(conn, "   ~CId: ~W%d", skill->id);
+    xwritelnf(conn, "   ~CId: ~W%d", skill->id);
 
-    writelnf(conn, "~YA) ~CName: ~W%s~x", skill->name);
+    xwritelnf(conn, "~YA) ~CName: ~W%s~x", skill->name);
 
-    writelnf(conn, "~YB) ~CDamage: ~W%s~x", skill->damage);
+    xwritelnf(conn, "~YB) ~CDamage: ~W%s~x", skill->damage);
 
-    writelnf(conn, "~YC) ~CMsgOff: ~W%s~x", skill->msgOff);
+    xwritelnf(conn, "~YC) ~CMsgOff: ~W%s~x", skill->msgOff);
 
-    writelnf(conn, "~YD) ~CMsgObj: ~W%s~x", skill->msgObj);
+    xwritelnf(conn, "~YD) ~CMsgObj: ~W%s~x", skill->msgObj);
 
-    writelnf(conn, "~YE) ~CWait: ~W%d~x", skill->wait);
+    xwritelnf(conn, "~YE) ~CWait: ~W%d~x", skill->wait);
 
-    writelnf(conn, "~YF) ~CMana: ~W%d~x", skill->mana);
+    xwritelnf(conn, "~YF) ~CMana: ~W%d~x", skill->mana);
 
-    writelnf(conn, "~YG) ~CCost: ~W%.2f~x", skill->cost);
+    xwritelnf(conn, "~YG) ~CCost: ~W%.2f~x", skill->cost);
 
     const char *spfun = spellfun_name(skill->spellfun);
 
-    writelnf(conn, "~YH) ~CSpell: ~W%s~x", spfun ? spfun : "None");
+    xwritelnf(conn, "~YH) ~CSpell: ~W%s~x", spfun ? spfun : "None");
 
     const char *gsname = gsn_name(skill->pgsn);
 
-    writelnf(conn, "~YI) ~CGSN: ~W%s~x", gsname ? gsname : "None");
+    xwritelnf(conn, "~YI) ~CGSN: ~W%s~x", gsname ? gsname : "None");
 
-    writelnf(conn, "~YJ) ~CMinPos: ~W%s~x",
-             position_table[skill->minPos].name);
+    xwritelnf(conn, "~YJ) ~CMinPos: ~W%s~x",
+              position_table[skill->minPos].name);
 
-    writelnf(conn, "~YK) ~CFlags: ~W%s~x",
-             format_flags(&skill->flags, skill_flags));
+    xwritelnf(conn, "~YK) ~CFlags: ~W%s~x",
+              format_flags(&skill->flags, skill_flags));
 
-    write(conn, "~YL) ~CLevels: ~W");
+    xwrite(conn, "~YL) ~CLevels: ~W");
 
     for (int i = 0; i < max_class; i++)
     {
 
-        writef(conn, "%s [%d] ", class_table[i].name, skill->levels[i]);
+        xwritef(conn, "%s [%d] ", class_table[i].name, skill->levels[i]);
 
     }
 
-    writeln(conn, "");
+    xwriteln(conn, "");
 
 }
 
@@ -106,16 +106,16 @@ void skill_edit_list(Client *conn)
     for (int i = 0; i < max_skill; i++)
     {
 
-        writef(conn, "%2d) %-12.12s ", skill_table[i].id,
-               skill_table[i].name);
+        xwritef(conn, "%2d) %-12.12s ", skill_table[i].id,
+                skill_table[i].name);
 
         if (++count % 4 == 0)
-            writeln(conn, "");
+            xwriteln(conn, "");
 
     }
 
     if (count % 4 != 0)
-        writeln(conn, "");
+        xwriteln(conn, "");
 
 }
 
@@ -149,7 +149,7 @@ void skill_editor(Client *conn, const char *argument)
 
         save_skill(skill);
 
-        writeln(conn, "~CSkill saved.~x");
+        xwriteln(conn, "~CSkill saved.~x");
 
         return;
 
@@ -168,7 +168,7 @@ void skill_editor(Client *conn, const char *argument)
         if (nullstr(argument))
         {
 
-            writeln(conn, "~CChange skill name to what?~x");
+            xwriteln(conn, "~CChange skill name to what?~x");
 
             return;
 
@@ -263,7 +263,7 @@ void skill_editor(Client *conn, const char *argument)
         if (!is_number(argument))
         {
 
-            writeln(conn, "~CThat is not a number.~x");
+            xwriteln(conn, "~CThat is not a number.~x");
 
             return;
 
@@ -279,7 +279,7 @@ void skill_editor(Client *conn, const char *argument)
         if (!is_number(argument))
         {
 
-            writeln(conn, "~CThat is not a number.~x");
+            xwriteln(conn, "~CThat is not a number.~x");
 
             return;
 
@@ -297,7 +297,7 @@ void skill_editor(Client *conn, const char *argument)
         if (!is_number(argument))
         {
 
-            writeln(conn, "~CThat is not a number.~x");
+            xwriteln(conn, "~CThat is not a number.~x");
 
             return;
 
@@ -326,23 +326,23 @@ void skill_editor(Client *conn, const char *argument)
             if (skill->spellfun == 0)
             {
 
-                writeln(conn, "~CValid spells are:~x");
+                xwriteln(conn, "~CValid spells are:~x");
 
                 int i;
 
                 for (i = 0; spellfun_table[i].name != 0; i++)
                 {
 
-                    writef(conn, "%-10s ",
-                           spellfun_table[i].name);
+                    xwritef(conn, "%-10s ",
+                            spellfun_table[i].name);
 
                     if (i % 4 == 0)
-                        writeln(conn, "");
+                        xwriteln(conn, "");
 
                 }
 
                 if (i % 4 != 0)
-                    writeln(conn, "");
+                    xwriteln(conn, "");
 
                 return;
 
@@ -372,22 +372,22 @@ void skill_editor(Client *conn, const char *argument)
         if (skill->pgsn == 0)
         {
 
-            writeln(conn, "~CValid gsns are:~x");
+            xwriteln(conn, "~CValid gsns are:~x");
 
             int i;
 
             for (i = 0; gsn_table[i].name != 0; i++)
             {
 
-                writef(conn, "%-10s ", gsn_table[i].name);
+                xwritef(conn, "%-10s ", gsn_table[i].name);
 
                 if (i % 4 == 0)
-                    writeln(conn, "");
+                    xwriteln(conn, "");
 
             }
 
             if (i % 4 != 0)
-                writeln(conn, "");
+                xwriteln(conn, "");
 
             return;
 
@@ -405,8 +405,8 @@ void skill_editor(Client *conn, const char *argument)
         if (pos == -1)
         {
 
-            writelnf(conn, "~CValid positions are: ~W%s~x",
-                     lookup_names(position_table));
+            xwritelnf(conn, "~CValid positions are: ~W%s~x",
+                      lookup_names(position_table));
 
             return;
 
@@ -440,15 +440,15 @@ void skill_editor(Client *conn, const char *argument)
         if (c == -1)
         {
 
-            writeln(conn, "~CValid classes are:~W");
+            xwriteln(conn, "~CValid classes are:~W");
 
             for (int i = 0; i < max_class; i++)
             {
 
-                writef(conn, "%s ", class_table[i].name);
+                xwritef(conn, "%s ", class_table[i].name);
 
             }
-            writeln(conn, "~x");
+            xwriteln(conn, "~x");
 
             return;
 
@@ -456,7 +456,7 @@ void skill_editor(Client *conn, const char *argument)
         if (!is_number(argument))
         {
 
-            writeln(conn, "~CThat is not a valid level.~x");
+            xwriteln(conn, "~CThat is not a valid level.~x");
 
             return;
 

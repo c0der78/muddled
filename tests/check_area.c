@@ -21,7 +21,7 @@
 #include "config.h"
 #endif
 #include <check.h>
-#include "../src/area.h"
+#include "area.h"
 
 START_TEST(test_area_new)
 {

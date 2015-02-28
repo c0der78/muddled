@@ -20,30 +20,30 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "../engine.h"
-#include "importer.h"
-#include "config.h"
 #include <libgen.h>
 #include <inttypes.h>
-#include "../str.h"
-#include "../log.h"
-#include "../area.h"
-#include "../room.h"
-#include "../class.h"
-#include "../exit.h"
-#include "../character.h"
-#include "../nonplayer.h"
-#include "../help.h"
-#include "../db.h"
-#include "../flag.h"
-#include "../lookup.h"
-#include "../object.h"
-#include "../affect.h"
-#include "../social.h"
-#include "../race.h"
-#include "../skill.h"
-#include "../hashmap.h"
 #include <ctype.h>
+#include "engine.h"
+#include "importer.h"
+#include "str.h"
+#include "log.h"
+#include "area.h"
+#include "room.h"
+#include "class.h"
+#include "exit.h"
+#include "character.h"
+#include "nonplayer.h"
+#include "help.h"
+#include "db.h"
+#include "flag.h"
+#include "lookup.h"
+#include "object.h"
+#include "affect.h"
+#include "social.h"
+#include "race.h"
+#include "skill.h"
+#include "hashmap.h"
+#include "private.h"
 
 #define A           1
 #define B           2
@@ -1354,13 +1354,11 @@ Flag *rom_convert_affect_flags(long bits)
     return flags;
 }
 
-typedef void (*AffectCallback)(Affect *, void *, bool);
-
-AffectCallback convert_affect_location(int location)
+AffectCallback *convert_affect_location(int location)
 {
     static const struct
     {
-        AffectCallback callback;
+        AffectCallback *callback;
         int location;
     } convert[] =
     {

@@ -22,9 +22,9 @@
 #endif
 #include <check.h>
 #include <stdlib.h>
-#include "../src/cdecl.h"
-#include "../src/flag.h"
-#include "../src/lookup.h"
+#include "cdecl.h"
+#include "flag.h"
+#include "lookup.h"
 
 const Lookup test_flags[] =
 {

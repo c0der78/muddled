@@ -21,11 +21,11 @@
 #include "config.h"
 #endif
 #include <check.h>
-#include "../src/flag.h"
-#include "../src/explored.h"
-#include "../src/room.h"
-#include "../src/area.h"
-#include "../src/log.h"
+#include "flag.h"
+#include "explored.h"
+#include "room.h"
+#include "area.h"
+#include "log.h"
 #include <stdio.h>
 
 int bitcount(int);

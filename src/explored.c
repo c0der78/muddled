@@ -20,6 +20,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "character.h"
 #include "area.h"
 #include "flag.h"
@@ -28,9 +31,7 @@
 #include "str.h"
 #include "log.h"
 #include "explored.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "private.h"
 
 int bitcount(int c)
 {

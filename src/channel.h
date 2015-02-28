@@ -43,21 +43,13 @@ typedef enum
 
 struct channel
 {
-
     int *pgcn;
-
     int bit;
-
     const char *name;
-
     const char *description;
-
     const char *format;
-
     const char *color;
-
     channel_t type;
-
 };
 
 enum

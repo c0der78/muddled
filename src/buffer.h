@@ -21,31 +21,10 @@
 #ifndef MUDDLED_BUFFER_H
 #define MUDDLED_BUFFER_H
 
-typedef struct buffer Buffer;
-
 #define MAX_TEMP_BUF 5
 #define TEMP_BUF_SIZ BUFSIZ
 
 #include "cdecl.h"
-
-struct buffer
-{
-
-    short state;        /* error state of the buffer */
-
-    int size;       /* size in k */
-
-    char *string;       /* buffer's string */
-
-    bool(*write) (Buffer *, const char *);
-
-    bool(*writeln) (Buffer *, const char *);
-
-    bool(*writef) (Buffer *, const char *, ...);
-
-    bool(*writelnf) (Buffer *, const char *, ...);
-
-};
 
 BEGIN_DECL
 

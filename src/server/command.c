@@ -23,23 +23,24 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include "client.h"
-#include "../engine.h"
-#include "../exit.h"
-#include "../character.h"
-#include "../room.h"
-#include "../connection.h"
-#include "../account.h"
-#include "../player.h"
-#include "../str.h"
-#include "../gsn.h"
-#include "../fight.h"
-#include "../channel.h"
-#include "../log.h"
-#include "../skill.h"
-#include "../util.h"
-#include "../object.h"
-#include "../str.h"
-#include "../social.h"
+#include "engine.h"
+#include "exit.h"
+#include "character.h"
+#include "room.h"
+#include "connection.h"
+#include "account.h"
+#include "player.h"
+#include "str.h"
+#include "gsn.h"
+#include "fight.h"
+#include "channel.h"
+#include "log.h"
+#include "skill.h"
+#include "util.h"
+#include "object.h"
+#include "str.h"
+#include "social.h"
+#include "private.h"
 #include "command.h"
 
 const Command cmd_table[] =
@@ -171,16 +172,16 @@ void command_interpret(Character *ch, const char *argument)
             "I do not understand..."
         };
 
-        writeln(ch,
-                message[number_range
-                        (0,
-                         (sizeof(message) / sizeof(message[0])) - 1)]);
+        xwriteln(ch,
+                 message[number_range
+                         (0,
+                          (sizeof(message) / sizeof(message[0])) - 1)]);
         return;
     }
     if (cmd->position < ch->position)
     {
-        writelnf(ch, "You can't do that while you are %s.",
-                 position_table[ch->position].name);
+        xwritelnf(ch, "You can't do that while you are %s.",
+                  position_table[ch->position].name);
         return;
     }
     (*cmd->dofun) (cmd->name, ch, argument);
@@ -216,11 +217,11 @@ void cmd_syntax(Character *ch, const char *n_fun, ...)
 
     i = strlen(title) + 1;
 
-    writelnf(ch, "~W%s: ~w%s %s~x", title, n_fun, str);
+    xwritelnf(ch, "~W%s: ~w%s %s~x", title, n_fun, str);
 
     while ((str = va_arg(args, char *)) != NULL)
 
-        writelnf(ch, "~W%*c ~w%s %s~x", i, ' ', n_fun, str);
+        xwritelnf(ch, "~W%*c ~w%s %s~x", i, ' ', n_fun, str);
 
     va_end(args);
 }
@@ -252,7 +253,7 @@ DOFUN(quit)
 
     long number =
         number_range(1, sizeof(chmessage) / sizeof(chmessage[0])) - 1;
-    writeln(ch, chmessage[number]);
+    xwriteln(ch, chmessage[number]);
 
     number = number_range(1, sizeof(wmessage) / sizeof(wmessage[0])) - 1;
 
@@ -290,12 +291,12 @@ DOFUN(autologin)
     {
         for (p = ch->pc->account->players; p; p = p->next)
         {
-            writelnf(ch, "%s~Y%2d)~C %s",
-                     p->charId ==
-                     ch->pc->account->autologinId ? "~R*" : " ",
-                     ++count, p->name);
+            xwritelnf(ch, "%s~Y%2d)~C %s",
+                      p->charId ==
+                      ch->pc->account->autologinId ? "~R*" : " ",
+                      ++count, p->name);
         }
-        writelnf(ch, "~WSyntax: %s <# or name>~x", do_name);
+        xwritelnf(ch, "~WSyntax: %s <# or name>~x", do_name);
         return;
     }
     for (p = ch->pc->account->players; p; p = p->next)
@@ -313,7 +314,7 @@ DOFUN(autologin)
     }
     ch->pc->account->autologinId = p->charId;
 
-    writelnf(ch, "Autologin set to %s.", p->name);
+    xwritelnf(ch, "Autologin set to %s.", p->name);
 }
 
 void move_char(Character *ch, direction_t dir)
@@ -327,7 +328,7 @@ void move_char(Character *ch, direction_t dir)
 
     if (ex == 0 || ex->to.room == 0)
     {
-        writeln(ch, "You can't move in that direction.");
+        xwriteln(ch, "You can't move in that direction.");
         return;
     }
     char_from_room(ch);
@@ -373,7 +374,7 @@ DOFUN(kill)
 
     if (victim == 0)
     {
-        writeln(ch, "They are not here.");
+        xwriteln(ch, "They are not here.");
         return;
     }
     victim->fighting = ch;
@@ -386,7 +387,7 @@ DOFUN(kick)
 {
     if (ch->fighting == 0)
     {
-        writeln(ch, "Your not fighting anyone!");
+        xwriteln(ch, "Your not fighting anyone!");
         return;
     }
     multi_hit(ch, ch->fighting, gsn_kick, DAM_BASH);
@@ -409,7 +410,7 @@ DOFUN(cast)
 
     if (sn >= max_skill)
     {
-        writeln(ch, "No such spell!");
+        xwriteln(ch, "No such spell!");
         return;
     }
     (*skill_table[sn].spellfun) (sn, ch);
@@ -419,14 +420,14 @@ DOFUN(get)
 {
     if (nullstr(argument))
     {
-        writeln(ch, "Get what?");
+        xwriteln(ch, "Get what?");
         return;
     }
     Object *obj = get_obj_list(ch, argument, ch->inRoom->objects);
 
     if (obj == 0)
     {
-        writeln(ch, "That is not here.");
+        xwriteln(ch, "That is not here.");
         return;
     }
     obj_from_room(obj);
@@ -441,14 +442,14 @@ DOFUN(drop)
 {
     if (nullstr(argument))
     {
-        writeln(ch, "Drop what?");
+        xwriteln(ch, "Drop what?");
         return;
     }
     Object *obj = get_obj_list(ch, argument, ch->carrying);
 
     if (obj == 0)
     {
-        writeln(ch, "You are not carrying that.");
+        xwriteln(ch, "You are not carrying that.");
         return;
     }
     obj_from_char(obj);
@@ -479,8 +480,8 @@ void wear_obj(Character *ch, Object *obj, bool fReplace)
 {
     if (ch->level < obj->level)
     {
-        writelnf(ch, "You must be level %d to use this object.",
-                 obj->level);
+        xwritelnf(ch, "You must be level %d to use this object.",
+                  obj->level);
 
         act(TO_ROOM, ch, obj, 0,
             "$n tries to use $p, but is too inexperienced.");
@@ -497,7 +498,7 @@ void wear_obj(Character *ch, Object *obj, bool fReplace)
 
     if (t != 0 && t->canUse != 0 && !(*t->canUse) (ch))
     {
-        writeln(ch, "You do not know how to wear that object.");
+        xwriteln(ch, "You do not know how to wear that object.");
         act(TO_ROOM, ch, obj, 0,
             "$n tries to use $p, but doesn't know how.");
         return;
@@ -580,8 +581,8 @@ void wear_obj(Character *ch, Object *obj, bool fReplace)
             equip_char(ch, obj, WEAR_WRIST_2);
             return;
         }
-        writeln(ch,
-                "You are already wearing something on your wrists.");
+        xwriteln(ch,
+                 "You are already wearing something on your wrists.");
         return;
     case WEAR_FINGER:
         if (get_eq_char(ch, WEAR_FINGER) != 0 &&
@@ -607,7 +608,7 @@ void wear_obj(Character *ch, Object *obj, bool fReplace)
             equip_char(ch, obj, WEAR_FINGER_2);
             return;
         }
-        writeln(ch, "You are already wearing two rings.");
+        xwriteln(ch, "You are already wearing two rings.");
         return;
     case WEAR_TORSO:
         if (!remove_obj(ch, WEAR_TORSO, fReplace))
@@ -683,7 +684,7 @@ void wear_obj(Character *ch, Object *obj, bool fReplace)
         return;
     default:
         if (fReplace)
-            writeln(ch, "You can't wear, wield, or hold that.");
+            xwriteln(ch, "You can't wear, wield, or hold that.");
         return;
     }
 }
@@ -697,7 +698,7 @@ DOFUN(wear)
 
     if (arg[0] == '\0')
     {
-        writeln(ch, "Wear, wield, or hold what?");
+        xwriteln(ch, "Wear, wield, or hold what?");
         return;
     }
     if (!str_cmp(arg, "all"))
@@ -716,7 +717,7 @@ DOFUN(wear)
     {
         if ((obj = get_obj_carry(ch, arg, ch)) == NULL)
         {
-            writeln(ch, "You do not have that item.");
+            xwriteln(ch, "You do not have that item.");
             return;
         }
         wear_obj(ch, obj, true);

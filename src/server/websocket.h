@@ -22,7 +22,7 @@
 #define MUDDLED_WEBSOCKET_H
 
 #include <libwebsockets.h>
-#include "../cdecl.h"
+#include "cdecl.h"
 
 extern short websocket_port;
 

@@ -34,6 +34,7 @@
 #include "engine.h"
 #include "util.h"
 #include "explored.h"
+#include "private.h"
 
 Room *room_hash[ID_HASH] = { 0 };
 
@@ -91,8 +92,8 @@ void destroy_room(Room *room)
     {
         ch_next = ch->next_in_room;
 
-        writeln(ch,
-                "The gods wreack havok upon the land and you are transported somewhere safe..");
+        xwriteln(ch,
+                 "The gods wreack havok upon the land and you are transported somewhere safe..");
 
         char_from_room(ch);
 
