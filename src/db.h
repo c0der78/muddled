@@ -24,8 +24,6 @@
 #include <stdint.h>
 #include "typedef.h"
 
-#define sql         sqlite3
-#define sql_stmt    sqlite3_stmt
 #define sql_int64   sqlite3_int64
 #define sql_uint64  sqlite3_uint64
 
@@ -47,13 +45,13 @@
 
 typedef struct field_map
 {
-    const char *name;
-    const void *value;
-    int type;
-    const void *arg1;
-    const void *arg2;
-    int flags;
-    int (*funk)(sqlite3_stmt *, int, const struct field_map *);
+	const char *name;
+	const void *value;
+	int type;
+	const void *arg1;
+	const void *arg2;
+	int flags;
+	int (*funk)(sqlite3_stmt *, int, const struct field_map *);
 } field_map;
 
 typedef int (*custom_field_t) (sql_stmt *, int, const field_map *);

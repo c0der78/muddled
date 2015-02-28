@@ -23,6 +23,7 @@
 
 #include <libwebsockets.h>
 #include "cdecl.h"
+#include "typedef.h"
 
 extern short websocket_port;
 

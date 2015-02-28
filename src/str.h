@@ -20,17 +20,15 @@
 #ifndef MUDDLED_STRING_H
 #define MUDDLED_STRING_H
 
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
 #include "cdecl.h"
+#include "typedef.h"
 
 typedef enum
 {
-    ALIGN_LEFT,
-    ALIGN_CENTER,
-    ALIGN_RIGHT,
-    ALIGN_INDENT
+	ALIGN_LEFT,
+	ALIGN_CENTER,
+	ALIGN_RIGHT,
+	ALIGN_INDENT
 } align_t;
 
 extern const char str_empty[];

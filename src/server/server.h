@@ -22,6 +22,7 @@
 #define MUDDLED_SERVER_H
 
 #include "cdecl.h"
+#include "typedef.h"
 
 #include <time.h>
 

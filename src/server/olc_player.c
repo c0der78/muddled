@@ -34,6 +34,7 @@
 #include "flag.h"
 #include "macro.h"
 #include "util.h"
+#include "private.h"
 
 Editor *build_player_editor(Character *player)
 {

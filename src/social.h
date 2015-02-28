@@ -20,11 +20,8 @@
 #ifndef MUDDLED_SOCIAL_H
 #define MUDDLED_SOCIAL_H
 
-typedef struct social Social;
-
-#include <stdlib.h>
-#include "str.h"
-#include "character.h"
+#include "cdecl.h"
+#include "typedef.h"
 
 struct social
 {

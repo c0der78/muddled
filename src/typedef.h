@@ -1,6 +1,17 @@
 #ifndef MUDDLED_TYPEDEF_H
 #define MUDDLED_TYPEDEF_H
 
+
+#ifdef HAVE_LIBSQLITE3
+#include <sqlite3.h>
+typedef sqlite3  sql;
+typedef sqlite3_stmt sql_stmt;
+#endif
+
+#ifdef HAVE_STDBOOL_H
+#include <stdbool.h>
+#endif
+
 /*!
  * @typedef Account
  */
@@ -14,7 +25,6 @@ typedef struct account_player AccountPlayer;
  */
 typedef struct account_forum AccountForum;
 
-
 /*!
  * @typedef Area
  */
@@ -27,9 +37,11 @@ typedef struct affect Affect;
 
 typedef void AffectCallback(Affect *, void *, bool);
 
-
 typedef struct buffer Buffer;
 
+typedef __int64_t bit_t;
+
+typedef struct flag Flag;
 
 typedef struct connection Connection;
 
@@ -54,6 +66,8 @@ typedef struct npc NPC;
 typedef struct player Player;
 
 typedef struct race Race;
+
+typedef struct social Social;
 
 typedef enum
 {
@@ -125,5 +139,33 @@ typedef enum
     DEF_EXCLUDE,
     DEF_READONLY
 } forum_t;
+
+typedef enum
+{
+    STAT_STR,
+    STAT_INT,
+    STAT_WIS,
+    STAT_DEX,
+    STAT_CON,
+    STAT_LUCK,
+    MAX_STAT,
+    MAX_STAT_VALUE = 500
+} stat_t;
+
+typedef enum
+{
+    INFO_ALL,
+    INFO_NOTE,
+    INFO_LEVEL,
+    INFO_DEATH,
+    INFO_JOIN,
+    INFO_LEAVE,
+
+    /*
+     * Use the info all as a private bit for other info types. Info all
+     * shouldn't be private so its safe to use.
+     */
+    INFO_PRIVATE = (1 << INFO_ALL)
+} info_t;
 
 #endif

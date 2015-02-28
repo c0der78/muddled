@@ -32,6 +32,7 @@
 #include "flag.h"
 #include "lookup.h"
 #include "util.h"
+#include "str.h"
 #include "private.h"
 
 Social *first_social = 0;

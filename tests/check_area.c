@@ -22,6 +22,7 @@
 #endif
 #include <check.h>
 #include "area.h"
+#include "private.h"
 
 START_TEST(test_area_new)
 {

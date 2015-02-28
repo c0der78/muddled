@@ -3,10 +3,6 @@
 
 #include <stdlib.h>
 
-#ifdef HAVE_STDBOOL_H
-#include <stdbool.h>
-#endif
-
 #ifdef __cplusplus
 #define BEGIN_DECL extern "C" {
 #define END_DECL }

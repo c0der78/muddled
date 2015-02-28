@@ -30,6 +30,7 @@
 #include "nonplayer.h"
 #include "player.h"
 #include "str.h"
+#include "private.h"
 
 static Character *tch = 0;
 char buffer[BUF_SIZ] = {0};

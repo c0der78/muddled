@@ -31,9 +31,12 @@
 #ifndef MUDDLED_ENGINE_H
 #define MUDDLED_ENGINE_H
 
+#include <time.h>
 #include <stdio.h>
-
 #include "cdecl.h"
+#include "typedef.h"
+#include "macro.h"
+#include "lookup.h"
 
 #define BUF_SIZ     512
 
@@ -52,28 +55,11 @@
 #define LEVEL_GROUPS    5
 #define EXP_TABLE_SIZ   ((MAX_PLAYABLE_LEVEL / LEVEL_GROUPS) + 1)
 
-#include <time.h>
-#include "flag.h"
-#include "macro.h"
-#include "db.h"
-
 extern const char *weekdays[];
 extern const char *months[];
 extern const char *seasons[];
 
 extern const float exp_table[EXP_TABLE_SIZ];
-
-typedef enum
-{
-    STAT_STR,
-    STAT_INT,
-    STAT_WIS,
-    STAT_DEX,
-    STAT_CON,
-    STAT_LUCK,
-    MAX_STAT,
-    MAX_STAT_VALUE = 500
-} stat_t;
 
 enum
 {
@@ -88,22 +74,6 @@ enum
 {
     ENGINE_OFF
 };
-
-typedef enum
-{
-    INFO_ALL,
-    INFO_NOTE,
-    INFO_LEVEL,
-    INFO_DEATH,
-    INFO_JOIN,
-    INFO_LEAVE,
-
-    /*
-     * Use the info all as a private bit for other info types. Info all
-     * shouldn't be private so its safe to use.
-     */
-    INFO_PRIVATE = (1 << INFO_ALL)
-} info_t;
 
 struct engine
 {
@@ -127,8 +97,6 @@ extern const Lookup stat_table[];
 BEGIN_DECL
 FILE *engine_open_file(const char *, const char *);
 FILE *engine_open_file_in_dir(const char *, const char *, const char *);
-
-sqlite3 *enginedb();
 
 int engine_query(const char *, size_t, sql_stmt *);
 

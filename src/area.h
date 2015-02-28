@@ -24,12 +24,14 @@
 #ifndef MUDDLED_AREA_H_
 #define MUDDLED_AREA_H_
 
+#include "cdecl.h"
 #include "typedef.h"
+#include "lookup.h"
 
 enum
 {
-    AREA_NOEXPLORE,
-    AREA_CHANGED
+	AREA_NOEXPLORE,
+	AREA_CHANGED
 };
 
 /*!

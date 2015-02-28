@@ -20,11 +20,12 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "hint.h"
-#include "engine.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include "hint.h"
+#include "engine.h"
+#include "db.h"
 #include "str.h"
 #include "log.h"
 #include "macro.h"

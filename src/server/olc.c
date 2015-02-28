@@ -33,7 +33,7 @@
 #include "race.h"
 #include "telnet.h"
 #include "engine.h"
-#
+#include "private.h"
 
 Editor *new_editor()
 {

@@ -22,10 +22,7 @@
 #define MUDDLED_FLAG_H
 
 #include "cdecl.h"
-
-typedef long long bit_t;
-typedef struct flag Flag;
-
+#include "typedef.h"
 #include "lookup.h"
 
 /*!
@@ -33,8 +30,8 @@ typedef struct flag Flag;
  */
 struct flag
 {
-    int *bits;
-    size_t size;
+	int *bits;
+	size_t size;
 };
 
 BEGIN_DECL

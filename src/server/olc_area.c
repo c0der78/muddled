@@ -28,6 +28,7 @@
 #include "area.h"
 #include "lookup.h"
 #include "macro.h"
+#include "private.h"
 
 Editor *build_area_editor(Area *area)
 {

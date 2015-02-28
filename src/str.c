@@ -20,16 +20,16 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "macro.h"
-#include <ctype.h>
-#include <string.h>
-#include "str.h"
-#include "color.h"
-#include <stdio.h>
-#include "engine.h"
-#include "log.h"
 #include <stdarg.h>
 #include <regex.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdio.h>
+#include "macro.h"
+#include "str.h"
+#include "color.h"
+#include "engine.h"
+#include "log.h"
 
 const char str_empty[1] = { 0 };
 

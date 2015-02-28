@@ -23,13 +23,11 @@
 
 #include <stdint.h>
 
-typedef struct lookup Lookup;
-
-struct lookup
+typedef struct
 {
-    const char *name;
-    uintptr_t value;
-};
+	const char *name;
+	uintptr_t value;
+} Lookup;
 
 BEGIN_DECL
 int index_lookup(const Lookup *, const char *);

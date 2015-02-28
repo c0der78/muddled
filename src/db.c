@@ -22,13 +22,15 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "engine.h"
-#include "str.h"
-#include "log.h"
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
 #include <assert.h>
+#include "engine.h"
+#include "db.h"
+#include "flag.h"
+#include "str.h"
+#include "log.h"
 
 sqlite3 *enginedb()
 {

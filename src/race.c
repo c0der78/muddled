@@ -20,15 +20,16 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "flag.h"
-#include "str.h"
-#include "engine.h"
-#include "macro.h"
-#include "log.h"
-#include "lookup.h"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <stdio.h>
+#include "flag.h"
+#include "str.h"
+#include "engine.h"
+#include "db.h"
+#include "macro.h"
+#include "log.h"
+#include "lookup.h"
 #include "race.h"
 
 Race *first_race = 0;

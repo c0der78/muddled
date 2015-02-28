@@ -191,7 +191,7 @@ void affect_apply_align(Affect *paf, void *obj, bool fRemove)
                MAX_ALIGN);
 }
 
-const Lookup AffectCallbacks[] =
+const Lookup affect_callbacks[] =
 {
     {"none", 0},
     {"strength", (uintptr_t) &affect_apply_str},
@@ -253,7 +253,7 @@ void affect_remove_obj(Object *obj, Affect *paf)
 
 const char *affect_name(Affect *paf)
 {
-    return lookup_name(AffectCallbacks, (uintptr_t) paf->callback);
+    return lookup_name(affect_callbacks, (uintptr_t) paf->callback);
 }
 
 void affect_modify(Character *ch, Affect *paf, bool fAdd)
@@ -375,7 +375,7 @@ Affect *load_affect_by_id(identifier_t id)
 
                 paf->callback =
                     (AffectCallback *)
-                    value_lookup(AffectCallbacks,
+                    value_lookup(affect_callbacks,
                                  sql_column_str(stmt, i));
 
             }
@@ -402,7 +402,7 @@ int save_affect(Affect *paf)
         {"modifier", &paf->modifier, SQL_INT},
         {"level", &paf->level, SQL_INT},
         {"flags", &paf->flags, SQL_FLAG, affect_flags},
-        {"type", &paf->callback, SQL_FLAG, AffectCallbacks},
+        {"type", &paf->callback, SQL_FLAG, affect_callbacks},
         {0}
     };
 
