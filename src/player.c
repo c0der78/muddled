@@ -144,7 +144,7 @@ int save_player(Character *ch)
     }
     int res = save_character(ch, plr_flags);
 
-    const int maxCond = MAX_COND;
+    const size_t maxCond = MAX_COND;
 
     field_map pc_values[] =
     {
@@ -156,10 +156,7 @@ int save_player(Character *ch)
         {"battlePrompt", &ch->pc->battlePrompt, SQL_TEXT},
         {"explored", &ch->pc->explored, SQL_CUSTOM, NULL, NULL, 0, save_explored},
         {"channels", &ch->pc->channels, SQL_FLAG, channel_flags},
-        {
-            "condition", &ch->pc->condition, SQL_CUSTOM, NULL, &maxCond, 0, db_save_int_array
-
-        },
+        {"condition", &ch->pc->condition, SQL_CUSTOM, NULL, &maxCond, 0, db_save_int_array},
         {"experience", &ch->pc->experience, SQL_INT},
         {"permHit", &ch->pc->permHit, SQL_INT},
         {"permMana", &ch->pc->permMana, SQL_INT},

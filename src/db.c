@@ -347,7 +347,7 @@ static int sql_bind_values(sql_stmt *stmt, field_map *table, const char *idname)
 int db_save_int_array(sql_stmt *stmt, int index, const field_map *table)
 {
     int *values = (int *)table->value;
-    size_t max = (size_t) table->arg2;
+    size_t max = *((size_t*) table->arg2);
 
     static char buf[BUF_SIZ];
     int len = 0;
