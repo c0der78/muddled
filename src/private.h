@@ -1,6 +1,7 @@
 #ifndef MUDDLED_PRIVATE_H
 #define MUDDLED_PRIVATE_H
 
+#include <time.h>
 #include "typedef.h"
 
 struct account

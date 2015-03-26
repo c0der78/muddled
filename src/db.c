@@ -101,10 +101,10 @@ void db_close()
 int db_open(const char *name, const char *root_path)
 {
     if (root_path && *root_path)
-        return sqlite3_open(formatf("%s/%s", root_path, name),
+        return sqlite3_open(formatf("%s/share/muddled/%s", root_path, name),
                             &engine_info.db);
     else
-        return sqlite3_open(formatf("%s", name), &engine_info.db);
+        return sqlite3_open(formatf("resources/%s", name), &engine_info.db);
 }
 
 int sql_query(const char *buf, int len, sql_stmt **stmt)

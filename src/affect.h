@@ -24,6 +24,11 @@
 #define MUDDLED_AFFECT_H
 
 #include "typedef.h"
+#include "lookup.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum
 {
@@ -61,8 +66,6 @@ enum
  * @group Memory Management
  */
 
-BEGIN_DECL
-
 /*!
  * creates a new affect @return the newly allocated affect
  */
@@ -71,7 +74,7 @@ Affect *new_affect();
 /*!
  * destroys an affect @param affect the allocated affect to destroy
  */
-void destroy_affect(Affect *);
+void free_affect(Affect *);
 
 /*!
  * @group Memory Management
@@ -103,8 +106,6 @@ void affect_remove(Character *, Affect *);
 const char *affect_name(Affect *);
 bool is_affected(Character *, identifier_t);
 
-END_DECL
-
 /*!
  * @constant AffectCallbacks the table used to lookup affect callbacks
  */
@@ -134,5 +135,9 @@ AffectCallback affect_apply_align;
 /*!
  * @group Callbacks
  */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

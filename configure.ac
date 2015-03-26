@@ -39,6 +39,6 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([atexit gethostbyaddr gettimeofday inet_ntoa isascii memmove memset memcpy strcat strncat strlen pow regcomp select socket sqrt strcasecmp strchr strerror strrchr strstr strtoul])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/server/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/server/Makefile tests/Makefile resources/Makefile])
 
 AC_OUTPUT

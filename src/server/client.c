@@ -329,7 +329,7 @@ void destroy_client(Client *conn)
         close(conn->socket);
 
     if (conn->account != 0)
-        destroy_account(conn->account);
+        free_account(conn->account);
 
     if (conn->showstr_head != 0)
         free_mem(conn->showstr_head);
@@ -1665,7 +1665,7 @@ void client_confirm_account_delete(Client *conn, const char *argument)
 
     delete_account(conn->account);
 
-    destroy_account(conn->account);
+    free_account(conn->account);
 
     conn->handler = 0;
 

@@ -19,22 +19,17 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <inttypes.h>
-#include <assert.h>
 #include "engine.h"
 #include "account.h"
 #include "str.h"
-#include "db.h"
-#include "log.h"
-#include "character.h"
-#include "player.h"
 #include "forum.h"
-#include "lookup.h"
 #include "flag.h"
+#include "character.h"
+#include "log.h"
 #include "private.h"
+
+#define ACCOUNT_TABLE "account"
+#define ACCOUNT_FORUM_TABLE "account_forum"
 
 const Lookup account_flags[] =
 {
@@ -65,7 +60,7 @@ Account *new_account(Connection *conn)
     return acc;
 }
 
-void destroy_account(Account *acc)
+void free_account(Account *acc)
 {
     free_str(acc->login);
     free_str(acc->password);
@@ -83,7 +78,7 @@ void destroy_account(Account *acc)
     for (AccountPlayer * ch_next, *ch = acc->players; ch != 0; ch = ch_next)
     {
         ch_next = ch->next;
-        destroy_account_player(ch);
+        free_account_player(ch);
     }
 
     if (acc->playing)
@@ -103,7 +98,7 @@ AccountPlayer *new_account_player()
     return p;
 }
 
-void destroy_account_player(AccountPlayer *p)
+void free_account_player(AccountPlayer *p)
 {
     free_str(p->name);
 
@@ -112,7 +107,7 @@ void destroy_account_player(AccountPlayer *p)
 
 void account_forum_set_last_note(Account *acc, time_t value)
 {
-    assert(acc != 0);
+    if (!acc) return;
 
     int i = lookup_forum_by_id(acc->forum->id);
 
@@ -124,7 +119,7 @@ void account_forum_set_last_note(Account *acc, time_t value)
 
 time_t account_forum_last_note(Account *acc)
 {
-    assert(acc != 0 && acc->forum != 0);
+    if (!acc || !acc->forum) return 0;
 
     int i = lookup_forum_by_id(acc->forum->id);
 
@@ -136,7 +131,7 @@ time_t account_forum_last_note(Account *acc)
 
 bool account_forum_is_subscribed(Account *acc)
 {
-    assert(acc != 0 && acc->forum != 0);
+    if (!acc || !acc->forum) return false;
 
     int i = lookup_forum_by_id(acc->forum->id);
 

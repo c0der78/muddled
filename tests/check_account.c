@@ -34,7 +34,7 @@ START_TEST(test_account_new)
 
     fail_unless(acc->players == 0, "account player was not zero initialized");
 
-    destroy_account(acc);
+    free_account(acc);
 }
 END_TEST
 

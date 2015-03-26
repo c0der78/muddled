@@ -12,6 +12,8 @@ typedef sqlite3_stmt sql_stmt;
 #include <stdbool.h>
 #endif
 
+#include <inttypes.h>
+
 /*!
  * @typedef Account
  */
@@ -39,7 +41,7 @@ typedef void AffectCallback(Affect *, void *, bool);
 
 typedef struct buffer Buffer;
 
-typedef __int64_t bit_t;
+typedef int64_t bit_t;
 
 typedef struct flag Flag;
 
@@ -55,7 +57,7 @@ typedef struct engine Engine;
 
 typedef double money_t;
 
-typedef __int64_t identifier_t;
+typedef int64_t identifier_t;
 
 typedef struct room Room;
 

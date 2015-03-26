@@ -168,7 +168,6 @@ int load_engine(const char *db_file, const char *root_path)
 
 int save_engine()
 {
-
     engine_info.id = db_save(engine_field_map(&engine_info), "engine", engine_info.id);
 
     return engine_info.id != 0;

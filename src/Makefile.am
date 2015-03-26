@@ -3,7 +3,7 @@ lib_LTLIBRARIES = libmuddled.la
 
 libmuddled_la_LDFLAGS = $(LIBMUDDLED_LA_LDFLAGS) $(LIBS) -version-info 0:0:0
 
-subdirheadersdir = $(pkgincludedir)/muddled
+subdirheadersdir = $(pkgincludedir)
 
 subdirheaders_HEADERS = account.h affect.h area.h buffer.h channel.h character.h class.h color.h connection.h db.h engine.h exit.h explored.h fight.h flag.h forum.h grid.h gsn.h hashmap.h help.h hint.h log.h lookup.h macro.h map.h nonplayer.h object.h player.h race.h room.h script.h skill.h social.h spellfun.h str.h util.h variant.h typedef.h cdecl.h
 

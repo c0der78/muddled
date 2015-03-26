@@ -83,6 +83,8 @@ void log_data(const char *format, ...)
 
     va_start(args, format);
 
+    printf("DATA: ");
+
     if (sql_errcode() != SQL_OK)
     {
         vsnprintf(buf, BUFSIZ, format, args);
@@ -104,7 +106,9 @@ void log_trace(const char *format, ...)
 
     va_start(args, format);
 
+    printf("TRACE: ");
     vprintf(format, args);
+    printf("\n");
 
     va_end(args);
 }

@@ -21,22 +21,20 @@
  * ! @header Structure, methods and constants related to accounts @ignore
  * __ACCOUNT_H_
  */
-#ifndef MUDDLED_ACCOUNT_H_
-#define MUDDLED_ACCOUNT_H_
+#ifndef MUDDLED_ACCOUNT_H
+#define MUDDLED_ACCOUNT_H
 
-#include "cdecl.h"
-
-#define ACCOUNT_TABLE "account"
-#define ACCOUNT_FORUM_TABLE "account_forum"
-
-#include "flag.h"
-#include "forum.h"
-#include "connection.h"
 #include <time.h>
+#include "lookup.h"
+#include "typedef.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum
 {
-    ACC_COLOR_OFF
+	ACC_COLOR_OFF
 };
 
 /*!
@@ -48,8 +46,6 @@ extern const Lookup account_flags[];
 /*!
  * @group Memory Management
  */
-
-BEGIN_DECL
 
 /*!
  * creates a new account @return a newly allocated account
@@ -64,20 +60,12 @@ AccountPlayer *new_account_player();
  * performs cleanup and destroys a created account @param account the
  * allocated account to destroy
  */
-void destroy_account(Account *);
+void free_account(Account *);
 /*!
  * performs cleanup and destroys a created account player link @param
  * accountPlayer the allocated account player link to destroy
  */
-void destroy_account_player(AccountPlayer *);
-
-/*!
- * @group Memory Management
- */
-
-/*!
- * @group Data Management
- */
+void free_account_player(AccountPlayer *);
 
 /*!
  * loads the players for an account @param account the allocated account
@@ -130,6 +118,8 @@ bool account_forum_is_subscribed(Account *);
  */
 void account_forum_set_last_note(Account *, time_t);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif

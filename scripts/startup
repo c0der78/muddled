@@ -3,6 +3,5 @@
 require 'rubygems' if RUBY_VERSION < '1.9'
 require 'daemons'
 
-folder = ENV['DEBUG'] ? 'debug' : 'release'
+Daemons.run("muddled")
 
-Daemons.run("bin/muddled")

@@ -20,20 +20,13 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include <assert.h>
-#include <stdio.h>
-#include <inttypes.h>
-#include "engine.h"
 #include "affect.h"
-#include "log.h"
-#include "character.h"
-#include "nonplayer.h"
-#include "object.h"
-#include "room.h"
-#include "db.h"
-#include "str.h"
-#include "lookup.h"
 #include "private.h"
+#include "macro.h"
+#include "character.h"
+#include "log.h"
+#include "str.h"
+#include <assert.h>
 
 const Lookup affect_flags[] =
 {
@@ -81,9 +74,7 @@ static int affect_mod(Affect *paf, bool fRemove)
 void affect_apply_stat(Affect *aff, void *obj, bool fRemove, int stat)
 {
     Character *ch = (Character *) obj;
-
     assert(ch != 0);
-
     ch->statMods[stat] += affect_mod(aff, fRemove);
 
 }
@@ -91,9 +82,7 @@ void affect_apply_stat(Affect *aff, void *obj, bool fRemove, int stat)
 void affect_apply_resist(Affect *paf, void *obj, bool fRemove, int arg)
 {
     Character *ch = (Character *) obj;
-
     assert(ch != 0);
-
     ch->resists[arg] = affect_mod(paf, fRemove);
 }
 
@@ -101,7 +90,6 @@ void affect_apply_resists(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
-
     for (int i = DAM_BASH; i <= DAM_SLASH; i++)
     {
         ch->resists[i] += affect_mod(paf, fRemove);
@@ -150,6 +138,7 @@ void affect_apply_sex(Affect *paf, void *obj, bool fRemove)
 void affect_apply_level(Affect *paf, void *affected, bool fRemove)
 {
     Character *ch = (Character *) affected;
+    assert(ch != 0);
     ch->level += affect_mod(paf, fRemove);
 }
 
@@ -260,22 +249,8 @@ void affect_modify(Character *ch, Affect *paf, bool fAdd)
 {
     if (ch && paf && paf->callback)
     {
-
         (*paf->callback) (paf, ch, !fAdd);
     }
-    /*
-     * if (ch->pc && (wield = get_eq_char(ch, WEAR_WIELD)) != NULL &&
-     * get_obj_weight(wield) > (str_app[get_curr_stat(ch,
-     * STAT_STR)].wield * 10) && !IS_WEAPON_STAT(wield, WEAPON_NODISARM))
-     * { static int depth;
-     *
-     * if (depth == 0) { depth++; act("You drop $p.", ch, wield, NULL,
-     * TO_CHAR); act("$n drops $p.", ch, wield, NULL, TO_ROOM);
-     * obj_from_char(wield); obj_to_room(wield, ch->in_room); depth--; }
-     * }
-     */
-
-    return;
 }
 
 Affect *affect_find(Affect *paf, identifier_t sn)
