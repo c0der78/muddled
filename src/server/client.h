@@ -34,73 +34,40 @@ typedef struct Client Client;
 
 struct Client
 {
-
     // the order of the function pointers is so we can cast
     // to an interface in the library
     void (*handler) (Client *, const char *);
-
     void (*writelnf) (Client *, const char *, ...);
-
     void (*writeln) (Client *, const char *);
-
     void (*writef) (Client *, const char *, ...);
-
     void (*write) (Client *, const char *);
-
     void (*page) (Client *, const char *);
-
     void (*vwrite) (Client *, const char *, va_list);
-
     void (*titlef) (Client *, const char *, ...);
-
     void (*title) (Client *, const char *);
-
     void (*vtitle) (Client *, const char *, va_list);
-
     bool(*is_playing) (Client *);
-
     short scrHeight;
-
     short scrWidth;
-
     const char *termType;
-
     const char *host;
-
     Account *account;
-
     Client *next;
-
     int socket;
-
     struct sockaddr_in addr;
-
     struct libwebsocket *websocket;
-
     char lastCommand[BUF_SIZ];
-
     unsigned char inbuf[4 * ARG_SIZ];
-
     char incomm[ARG_SIZ];
-
     char *outbuf;
-
     int outsize;
-
     size_t outtop;
-
     bool fCommand;
-
     short repeat;
-
     short password_retries;
-
     char *showstr_head;
-
     const char *showstr_point;
-
     bool(*readln) (Client *);
-
     Editor *editing;
 
 };

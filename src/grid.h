@@ -34,60 +34,40 @@ typedef struct border Border;
 
 struct border
 {
-
     char color[4];
-
     char vertical;
-
     char horizontal;
-
     int flags;
 
 };
 
 struct gridcell
 {
-
     char value[BUF_SIZ];
-
     int span;
-
     int left_margin;
-
     int right_margin;
-
     int align;
-
     Border border;
-
     char color[4];
 
 };
 
 struct gridrow
 {
-
     int columns;
-
     int columnsize;
-
     struct gridcell *cells;
 
 };
 
 struct grid
 {
-
     struct gridrow *rows;
-
     int rowcount;
-
     int defaultcolumns;
-
     int x;
-
     int y;
-
     int width;
 
 };
@@ -117,7 +97,6 @@ void
 grid_set(Grid *, int, int, align_t, int, Border *, const char *, int, int);
 
 int
-
 
 grid_addf(Grid *, align_t, int, Border *, const char *, int, int,
           const char *, ...) __attribute__ ((format(printf, 8, 9)));

@@ -11,7 +11,6 @@
 #define END_DECL
 #endif
 
-
 BEGIN_DECL
 
 /* Kinda miffed and confused why I need this on OSX */

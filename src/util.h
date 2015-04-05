@@ -26,15 +26,11 @@
 
 struct timezone_type
 {
-
-    const char *name;   /* Name of the time zone */
-
-    const char *zone;   /* Cities or Zones in zone crossing */
-
-    int gmt_offset;     /* Difference in hours from Greenwich Mean
+	const char *name;   /* Name of the time zone */
+	const char *zone;   /* Cities or Zones in zone crossing */
+	int gmt_offset;     /* Difference in hours from Greenwich Mean
                  * Time */
-
-    int dst_offset;     /* Day Light Savings Time offset */
+	int dst_offset;     /* Day Light Savings Time offset */
 
 };
 
@@ -73,7 +69,6 @@ void obj_to_obj(Object *, Object *);
 Character *get_char_room(Character *, const char *);
 
 void
-
 
 actf(int, const Character *, const void *, const void *,
      const char *, ...) __attribute__ ((format(printf, 5, 6)));
@@ -119,9 +114,12 @@ int interpolate(int, int, int);
 
 Room *find_location(Character *, const char *);
 
+
 double diminishing_returns(double, double);
 
+
 double factorial(int);
+
 
 double combination(int, int);
 

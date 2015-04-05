@@ -48,11 +48,9 @@ const Lookup npc_flags[] =
 NPC *new_npc()
 {
     NPC *npc = (NPC *) alloc_mem(1, sizeof(NPC));
-
     npc->shortDescr = str_empty;
     npc->longDescr = str_empty;
     npc->startPosition = POS_STANDING;
-
     return npc;
 }
 
@@ -60,7 +58,6 @@ void destroy_npc(NPC *npc)
 {
     free_str(npc->shortDescr);
     free_str(npc->longDescr);
-
     free_mem(npc);
 }
 
@@ -75,27 +72,33 @@ void load_npc_columns(Character *ch, sql_stmt *stmt)
         if (load_char_column(ch, stmt, colname, i))
         {
         }
+
         else if (!str_cmp(colname, "shortDescr"))
         {
             ch->npc->shortDescr = str_dup(sql_column_str(stmt, i));
         }
+
         else if (!str_cmp(colname, "longDescr"))
         {
             ch->npc->longDescr = str_dup(sql_column_str(stmt, i));
         }
+
         else if (!str_cmp(colname, "startPosition"))
         {
             ch->npc->startPosition = sql_column_int(stmt, i);
         }
+
         else if (!str_cmp(colname, "flags"))
         {
             parse_flags(ch->flags, sql_column_str(stmt, i),
                         npc_flags);
         }
+
         else if (!str_cmp(colname, "areaId"))
         {
             ch->npc->area = get_area_by_id(sql_column_int(stmt, i));
         }
+
         else
         {
             log_warn("unknown nonplayer column '%s'", colname);
@@ -108,7 +111,6 @@ Character *load_npc(identifier_t id)
     char buf[400];
     sql_stmt *stmt;
     Character *ch = 0;
-
     int len = sprintf(buf,
                       "select * from character join nonplayer on nonplayerId=characterId where charId=%"
                       PRId64,
@@ -119,16 +121,16 @@ Character *load_npc(identifier_t id)
         log_data("could not prepare statement");
         return 0;
     }
+
     if (sql_step(stmt) != SQL_DONE)
     {
         ch = new_char();
         ch->npc = new_npc();
-
         load_npc_columns(ch, stmt);
-
         LINK(ch->npc->area->npcs, ch, next_in_area);
         LINK(first_character, ch, next);
     }
+
     if (sql_finalize(stmt) != SQL_OK)
     {
         log_data("could not finalize statement");
@@ -141,7 +143,6 @@ int load_npcs(Area *area)
     char buf[400];
     sql_stmt *stmt;
     int total = 0;
-
     int len = sprintf(buf,
                       "select * from character natural join nonplayer where areaId=%"
                       PRId64,
@@ -152,15 +153,13 @@ int load_npcs(Area *area)
         log_data("could not prepare statement");
         return 0;
     }
+
     while (sql_step(stmt) != SQL_DONE)
     {
         Character *ch = new_char();
         ch->npc = new_npc();
-
         ch->npc->area = area;
-
         load_npc_columns(ch, stmt);
-
         LINK(area->npcs, ch, next_in_area);
         LINK(first_character, ch, next);
         total++;
@@ -175,9 +174,7 @@ int load_npcs(Area *area)
 
 int save_npc(Character *ch)
 {
-
     int res = save_character(ch, npc_flags);
-
     field_map npc_values[] =
     {
         {"nonplayerId", &ch->id, SQL_INT},
@@ -190,14 +187,17 @@ int save_npc(Character *ch)
 
     if (res == 1)
     {
+
         if (sql_insert_query(npc_values, "nonplayer") != SQL_OK)
         {
             log_data("could not insert player");
             return 0;
         }
     }
+
     else if (res == 2)
     {
+
         if (sql_update_query(npc_values, "nonplayer", ch->id) != SQL_OK)
         {
             log_data("could not update character");
@@ -211,9 +211,9 @@ int delete_npc(Character *ch)
 {
     char buf[BUF_SIZ];
 
-    if (!delete_character(ch))
+    if (!delete_character(ch)) {
         return 0;
-
+    }
     sprintf(buf, "delete from nonplayer where charId=%" PRId64, ch->id);
 
     if (sql_exec(buf) != SQL_OK)
@@ -226,34 +226,41 @@ int delete_npc(Character *ch)
 
 Character *npc_lookup(const char *arg)
 {
+
     if (is_number(arg))
     {
         return get_npc_by_id(atoi(arg));
     }
     else
     {
-        for (Character *nch = first_character; nch != 0;
-                nch = nch->next)
+        for (Character *nch = first_character; nch != 0; nch = nch->next)
         {
-            if (nch->npc == 0)
+            if (nch->npc == 0) {
                 continue;
+            }
 
-            if (is_name(arg, nch->name))
+
+            if (is_name(arg, nch->name)) {
                 return nch;
+            }
         }
-        return 0;
     }
+    return 0;
 }
 
 Character *get_npc_by_id(identifier_t id)
 {
+
     for (Character *nch = first_character; nch != 0; nch = nch->next)
     {
-        if (nch->npc == 0)
-            continue;
 
-        if (nch->id == id)
+        if (nch->npc == 0) {
+            continue;
+        }
+
+        if (nch->id == id) {
             return nch;
+        }
     }
     return 0;
 }

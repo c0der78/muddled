@@ -29,11 +29,8 @@ lua_State *lua_instance = 0;
 
 void init_lua()
 {
-
     lua_instance = lua_open();
-
     luaopen_base(lua_instance);
-
     luaopen_string(lua_instance);
 
 }
@@ -43,13 +40,9 @@ void close_lua()
 
     if (lua_instance != 0)
     {
-
         log_info("closing lua");
-
         lua_close(lua_instance);
-
         lua_instance = 0;
-
     }
 }
 #else

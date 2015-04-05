@@ -284,6 +284,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TAR = @TAR@
 VERSION = @VERSION@
 X_CFLAGS = @X_CFLAGS@
 abs_builddir = @abs_builddir@

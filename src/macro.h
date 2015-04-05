@@ -40,37 +40,37 @@
 #define NAME(ch) ((ch->npc != 0) ? (ch->npc->shortDescr) : (ch->name))
 
 #define UNLINK(plist, ptype, pdata, pnext) \
-    do { \
-        if (plist == pdata) \
-            plist = pdata->pnext; \
-        else { \
-            ptype *_prev; \
-            for (_prev = plist; _prev != NULL; _prev = _prev->pnext) { \
-                if (_prev->pnext == pdata) { \
-                    _prev->pnext = pdata->pnext; \
-                    break; \
-                } \
+do { \
+    if (plist == pdata) \
+        plist = pdata->pnext; \
+    else { \
+        ptype *_prev; \
+        for (_prev = plist; _prev != NULL; _prev = _prev->pnext) { \
+            if (_prev->pnext == pdata) { \
+                _prev->pnext = pdata->pnext; \
+                break; \
             } \
         } \
-    } while(0)
+    } \
+} while (0)
 
 #define LINK(plist, pdata, pnext) \
     do { \
-        if((pdata) == NULL) \
+        if ((pdata) == NULL) \
             break; \
         (pdata)->pnext = (plist); \
         (plist) = (pdata); \
-    } while(0)
+    } while (0)
 
 #define LINK_LAST(plist, ptype, pdata, pnext) \
-    do { \
-        if(plist == NULL) { \
-            (plist) = (pdata); \
-            break; \
-        } \
-        ptype *p; \
-        for (p = plist; p->pnext; p = p->pnext ) ; \
-        p->pnext = pdata; \
-    } while(0)
+        do { \
+            if (plist == NULL) { \
+                (plist) = (pdata); \
+                break; \
+            } \
+            ptype *p; \
+            for (p = plist; p->pnext; p = p->pnext ); \
+            p->pnext = pdata; \
+        } while (0)
 
 #endif

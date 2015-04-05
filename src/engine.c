@@ -120,7 +120,6 @@ FILE *engine_open_file(const char *filepath, const char *perm)
 field_map *engine_field_map(Engine *info)
 {
     static field_map *table = 0;
-
     field_map engine_values[] =
     {
         {"engineId", &info->id, SQL_INT},
@@ -129,12 +128,12 @@ field_map *engine_field_map(Engine *info)
         {"flags", &info->flags, SQL_FLAG, engine_flags},
         {0}
     };
+
     if (table == 0)
     {
         table = alloc_mem(sizeof(engine_values) / sizeof(engine_values[0]), sizeof(engine_values[0]));
     }
     memcpy(table, engine_values, sizeof(engine_values));
-
     return table;
 }
 
@@ -143,7 +142,6 @@ int load_engine(const char *db_file, const char *root_path)
     /*char buf[500];
     sql_stmt *stmt;
     int len = sprintf(buf, "select * from engine");*/
-
     engine_info.flags = new_flag();
     engine_info.logging = new_flag();
     engine_info.root_path = str_dup(root_path);
@@ -160,16 +158,13 @@ int load_engine(const char *db_file, const char *root_path)
         log_data("could not load engine info");
         return 0;
     }
-
     log_info("Starting %s", engine_info.name);
-
     return 1;
 }
 
 int save_engine()
 {
     engine_info.id = db_save(engine_field_map(&engine_info), "engine", engine_info.id);
-
     return engine_info.id != 0;
 }
 
@@ -186,30 +181,17 @@ void free_mem(void *data)
 void initialize_engine(const char *db_file, const char *root_path)
 {
     log_info("Running from %s", root_path);
-
     current_time = time(0);
-
     init_lua();
-
     load_engine(db_file, root_path);
-
     synchronize_tables();
-
     log_info("loaded %d races", load_races());
-
     log_info("loaded %d classes", load_classes());
-
     log_info("loaded %d skills", load_skills());
-
     log_info("loaded %d areas", load_areas());
-
     log_info("loaded %d socials", load_socials());
-
     log_info("loaded %d helps", load_helps());
-
     log_info("loaded %d hints", load_hints());
-
     log_info("loaded %d forums", load_forums());
-
 
 }

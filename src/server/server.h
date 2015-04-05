@@ -40,7 +40,7 @@ extern time_t startup_time;
 
 extern time_t last_reboot;
 
-void run_server();
+int run_server();
 
 void stop_server();
 

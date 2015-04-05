@@ -37,7 +37,6 @@
 void synch_table(const char *tablename, const Lookup *table)
 {
     char buf[400];
-
     sprintf(buf, "CREATE TABLE IF NOT EXISTS [%s] ("
             "[name] VARCHAR NOT NULL PRIMARY KEY UNIQUE,"
             "[value] INTEGER)", tablename);
@@ -47,15 +46,13 @@ void synch_table(const char *tablename, const Lookup *table)
         log_data("could not create %s", tablename);
         return;
     }
+
     for (const Lookup *ptable = table; ptable->name != 0; ptable++)
     {
-        sprintf(buf,
-                "insert into %s (name,value) values('%s','%" PRIXPTR
-                "')", tablename, ptable->name, ptable->value);
+        sprintf(buf, "insert into %s (name,value) values('%s','%" PRIXPTR "')", tablename, ptable->name, ptable->value);
 
         if (sql_exec(buf) != SQL_OK)
         {
-
             sprintf(buf,
                     "update %s set name='%s', value='%" PRIXPTR
                     "' where name='%s'", tablename, ptable->name,
@@ -64,7 +61,6 @@ void synch_table(const char *tablename, const Lookup *table)
             if (sql_exec(buf) != SQL_OK)
             {
                 log_data("could not save into %s", tablename);
-
                 return;
             }
         }
@@ -74,7 +70,6 @@ void synch_table(const char *tablename, const Lookup *table)
 void synchronize_tables()
 {
     log_info("synchronizing tables");
-
     synch_table("direction", direction_table);
     synch_table("sex", sex_table);
     synch_table("position", position_table);
@@ -89,36 +84,41 @@ void synchronize_tables()
 
 uintptr_t value_lookup(const Lookup *table, const char *arg)
 {
-    if (!arg || !*arg)
+
+    if (!arg || !*arg) {
         return -1;
+    }
 
     for (const Lookup *t = table; t->name != 0; t++)
     {
-        if (!str_prefix(arg, t->name))
-            return t->value;
-    }
 
+        if (!str_prefix(arg, t->name)) {
+            return t->value;
+        }
+    }
     return -1;
 }
 
 int index_lookup(const Lookup *table, const char *arg)
 {
-    if (nullstr(arg))
+
+    if (nullstr(arg)) {
         return -1;
+    }
 
     for (int i = 0; table[i].name != 0; i++)
     {
-        if (!str_prefix(arg, table[i].name))
-            return i;
-    }
 
+        if (!str_prefix(arg, table[i].name)) {
+            return i;
+        }
+    }
     return -1;
 }
 
 const char *lookup_names(const Lookup *table)
 {
     static char buf[500];
-
     buf[0] = 0;
 
     for (const Lookup *t = table; t->name != 0; t++)
@@ -126,17 +126,18 @@ const char *lookup_names(const Lookup *table)
         strcat(buf, t->name);
         strcat(buf, " ");
     }
-
     return buf;
 }
 
 const char *lookup_name(const Lookup *table, uintptr_t value)
 {
+
     for (const Lookup *t = table; t->name != 0; t++)
     {
-        if (t->value == value)
-            return t->name;
-    }
 
+        if (t->value == value) {
+            return t->name;
+        }
+    }
     return 0;
 }

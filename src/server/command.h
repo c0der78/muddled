@@ -31,6 +31,7 @@ struct Command
 {
     const char *name;
     short level;
+
     DoFun *dofun;
     int category;
     position_t position;
@@ -57,6 +58,7 @@ enum
     COMMAND_COMM = (1 << 5),
     COMMAND_COMBAT = (1 << 6)
 };
+
 
 DoFun do_quit;
 DoFun do_logout;

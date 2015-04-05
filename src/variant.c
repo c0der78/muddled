@@ -77,6 +77,7 @@ float vget_float(variant_t *v)
     return v->value.vfloat;
 }
 
+
 double vget_double(variant_t *v)
 {
     assert(v != 0);

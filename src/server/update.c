@@ -45,33 +45,30 @@
 void reset_room(Room *room)
 {
     static const char *delims = "(),";
-
     void wear_obj(Character *, Object *, bool);
 
-    if (room == 0 || room->reset == 0)
+    if (room == 0 || room->reset == 0) {
         return;
-
+    }
     const char *str = room->reset;
-
     char buf[ARG_SIZ];
-
     Character *lastNPC = 0;
     Object *lastOBJ = 0;
 
     while (str && *str != 0)
     {
         str = get_line(str, buf);
-
         char *tmp;
         identifier_t id = 0;
 
-        if (buf[0] == 0 || (tmp = strtok(buf, delims)) == 0)
+        if (buf[0] == 0 || (tmp = strtok(buf, delims)) == 0) {
             continue;
-
+        }
         tmp = trim(tmp);
 
         if (!str_cmp("npc", tmp))
         {
+
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
                     || (lastNPC = load_npc(id)) == 0)
@@ -91,18 +88,21 @@ void reset_room(Room *room)
 
             for (Character *rch = room->characters; rch;
                     rch = rch->next_in_room)
-                if (rch->id == id)
+
+                if (rch->id == id) {
                     count++;
+                }
 
-            if (count >= max)
+            if (count >= max) {
                 continue;
-
+            }
             char_to_room(lastNPC, room);
-
             continue;
         }
+
         if (!str_cmp("obj", tmp))
         {
+
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
                     || (lastOBJ = load_object(id)) == 0)
@@ -122,23 +122,28 @@ void reset_room(Room *room)
 
             for (Object *obj = room->objects; obj;
                     obj = obj->next_content)
-                if (obj->id == id)
+
+                if (obj->id == id) {
                     count++;
+                }
 
-            if (count >= max)
+            if (count >= max) {
                 continue;
-
+            }
             obj_to_room(lastOBJ, room);
             continue;
         }
+
         if (!str_cmp("give", tmp))
         {
+
             if (lastNPC == 0)
             {
                 log_error("give reset - no last npc (room %"
                           PRId64 ")", room->id);
                 continue;
             }
+
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
                     || (lastOBJ = load_object(id)) == 0)
@@ -158,23 +163,28 @@ void reset_room(Room *room)
 
             for (Object *obj = lastNPC->carrying; obj;
                     obj = obj->next_content)
-                if (obj->id == id)
+
+                if (obj->id == id) {
                     count++;
+                }
 
-            if (count >= max)
+            if (count >= max) {
                 continue;
-
+            }
             obj_to_char(lastOBJ, lastNPC);
             continue;
         }
+
         if (!str_cmp("equip", tmp))
         {
+
             if (lastNPC == 0)
             {
                 log_error("equip reset - no last npc (room %"
                           PRId64 ")", room->id);
                 continue;
             }
+
             if ((tmp = strtok(0, delims)) == 0
                     || (id = atol(tmp)) == 0
                     || (lastOBJ = load_object(id)) == 0)
@@ -189,21 +199,21 @@ void reset_room(Room *room)
             if ((tmp = strtok(0, delims)) != 0)
             {
                 one_argument(tmp, buf);
-
                 wear_type type =
                     (wear_type) value_lookup(wear_types, buf);
-
                 equip_char(lastNPC, lastOBJ, type);
             }
+
             else
             {
                 wear_obj(lastNPC, lastOBJ, false);
             }
-
             continue;
         }
+
         if (!str_cmp("put", tmp))
         {
+
             if (lastOBJ == 0)
             {
                 log_error("put reset - no last obj (room %"
@@ -221,6 +231,7 @@ void reset_room(Room *room)
                           room->id);
                 continue;
             }
+
             if ((tmp = strtok(0, delims)) != 0)
             {
                 /* int max = atoi(tmp);*/
@@ -233,6 +244,7 @@ void reset_room(Room *room)
 
 void reset_area(Area *area)
 {
+
     for (Room *room = area->rooms; room != 0; room = room->next_in_area)
     {
         reset_room(room);
@@ -241,6 +253,7 @@ void reset_area(Area *area)
 
 void area_update()
 {
+
     for (Area *area = first_area; area != 0; area = area->next)
     {
         reset_area(area);
@@ -253,8 +266,9 @@ long hit_gain(Character *ch)
     long gain;
     // int number;
 
-    if (ch->inRoom == NULL)
+    if (ch->inRoom == NULL) {
         return 0;
+    }
 
     if (!ch->pc)
     {
@@ -276,8 +290,8 @@ long hit_gain(Character *ch)
             gain /= 3;
             break;
         }
-
     }
+
     else
     {
         gain = UMAX(3, getCurrStat(ch, STAT_CON) - 3 + ch->level);
@@ -305,19 +319,17 @@ long hit_gain(Character *ch)
             break;
         }
 
-        if (ch->pc->condition[COND_HUNGER] >= 20)
+        if (ch->pc->condition[COND_HUNGER] >= 20) {
             gain /= 2;
+        }
 
-        if (ch->pc->condition[COND_THIRST] >= 20)
+        if (ch->pc->condition[COND_THIRST] >= 20) {
             gain /= 2;
-
+        }
     }
-
     // gain = gain * ch->in_room->heal_rate / 100;
-
     // if (ch->on != NULL && ch->on->item_type == ITEM_FURNITURE)
     // gain = gain * ch->on->value[3] / 100;
-
     /*
      * if (IS_AFFECTED(ch, AFF_POISON)) gain /= 4;
      *
@@ -337,12 +349,14 @@ long mana_gain(Character *ch)
     long gain;
     // int number;
 
-    if (ch->inRoom == NULL)
+    if (ch->inRoom == NULL) {
         return 0;
+    }
 
     if (!ch->pc)
     {
         gain = 10 + ch->level;
+
         switch (ch->position)
         {
         default:
@@ -358,6 +372,7 @@ long mana_gain(Character *ch)
             break;
         }
     }
+
     else
     {
         gain =
@@ -371,6 +386,7 @@ long mana_gain(Character *ch)
          * gsn_meditation, true, 8); } if (!has_spells(ch)) gain /=
          * 2;
          */
+
         switch (ch->position)
         {
         default:
@@ -386,14 +402,14 @@ long mana_gain(Character *ch)
             break;
         }
 
-        if (ch->pc->condition[COND_HUNGER] >= 20)
+        if (ch->pc->condition[COND_HUNGER] >= 20) {
             gain /= 2;
+        }
 
-        if (ch->pc->condition[COND_THIRST] >= 20)
+        if (ch->pc->condition[COND_THIRST] >= 20) {
             gain /= 2;
-
+        }
     }
-
     /*
      * gain = gain * ch->in_room->mana_rate / 100;
      *
@@ -410,7 +426,6 @@ long mana_gain(Character *ch)
      * if (ch->race == race_lookup("vampire") && time_info.hour < 7 &&
      * time_info.hour > 19) gain *= 3;
      */
-
     return UMIN(gain, ch->maxMana - ch->mana);
 }
 
@@ -418,13 +433,15 @@ long move_gain(Character *ch)
 {
     long gain;
 
-    if (ch->inRoom == NULL)
+    if (ch->inRoom == NULL) {
         return 0;
+    }
 
     if (!ch->pc)
     {
         gain = ch->level;
     }
+
     else
     {
         gain = UMAX(15, ch->level + getCurrStat(ch, STAT_DEX));
@@ -441,13 +458,14 @@ long move_gain(Character *ch)
             break;
         }
 
-        if (ch->pc->condition[COND_HUNGER] >= 20)
+        if (ch->pc->condition[COND_HUNGER] >= 20) {
             gain /= 2;
+        }
 
-        if (ch->pc->condition[COND_THIRST] >= 20)
+        if (ch->pc->condition[COND_THIRST] >= 20) {
             gain /= 2;
+        }
     }
-
     /*
      * gain = gain * ch->in_room->heal_rate / 100;
      *
@@ -469,13 +487,15 @@ long move_gain(Character *ch)
 
 void gain_condition(Character *ch, int iCond, int value)
 {
-    if (value == 0 || !ch || !ch->pc || ch->level >= LEVEL_IMMORTAL)
-        return;
 
+    if (value == 0 || !ch || !ch->pc || ch->level >= LEVEL_IMMORTAL) {
+        return;
+    }
     int condition = ch->pc->condition[iCond];
 
-    if (condition < -50)
+    if (condition < -50) {
         return;
+    }
 
     if (iCond == COND_THIRST && value < 0 && ch->inRoom
             && ch->inRoom->sector == SECT_DESERT)
@@ -483,57 +503,80 @@ void gain_condition(Character *ch, int iCond, int value)
         value *= 2;
         xwriteln(ch, "You feel the ~Ydesert ~Rheat~x...");
     }
-    if (condition < 0)
-        value /= 2;
 
+    if (condition < 0) {
+        value /= 2;
+    }
     ch->pc->condition[iCond] =
         URANGE(iCond == COND_DRUNK ? 0 : -50, condition + value, 75);
 
     if ((condition = ch->pc->condition[iCond]) <= 0)
     {
+
         switch (iCond)
         {
         case COND_HUNGER:
+
             if (condition < -42 && value < 0)
             {
                 xwriteln(ch, "You are starving!");
                 act(TO_ROOM, ch, 0, 0, "$n is starving!");
             }
-            else if (condition < -30)
+
+            else if (condition < -30) {
                 xwriteln(ch, "You are dying of starvation.");
-            else if (condition < -20)
+            }
+
+            else if (condition < -20) {
                 xwriteln(ch, "You are extremely hungry.");
-            else if (condition < -10)
+            }
+
+            else if (condition < -10) {
                 xwriteln(ch, "You are really hungry.");
-            else
+            }
+
+            else {
                 xwriteln(ch, "You are hungry.");
-            if (ch->position == POS_SLEEPING)
+            }
+
+            if (ch->position == POS_SLEEPING) {
                 return;
-
+            }
             break;
-
         case COND_THIRST:
+
             if (condition < -40 && value < 0)
             {
                 xwriteln(ch, "You are dying of thirst!");
                 act(TO_ROOM, ch, 0, 0,
                     "$n is dying of thirst!");
             }
-            else if (condition < -30)
-                xwriteln(ch, "You are dying of dehydration.");
-            else if (condition < -20)
-                xwriteln(ch, "You are extremely dehydrated.");
-            else if (condition < -10)
-                xwriteln(ch, "You are dehydrating.");
-            else
-                xwriteln(ch, "You are thirsty.");
-            if (ch->position == POS_SLEEPING)
-                return;
-            break;
 
+            else if (condition < -30) {
+                xwriteln(ch, "You are dying of dehydration.");
+            }
+
+            else if (condition < -20) {
+                xwriteln(ch, "You are extremely dehydrated.");
+            }
+
+            else if (condition < -10) {
+                xwriteln(ch, "You are dehydrating.");
+            }
+
+            else {
+                xwriteln(ch, "You are thirsty.");
+            }
+
+            if (ch->position == POS_SLEEPING) {
+                return;
+            }
+            break;
         case COND_DRUNK:
-            if (condition != 0)
+
+            if (condition != 0) {
                 xwriteln(ch, "You are sober.");
+            }
             break;
         }
     }
@@ -542,8 +585,10 @@ void gain_condition(Character *ch, int iCond, int value)
 
 void character_update()
 {
+
     for (Character *ch = first_character; ch != 0; ch = ch->next)
     {
+
         if (ch->pc)
         {
             Client *conn = (Client *) ch->pc->conn;
@@ -555,6 +600,7 @@ void character_update()
                 {
                     "TICK", "TOCK"
                 };
+
                 if (number_range(0, 100) < 50)
                     xwritelnf(ch, "~?[%s] %s!~x",
                               str_time(-1,
@@ -562,29 +608,40 @@ void character_update()
                                        timezone, "%I:%M:%S"),
                               mesg[number_range(0, 10) <
                                    5 ? 0 : 1]);
+
                 else
                     xwritelnf(ch, "~?%s!~x",
                               mesg[number_range(0, 10) <
                                    5 ? 0 : 1]);
             }
         }
+
         if (ch->position < POS_STUNNED)
         {
 
-            if (ch->hit < ch->maxHit)
+            if (ch->hit < ch->maxHit) {
                 ch->hit += hit_gain(ch);
-            else
+            }
+
+            else {
                 ch->hit = ch->maxHit;
+            }
 
-            if (ch->mana < ch->maxMana)
+            if (ch->mana < ch->maxMana) {
                 ch->mana += mana_gain(ch);
-            else
-                ch->mana = ch->maxMana;
+            }
 
-            if (ch->move < ch->maxMove)
+            else {
+                ch->mana = ch->maxMana;
+            }
+
+            if (ch->move < ch->maxMove) {
                 ch->move += move_gain(ch);
-            else
+            }
+
+            else {
                 ch->move = ch->maxMove;
+            }
         }
         gain_condition(ch, COND_DRUNK, -1);
         gain_condition(ch, COND_THIRST, -1);
@@ -598,14 +655,19 @@ void character_update()
             if (paf->duration > 0)
             {
                 paf->duration--;
-                if (number_range(0, 4) == 0 && paf->level > 0)
+
+                if (number_range(0, 4) == 0 && paf->level > 0) {
                     paf->level--;
+                }
             }
+
             else if (paf->duration == 0)
             {
+
                 if (!paf_next || paf_next->from != paf->from
                         || paf_next->duration > 0)
                 {
+
                     if (valid_skill(paf->from)
                             && !nullstr(skill_table[paf->from].
                                         msgOff))
@@ -623,32 +685,35 @@ void character_update()
 
 void hint_update()
 {
+
     for (Character *ch = first_player; ch != 0; ch = ch->next_player)
     {
-        if (!is_set(ch->pc->account->flags, PLR_HINTS))
+
+        if (!is_set(ch->pc->account->flags, PLR_HINTS)) {
             continue;
-
+        }
         long pos = number_range(0, max_hint - 1);
-
         xwritelnf(ch, "~?%s~x", hint_table[pos].text);
     }
 }
 
 void violence_update()
 {
+
     for (Character * ch_next, *ch = first_character; ch != 0; ch = ch_next)
     {
         Character *victim;
-
         ch_next = ch->next;
 
-        if ((victim = ch->fighting) == 0 || ch->inRoom == 0)
+        if ((victim = ch->fighting) == 0 || ch->inRoom == 0) {
             continue;
+        }
 
         if (victim->inRoom == ch->inRoom)
         {
             multi_hit(ch, victim, GSN_UNDEFINED, DAM_UNDEFINED);
         }
+
         else
         {
             ch->fighting = 0;
@@ -674,16 +739,19 @@ void update_handler()
         pulse_area = PULSE_AREA;
         area_update();
     }
+
     if (--pulse_tick <= 0)
     {
         pulse_tick = PULSE_TICK;
         character_update();
     }
+
     if (--pulse_hint <= 0)
     {
         pulse_hint = PULSE_HINT;
         hint_update();
     }
+
     if (--pulse_violence <= 0)
     {
         pulse_violence = PULSE_VIOLENCE;

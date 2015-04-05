@@ -45,25 +45,32 @@ Race *get_race_by_id(identifier_t id)
 
     for (Race *r = first_race; r != 0; r = r->next)
     {
-        if (r->id == id)
+
+        if (r->id == id) {
             return r;
+        }
     }
     return 0;
 }
 
 Race *race_lookup(const char *arg)
 {
-    if (!arg || !*arg)
+
+    if (!arg || !*arg) {
         return 0;
+    }
 
     if (is_number(arg))
     {
         return get_race_by_id(atoi(arg));
     }
+
     for (Race *r = first_race; r != 0; r = r->next)
     {
-        if (!str_prefix(arg, r->name))
+
+        if (!str_prefix(arg, r->name)) {
             return r;
+        }
     }
     return 0;
 }
@@ -71,12 +78,10 @@ Race *race_lookup(const char *arg)
 Race *new_race()
 {
     Race *race = (Race *) alloc_mem(1, sizeof(Race));
-
     race->name = str_empty;
     race->description = str_empty;
     race->flags = new_flag();
     memset(race->stats, 13, MAX_STAT * sizeof(int));
-
     return race;
 }
 
@@ -84,7 +89,6 @@ void destroy_race(Race *race)
 {
     free_str(race->name);
     free_str(race->description);
-
     free_mem(race);
 }
 
@@ -93,7 +97,6 @@ int load_races()
     char buf[400];
     sql_stmt *stmt;
     int total = 0;
-
     int len = sprintf(buf, "select * from race");
 
     if (sql_query(buf, len, &stmt) != SQL_OK)
@@ -101,10 +104,10 @@ int load_races()
         log_data("could not prepare statement");
         return 0;
     }
+
     while (sql_step(stmt) != SQL_DONE)
     {
         int count = sql_column_count(stmt);
-
         Race *race = new_race();
 
         for (int i = 0; i < count; i++)
@@ -115,37 +118,42 @@ int load_races()
             {
                 race->name = str_dup(sql_column_str(stmt, i));
             }
+
             else if (!str_cmp(colname, "summary"))
             {
                 race->description =
                     str_dup(sql_column_str(stmt, i));
             }
+
             else if (!str_cmp(colname, "raceId"))
             {
                 race->id = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "stats"))
             {
                 db_read_int_array(MAX_STAT, &race->stats, stmt,
                                   i);
             }
+
             else if (!str_cmp(colname, "statMods"))
             {
                 db_read_int_array(MAX_STAT, &race->statMods,
                                   stmt, i);
             }
+
             else if (!str_cmp(colname, "flags"))
             {
                 parse_flags(race->flags,
                             sql_column_str(stmt, i),
                             race_flags);
             }
+
             else
             {
                 log_warn("unknown race column '%s'", colname);
             }
         }
-
         LINK(first_race, race, next);
         total++;
     }
@@ -160,7 +168,6 @@ int load_races()
 int save_race(Race *race)
 {
     const int maxStat = MAX_STAT;
-
     field_map race_values[] =
     {
         {"name", &race->name, SQL_TEXT},
@@ -177,22 +184,23 @@ int save_race(Race *race)
 
     if (race->id == 0)
     {
+
         if (sql_insert_query(race_values, "race") != SQL_OK)
         {
             log_data("could not insert race");
             return 0;
         }
         race->id = db_last_insert_rowid();
-
     }
+
     else
     {
+
         if (sql_update_query(race_values, "race", race->id) != SQL_OK)
         {
             log_data("could not update race");
             return 0;
         }
     }
-
     return 1;
 }

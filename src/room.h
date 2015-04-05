@@ -70,7 +70,6 @@ enum
 {
     ROOM_SAFE,
     ROOM_NO_RECALL,
-
     ROOM_NOEXPLORE
 };
 

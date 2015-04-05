@@ -54,10 +54,9 @@ const char *reboot_file = 0;
 time_t startup_time = 0;
 time_t last_reboot = 0;
 
-extern char *mktemp(char *);
-
-void initialize_server()
+int initialize_server()
 {
+
     if (!server_rebooting)
     {
         static struct sockaddr_in sa_zero;
@@ -67,20 +66,18 @@ void initialize_server()
         if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         {
             log_error("init_socket: socket");
-            exit(-1);
+            return 1;
         }
-        if (setsockopt
-                (server_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&x,
-                 sizeof(x)) < 0)
+
+        if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&x, sizeof(x)) < 0)
         {
             log_error("Init_socket: SO_REUSEADDR");
             close(server_socket);
-            exit(-1);
+            return 1;
         }
 #if defined SO_DONTLINGER && !defined SYSV
         {
             struct linger ld;
-
             ld.l_onoff = 1;
             ld.l_linger = 1000;
 
@@ -90,11 +87,10 @@ void initialize_server()
             {
                 log_error("init_socket: SO_DONTLINGER");
                 close(server_socket);
-                exit(-1);
+                return 1;
             }
         }
 #endif
-
         sa = sa_zero;
         sa.sin_family = AF_INET;
         sa.sin_port = htons(server_port);
@@ -104,22 +100,21 @@ void initialize_server()
         {
             log_error("init socket: bind");
             close(server_socket);
-            exit(-1);
+            return 1;
         }
+
         if (listen(server_socket, 5) < 0)
         {
             log_error("init socket: listen");
             close(server_socket);
-            exit(-1);
+            return 1;
         }
-
     }
+
     else
     {
         char buf[ARG_SIZ];
-
         FILE *fp = engine_open_file(reboot_file, "r");
-
         last_reboot = time(0);
 
         if (fp == 0)
@@ -127,11 +122,14 @@ void initialize_server()
             log_error("Could not open file %s for reading",
                       reboot_file);
         }
+
         else
         {
             log_trace("parsing reboot file");
+
             if (fgets(buf, sizeof(buf), fp) != NULL)
             {
+
                 if (sscanf(buf, "%ld\n", &startup_time) != 1)
                 {
                     log_error
@@ -139,6 +137,7 @@ void initialize_server()
                 }
             }
             socklen_t size = sizeof(struct sockaddr);
+
             while (fgets(buf, sizeof(buf), fp) != NULL)
             {
                 Client *conn = new_client();
@@ -147,7 +146,6 @@ void initialize_server()
                 char term[100];
                 int width, height;
                 struct hostent *from;
-
                 conn->account = new_account((Connection *) conn);
 
                 if (sscanf (buf, "%d %d %d %[^'~']~ %[^'~']~ %s\n",
@@ -180,6 +178,7 @@ void initialize_server()
                     destroy_client(conn);
                     continue;
                 }
+
                 for (AccountPlayer *ch = conn->account->players; ch; ch = ch->next)
                 {
                     if (!str_cmp(ch->name, name))
@@ -199,34 +198,32 @@ void initialize_server()
                 {
                     LINK(first_client, conn, next);
                     test_telopts(conn);
-
                     xwriteln(conn, "Reality warps briefly and you feel a change in the world.");
-
                     set_playing(conn);
                 }
-
             }
-
             unlink(reboot_file);
         }
     }
-
     log_info("listening on port %d", server_port);
 
+    if (websocket_port == 0) {
+        websocket_port = server_port + 1;
+    }
     websocket_context = create_websocket(websocket_port);
+    return 0;
 }
 
-void game_loop(int control)
+int game_loop(int control)
 {
     static struct timeval null_time;
     struct timeval last_time;
-
     gettimeofday(&last_time, NULL);
     current_time = (time_t) last_time.tv_sec;
-
     /*
      * Main loop
      */
+
     while (server_socket != -1)
     {
         fd_set in_set;
@@ -234,7 +231,6 @@ void game_loop(int control)
         fd_set exc_set;
         Client *c, *c_next;
         int maxdesc;
-
         /*
          * Poll all active descriptors.
          */
@@ -243,6 +239,7 @@ void game_loop(int control)
         FD_ZERO(&exc_set);
         FD_SET(control, &in_set);
         maxdesc = control;
+
         for (c = first_client; c; c = c->next)
         {
             maxdesc = UMAX(maxdesc, c->socket);
@@ -254,11 +251,12 @@ void game_loop(int control)
         if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0)
         {
             log_error("select: poll");
-            exit(1);
+            return 1;
         }
         /*
          * New connection?
          */
+
         if (FD_ISSET(control, &in_set))
         {
             initialize_client(control);
@@ -266,36 +264,42 @@ void game_loop(int control)
         /*
          * Kick out the freaky folks.
          */
+
         for (c = first_client; c; c = c_next)
         {
             c_next = c->next;
+
             if (FD_ISSET(c->socket, &exc_set) || c->handler == 0)
             {
                 FD_CLR(c->socket, &in_set);
                 FD_CLR(c->socket, &out_set);
-                if (client_is_playing(c))
+
+                if (client_is_playing(c)) {
                     save_player(c->account->playing);
+                }
                 c->outtop = 0;
                 close_client(c);
             }
         }
-
         /*
          * Process input.
          */
+
         for (c = first_client; c; c = c_next)
         {
             c_next = c->next;
-
             c->fCommand = false;
 
             if (FD_ISSET(c->socket, &in_set))
             {
+
                 if (!c->readln(c))
                 {
                     FD_CLR(c->socket, &out_set);
-                    if (client_is_playing(c))
+
+                    if (client_is_playing(c)) {
                         save_player(c->account->playing);
+                    }
                     c->outtop = 0;
                     close_client(c);
                     continue;
@@ -313,39 +317,37 @@ void game_loop(int control)
             {
                 c->fCommand = true;
                 // stop_idling(c->character);
-
                 (*c->handler) (c, c->incomm);
-
                 c->incomm[0] = 0;
             }
         }
-
         /*
          * Autonomous game motion.
          */
         update_handler();
-
         libwebsocket_service(websocket_context, 1);
-
         /*
          * Output.
          */
+
         for (c = first_client; c; c = c_next)
         {
             c_next = c->next;
 
             if ((c->fCommand || c->outtop > 0) && FD_ISSET(c->socket, &out_set))
             {
+
                 if (!process_output(c, true))
                 {
-                    if (client_is_playing(c))
+
+                    if (client_is_playing(c)) {
                         save_player(c->account->playing);
+                    }
                     c->outtop = 0;
                     close_client(c);
                 }
             }
         }
-
         /*
          * Synchronize to a clock.
          * Sleep( last_time + 1/PULSE_PER_SECOND - now ).
@@ -355,7 +357,6 @@ void game_loop(int control)
             struct timeval now_time;
             suseconds_t secDelta;
             suseconds_t usecDelta;
-
             gettimeofday(&now_time, NULL);
             usecDelta =
                 last_time.tv_usec - now_time.tv_usec +
@@ -378,9 +379,9 @@ void game_loop(int control)
             if (secDelta > 0 || (secDelta == 0 && usecDelta > 0))
             {
                 struct timeval stall_time;
-
                 stall_time.tv_usec = usecDelta;
                 stall_time.tv_sec = secDelta;
+
                 if (select(0, NULL, NULL, NULL, &stall_time) <
                         0)
                 {
@@ -389,50 +390,44 @@ void game_loop(int control)
                 }
             }
         }
-
         gettimeofday(&last_time, NULL);
         current_time = (time_t) last_time.tv_sec;
     }
+
+    return 0;
 }
 
-void run_server()
+int run_server()
 {
-    initialize_server();
-
+    if (initialize_server()) {
+        return 1;
+    }
     startup_time = time(0);
 
-    game_loop(server_socket);
+    return game_loop(server_socket);
 }
 
 void stop_server()
 {
+
     if (server_socket != -1)
     {
         log_info("shutting down server");
         close(server_socket);
         server_socket = -1;
     }
-
     char buf[ARG_SIZ + 1] = {0};
-
     sprintf(buf, "update engine set last_shutdown = '%s'", iso8601_format(current_time, buf, ARG_SIZ));
-
     sql_exec(buf);
 }
 
 void reboot_server()
 {
     FILE *fp;
-
     char arg1[50];
-
     char arg2[50];
-
     char arg3[100];
-
-    reboot_file = mktemp("reboot.XXXXXX");
-
-    fp = engine_open_file(reboot_file, "w");
+    fp = fdopen(mkstemp("reboot.XXXXXX"), "w");
 
     if (fp == 0)
     {
@@ -444,27 +439,21 @@ void reboot_server()
     for (Client *conn = first_client; conn; conn = conn->next)
     {
 
-        if (client_is_playing(conn))
+        if (client_is_playing(conn)) {
             save_player(conn->account->playing);
-
+        }
         fprintf(fp, "%d %d %d %s~ %s~ %s\n", conn->socket,
                 conn->scrWidth, conn->scrHeight, conn->account->login,
                 conn->account->playing->name, conn->termType);
 
-        if (conn->outtop > 0)
+        if (conn->outtop > 0) {
             process_output(conn, false);
-
+        }
     }
-
     fclose(fp);
-
     sprintf(arg1, "-c%d", server_socket);
-
     sprintf(arg2, "-p%d", server_port);
-
     sprintf(arg3, "-f%s", reboot_file);
-
     execl(exec_path, exec_path, arg1, arg2, arg3, (char *)NULL);
-
     log_error("Could not reboot");
 }

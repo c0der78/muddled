@@ -49,7 +49,6 @@ const Lookup area_flags[] =
 field_map *area_field_map(Area *area)
 {
     static field_map *area_values;
-
     field_map temp[] =
     {
         {"areaId", &area->id, SQL_INT },
@@ -63,22 +62,16 @@ field_map *area_field_map(Area *area)
 Area *new_area()
 {
     Area *area = (Area *) alloc_mem(1, sizeof(Area));
-
     area->name = str_empty;
-
     area->npcs = 0;
-
     area->flags = new_flag();
-
     return area;
 }
 
 void destroy_area(Area *area)
 {
     free_str(area->name);
-
     destroy_flags(area->flags);
-
     free_mem(area);
 }
 
@@ -108,7 +101,6 @@ Area *load_area(identifier_t id)
     /*char buf[500];
     sql_stmt *stmt;
     Area *area = 0;
-
     int len = sprintf(buf,
               "select * from area where areaId = %"
               PRId64 " limit 1",
@@ -119,24 +111,20 @@ Area *load_area(identifier_t id)
         log_data("could not prepare statement");
         return 0;
     }
+
     if (sql_step(stmt) != SQL_DONE) {
         area = new_area();
-
         load_area_columns(area, stmt);
-
         log_info("loaded %s (%d npcs, %d objs, %d rooms)", area->name,
              load_npcs(area), load_objects(area), load_rooms(area));
-
         LINK(first_area, area, next);
-
         max_area++;
     }
+
     if (sql_finalize(stmt) != SQL_OK) {
         log_data("could not finalize statement");
     }*/
-
     Area *area = new_area();
-
     int res = db_load_by_id(area_field_map(area), "area",  id);
 
     if (!res)
@@ -145,22 +133,16 @@ Area *load_area(identifier_t id)
         destroy_area(area);
         return 0;
     }
-
     return area;
 }
-
 
 static void create_area(sql_stmt *stmt)
 {
     Area *area = new_area();
-
     sql_load_columns(stmt, area_field_map(area));
-
     log_info("loaded %s (%d npcs, %d objs, %d rooms)", area->name,
              load_npcs(area), load_objects(area), load_rooms(area));
-
     LINK(first_area, area, next);
-
     max_area++;
 }
 
@@ -169,23 +151,19 @@ int load_areas()
     /*char buf[500];
     sql_stmt *stmt;
     int total = 0;
-
     int len = sprintf(buf, "select * from area");
 
     if (sql_query(buf, len, &stmt) != SQL_OK) {
         log_data("could not prepare statement");
         return 0;
     }
+
     while (sql_step(stmt) != SQL_DONE) {
         Area *area = new_area();
-
         load_area_columns(area, stmt);
-
         log_info("loaded %s (%d npcs, %d objs, %d rooms)", area->name,
              load_npcs(area), load_objects(area), load_rooms(area));
-
         LINK(first_area, area, next);
-
         total++;
         max_area++;
     }
@@ -194,22 +172,21 @@ int load_areas()
         log_data("could not finalize statement");
     }
     finalize_exits();
-
     return total;*/
-
     db_load_all("area", create_area, 0);
-
     finalize_exits();
-
     return max_area;
 }
 
 Area *get_area_by_id(identifier_t id)
 {
+
     for (Area *area = first_area; area != 0; area = area->next)
     {
-        if (area->id == id)
+
+        if (area->id == id) {
             return area;
+        }
     }
     return 0;
 }
@@ -222,16 +199,18 @@ int save_area_only(Area *area)
 
     if (area->id == 0)
     {
+
         if (sql_insert_query(area_field_map(area), "area") != SQL_OK)
         {
             log_data("could not insert area");
             return 0;
         }
         area->id = db_last_insert_rowid();
-
     }
+
     else
     {
+
         if (sql_update_query(area_field_map(area), "area", area->id) != SQL_OK)
         {
             log_data("could not update area");
@@ -244,7 +223,6 @@ int save_area_only(Area *area)
 int save_area(Area *area)
 {
     db_begin_transaction();
-
     save_area_only(area);
 
     for (Object *obj = area->objects; obj; obj = obj->next_in_area)
@@ -261,39 +239,41 @@ int save_area(Area *area)
     {
         save_room(room);
     }
-
     db_end_transaction();
-
     return 1;
 }
 
 Area *area_lookup(const char *arg)
 {
-    if (!arg || !*arg)
+
+    if (!arg || !*arg) {
         return 0;
+    }
 
     if (is_number(arg))
     {
         return get_area_by_id(atoi(arg));
     }
+
     for (Area *area = first_area; area != 0; area = area->next)
     {
-        if (!str_prefix(arg, strip_color(area->name)))
-            return area;
-    }
 
+        if (!str_prefix(arg, strip_color(area->name))) {
+            return area;
+        }
+    }
     return 0;
 }
 
 Area *get_default_area()
 {
-    if (first_area != 0)
-        return first_area;
 
+    if (first_area != 0) {
+        return first_area;
+    }
     Area *area = new_area();
     area->name = "The Default Area";
     LINK(first_area, area, next);
-
     max_area++;
     return area;
 }

@@ -83,5 +83,4 @@ int save_skill(Skill *);
 
 END_DECL
 
-
 #endif              /* // #ifndef SKILL_H */

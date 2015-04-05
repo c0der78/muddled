@@ -42,48 +42,42 @@
 #include "area.h"
 #include "forum.h"
 #include "channel.h"
+#include "websocket.h"
+#include "str.h"
 #include "private.h"
 
 #include <sys/time.h>
 
 void init_signals();
-void parse_options(int, char **);
+int parse_options(int, char **);
 
 const char *const DB_FILE = "muddled.db";
 
 static void exit_engine()
 {
     save_engine();
-
     save_forums();
 }
 
 int main(int argc, char *argv[])
 {
+    if (parse_options(argc, argv)) {
+        return 1;
+    }
     srand((unsigned int) (time(NULL) ^ getpid()));
-
-    parse_options(argc, argv);
-
     init_signals();
-
     initialize_engine(DB_FILE, ROOT_DIR);
-
     initialize_channels();
-
-    run_server();
-
-    return 0;
+    return run_server();;
 }
 
-void parse_options(int argc, char *argv[])
+int parse_options(int argc, char *argv[])
 {
     int c;
-
     log_trace("parsing options");
-
     exec_path = argv[0];
 
-    while ((c = getopt(argc, argv, "c:p:i:")) != -1)
+    while ((c = getopt(argc, argv, "c:p:i:w:")) != -1)
     {
         switch (c)
         {
@@ -92,34 +86,45 @@ void parse_options(int argc, char *argv[])
             server_rebooting = true;
             break;
         case 'p':
+            if (!is_number(optarg)) {
+                log_error("invalid port %s", optarg);
+                return 1;
+            }
             server_port = atoi(optarg);
             break;
         case 'f':
             reboot_file = optarg;
             break;
+        case 'w':
+            if (!is_number(optarg)) {
+                log_error("invalid port %s", optarg);
+                return 1;
+            }
+            websocket_port = atoi(optarg);
+            break;
         case 'i':
             server_import(ROOT_DIR, optarg);
-            exit(EXIT_SUCCESS);
+            return 1;
         default:
             break;
         }
     }
+    return 0;
 }
 
 void handle_sig(int sig)
 {
+    static volatile sig_atomic_t crashed = 0;
     Character *ch;
     struct sigaction default_action;
     int i;
     pid_t forkpid;
     int status;
-    static volatile sig_atomic_t crashed = 0;
-
     waitpid(-1, &status, WNOHANG);
+
     if (crashed == 0)
     {
         crashed++;
-
         log_info("game has crashed (%d).", sig);
 
         for (Client * c_next, *c = first_client; c; c = c_next)
@@ -133,14 +138,13 @@ void handle_sig(int sig)
                 continue;
             }
             save_player(ch);
-
-            xwritelnf(c, "\007~R%s has crashed, please hold on.~x",
-                      engine_info.name);
+            xwritelnf(c, "\007~R%s has crashed, please hold on.~x", engine_info.name);
         }
+        /*success - proceed with fork / copyover plan. Otherwise will go to
+            next section and crash with a full reboot to recover */
 
-        /*success - proceed with fork / copyover plan.Otherwise will go to
-           // next section and crash with a full reboot to recover */
         forkpid = fork();
+
         if (forkpid > 0)
         {
             /*Parent process copyover and exit */
@@ -148,15 +152,17 @@ void handle_sig(int sig)
             reboot_server();
             exit(0);
         }
+
         else if (forkpid < 0)
         {
             exit(1);
         }
         /*Child process proceed to dump
-           // Close all files ! */
-        for (i = 255; i >= 0; i--)
-            close(i);
+         Close all files ! */
 
+        for (i = 255; i >= 0; i--) {
+            close(i);
+        }
         /*Dup / dev / null to STD {
            IN, OUT, ERR
            } */
@@ -167,19 +173,21 @@ void handle_sig(int sig)
             perror("dup");
             abort();
         }
-
         default_action.sa_handler = SIG_DFL;
         sigaction(sig, &default_action, NULL);
-
         /*I run different scripts depending on my port */
+
         if (!fork())
         {
             exit(0);
         }
-        else
+
+        else {
             return;
+        }
         raise(sig);
     }
+
     else if (crashed == 1)
     {
         crashed++;
@@ -188,6 +196,7 @@ void handle_sig(int sig)
         {
             c_next = c->next;
             ch = c->account ? c->account->playing : 0;
+
             if (ch == NULL)
             {
                 close_client(c);
@@ -207,10 +216,13 @@ void handle_sig(int sig)
             kill(getppid(), sig);
             exit(1);
         }
-        else
+
+        else {
             return;
+        }
         raise(sig);
     }
+
     else if (crashed == 2)
     {
         crashed++;
@@ -223,10 +235,13 @@ void handle_sig(int sig)
             kill(getppid(), sig);
             exit(1);
         }
-        else
+
+        else {
             return;
+        }
         raise(sig);
     }
+
     else if (crashed == 3)
     {
         default_action.sa_handler = SIG_DFL;
@@ -237,8 +252,10 @@ void handle_sig(int sig)
             kill(getppid(), sig);
             exit(1);
         }
-        else
+
+        else {
             return;
+        }
         raise(sig);
     }
 }
@@ -274,25 +291,19 @@ void handle_alarm(int sig)
         log_bug("%s", crash_message_a);
         log_bug("%s", crash_message_b);
         break;
-
     case 1:
         safe_check = 2;
         log_info("%s", crash_message_a);
         log_info("%s", crash_message_b);
         log_info("%s", crash_message_c);
         break;
-
     case 2:
         break;
     }
-
     /* Reboot the MUD */
-
     set_vtimer(-1);
-
     /* Shouldnt return */
     handle_sig(sig);
-
     /* Last resort */
     exit(1);
 }
@@ -341,11 +352,9 @@ const struct sig_type
 bool init_sig(const struct sig_type *tabl)
 {
     struct sigaction sigact;
-
     sigact.sa_flags = tabl->flags;
     sigact.sa_handler = (void (*)(int)) tabl->sigfun;
     sigemptyset(&sigact.sa_mask);
-
     sigaction(tabl->sig, &sigact, NULL);
 
     if (tabl->sig == SIGVTALRM)
@@ -357,9 +366,10 @@ bool init_sig(const struct sig_type *tabl)
 
 void init_signals()
 {
-    for (int i = 0; sig_table[i].name != NULL; i++)
-        init_sig(&sig_table[i]);
 
+    for (int i = 0; sig_table[i].name != NULL; i++) {
+        init_sig(&sig_table[i]);
+    }
     atexit(close_lua);
     atexit(db_close);
     atexit(exit_engine);

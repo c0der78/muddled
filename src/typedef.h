@@ -1,7 +1,6 @@
 #ifndef MUDDLED_TYPEDEF_H
 #define MUDDLED_TYPEDEF_H
 
-
 #ifdef HAVE_LIBSQLITE3
 #include <sqlite3.h>
 typedef sqlite3  sql;
@@ -162,7 +161,6 @@ typedef enum
     INFO_DEATH,
     INFO_JOIN,
     INFO_LEAVE,
-
     /*
      * Use the info all as a private bit for other info types. Info all
      * shouldn't be private so its safe to use.

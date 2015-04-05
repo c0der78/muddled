@@ -65,9 +65,9 @@ static int affect_mod(Affect *paf, bool fRemove)
 {
     int mod = paf->modifier;
 
-    if (fRemove)
+    if (fRemove) {
         mod = 0 - mod;
-
+    }
     return mod;
 }
 
@@ -90,6 +90,7 @@ void affect_apply_resists(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
+
     for (int i = DAM_BASH; i <= DAM_SLASH; i++)
     {
         ch->resists[i] += affect_mod(paf, fRemove);
@@ -174,7 +175,6 @@ void affect_apply_align(Affect *paf, void *obj, bool fRemove)
 {
     Character *ch = (Character *) obj;
     assert(ch != 0);
-
     ch->alignment =
         URANGE(-MAX_ALIGN, ch->alignment + affect_mod(paf, fRemove),
                MAX_ALIGN);
@@ -202,9 +202,7 @@ const Lookup affect_callbacks[] =
 Affect *new_affect()
 {
     Affect *aff = (Affect *) alloc_mem(1, sizeof(Affect));
-
     aff->from = -1;
-
     return aff;
 }
 
@@ -215,28 +213,29 @@ void destroy_affect(Affect *aff)
 
 void affect_remove(Character *ch, Affect *paf)
 {
+
     if (ch->affects == 0)
     {
         log_bug("no affects.");
         return;
     }
     affect_modify(ch, paf, false);
-
     UNLINK(ch->affects, Affect, paf, next);
 }
 
 void affect_remove_obj(Object *obj, Affect *paf)
 {
+
     if (obj->affects == 0)
     {
         log_bug("no affects on object.");
         return;
     }
-    if (obj->carriedBy != NULL && obj->wearLoc != WEAR_NONE)
+
+    if (obj->carriedBy != NULL && obj->wearLoc != WEAR_NONE) {
         (*paf->callback) (paf, obj->carriedBy, true);
-
+    }
     (*paf->callback) (paf, obj, true);
-
     UNLINK(obj->affects, Affect, paf, next);
 }
 
@@ -247,6 +246,7 @@ const char *affect_name(Affect *paf)
 
 void affect_modify(Character *ch, Affect *paf, bool fAdd)
 {
+
     if (ch && paf && paf->callback)
     {
         (*paf->callback) (paf, ch, !fAdd);
@@ -258,19 +258,18 @@ Affect *affect_find(Affect *paf, identifier_t sn)
 
     for (Affect *paf_find = paf; paf_find; paf_find = paf_find->next)
     {
-        if (paf_find->from == sn)
-            return paf_find;
-    }
 
+        if (paf_find->from == sn) {
+            return paf_find;
+        }
+    }
     return 0;
 }
 
 void affect_to_char(Character *ch, Affect *paf)
 {
     LINK(ch->affects, paf, next);
-
     affect_modify(ch, paf, true);
-
     return;
 }
 
@@ -278,15 +277,17 @@ void affect_to_obj(Object *obj, Affect *paf)
 {
     LINK(obj->affects, paf, next);
 
-    if (obj->carriedBy && obj->wearLoc != WEAR_NONE)
+    if (obj->carriedBy && obj->wearLoc != WEAR_NONE) {
         affect_modify(obj->carriedBy, paf, true);
+    }
 }
 
 bool is_affected(Character *ch, identifier_t sn)
 {
-    if (!ch)
-        return false;
 
+    if (!ch) {
+        return false;
+    }
     return affect_find(ch->affects, sn) != NULL;
 }
 
@@ -294,7 +295,6 @@ Affect *load_affect_by_id(identifier_t id)
 {
     char buf[400];
     sql_stmt *stmt;
-
     int len =
         sprintf(buf, "select * from affect where affectId=%" PRId64, id);
 
@@ -309,7 +309,6 @@ Affect *load_affect_by_id(identifier_t id)
     {
         paf = new_affect();
         paf->id = id;
-
         int count = sql_column_count(stmt);
 
         for (int i = 0; i < count; i++)
@@ -318,42 +317,48 @@ Affect *load_affect_by_id(identifier_t id)
 
             if (!str_cmp(colname, "affectId"))
             {
+
                 if (id != sql_column_int(stmt, i))
                     log_error
                     ("sql statement did not return correct affect");
             }
+
             else if (!str_cmp(colname, "from"))
             {
                 paf->from = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "level"))
             {
                 paf->level = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "duration"))
             {
                 paf->duration = paf->perm_duration =
                                     sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "modifier"))
             {
                 paf->modifier = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "flags"))
             {
                 parse_flags(paf->flags,
                             sql_column_str(stmt, i),
                             affect_flags);
             }
+
             else if (!str_cmp(colname, "type"))
             {
-
                 paf->callback =
                     (AffectCallback *)
                     value_lookup(affect_callbacks,
                                  sql_column_str(stmt, i));
-
             }
+
             else
             {
                 log_warn("unknown coloumn for affect '%s'",
@@ -361,6 +366,7 @@ Affect *load_affect_by_id(identifier_t id)
             }
         }
     }
+
     if (sql_finalize(stmt) != SQL_OK)
     {
         log_data("unable to finalize statement");
@@ -383,16 +389,18 @@ int save_affect(Affect *paf)
 
     if (paf->id == 0)
     {
+
         if (sql_insert_query(affect_values, "affect") != SQL_OK)
         {
             log_data("could not insert affect");
             return 0;
         }
         paf->id = db_last_insert_rowid();
-
     }
+
     else
     {
+
         if (sql_update_query(affect_values, "affect", paf->id) !=
                 SQL_OK)
         {
@@ -400,6 +408,5 @@ int save_affect(Affect *paf)
             return 0;
         }
     }
-
     return 1;
 }

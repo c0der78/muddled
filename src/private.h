@@ -14,6 +14,7 @@ struct account
     int timezone;
     identifier_t autologinId;
     Flag *flags;
+
     Forum *forum;
     Note *inProgress;
     Connection *conn;
@@ -64,19 +65,12 @@ struct area
 
 struct buffer
 {
-
     short state;        /* error state of the buffer */
-
     int size;       /* size in k */
-
     char *string;       /* buffer's string */
-
     bool(*write) (Buffer *, const char *);
-
     bool(*writeln) (Buffer *, const char *);
-
     bool(*writef) (Buffer *, const char *, ...);
-
     bool(*writelnf) (Buffer *, const char *, ...);
 
 };
@@ -125,7 +119,6 @@ struct character
     void (*title) (const Character *, const char *);
 };
 
-
 struct forum
 {
     identifier_t id;
@@ -134,6 +127,7 @@ struct forum
     short readLevel;
     short writeLevel;
     const char *defaultTo;
+
     forum_t type;
     int purgeDays;
     Note *notes;

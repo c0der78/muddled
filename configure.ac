@@ -14,8 +14,8 @@ AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CC
-
 AM_PROG_CC_C_O
+AC_CHECK_PROG(TAR, tar, tar)
 
 AC_SUBST(X_CFLAGS, "-std=c99 -pedantic -Wall -Werror -D_XOPEN_SOURCE=700")
 

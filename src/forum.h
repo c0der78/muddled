@@ -28,8 +28,10 @@ extern int max_forum;
 
 enum
 {
-    FORUM_CHANGED = (1 << 0),
-    FORUM_NOUNSUB = (1 << 1)
+
+	FORUM_CHANGED = (1 << 0),
+
+	FORUM_NOUNSUB = (1 << 1)
 };
 
 #define FORUM_ERROR -1

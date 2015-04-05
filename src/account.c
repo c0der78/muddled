@@ -40,23 +40,18 @@ const Lookup account_flags[] =
 Account *new_account(Connection *conn)
 {
     Account *acc = (Account *) alloc_mem(1, sizeof(Account));
-
     acc->login = str_empty;
     acc->password = str_empty;
     acc->email = str_empty;
-
     acc->conn = conn;
-
     acc->forum = &forum_table[0];
-
     acc->flags = new_flag();
-
     acc->forumData =
         (AccountForum *) alloc_mem(max_forum, sizeof(AccountForum));
 
-    for (int i = 0; i < max_forum; i++)
+    for (int i = 0; i < max_forum; i++) {
         acc->forumData[i].draft = str_empty;
-
+    }
     return acc;
 }
 
@@ -65,14 +60,12 @@ void free_account(Account *acc)
     free_str(acc->login);
     free_str(acc->password);
     free_str(acc->email);
-
     destroy_flags(acc->flags);
 
     for (int i = 0; i < max_forum; i++)
     {
         free_str(acc->forumData[i].draft);
     }
-
     free_mem(acc->forumData);
 
     for (AccountPlayer * ch_next, *ch = acc->players; ch != 0; ch = ch_next)
@@ -92,52 +85,49 @@ AccountPlayer *new_account_player()
 {
     AccountPlayer *p =
         (AccountPlayer *) alloc_mem(1, sizeof(AccountPlayer));
-
     p->name = str_empty;
-
     return p;
 }
 
 void free_account_player(AccountPlayer *p)
 {
     free_str(p->name);
-
     free_mem(p);
 }
 
 void account_forum_set_last_note(Account *acc, time_t value)
 {
-    if (!acc) return;
 
+    if (!acc) { return; }
     int i = lookup_forum_by_id(acc->forum->id);
 
-    if (i == FORUM_ERROR)
+    if (i == FORUM_ERROR) {
         return;
-
+    }
     acc->forumData[i].lastNote = value;
 }
 
 time_t account_forum_last_note(Account *acc)
 {
-    if (!acc || !acc->forum) return 0;
 
+    if (!acc || !acc->forum) { return 0; }
     int i = lookup_forum_by_id(acc->forum->id);
 
-    if (i == FORUM_ERROR)
+    if (i == FORUM_ERROR) {
         return 0;
-
+    }
     return acc->forumData[i].lastNote;
 }
 
 bool account_forum_is_subscribed(Account *acc)
 {
-    if (!acc || !acc->forum) return false;
 
+    if (!acc || !acc->forum) { return false; }
     int i = lookup_forum_by_id(acc->forum->id);
 
-    if (i == FORUM_ERROR)
+    if (i == FORUM_ERROR) {
         return true;
-
+    }
     return !acc->forumData[i].unsubscribed;
 }
 
@@ -146,7 +136,6 @@ int load_account(Account *acc, const char *login)
     char buf[500];
     sql_stmt *stmt;
     int len = sprintf(buf, "select * from account where login='%s'", login);
-
     log_debug("loading account %s", login);
 
     if (sql_query(buf, len, &stmt) != SQL_OK)
@@ -154,15 +143,20 @@ int load_account(Account *acc, const char *login)
         log_data("could not prepare sql statement");
         return 0;
     }
+
     if (sql_step(stmt) == SQL_DONE)
     {
-        if (sql_finalize(stmt) != SQL_OK)
+
+        if (sql_finalize(stmt) != SQL_OK) {
             log_data("could not finalize sql statement");
+        }
         return 0;
     }
+
     do
     {
         int i, cols = sql_column_count(stmt);
+
         for (i = 0; i < cols; i++)
         {
             const char *colname = sql_column_name(stmt, i);
@@ -171,33 +165,40 @@ int load_account(Account *acc, const char *login)
             {
                 acc->id = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "login"))
             {
                 acc->login = str_dup(sql_column_str(stmt, i));
             }
+
             else if (!str_cmp(colname, "email"))
             {
                 acc->email = str_dup(sql_column_str(stmt, i));
             }
+
             else if (!str_cmp(colname, "timezone"))
             {
                 acc->timezone = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "autologinId"))
             {
                 acc->autologinId = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "flags"))
             {
                 parse_flags(acc->flags,
                             sql_column_str(stmt, i),
                             account_flags);
             }
+
             else if (!str_cmp(colname, "password"))
             {
                 acc->password =
                     str_dup(sql_column_str(stmt, i));
             }
+
             else
             {
                 log_warn("unknown account column '%s'",
@@ -205,6 +206,7 @@ int load_account(Account *acc, const char *login)
             }
         }
     }
+
     while (sql_step(stmt) != SQL_DONE);
 
     if (sql_finalize(stmt) != SQL_OK)
@@ -212,18 +214,14 @@ int load_account(Account *acc, const char *login)
         log_data("could not finalize sql statement");
     }
     /* load account players */
-
     load_account_players(acc);
-
     load_account_forums(acc);
-
     return 1;
 }
 
 field_map *account_forum_fields(Account *acc, AccountForum *forum)
 {
     static field_map *table = 0;
-
     field_map account_values[] =
     {
         {"accountForumId", &forum->id, SQL_INT},
@@ -239,9 +237,7 @@ field_map *account_forum_fields(Account *acc, AccountForum *forum)
     {
         table = alloc_mem(1, sizeof(account_values));
     }
-
     memcpy(table, account_values, sizeof(account_values));
-
     return table;
 }
 
@@ -251,14 +247,12 @@ int save_account_forum(Account *acc, int f)
 
 
     forum->id = db_save(account_forum_fields(acc, forum), ACCOUNT_FORUM_TABLE, forum->id);
-
     return forum->id != 0;
 }
 
 field_map *account_fields(Account *acc)
 {
     static field_map *table = 0;
-
     field_map accvalues[] =
     {
         {"accountId", &acc->id, SQL_INT},
@@ -281,12 +275,11 @@ field_map *account_fields(Account *acc)
 
 int save_account(Account *acc)
 {
-
     acc->id = db_save(account_fields(acc), ACCOUNT_TABLE, acc->id);
 
-    for (int i = 0; i < max_forum; ++i)
+    for (int i = 0; i < max_forum; ++i) {
         save_account_forum(acc, i);
-
+    }
     return acc->id != 0;
 }
 
@@ -299,7 +292,6 @@ int load_account_players(Account *acc)
 {
     char buf[400];
     sql_stmt *stmt;
-
     int len = sprintf(buf,
                       "select * from character natural join player where accountId=%"
                       PRId64,
@@ -310,10 +302,13 @@ int load_account_players(Account *acc)
         log_data("could not prepare sql statement");
         return 0;
     }
+
     if (sql_step(stmt) == SQL_DONE)
     {
-        if (sql_finalize(stmt) != SQL_OK)
+
+        if (sql_finalize(stmt) != SQL_OK) {
             log_data("could not finalize sql statement");
+        }
         return 0;
     }
     AccountPlayer *ch = new_account_player();
@@ -330,12 +325,15 @@ int load_account_players(Account *acc)
             {
                 ch->name = str_dup(sql_column_str(stmt, i));
             }
+
             else if (!str_cmp(colname, "level"))
             {
                 ch->level = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "accountId"))
             {
+
                 if (acc->id != sql_column_int(stmt, i))
                 {
                     log_error
@@ -344,12 +342,14 @@ int load_account_players(Account *acc)
                 }
                 LINK(acc->players, ch, next);
             }
+
             else if (!str_cmp(colname, "characterId"))
             {
                 ch->charId = sql_column_int(stmt, i);
             }
         }
     }
+
     while (sql_step(stmt) != SQL_DONE);
 
     if (sql_finalize(stmt) != SQL_OK)
@@ -364,7 +364,6 @@ int load_account_forums(Account *acc)
 {
     char buf[400];
     sql_stmt *stmt;
-
     int len = sprintf(buf,
                       "select * from account_forum where accountId=%"
                       PRId64,
@@ -375,39 +374,45 @@ int load_account_forums(Account *acc)
         log_data("could not prepare sql statement");
         return 0;
     }
+
     if (sql_step(stmt) == SQL_DONE)
     {
-        if (sql_finalize(stmt) != SQL_OK)
+
+        if (sql_finalize(stmt) != SQL_OK) {
             log_data("could not finalize sql statement");
+        }
         return 0;
     }
+
     do
     {
         int i, cols = sql_column_count(stmt);
-
         AccountForum f;
 
         for (i = 0; i < cols; i++)
         {
             const char *colname = sql_column_name(stmt, i);
+
             if (!str_cmp(colname, "timestamp"))
             {
                 f.lastNote = sql_column_int(stmt, i);
             }
+
             else if (!str_cmp(colname, "unsubscribed"))
             {
                 f.unsubscribed = sql_column_int(stmt, i) == 1;
             }
+
             else if (!str_cmp(colname, "draft"))
             {
                 f.draft = sql_column_str(stmt, i);
             }
+
             else if (!str_cmp(colname, "forumId"))
             {
                 f.id = sql_column_int(stmt, i);
             }
         }
-
         int index = lookup_forum_by_id(f.id);
 
         if (index != FORUM_ERROR)
@@ -415,6 +420,7 @@ int load_account_forums(Account *acc)
             memcpy(&acc->forumData[index], &f, sizeof(f));
         }
     }
+
     while (sql_step(stmt) != SQL_DONE);
 
     if (sql_finalize(stmt) != SQL_OK)

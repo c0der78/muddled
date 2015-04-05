@@ -114,14 +114,15 @@ Help *import_helps = 0;
 
 void import_finalize_exits(Room *room)
 {
+
     for (int e = 0; e < MAX_DIR; e++)
     {
-        if (!room->exits[e])
-            continue;
 
+        if (!room->exits[e]) {
+            continue;
+        }
         identifier_t id = room->exits[e]->to.id;
         identifier_t key = room->exits[e]->key;
-
         Room *toRoom = (Room *) hm_get(room_indexes, id);
         Object *keyObj = (Object *) hm_get(obj_indexes, key);
 
@@ -129,6 +130,7 @@ void import_finalize_exits(Room *room)
         {
             toRoom = get_room_by_id(id);
         }
+
         if (!toRoom)
         {
             log_bug("exit (%" PRId64 ") with no room %" PRId64,
@@ -136,6 +138,7 @@ void import_finalize_exits(Room *room)
             destroy_exit(room->exits[e]);
             room->exits[e] = 0;
         }
+
         else
         {
             room->exits[e]->to.room = toRoom;
@@ -144,11 +147,11 @@ void import_finalize_exits(Room *room)
             {
                 room->exits[e]->key = key;
             }
+
             else
             {
                 room->exits[e]->key = 0;
             }
-
             save_exit(room->exits[e], e);
         }
     }
@@ -169,32 +172,29 @@ void room_import_cleanup(void *data)
     Room *room = (Room *) data;
 
     for (int i = 0; i < MAX_DIR; i++)
-        if (room->exits[i] != 0)
-            destroy_exit(room->exits[i]);
 
+        if (room->exits[i] != 0) {
+            destroy_exit(room->exits[i]);
+        }
     destroy_room(room);
 }
 
 void import_cleanup()
 {
     hm_foreach(npc_indexes, npc_import_cleanup);
-
     destroy_hashmap(npc_indexes);
-
     hm_foreach(obj_indexes, obj_import_cleanup);
-
     destroy_hashmap(obj_indexes);
-
     hm_foreach(room_indexes, room_import_cleanup);
-
     destroy_hashmap(room_indexes);
-
     npc_indexes = obj_indexes = room_indexes = 0;
 
     for (TmpReset *tmp = temp_resets; tmp; tmp = tmp->next)
     {
-        for (TmpReset *sub = tmp->subresets; sub; sub = sub->next_sub)
+
+        for (TmpReset *sub = tmp->subresets; sub; sub = sub->next_sub) {
             free_mem(sub);
+        }
         free_mem(tmp);
     }
     temp_resets = 0;
@@ -202,22 +202,22 @@ void import_cleanup()
     for (Area * a_next, *area = import_areas; area; area = a_next)
     {
         a_next = area->next;
-
         destroy_area(area);
     }
 }
 
 bool import_rom_area_list(const char *dir, FILE *fpList)
 {
+
     for (;;)
     {
         char strArea[BUF_SIZ];
         FILE *fpArea;
-
         sprintf(strArea, "%s/%s", dir, fread_word(fpList));
 
-        if (!str_suffix("$", strArea))
+        if (!str_suffix("$", strArea)) {
             break;
+        }
 
         if ((fpArea = fopen(strArea, "r")) == NULL)
         {
@@ -225,9 +225,7 @@ bool import_rom_area_list(const char *dir, FILE *fpList)
             return false;
         }
         log_info("importing %s", strArea);
-
         import_rom_file(fpArea);
-
         fclose(fpArea);
         fpArea = NULL;
     }
@@ -240,38 +238,49 @@ void import_finalize_reset(TmpReset *res, char *buf, int tab)
     Character *npc;
     Object *obj;
 
-    for (int i = 0; i < tab; i++)
+    for (int i = 0; i < tab; i++) {
         strcat(buf, "\t");
+    }
 
     switch (res->type)
     {
     case 'M':
         npc = (Character *) hm_get(npc_indexes, res->arg1);
+
         if (npc->id == 0)
         {
             log_bug("npc %ld not saved", res->arg1);
         }
         sprintf(buf + strlen(buf), "npc(%" PRId64, npc->id);
-        if (res->arg4 > 1)
-            sprintf(buf + strlen(buf), ",%ld)\n", res->arg4);
-        else
-            strcat(buf, ")\n");
 
+        if (res->arg4 > 1) {
+            sprintf(buf + strlen(buf), ",%ld)\n", res->arg4);
+        }
+
+        else {
+            strcat(buf, ")\n");
+        }
         break;
     case 'O':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
+
         if (obj->id == 0)
         {
             log_bug("obj %ld not saved", res->arg1);
         }
         sprintf(buf + strlen(buf), "obj(%" PRId64, obj->id);
-        if (res->arg4 > 0)
+
+        if (res->arg4 > 0) {
             sprintf(buf + strlen(buf), ",%ld)\n", res->arg4);
-        else
+        }
+
+        else {
             strcat(buf, ")\n");
+        }
         break;
     case 'P':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
+
         if (obj->id == 0)
         {
             log_bug("obj %ld not saved", res->arg1);
@@ -284,6 +293,7 @@ void import_finalize_reset(TmpReset *res, char *buf, int tab)
         break;
     case 'G':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
+
         if (obj->id == 0)
         {
             log_bug("obj %ld not saved", res->arg1);
@@ -296,6 +306,7 @@ void import_finalize_reset(TmpReset *res, char *buf, int tab)
         break;
     case 'E':
         obj = (Object *) hm_get(obj_indexes, res->arg1);
+
         if (obj->id == 0)
         {
             log_bug("obj %ld not saved", res->arg1);
@@ -304,7 +315,6 @@ void import_finalize_reset(TmpReset *res, char *buf, int tab)
         /*
          * lookup_name( wear_flags, wear_type_to_flag( res->arg2 ) ) );
          */
-
         break;
     case 'R':
         break;
@@ -343,13 +353,9 @@ void import_commit(bool load)
     for (TmpReset * tmp_next, *tmp = temp_resets; tmp; tmp = tmp_next)
     {
         tmp_next = tmp->next;
-
         char buf[OUT_SIZ * 2] = { 0 };
-
         import_finalize_reset(tmp, buf, 0);
-
         tmp->room->reset = str_dup(buf);
-
         // save_room_only(tmp->room);
 
         for (TmpReset *sub_next = 0, *sub = tmp->subresets; sub;
@@ -358,14 +364,13 @@ void import_commit(bool load)
             sub_next = sub->next;
             free_mem(sub);
         }
-
         free_mem(tmp);
     }
-
     temp_resets = 0;
 
     for (Area *area = import_areas; area; area = area->next)
     {
+
         for (Room *room = area->rooms; room; room = room->next_in_area)
         {
             save_room_only(room);
@@ -380,12 +385,11 @@ void import_commit(bool load)
             import_finalize_exits(room);
         }
 
-        if (load)
+        if (load) {
             load_area(area->id);
+        }
     }
-
     db_end_transaction();
-
     import_cleanup();
 }
 
@@ -399,6 +403,7 @@ void server_import(const char *db_path, const char *file)
         log_bug("Could not open %s for importing.", file);
         return;
     }
+
     if (db_open(DB_FILE, db_path))
     {
         log_data("Can't open database");
@@ -406,25 +411,32 @@ void server_import(const char *db_path, const char *file)
         exit(EXIT_FAILURE);
     }
     log_info("loaded %d races", load_races());
-
     log_info("loaded %d classes", load_classes());
-
     log_info("loaded %d skills", load_skills());
 
     if (!str_suffix(".lst", file))
     {
+
         if (!
-                (success = import_rom_area_list(dirname((char *)file), fp)))
+                (success = import_rom_area_list(dirname((char *)file), fp))) {
             log_bug("Could not import areas.");
-        else
+        }
+
+        else {
             log_info("Areas imported.");
+        }
     }
+
     else
     {
-        if (!(success = import_rom_file(fp)))
+
+        if (!(success = import_rom_file(fp))) {
             log_bug("Could not import file.");
-        else
+        }
+
+        else {
             log_info("File imported.");
+        }
     }
 
     if (success)
@@ -438,14 +450,17 @@ void server_import(const char *db_path, const char *file)
 bool import_rom_file(FILE *fpArea)
 {
 
-    if (npc_indexes == 0)
+    if (npc_indexes == 0) {
         npc_indexes = new_hashmap(0);
+    }
 
-    if (obj_indexes == 0)
+    if (obj_indexes == 0) {
         obj_indexes = new_hashmap(0);
+    }
 
-    if (room_indexes == 0)
+    if (room_indexes == 0) {
         room_indexes = new_hashmap(0);
+    }
 
     for (;;)
     {
@@ -460,28 +475,50 @@ bool import_rom_file(FILE *fpArea)
         }
         word = fread_word(fpArea);
 
-        if (word[0] == '$')
+        if (word[0] == '$') {
             break;
-        else if (!str_cmp(word, "AREA"))
+        }
+
+        else if (!str_cmp(word, "AREA")) {
             import_rom_area(fpArea);
-        else if (!str_cmp(word, "AREADATA"))
+        }
+
+        else if (!str_cmp(word, "AREADATA")) {
             import_rom_olc_area(fpArea);
-        else if (!str_cmp(word, "HELPS"))
+        }
+
+        else if (!str_cmp(word, "HELPS")) {
             import_rom_helps(fpArea);
-        else if (!str_cmp(word, "MOBILES"))
+        }
+
+        else if (!str_cmp(word, "MOBILES")) {
             import_rom_mobiles(fpArea);
-        else if (!str_cmp(word, "OBJECTS"))
+        }
+
+        else if (!str_cmp(word, "OBJECTS")) {
             import_rom_objects(fpArea);
-        else if (!str_cmp(word, "RESETS"))
+        }
+
+        else if (!str_cmp(word, "RESETS")) {
             import_rom_resets(fpArea);
-        else if (!str_cmp(word, "ROOMS"))
+        }
+
+        else if (!str_cmp(word, "ROOMS")) {
             import_rom_rooms(fpArea);
-        else if (!str_cmp(word, "SHOPS"))
+        }
+
+        else if (!str_cmp(word, "SHOPS")) {
             import_rom_shops(fpArea);
-        else if (!str_cmp(word, "SOCIALS"))
+        }
+
+        else if (!str_cmp(word, "SOCIALS")) {
             import_rom_socials(fpArea);
-        else if (!str_cmp(word, "SPECIALS"))
+        }
+
+        else if (!str_cmp(word, "SPECIALS")) {
             import_rom_specials(fpArea);
+        }
+
         else
         {
             log_bug("bad section name.");
@@ -497,11 +534,8 @@ bool import_rom_file(FILE *fpArea)
 bool import_rom_area(FILE *fp)
 {
     Area *pArea;
-
     pArea = new_area();
-
     set_bit(pArea->flags, AREA_CHANGED);
-
     fread_string(fp);
     // filename
     pArea->name = fread_string(fp);
@@ -511,11 +545,8 @@ bool import_rom_area(FILE *fp)
     // lvnum
     fread_number(fp);
     // uvnum
-
     LINK(import_areas, pArea, next);
-
     area_last = pArea;
-
     return true;
 }
 
@@ -523,7 +554,6 @@ bool import_rom_olc_area(FILE *fp)
 {
     Area *pArea;
     const char *word;
-
     pArea = new_area();
 
     for (;;)
@@ -533,6 +563,7 @@ bool import_rom_olc_area(FILE *fp)
         switch (UPPER(word[0]))
         {
         case 'C':
+
             if (!str_cmp(word, "Credits"))
             {
                 free_str(fread_string(fp));
@@ -540,6 +571,7 @@ bool import_rom_olc_area(FILE *fp)
             }
             break;
         case 'N':
+
             if (!str_cmp(word, "Name"))
             {
                 pArea->name = fread_string(fp);
@@ -547,6 +579,7 @@ bool import_rom_olc_area(FILE *fp)
             }
             break;
         case 'S':
+
             if (!str_cmp(word, "Security"))
             {
                 fread_number(fp);
@@ -554,6 +587,7 @@ bool import_rom_olc_area(FILE *fp)
             }
             break;
         case 'V':
+
             if (!str_cmp(word, "VNUMs"))
             {
                 fread_number(fp);
@@ -562,6 +596,7 @@ bool import_rom_olc_area(FILE *fp)
             }
             break;
         case 'E':
+
             if (!str_cmp(word, "End"))
             {
                 set_bit(pArea->flags, AREA_CHANGED);
@@ -571,6 +606,7 @@ bool import_rom_olc_area(FILE *fp)
             }
             break;
         case 'B':
+
             if (!str_cmp(word, "Builders"))
             {
                 free_str(fread_string(fp));
@@ -590,7 +626,6 @@ void rom_act_flag_convert(Flag *flags, long bits)
         int bit;
     } actconvert[] =
     {
-
         {
             B, NPC_SENTINEL
         },  // ACT_SENTINEL
@@ -607,6 +642,7 @@ void rom_act_flag_convert(Flag *flags, long bits)
 
     for (int i = 0; i < sizeof(actconvert) / sizeof(actconvert[0]); i++)
     {
+
         if (actconvert[i].rombit & bits)
         {
             set_bit(flags, actconvert[i].bit);
@@ -653,6 +689,7 @@ void rom_resists_flag_convert(Character *ch, long bits, int mod)
 
     for (int i = 0; i < sizeof(resistconv) / sizeof(resistconv[0]); i++)
     {
+
         if (resistconv[i].rombit & bits)
         {
             ch->resists[resistconv[i].resist] += (mod * ch->level);
@@ -685,8 +722,10 @@ float rom_convert_size(const char *word)
 
     for (int i = 0; i < sizeof(sizetable) / sizeof(sizetable[0]); i++)
     {
-        if (!str_cmp(word, sizetable[i].name))
+
+        if (!str_cmp(word, sizetable[i].name)) {
             return sizetable[i].size;
+        }
     }
     return 4.8f;
 }
@@ -700,20 +739,23 @@ bool import_rom_mobiles(FILE *fp)
         log_bug("no area seen yet.");
         return false;
     }
+
     for (;;)
     {
         long vnum;
         char letter;
-
         letter = fread_letter(fp);
+
         if (letter != '#')
         {
             log_bug("# not found.");
             return false;
         }
         vnum = fread_number(fp);
-        if (vnum == 0)
+
+        if (vnum == 0) {
             break;
+        }
 
         if (hm_get(npc_indexes, vnum) != NULL)
         {
@@ -732,9 +774,9 @@ bool import_rom_mobiles(FILE *fp)
         pMobIndex->race = race_lookup(tmp);
         free_str(tmp);
 
-        if (pMobIndex->race == 0)
+        if (pMobIndex->race == 0) {
             pMobIndex->race = first_race;
-
+        }
         rom_act_flag_convert(pMobIndex->flags, fread_flag(fp));
         /*
          * | race_table[pMobIndex->race].act;
@@ -746,19 +788,16 @@ bool import_rom_mobiles(FILE *fp)
         /*
          * | race_table[pMobIndex->race].aff
          */ ;
-
         pMobIndex->alignment = (int)fread_number(fp);
         /*
          * pMobIndex->group =
          */
         fread_number(fp);
-
         pMobIndex->level = fread_number(fp);
         /*
          * pMobIndex->hitroll =
          */
         fread_number(fp);
-
         /*
          * read hit dice
          */
@@ -773,7 +812,6 @@ bool import_rom_mobiles(FILE *fp)
          */
         fread_letter(fp);
         pMobIndex->npc->hit[DICE_BONUS] = (int)fread_number(fp);
-
         /*
          * read mana dice
          */
@@ -782,7 +820,6 @@ bool import_rom_mobiles(FILE *fp)
         pMobIndex->npc->mana[DICE_TYPE] = (int)fread_number(fp);
         fread_letter(fp);
         pMobIndex->npc->mana[DICE_BONUS] = (int)fread_number(fp);
-
         /*
          * read damage dice
          */
@@ -798,7 +835,6 @@ bool import_rom_mobiles(FILE *fp)
         /*
          * )
          */ ;
-
         /*
          * read armor class
          */
@@ -809,9 +845,10 @@ bool import_rom_mobiles(FILE *fp)
          * pMobIndex->resists[DAM_MAGIC] =
          */
         int res = (int)fread_number(fp);
-        for (int i = DAM_SLASH; i < MAX_DAM; i++)
-            pMobIndex->resists[i] = res;
 
+        for (int i = DAM_SLASH; i < MAX_DAM; i++) {
+            pMobIndex->resists[i] = res;
+        }
         /*
          * read flags and add in data from the race table
          */
@@ -843,9 +880,7 @@ bool import_rom_mobiles(FILE *fp)
                                          * |
                                          * race_table[pMobIndex->race].vuln
                                          */ ;
-
         int e = value_lookup(position_table, fread_word(fp));
-
         /*
          * vital statistics
          */
@@ -855,9 +890,7 @@ bool import_rom_mobiles(FILE *fp)
             e == -1 ? POS_STANDING : ((position_t) e);
         e = value_lookup(sex_table, fread_word(fp));
         pMobIndex->sex = e == -1 ? SEX_NEUTRAL : ((sex_t) e);
-
         pMobIndex->gold = fread_number(fp);
-
         /*
          * pMobIndex->form =
          */
@@ -894,7 +927,6 @@ bool import_rom_mobiles(FILE *fp)
             if (letter == 'F')
             {
                 const char *word;
-
                 word = fread_word(fp);
                 fread_flag(fp);
 
@@ -902,55 +934,62 @@ bool import_rom_mobiles(FILE *fp)
                     /*
                      * REMOVE_BIT(pMobIndex->act,vector)
                      */ ;
+
                 else if (!str_prefix(word, "aff"))
                     /*
                      * REMOVE_BIT(pMobIndex->affected_by,v
                      * ector)
                      */ ;
+
                 else if (!str_prefix(word, "off"))
                     /*
                      * REMOVE_BIT(pMobIndex->off_flags,vec
                      * tor)
                      */ ;
+
                 else if (!str_prefix(word, "imm"))
                     /*
                      * REMOVE_BIT(pMobIndex->imm_flags,vec
                      * tor)
                      */ ;
+
                 else if (!str_prefix(word, "res"))
                     /*
                      * REMOVE_BIT(pMobIndex->res_flags,vec
                      * tor)
                      */ ;
+
                 else if (!str_prefix(word, "vul"))
                     /*
                      * REMOVE_BIT(pMobIndex->vuln_flags,ve
                      * ctor)
                      */ ;
+
                 else if (!str_prefix(word, "for"))
                     /*
                      * REMOVE_BIT(pMobIndex->form,vector)
                      */ ;
+
                 else if (!str_prefix(word, "par"))
                     /*
                      * REMOVE_BIT(pMobIndex->parts,vector)
                      *
                      */ ;
+
                 else
                 {
                     log_bug("flag not found.");
                     destroy_char(pMobIndex);
                     return false;
                 }
-
             }
+
             else
             {
                 ungetc(letter, fp);
                 break;
             }
         }
-
         LINK(area_last->npcs, pMobIndex, next_in_area);
     }
     return true;
@@ -1032,10 +1071,11 @@ int lookup_rom_obj_type(const char *word)
 
     for (int i = 0; table[i].name != 0; i++)
     {
-        if (!str_cmp(word, table[i].name))
-            return table[i].romtype;
-    }
 
+        if (!str_cmp(word, table[i].name)) {
+            return table[i].romtype;
+        }
+    }
     return 13;
 }
 
@@ -1065,15 +1105,15 @@ Flag *rom_convert_weapon_flags(long bits)
             H, WEAPON_POISON
         }
     };
-
     Flag *flag = new_flag();
 
     for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
     {
-        if ((convert[i].rombit & bits) != 0)
-            set_bit(flag, convert[i].bit);
-    }
 
+        if ((convert[i].rombit & bits) != 0) {
+            set_bit(flag, convert[i].bit);
+        }
+    }
     return flag;
 }
 
@@ -1097,67 +1137,81 @@ Flag *rom_convert_container_flags(long bits)
             E, CONT_PUT_ON
         },
     };
-
     Flag *flag = new_flag();
 
     for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
     {
+
         if ((convert[i].rombit & bits) != 0)
         {
             set_bit(flag, convert[i].bit);
         }
     }
-
     return flag;
 }
 
 wear_type import_rom_convert_wear_flags(long flag)
 {
-    if (flag & B)
+
+    if (flag & B) {
         return WEAR_FINGER;
+    }
 
-    if (flag & C)
+    if (flag & C) {
         return WEAR_NECK;
+    }
 
-    if (flag & D)
+    if (flag & D) {
         return WEAR_TORSO;
+    }
 
-    if (flag & E)
+    if (flag & E) {
         return WEAR_HEAD;
+    }
 
-    if (flag & F)
+    if (flag & F) {
         return WEAR_LEGS;
+    }
 
-    if (flag & G)
+    if (flag & G) {
         return WEAR_FEET;
+    }
 
-    if (flag & H)
+    if (flag & H) {
         return WEAR_HANDS;
+    }
 
-    if (flag & I)
+    if (flag & I) {
         return WEAR_ARMS;
+    }
 
-    if (flag & J)
+    if (flag & J) {
         return WEAR_SHIELD;
+    }
 
-    if (flag & K)
+    if (flag & K) {
         return WEAR_ABOUT;
+    }
 
-    if (flag & L)
+    if (flag & L) {
         return WEAR_WAIST;
+    }
 
-    if (flag & M)
+    if (flag & M) {
         return WEAR_WRIST;
+    }
 
-    if (flag & N)
+    if (flag & N) {
         return WEAR_WIELD;
+    }
 
-    if (flag & O)
+    if (flag & O) {
         return WEAR_HOLD;
+    }
 
-    if (flag & Q)
+    if (flag & Q) {
         return WEAR_FLOAT;
-
+    }
     return WEAR_NONE;
 }
 
@@ -1273,8 +1327,10 @@ void rom_convert_obj_flags(Flag *flags, long flag)
 
     for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
     {
-        if ((convert[i].rombit & flag) != 0)
+
+        if ((convert[i].rombit & flag) != 0) {
             set_bit(flags, convert[i].bit);
+        }
     }
 }
 
@@ -1344,12 +1400,14 @@ Flag *rom_convert_affect_flags(long bits)
             AFF_SLOW, (dd)
         }
     };
-
     Flag *flags = new_flag();
+
     for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
     {
-        if ((convert[i].rombit & bits) != 0)
+
+        if ((convert[i].rombit & bits) != 0) {
             set_bit(flags, convert[i].bit);
+        }
     }
     return flags;
 }
@@ -1384,10 +1442,13 @@ AffectCallback *convert_affect_location(int location)
             &affect_apply_move, 14
         }
     };
+
     for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
     {
-        if (convert[i].location == location)
+
+        if (convert[i].location == location) {
             return convert[i].callback;
+        }
     }
     return 0;
 }
@@ -1401,20 +1462,23 @@ bool import_rom_objects(FILE *fp)
         log_bug("no area seen yet.");
         return false;
     }
+
     for (;;)
     {
         long vnum;
         char letter;
-
         letter = fread_letter(fp);
+
         if (letter != '#')
         {
             log_bug("# not found.");
             return false;
         }
         vnum = fread_number(fp);
-        if (vnum == 0)
+
+        if (vnum == 0) {
             break;
+        }
 
         if (hm_get(obj_indexes, vnum) != NULL)
         {
@@ -1434,28 +1498,22 @@ bool import_rom_objects(FILE *fp)
         /*
          * )
          */ ;
-
         const char *item_type = fread_word(fp);
-
         pObjIndex->type =
             (object_type) value_lookup(object_types, item_type);
-
         rom_convert_obj_flags(pObjIndex->flags, fread_flag(fp));
-
         pObjIndex->wearFlags =
             import_rom_convert_wear_flags(fread_flag(fp));
-
         rom_load_obj_values(pObjIndex, lookup_rom_obj_type(item_type),
                             fp);
-
         pObjIndex->level = fread_number(fp);
         pObjIndex->weight = (float)fread_number(fp);
         pObjIndex->cost = fread_number(fp);
-
         /*
          * condition
          */
         letter = fread_letter(fp);
+
         switch (letter)
         {
         case ('P'):
@@ -1487,13 +1545,11 @@ bool import_rom_objects(FILE *fp)
         for (;;)
         {
             char letter;
-
             letter = fread_letter(fp);
 
             if (letter == 'A')
             {
                 Affect *paf;
-
                 paf = new_affect();
                 paf->level = pObjIndex->level;
                 paf->duration = -1;
@@ -1503,12 +1559,13 @@ bool import_rom_objects(FILE *fp)
                 paf->flags = new_flag();
                 LINK(pObjIndex->affects, paf, next);
             }
+
             else if (letter == 'F')
             {
                 Affect *paf;
-
                 paf = new_affect();
                 letter = fread_letter(fp);
+
                 switch (letter)
                 {
                 case 'A':
@@ -1518,7 +1575,6 @@ bool import_rom_objects(FILE *fp)
                 case 'V':
                     paf->callback = &affect_apply_resists;
                     break;
-
                 default:
                     log_bug("Bad where on flag set.");
                     destroy_object(pObjIndex);
@@ -1536,33 +1592,28 @@ bool import_rom_objects(FILE *fp)
                     rom_convert_affect_flags(fread_flag(fp));
                 LINK(pObjIndex->affects, paf, next);
             }
+
             else if (letter == 'E')
             {
                 // EXTRA_DESCR_DATA * ed;
                 // Property * prop = new_property();
-
                 const char *key = fread_string(fp);
                 const char *value = fread_string(fp);
-
                 sm_insert(&pObjIndex->extraDescr, value, key);
-
                 // ed = alloc_perm(sizeof(*ed));
                 // prop->key = fread_string(fp);
                 // prop->value = fread_string(fp);
-
                 // LINK(pObjIndex->extraDescr, prop, next);
             }
+
             else
             {
                 ungetc(letter, fp);
                 break;
             }
         }
-
         LINK(area_last->objects, pObjIndex, next_in_area);
-
     }
-
     return true;
 }
 
@@ -1583,14 +1634,15 @@ void rom_convert_room_flags(Flag *flags, long bits)
 
     for (int i = 0; i < sizeof(convert) / sizeof(convert[0]); i++)
     {
-        if ((convert[i].rombit & bits) != 0)
+
+        if ((convert[i].rombit & bits) != 0) {
             set_bit(flags, convert[i].bit);
+        }
     }
 }
 
 bool import_rom_rooms(FILE *fp)
 {
-
     Room *pRoomIndex;
 
     if (area_last == NULL)
@@ -1598,20 +1650,23 @@ bool import_rom_rooms(FILE *fp)
         log_bug("no area seen yet.");
         return false;
     }
+
     for (;;)
     {
         char letter;
         int door;
-
         letter = fread_letter(fp);
+
         if (letter != '#')
         {
             log_bug("# not found.");
             return false;
         }
         long vnum = fread_number(fp);
-        if (vnum == 0)
+
+        if (vnum == 0) {
             break;
+        }
 
         if (hm_get(room_indexes, vnum) != NULL)
         {
@@ -1628,33 +1683,36 @@ bool import_rom_rooms(FILE *fp)
          */
         fread_number(fp);
         rom_convert_room_flags(pRoomIndex->flags, fread_flag(fp));
-
         pRoomIndex->sector = (sector_t) fread_number(fp);
 
         for (;;)
         {
             letter = fread_letter(fp);
 
-            if (letter == 'S')
+            if (letter == 'S') {
                 break;
+            }
 
-            if (letter == 'H')  /* healing room */
+            if (letter == 'H') { /* healing room */
                 fread_number(fp);
+            }
 
-            else if (letter == 'M') /* mana room */
+            else if (letter == 'M') { /* mana room */
                 fread_number(fp);
+            }
 
             else if (letter == 'C')     /* clan */
             {
-
                 free_str(fread_string(fp));
             }
+
             else if (letter == 'D')
             {
                 Exit *pexit;
                 long locks;
 
                 door = (int)fread_number(fp);
+
                 if (door < 0 || door > 5)
                 {
                     log_bug("%s bad door number.",
@@ -1666,7 +1724,6 @@ bool import_rom_rooms(FILE *fp)
                 free_str(fread_string(fp));
                 free_str(fread_string(fp));
                 pexit->fromRoom = pRoomIndex;
-
                 locks = fread_number(fp);
                 pexit->key = fread_number(fp);
                 pexit->to.id = fread_number(fp);
@@ -1719,25 +1776,24 @@ bool import_rom_rooms(FILE *fp)
                             EXIT_LOCKED);
                     break;
                 }
-
                 pRoomIndex->exits[door] = pexit;
             }
+
             else if (letter == 'E')
             {
                 // Property * ed = new_property();
-
                 const char *key = fread_string(fp);
                 const char *value = fread_string(fp);
-
                 sm_insert(&pRoomIndex->extraDescr, value, key);
             }
+
             else if (letter == 'O')
             {
-
                 /*
                  * pRoomIndex->owner =
                  */ fread_string(fp);
             }
+
             else
             {
                 log_bug("room %s has flag not 'DES'.",
@@ -1746,7 +1802,6 @@ bool import_rom_rooms(FILE *fp)
                 return false;
             }
         }
-
         LINK(area_last->rooms, pRoomIndex, next_in_area);
     }
     return true;
@@ -1764,15 +1819,14 @@ int convert_rom_wear_loc(int val)
         WEAR_FLOAT
     };
 
-    if (val >= 0 && val < sizeof(table) / sizeof(table[0]))
+    if (val >= 0 && val < sizeof(table) / sizeof(table[0])) {
         return table[val];
-
+    }
     return WEAR_NONE;
 }
 
 bool import_rom_resets(FILE *fp)
 {
-
     TmpReset *pReset = 0;
     long iLastRoom = 0;
     long iLastObj = 0;
@@ -1790,8 +1844,9 @@ bool import_rom_resets(FILE *fp)
         Room *pRoomIndex;
         char letter;
 
-        if ((letter = fread_letter(fp)) == 'S')
+        if ((letter = fread_letter(fp)) == 'S') {
             break;
+        }
 
         if (letter == '*')
         {
@@ -1799,7 +1854,6 @@ bool import_rom_resets(FILE *fp)
             continue;
         }
         pReset = alloc_mem(1, sizeof(TmpReset));
-
         pReset->type = letter;
         /*
          * if_flag
@@ -1811,44 +1865,44 @@ bool import_rom_resets(FILE *fp)
                         || letter == 'R') ? 0 : fread_number(fp);
         pReset->arg4 = (letter == 'P'
                         || letter == 'M') ? fread_number(fp) : 0;
-
         fread_to_eol(fp);
-
         /*
          * Validate parameters.
          * We're calling the index functions for the side effect.
          */
+
         switch (letter)
         {
         default:
             log_bug("bad command '%c'.", letter);
             free_mem(pReset);
             break;
-
         case 'M':
+
             if (hm_get(npc_indexes, pReset->arg1) == 0)
             {
                 log_bug("bad npc for reset.");
                 free_mem(pReset);
                 break;
             }
+
             if ((pRoomIndex = hm_get(room_indexes, pReset->arg3)))
             {
-
                 LINK(temp_resets, pReset, next);
                 pReset->room = pRoomIndex;
                 iLastRoom = pReset->arg3;
                 last_reset = pReset;
             }
             break;
-
         case 'O':
+
             if (hm_get(obj_indexes, pReset->arg1) == 0)
             {
                 log_bug("bad object for O reset.");
                 free_mem(pReset);
                 break;
             }
+
             if ((pRoomIndex = hm_get(room_indexes, pReset->arg3)))
             {
                 LINK(temp_resets, pReset, next);
@@ -1857,16 +1911,18 @@ bool import_rom_resets(FILE *fp)
                 last_reset = pReset;
             }
             break;
-
         case 'P':
+
             if (hm_get(obj_indexes, pReset->arg1) == 0)
             {
                 log_bug("bad object for P reset.");
                 free_mem(pReset);
                 break;
             }
+
             if ((pRoomIndex = hm_get(room_indexes, iLastObj)))
             {
+
                 if (last_reset == 0
                         || (last_reset->type != 'O'
                             && last_reset->type != 'G'
@@ -1880,8 +1936,8 @@ bool import_rom_resets(FILE *fp)
                 LINK(last_reset->subresets, pReset, next_sub);
             }
             break;
-
         case 'G':
+
             if (hm_get(obj_indexes, pReset->arg1) == 0)
             {
                 log_bug("bad object for G reset %ld.",
@@ -1889,8 +1945,10 @@ bool import_rom_resets(FILE *fp)
                 free_mem(pReset);
                 break;
             }
+
             if ((pRoomIndex = hm_get(room_indexes, iLastRoom)))
             {
+
                 if (last_reset == 0
                         || (last_reset->type != 'M'))
                 {
@@ -1903,16 +1961,18 @@ bool import_rom_resets(FILE *fp)
                 iLastObj = iLastRoom;
             }
             break;
-
         case 'E':
+
             if (hm_get(obj_indexes, pReset->arg1) == 0)
             {
                 log_bug("bad object for E reset.");
                 free_mem(pReset);
                 break;
             }
+
             if ((pRoomIndex = hm_get(room_indexes, iLastRoom)))
             {
+
                 if (last_reset == 0
                         || (last_reset->type != 'M'))
                 {
@@ -1926,8 +1986,8 @@ bool import_rom_resets(FILE *fp)
                 iLastObj = iLastRoom;
             }
             break;
-
         case 'D':
+
             if ((pRoomIndex =
                         hm_get(room_indexes, pReset->arg1)) == 0)
             {
@@ -1935,6 +1995,7 @@ bool import_rom_resets(FILE *fp)
                 free_mem(pReset);
                 break;
             }
+
             if (pReset->arg2 < 0
                     || pReset->arg2 > 5
                     || !pRoomIndex
@@ -1946,6 +2007,7 @@ bool import_rom_resets(FILE *fp)
                 free_mem(pReset);
                 break;
             }
+
             switch (pReset->arg3)
             {
             default:
@@ -1971,15 +2033,12 @@ bool import_rom_resets(FILE *fp)
                      * PICKPROOF ); */
                 break;
             }
-
             pReset->room = pRoomIndex;
             LINK(temp_resets, pReset, next);
-
             last_reset = pReset;
-
             break;
-
         case 'R':
+
             if (pReset->arg2 < 0 || pReset->arg2 > 6)   /* Last Door. */
             {
                 log_bug("bad exit %ld.", pReset->arg2);
@@ -1989,40 +2048,41 @@ bool import_rom_resets(FILE *fp)
             // if (pReset->arg1 < max_room_index && (pRoomIndex =
             // room_indexes[pReset->arg1]))
             // LINK(pRoomIndex->resets, pReset, next);
-
             break;
         }
     }
-
     return true;
 }
 
 bool import_rom_shops(FILE *fp)
 {
+
     for (;;)
     {
         int iTrade;
-
         long keeper = fread_number(fp);
-        if (keeper == 0)
+
+        if (keeper == 0) {
             break;
-        for (iTrade = 0; iTrade < 5; iTrade++)
+        }
+
+        for (iTrade = 0; iTrade < 5; iTrade++) {
             fread_number(fp);
+        }
         fread_number(fp);
         fread_number(fp);
         fread_number(fp);
         fread_number(fp);
         fread_to_eol(fp);
-
     }
     return true;
 }
 
 bool import_rom_specials(FILE *fp)
 {
+
     for (;;)
     {
-
         char letter;
 
         switch (letter = fread_letter(fp))
@@ -2030,20 +2090,15 @@ bool import_rom_specials(FILE *fp)
         default:
             log_bug("letter '%c' not *MS.", letter);
             return false;
-
         case 'S':
             return true;
-
         case '*':
             break;
-
         case 'M':
             fread_number(fp);
             fread_word(fp);
-
             break;
         }
-
         fread_to_eol(fp);
     }
     return true;
@@ -2061,6 +2116,7 @@ bool import_rom_helps(FILE *fp)
          */
         fread_number(fp);
         pHelp->keywords = fread_string(fp);
+
         if (pHelp->keywords[0] == '$')
         {
             destroy_help(pHelp);
@@ -2068,99 +2124,113 @@ bool import_rom_helps(FILE *fp)
         }
         pHelp->text = fread_string(fp);
         LINK(import_helps, pHelp, next);
-
     }
     return true;
 }
 
 bool import_rom_socials(FILE *fp)
 {
+
     for (;;)
     {
         const char *temp;
-
         temp = fread_word(fp);
-        if (!strcmp(temp, "#0"))
+
+        if (!strcmp(temp, "#0")) {
             return true;    /* done */
-
+        }
         Social *social = new_social();
-
         social->minPosition = POS_RESTING;
         social->name = str_dup(temp);
         fread_to_eol(fp);
-
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
+
+        else if (strcmp(temp, "$")) {
             social->charNoArg = temp;
-
+        }
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
+
+        else if (strcmp(temp, "$")) {
             social->othersNoArg = temp;
-
+        }
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
+
+        else if (strcmp(temp, "$")) {
             social->charFound = temp;
-
+        }
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
+
+        else if (strcmp(temp, "$")) {
             social->othersFound = temp;
-
+        }
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
+
+        else if (strcmp(temp, "$")) {
             social->victFound = temp;
-
+        }
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
+
+        else if (strcmp(temp, "$")) {
             social->charNotFound = temp;
-
+        }
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
+
+        else if (strcmp(temp, "$")) {
             social->charAuto = temp;
-
+        }
         temp = fread_string_eol(fp);
+
         if (!strcmp(temp, "#"))
         {
             LINK(import_socials, social, next);
             continue;
         }
-        else if (strcmp(temp, "$"))
-            social->othersAuto = temp;
 
+        else if (strcmp(temp, "$")) {
+            social->othersAuto = temp;
+        }
         LINK(import_socials, social, next);
     }
     return false;
@@ -2174,8 +2244,8 @@ char fread_letter(FILE *fp)
     {
         c = fgetc(fp);
     }
-    while (isspace((int)c));
 
+    while (isspace((int)c));
     return c;
 }
 
@@ -2189,40 +2259,45 @@ long fread_number(FILE *fp)
     {
         c = fgetc(fp);
     }
+
     while (isspace((int)c));
-
     number = 0;
-
     sign = false;
+
     if (c == '+')
     {
         c = fgetc(fp);
     }
+
     else if (c == '-')
     {
         sign = true;
         c = fgetc(fp);
     }
+
     if (!isdigit((int)c))
     {
         log_bug("bad format '%c'... %s", c, "aborting");
-
         abort();
     }
+
     while (isdigit((int)c))
     {
         number = number * 10 + c - '0';
         c = fgetc(fp);
     }
 
-    if (sign)
+    if (sign) {
         number = 0 - number;
+    }
 
-    if (c == '|')
+    if (c == '|') {
         number += fread_number(fp);
-    else if (c != ' ')
-        ungetc(c, fp);
+    }
 
+    else if (c != ' ') {
+        ungetc(c, fp);
+    }
     return number;
 }
 
@@ -2234,14 +2309,19 @@ long flag_convert(char letter)
     if ('A' <= letter && letter <= 'Z')
     {
         bitsum = 1;
-        for (i = letter; i > 'A'; i--)
+
+        for (i = letter; i > 'A'; i--) {
             bitsum *= 2;
+        }
     }
+
     else if ('a' <= letter && letter <= 'z')
     {
         bitsum = 67108864;  /* 2^26 */
-        for (i = letter; i > 'a'; i--)
+
+        for (i = letter; i > 'a'; i--) {
             bitsum *= 2;
+        }
     }
     return bitsum;
 }
@@ -2258,10 +2338,12 @@ long fread_flag(FILE *fp)
     {
         c = fgetc(fp);
     }
+
     while (isspace((int)c));
 
     if (c != '+')
     {
+
         if (c == '-')
         {
             negative = true;
@@ -2271,44 +2353,51 @@ long fread_flag(FILE *fp)
 
         if (!isdigit((int)c))
         {
+
             while (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'))
             {
                 number += flag_convert(c);
                 c = fgetc(fp);
             }
         }
+
         while (isdigit((int)c))
         {
             number = number * 10 + c - '0';
             c = fgetc(fp);
         }
 
-        if (c == '|')
+        if (c == '|') {
             number += fread_flag(fp);
+        }
 
-        else if (c != ' ')
+        else if (c != ' ') {
             ungetc(c, fp);
+        }
 
-        if (negative)
+        if (negative) {
             return -1 * number;
-
+        }
         return number;
     }
+
     else
     {
         number = 0;
         flag = 0;
+
         do
         {
             c = fgetc(fp);
             flag += (temp << number) * (c == 'Y');
             number++;
         }
+
         while (c == 'Y' || c == 'n');
 
-        if (c == '\n' || c == '\r')
+        if (c == '\n' || c == '\r') {
             ungetc(c, fp);
-
+        }
         return flag;
     }
 }
@@ -2321,14 +2410,15 @@ void fread_to_eol(FILE *fp)
     {
         c = fgetc(fp);
     }
+
     while (c != '\n' && c != '\r');
 
     do
     {
         c = fgetc(fp);
     }
-    while (c == '\n' || c == '\r');
 
+    while (c == '\n' || c == '\r');
     ungetc(c, fp);
     return;
 }
@@ -2341,6 +2431,7 @@ const char *fread_word(FILE *fp)
 
     do
     {
+
         if (feof(fp))
         {
             log_bug("EOF encountered on read.");
@@ -2349,12 +2440,14 @@ const char *fread_word(FILE *fp)
         }
         cEnd = fgetc(fp);
     }
+
     while (isspace((int)cEnd));
 
     if (cEnd == '\'' || cEnd == '"')
     {
         pword = word;
     }
+
     else
     {
         word[0] = cEnd;
@@ -2365,17 +2458,18 @@ const char *fread_word(FILE *fp)
     for (; pword < word + OUT_SIZ; pword++)
     {
         *pword = fgetc(fp);
+
         if (cEnd == ' ' ? isspace((int)*pword) : *pword == cEnd)
         {
-            if (cEnd == ' ')
+
+            if (cEnd == ' ') {
                 ungetc(*pword, fp);
+            }
             *pword = 0;
             return word;
         }
     }
-
     log_bug("word too long... aborting");
-
     abort();
     return NULL;
 }
@@ -2387,40 +2481,43 @@ const char *fread_string(FILE *fp)
     long i = 0;
     register char c;
     bool sFull = false;
-
     /*
      * skip blanks
      */
+
     do
     {
         c = fgetc(fp);
     }
-    while (isspace((int)c));
 
+    while (isspace((int)c));
     /*
      * empty string
      */
-    if (c == '~')
-        return &str_empty[0];
 
+    if (c == '~') {
+        return &str_empty[0];
+    }
     buf[i++] = c;
 
     for (;;)
     {
+
         if (i >= sizeof(buf) && !sFull)
         {
             log_bug("String [%20.20s...] exceeded maximum.", buf);
             sFull = true;
         }
+
         switch (c = fgetc(fp))
         {
         default:
+
             if (!sFull)
             {
                 buf[i++] = c;
             }
             break;
-
         case EOF:
         case 0:
             /*
@@ -2429,18 +2526,16 @@ const char *fread_string(FILE *fp)
             log_bug("String [%20.20s...] EOF", buf);
             abort();
             break;
-
         case '\n':
+
             if (!sFull)
             {
                 buf[i++] = '\n';
                 buf[i++] = '\r';
             }
             break;
-
         case '\r':
             break;
-
         case '~':
             buf[i] = 0;
             return str_dup(buf);
@@ -2466,23 +2561,30 @@ const char *fread_string_eol(FILE *fp)
      * Skip blanks.
      * Read first char.
      */
+
     do
     {
         c = fgetc(fp);
     }
+
     while (isspace((int)c));
 
-    if ((buf[i++] = c) == '\n')
+    if ((buf[i++] = c) == '\n') {
         return &str_empty[0];
+    }
 
     for (;;)
     {
+
         if (!char_special[(c = fgetc(fp)) - EOF])
         {
-            if (!sFull)
+
+            if (!sFull) {
                 buf[i++] = c;
+            }
             continue;
         }
+
         switch (c)
         {
         default:
@@ -2491,7 +2593,6 @@ const char *fread_string_eol(FILE *fp)
             log_bug("EOF");
             abort();
             break;
-
         case '\n':
         case '\r':
             buf[i] = 0;
