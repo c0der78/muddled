@@ -21,3 +21,4 @@ stamp-h1
 *.la
 config.h
 config.status
+public/packed
