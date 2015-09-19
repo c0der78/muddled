@@ -146,7 +146,6 @@ int load_account(Account *acc, const char *login)
 
     if (sql_step(stmt) == SQL_DONE)
     {
-
         if (sql_finalize(stmt) != SQL_OK) {
             log_data("could not finalize sql statement");
         }

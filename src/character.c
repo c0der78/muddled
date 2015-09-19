@@ -109,7 +109,7 @@ static void write_to_char(const Character *ch, const char *arg)
     if (ch->pc == 0 || ch->pc->conn == 0) {
         return;
     }
-    ch->pc->conn->writeln(ch->pc->conn, arg);
+    ch->pc->conn->write(ch->pc->conn, arg);
 }
 
 static void page_to_char(Character *ch, const char *arg)

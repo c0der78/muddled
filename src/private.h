@@ -14,7 +14,6 @@ struct account
     int timezone;
     identifier_t autologinId;
     Flag *flags;
-
     Forum *forum;
     Note *inProgress;
     Connection *conn;
@@ -127,7 +126,6 @@ struct forum
     short readLevel;
     short writeLevel;
     const char *defaultTo;
-
     forum_t type;
     int purgeDays;
     Note *notes;

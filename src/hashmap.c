@@ -12,7 +12,7 @@
 
 #define ACTIVE 1
 
-static unsigned long isPrime(identifier_t val)
+static unsigned long is_prime(identifier_t val)
 {
     int i;
     identifier_t a, p, exp;
@@ -40,7 +40,7 @@ static unsigned long isPrime(identifier_t val)
     return 1;
 }
 
-static unsigned long findPrimeGreaterThan(unsigned long val)
+static unsigned long find_prime_greater_than(unsigned long val)
 {
 
     if (val & 1) {
@@ -51,7 +51,7 @@ static unsigned long findPrimeGreaterThan(unsigned long val)
         val++;
     }
 
-    while (!isPrime(val)) {
+    while (!is_prime(val)) {
         val += 2;
     }
     return val;
@@ -61,15 +61,15 @@ static void rehash(hashmap *hm)
 {
     long size = hm->size;
     hash_entry *table = hm->table;
-    hm->size = findPrimeGreaterThan(size << 1);
+    hm->size = find_prime_greater_than(size << 1);
     hm->table = (hash_entry *) calloc(sizeof(hash_entry), hm->size);
     hm->count = 0;
 
-    while (--size >= 0)
-
+    while (--size >= 0) {
         if (table[size].flags == ACTIVE) {
             hm_insert(hm, table[size].data, table[size].key);
         }
+    }
     free(table);
 }
 
@@ -97,7 +97,7 @@ hashmap *new_hashmap(long startsize)
     }
 
     else {
-        startsize = findPrimeGreaterThan(startsize - 2);
+        startsize = find_prime_greater_than(startsize - 2);
     }
     hm->table = (hash_entry *) calloc(sizeof(hash_entry), startsize);
     hm->size = startsize;

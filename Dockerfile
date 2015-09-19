@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.16
+FROM phusion/baseimage:0.9.17
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -10,7 +10,7 @@ RUN apt-get upgrade -y
 RUN apt-get --assume-yes install gcc make libtool libsqlite3-dev libc6-dev liblua5.1-dev libwebsockets-dev autoconf automake libnet-ssleay-perl ruby ruby-sass
 
 # install some perl for web
-RUN PERL_MM_USE_DEFAULT=1 cpan install URI Mozilla::CA IO::Socket::SSL IO::Socket::IP Mojolicious Mojolicious::Plugin::Authentication JHTHORSEN/Mojolicious-Plugin-AssetPack-0.45.tar.gz Mojolicious::Plugin::Bootstrap3 Mojolicious::Plugin::Database
+RUN PERL_MM_USE_DEFAULT=1 cpan install URI Mozilla::CA IO::Socket::SSL IO::Socket::IP Mojolicious Mojolicious::Plugin::Authentication Mojolicious::Plugin::AssetPack Mojolicious::Plugin::Bootstrap3 Mojolicious::Plugin::Database
 
 # add some services
 RUN mkdir -p /etc/service/muddled /etc/service/muddled-web

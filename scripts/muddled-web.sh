@@ -1,3 +1,6 @@
 #!/bin/sh
+MOJO_HOME=/usr/var/www 
+MOJO_MODE=production
+chdir $MOJO_HOME
 echo "Starting muddled web..."
-exec morbo -m production -l https://*:443 -l http://[::]:80 /usr/var/www/muddled.pl
+exec hypnotoad -f script/muddled

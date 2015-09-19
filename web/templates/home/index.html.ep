@@ -12,7 +12,7 @@
 ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝╚═════╝ 
 
 
-<a href="telnet://muddled.arg3.com">Login to muddled.arg3.com</a>
+<a href="telnet://<%= $hostname %>">Login to muddled.arg3.com</a>
 
 </pre>
 

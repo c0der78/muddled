@@ -60,7 +60,6 @@ typedef struct
         int vint;
         long vlong;
         float vfloat;
-
         double vdouble;
         const void *ptr;
     } value;
