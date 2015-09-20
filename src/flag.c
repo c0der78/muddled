@@ -200,6 +200,10 @@ bool flags_set(Flag *flags, Flag *val)
 {
     bool isset = true;
 
+    if (flags == NULL || val == NULL) {
+	return false;
+    }
+
     for (int i = 0; i < val->size; i++)
     {
 
@@ -220,6 +224,10 @@ int parse_flags_toggle(Flag *flags, const char *arglist, const Lookup *table)
 {
     int res = 0;
 
+    if (flags == NULL || arglist == NULL || table == NULL) {
+	return res;
+    }
+
     for (const Lookup *t = table; t->name != 0; t++)
     {
 
@@ -234,8 +242,14 @@ int parse_flags_toggle(Flag *flags, const char *arglist, const Lookup *table)
 
 int parse_flags(Flag *flags, const char *format, const Lookup *table)
 {
-    const char *name = strtok((char *)format, ",");
+    const char *name = NULL;
     int res = 0;
+
+    if (format == NULL || *format == 0) {
+	return res;
+    }
+    
+   name = strtok((char *)format, ",");
 
     while (name != 0)
     {
