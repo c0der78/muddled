@@ -2479,7 +2479,7 @@ const char *fread_string(FILE *fp)
     char buf[OUT_SIZ * 4];  /* extra 2 bytes on the end for \0
                  * and 1b slack */
     long i = 0;
-    register char c;
+    register int c;
     bool sFull = false;
     /*
      * skip blanks
@@ -2548,7 +2548,7 @@ const char *fread_string_eol(FILE *fp)
     static bool char_special[256 - EOF];
     char buf[OUT_SIZ * 4];
     long i = 0;
-    register char c;
+    register int c;
     bool sFull = false;
 
     if (char_special[EOF - EOF] != true)
