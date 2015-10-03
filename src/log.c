@@ -29,12 +29,18 @@
 #include "log.h"
 #include "flag.h"
 #include "util.h"
+#include "str.h"
 
 extern void vsyslog(int priority, const char *message, va_list args);
 
 void log_info(const char *format, ...)
 {
     va_list args;
+
+    if (nullstr(format)) {
+        return;
+    }
+
     va_start(args, format);
     vsyslog(LOG_INFO, format, args);
     va_end(args);
@@ -43,14 +49,26 @@ void log_info(const char *format, ...)
 void log_error(const char *format, ...)
 {
     va_list args;
+
+    if (nullstr(format)) {
+        return;
+    }
     va_start(args, format);
     vsyslog(LOG_ERR, format, args);
     va_end(args);
 }
 
+void log_errno(int errornum) {
+    syslog(LOG_ERR, "%d: %s", errornum, strerror(errornum));
+}
+
 void log_debug(const char *format, ...)
 {
     va_list args;
+
+    if (nullstr(format)) {
+        return;
+    }
     va_start(args, format);
     vsyslog(LOG_DEBUG, format, args);
     va_end(args);
@@ -59,6 +77,10 @@ void log_debug(const char *format, ...)
 void log_warn(const char *format, ...)
 {
     va_list args;
+
+    if (nullstr(format)) {
+        return;
+    }
     va_start(args, format);
     vsyslog(LOG_NOTICE, format, args);
     va_end(args);
@@ -68,6 +90,12 @@ void log_data(const char *format, ...)
 {
     char buf[BUFSIZ + 1] = {0};
     va_list args;
+
+
+    if (nullstr(format)) {
+        return;
+    }
+
     va_start(args, format);
     printf("DATA: ");
 
@@ -77,7 +105,6 @@ void log_data(const char *format, ...)
         snprintf(buf, BUFSIZ, "%s (%s)", buf,  sql_errmsg());
         syslog(LOG_ALERT, "%s", buf);
     }
-
     else
     {
         vsyslog(LOG_DEBUG, format, args);
@@ -88,6 +115,11 @@ void log_data(const char *format, ...)
 void log_trace(const char *format, ...)
 {
     va_list args;
+
+    if (nullstr(format)) {
+        return;
+    }
+
     va_start(args, format);
     printf("TRACE: ");
     vprintf(format, args);
@@ -98,6 +130,10 @@ void log_trace(const char *format, ...)
 void log_bug(const char *format, ...)
 {
     va_list args;
+
+    if (nullstr(format)) {
+        return;
+    }
     va_start(args, format);
     vsyslog(LOG_DEBUG, format, args);
     va_end(args);

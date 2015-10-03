@@ -20,11 +20,15 @@
 #ifndef MUDDLED_LOG_H
 #define MUDDLED_LOG_H
 
+#include <errno.h>
+
 BEGIN_DECL
 
 void log_info(const char *, ...) __attribute__((format(printf, 1, 2)));
 
 void log_error(const char *, ...) __attribute__((format(printf, 1, 2)));
+
+void log_errno(int errornum);
 
 void log_debug(const char *, ...) __attribute__((format(printf, 1, 2)));
 

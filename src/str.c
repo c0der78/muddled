@@ -35,8 +35,12 @@ const char str_empty[1] = { 0 };
 
 int match(const char *string, const char *pattern)
 {
-    int status;
+    int status = 0;
     regex_t re;
+
+    if (nullstr(string) || nullstr(pattern)) {
+        return 0;
+    }
 
     if (regcomp(&re, pattern, REG_EXTENDED | REG_NOSUB) != 0)
     {
@@ -55,7 +59,13 @@ int match(const char *string, const char *pattern)
 
 char *trim(char *b)
 {
-    char *e = strrchr(b, '\0'); /* Find the final null */
+    char *e = NULL;
+
+    if (nullstr(b)) {
+        return b;
+    }
+
+    e = strrchr(b, '\0'); /* Find the final null */
 
     while (b < e && isspace(*b)) {  /* Scan forward */
         ++b;
@@ -105,7 +115,7 @@ bool str_cmp(const char *astr, const char *bstr)
 bool str_prefix(const char *astr, const char *bstr)
 {
 
-    if (astr == NULL || !*astr)
+    if (nullstr(astr))
     {
         return true;
     }
@@ -133,12 +143,13 @@ bool str_prefix(const char *astr, const char *bstr)
  */
 bool str_infix(const char *astr, const char *bstr)
 {
-    size_t sstr1;
-    size_t sstr2;
-    size_t ichar;
-    char c0;
+    size_t sstr1 = 0;
+    size_t sstr2 = 0;
+    size_t ichar = 0;
+    char c0 = 0;
 
-    if ((c0 = LOWER(astr[0])) == '\0') {
+
+    if (astr == NULL || (c0 = LOWER(astr[0])) == '\0') {
         return false;
     }
     sstr1 = strlen(astr);
@@ -162,7 +173,8 @@ bool str_infix(const char *astr, const char *bstr)
  */
 bool str_suffix(const char *astr, const char *bstr)
 {
-    size_t sstr1, sstr2;
+    size_t sstr1 = 0, sstr2 = 0;
+
     sstr1 = strlen(astr);
     sstr2 = strlen(bstr);
 
@@ -170,30 +182,28 @@ bool str_suffix(const char *astr, const char *bstr)
         return false;
     }
 
-    else {
-        return true;
-    }
-
+    return true;
 }
 
 bool is_name(const char *str, const char *namelist)
 {
-    char name[BUF_SIZ], part[BUF_SIZ];
-    const char *list, *string;
+    char name[BUF_SIZ] = {0}, part[BUF_SIZ] = {0};
+    const char *list = NULL, *string = NULL;
+
     /*
      * fix crash on NULL namelist
      */
-
-    if (namelist == NULL || namelist[0] == '\0') {
+    if (nullstr(namelist)) {
         return true;
     }
     /*
      * fixed to prevent is_name on "" returning TRUE
      */
 
-    if (str[0] == '\0') {
+    if (nullstr(str)) {
         return false;
     }
+
     string = str;
     /*
      * we need ALL parts of string to match part of namelist
@@ -233,9 +243,9 @@ bool is_name(const char *str, const char *namelist)
 
 bool is_exact_name(const char *str, const char *namelist)
 {
-    char name[BUF_SIZ];
+    char name[BUF_SIZ] = {0};
 
-    if (namelist == NULL) {
+    if (nullstr(namelist) || nullstr(str)) {
         return false;
     }
 
@@ -256,7 +266,11 @@ bool is_exact_name(const char *str, const char *namelist)
 
 const char *stristr(const char *String, const char *Pattern)
 {
-    const char *pptr, *sptr, *start;
+    const char *pptr = NULL, *sptr = NULL, *start = NULL;
+
+    if (String == NULL || Pattern == NULL) {
+        return NULL;
+    }
 
     for (start = String; *start != 0; start++)
     {
@@ -293,16 +307,20 @@ const char *stristr(const char *String, const char *Pattern)
 
 const char *str_replace(const char *orig, const char *old, const char *pnew)
 {
-    char *buf;
-    const char *ptr;
-    size_t len, a, b;
+    char *buf = NULL;
+    const char *ptr = NULL;
+    size_t len = 0, a = 0, b = 0;
+    static char outbuf[7][OUT_SIZ];
+    static int i = 0;
+
+    if (nullstr(orig) || nullstr(old) || pnew == NULL) {
+        return orig;
+    }
 
     if ((ptr = strstr(orig, old)) == NULL
             || (a = ptr - orig) + (len = strlen(pnew)) >= (OUT_SIZ - 4)) {
         return orig;
     }
-    static char outbuf[7][OUT_SIZ];
-    static int i = 0;
     ++i, i %= 7;
     buf = outbuf[i];
     b = OUT_SIZ - 4 - a - len;
@@ -317,8 +335,12 @@ const char *str_replace(const char *orig, const char *old, const char *pnew)
 const char *str_replace_all(const char *orig, const char *old,
                             const char *newstr)
 {
-    const char *ptr;
-    size_t len;
+    const char *ptr = NULL;
+    size_t len = 0;
+
+    if (nullstr(orig) || nullstr(old) || newstr == NULL) {
+        return orig;
+    }
 
     if (!strstr(orig, old) || !str_cmp(old, newstr))
     {
@@ -336,16 +358,20 @@ const char *str_replace_all(const char *orig, const char *old,
 
 const char *str_ireplace(const char *orig, const char *old, const char *pnew)
 {
-    char *buf;
-    const char *ptr;
-    size_t len, a, b;
+    char *buf = NULL;
+    const char *ptr = NULL;
+    size_t len = 0, a = 0, b = 0;
+    static char outbuf[7][OUT_SIZ];
+    static int i = 0;
+
+    if (nullstr(orig) || nullstr(old) || pnew == NULL) {
+        return orig;
+    }
 
     if ((ptr = stristr(orig, old)) == NULL
             || (a = ptr - orig) + (len = strlen(pnew)) >= (OUT_SIZ - 4)) {
         return orig;
     }
-    static char outbuf[7][OUT_SIZ];
-    static int i = 0;
     ++i, i %= 7;
     buf = outbuf[i];
     b = OUT_SIZ - 4 - a - len;
@@ -360,8 +386,12 @@ const char *str_ireplace(const char *orig, const char *old, const char *pnew)
 const char *str_ireplace_all(const char *orig, const char *old,
                              const char *newstr)
 {
-    const char *ptr;
-    size_t len;
+    const char *ptr = NULL;
+    size_t len = 0;
+
+    if (nullstr(orig) || nullstr(old) || newstr == NULL) {
+        return orig;
+    }
 
     if (!stristr(orig, old) || !str_cmp(old, newstr))
     {
@@ -384,10 +414,10 @@ const char *str_ireplace_all(const char *orig, const char *old,
 const char *capitalize(const char *str)
 {
     static char strcap[5][500];
-    static int o;
-    int i;
+    static int o = 0;
+    int i = 0;
 
-    if (!str) {
+    if (nullstr(str)) {
         return str_empty;
     }
     ++o, o %= 5;
@@ -403,15 +433,20 @@ const char *capitalize(const char *str)
 
 const char *str_dup(const char *str)
 {
+    char *p = NULL;
+    size_t ssize = 0;
 
-    if (str == 0 || *str == 0) {
+    if (nullstr(str)) {
         return str_empty;
     }
-    char *p = alloc_mem(1, strlen(str) + 1);
+
+    ssize = strlen(str);
+
+    p = alloc_mem(1, ssize + 1);
 
     if (p)
     {
-        strcpy(p, str);
+        strncpy(p, str, ssize);
     }
     return p;
 
@@ -419,18 +454,17 @@ const char *str_dup(const char *str)
 
 void free_str(const char *pstr)
 {
-
-    if (pstr == 0 || !*pstr) {
-        return;
-    }
     free_mem((char *)pstr);
-    pstr = 0;
-
 }
 
 void free_str_dup(const char **pstr, const char *nstr)
 {
+    if (pstr == NULL) {
+        return;
+    }
+
     free_str(*pstr);
+
     *pstr = str_dup(nstr);
 
 }
@@ -441,12 +475,16 @@ void free_str_dup(const char **pstr, const char *nstr)
 bool is_valid_email(const char *address)
 {
     int count = 0;
-    const char *c, *domain;
+    const char *c = NULL, *domain = NULL;
     static char *rfc822_specials = "()<>@,;:\\\"[]";
+
+    if (nullstr(address)) {
+        return false;
+    }
+
     /*
      * first we validate the name portion (name@domain)
      */
-
     for (c = address; *c; c++)
     {
 
@@ -541,7 +579,7 @@ int is_number(const char *arg)
 {
     bool precision = false;
 
-    if (!arg || !*arg) {
+    if (nullstr(arg)) {
         return 0;
     }
 
@@ -568,6 +606,10 @@ int is_number(const char *arg)
 
 const char *get_line(const char *str, char *buf)
 {
+
+    if (buf == NULL) {
+        return str;
+    }
 
     while (str && *str != 0)
     {
@@ -617,7 +659,11 @@ const char *one_argument(const char *argument, char *arg)
 
 const char *first_arg(const char *argument, char *arg_first, bool fCase)
 {
-    char cEnd;
+    char cEnd = 0;
+
+    if (nullstr(argument) || nullstr(arg_first)) {
+        return str_empty;
+    }
 
     while (*argument == ' ') {
         argument++;
@@ -670,9 +716,11 @@ const char *first_arg(const char *argument, char *arg_first, bool fCase)
 const char *strip_color(const char *str)
 {
     static char out[5][OUT_SIZ];
-    static int i;
+    static int i = 0;
+    char *res = NULL;
+
     ++i, i %= 5;
-    char *res = out[i];
+    res = out[i];
 
     for (const char *pstr = str; *pstr != 0; pstr++)
     {
@@ -707,6 +755,10 @@ int strlen_color(const char *str)
 {
     int count = 0;
 
+    if (nullstr(str)) {
+        return count;
+    }
+
     for (const char *pstr = str; *pstr != 0; pstr++)
     {
 
@@ -739,15 +791,16 @@ int strlen_color(const char *str)
 
 static const char *fill_str_len(const char *src, size_t len)
 {
-    int cz, c, count;
-    size_t sz, pos, mod;
-    char *result;
-
-    if (!src || !*src || len <= 0) {
-        return &str_empty[0];
-    }
+    int cz = 0, c = 0, count = 0;
+    size_t sz = 0, pos = 0, mod = 0;
+    char *result = NULL;
     static char outbuf[7][OUT_SIZ * 2];
     static int i = 0;
+
+    if (nullstr(src) || len <= 0) {
+        return &str_empty[0];
+    }
+
     ++i, i %= 7;
     result = outbuf[i];
     result[0] = 0;
@@ -791,19 +844,31 @@ static const char *fill_str_len(const char *src, size_t len)
 const char *align_string(align_t align, int width, const char *color,
                          const char *fill, const char *str)
 {
-    size_t nCount, cnt, sz;
+    size_t nCount = 0, cnt = 0, sz = 0;
     static char outbuf[7][OUT_SIZ * 2];
     static int i = 0;
+    char *result = NULL;
+    int pos = 0;
+
+    if (nullstr(str)) {
+        return str_empty;
+    }
+
     // rotate buffers
     ++i, i %= 7;
-    char *result = outbuf[i];
+    result = outbuf[i];
 
-    if (!fill || !*fill) {
+    if (nullstr(fill)) {
         fill = " ";
     }
+
+    if (color == NULL) {
+        color = str_empty;
+    }
+
     sz = strlen_color(str);
     nCount = UMIN(sz, width);
-    strcpy(result, color ? color : &str_empty[0]);
+    strcpy(result, color);
 
     switch (align)
     {
@@ -825,7 +890,7 @@ const char *align_string(align_t align, int width, const char *color,
         cnt = 0;
         break;
     }
-    int pos = strpos(str, width);
+    pos = strpos(str, width);
     strncat(result, str, pos);
     cnt = UMIN(cnt + sz, width);
     strcat(result, fill_str_len(fill, width - cnt));
@@ -840,7 +905,7 @@ const char *align_string(align_t align, int width, const char *color,
 const char *valign_string(align_t align, int width, const char *color,
                           const char *fill, const char *fmt, va_list args)
 {
-    char buf[OUT_SIZ];
+    char buf[OUT_SIZ] = {0};
     vsnprintf(buf, sizeof(buf), fmt, args);
     return align_string(align, width, color, fill, buf);
 

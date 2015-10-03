@@ -170,12 +170,18 @@ int save_engine()
 
 void *alloc_mem(size_t num, size_t size)
 {
-    return calloc(num, size);
+    void *value = calloc(num, size);
+
+    memset(value, 0, size);
+
+    return value;
 }
 
 void free_mem(void *data)
 {
-    free(data);
+    if (data != NULL) {
+        free(data);
+    }
 }
 
 void initialize_engine(const char *db_file, const char *root_path)
