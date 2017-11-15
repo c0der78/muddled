@@ -27,10 +27,10 @@
 
 extern short websocket_port;
 
-extern struct libwebsocket_context *websocket_context;
+extern struct lws_context *websocket_context;
 
-bool write_to_websocket(struct libwebsocket *websocket, char *txt, size_t len);
+bool write_to_websocket(struct lws *websocket, char *txt, size_t len);
 
-struct libwebsocket_context *create_websocket(int port);
+struct lws_context *create_websocket(int port);
 
 #endif

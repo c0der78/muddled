@@ -55,7 +55,7 @@ struct Client
     Client *next;
     int socket;
     struct sockaddr_in addr;
-    struct libwebsocket *websocket;
+    struct lws *websocket;
     char lastCommand[BUF_SIZ];
     unsigned char inbuf[4 * ARG_SIZ];
     char incomm[ARG_SIZ];
@@ -69,7 +69,6 @@ struct Client
     const char *showstr_point;
     bool(*readln) (Client *);
     Editor *editing;
-
 };
 
 extern Client *first_client;

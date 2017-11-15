@@ -20,7 +20,7 @@ AC_CHECK_PROG(TAR, tar, tar)
 AC_SUBST(X_CFLAGS, "-std=c99 -pedantic -Wall -Werror -D_XOPEN_SOURCE=700")
 
 # Checks for libraries.
-AC_CHECK_LIB(websockets, libwebsocket_create_context)
+AC_CHECK_LIB(websockets, lws_create_context)
 AC_CHECK_LIB(sqlite3, sqlite3_open)
 AC_CHECK_LIB(crypt, crypt)
 AC_CHECK_LIB(m, sqrt)

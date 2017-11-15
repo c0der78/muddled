@@ -51,8 +51,8 @@ long number_mm(void)
 
 long number_range(long from, long to)
 {
-    int power;
-    long number;
+    int power = 0;
+    long number = 0;
 
     if (from == 0 && to == 0) {
         return 0;
@@ -71,7 +71,7 @@ long number_range(long from, long to)
 
 int number_percent(void)
 {
-    long percent;
+    long percent = 0;
 
     while ((percent = number_mm() & (128 - 1)) > 99) ;
     return (int)(1 + percent);
@@ -89,8 +89,8 @@ long number_bits(int width)
  */
 long dice(int number, int size)
 {
-    int idice;
-    long sum;
+    int idice = 0;
+    long sum = 0;
 
     switch (size)
     {
@@ -169,18 +169,21 @@ int interpolate(int level, int value_00, int value_32)
 
 bool can_see(const Character *ch, const Character *ch2)
 {
+    // TODO: implement
     return true;
 
 }
 
 bool can_see_room(const Character *ch, const Room *room)
 {
+    // TODO: implement
     return true;
 
 }
 
 bool can_see_obj(const Character *ch, const Object *obj)
 {
+    // TODO: implement
     return true;
 
 }

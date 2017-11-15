@@ -915,6 +915,10 @@ int strpos(const char *str, int width)
 {
     int i = 0, count = 0;
 
+    if (nullstr(str)) {
+        return 0;
+    }
+
     for (i = 0; str[i] != 0; i++)
     {
 
@@ -996,7 +1000,7 @@ const char *strupper(const char *str)
 const char *fillstr(const char *fill, size_t len)
 {
 
-    if (!fill || !*fill) {
+    if (nullstr(fill)) {
         fill = "-";
     }
     return fill_str_len(fill, len);
@@ -1015,9 +1019,14 @@ bool nullstr(const char *str)
  */
 long x_argument(char c, const char *argument, char *arg)
 {
-    const char *p;
-    char *q;
-    long number;
+    const char *p = NULL;
+    char *q = NULL;
+    long number = 0;
+
+    if (nullstr(argument)) {
+        return 0;
+    }
+
     p = strchr(argument, c);
 
     if (p == NULL)

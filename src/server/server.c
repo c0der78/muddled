@@ -325,8 +325,9 @@ int game_loop(int control)
          * Autonomous game motion.
          */
         update_handler();
-        libwebsocket_service(websocket_context, 1);
-        /*
+        lws_service(websocket_context, 1);
+        
+	/*
          * Output.
          */
 

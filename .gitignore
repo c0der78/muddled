@@ -24,3 +24,4 @@ config.status
 web/public/packed
 *.lz
 *.log
+debug
