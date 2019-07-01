@@ -22,40 +22,71 @@
 
 #include <sqlite3.h>
 #include <stdint.h>
+#include "cdecl.h"
 #include "typedef.h"
 
-#define sql_int64   sqlite3_int64
-#define sql_uint64  sqlite3_uint64
+#define sql_int64 sqlite3_int64
+#define sql_uint64 sqlite3_uint64
 
-#define SQL_OK      SQLITE_OK
-#define SQL_DONE    SQLITE_DONE
+#define sql sqlite3
+#define sql_stmt sqlite3_stmt
+#define sql_step sqlite3_step
+#define sql_finalize sqlite3_finalize
+#define sql_reset sqlite3_reset
+
+#define sql_bind_blob sqlite3_bind_blob
+#define sql_bind_double sqlite3_bind_double
+#define sql_bind_float sqlite3_bind_double
+#define sql_bind_int sqlite3_bind_int
+#define sql_bind_int64 sqlite3_bind_int64
+#define sql_bind_null sqlite3_bind_null
+#define sql_bind_text sqlite3_bind_text
+#define sql_bind_text16 sqlite3_bind_text16
+#define sql_bind_value sqlite3_bind_value
+#define sql_bind_zeroblob sqlite3_bind_zeroblob
+
+#define sql_column_blob sqlite3_column_blob
+#define sql_column_bytes sqlite3_column_bytes
+#define sql_column_bytes16 sqlite3_column_bytes16
+#define sql_column_double sqlite3_column_double
+#define sql_column_float sqlite3_column_double
+#define sql_column_int sqlite3_column_int
+#define sql_column_int64 sqlite3_column_int64
+#define sql_column_text sqlite3_column_text
+#define sql_column_text16 sqlite3_column_text16
+#define sql_column_type sqlite3_column_type
+#define sql_column_value sqlite3_column_value
+#define sql_column_name sqlite3_column_name
+#define sql_column_count sqlite3_column_count
+
+#define SQL_OK SQLITE_OK
+#define SQL_DONE SQLITE_DONE
 #define SQL_NONTYPE SQLITE_NOTFOUND
 
-#define SQL_INT     SQLITE_INTEGER
-#define SQL_DOUBLE  SQLITE_FLOAT
-#define SQL_BLOB    SQLITE_BLOB
-#define SQL_NULL    SQLITE_NULL
-#define SQL_TEXT    SQLITE_TEXT
+#define SQL_INT SQLITE_INTEGER
+#define SQL_DOUBLE SQLITE_FLOAT
+#define SQL_BLOB SQLITE_BLOB
+#define SQL_NULL SQLITE_NULL
+#define SQL_TEXT SQLITE_TEXT
 
-#define SQL_FLAG    1000
-#define SQL_CUSTOM  1001
-#define SQL_FLOAT   1002
-#define SQL_ARRAY   SQL_CUSTOM
-#define SQL_LOOKUP  1003
+#define SQL_FLAG 1000
+#define SQL_CUSTOM 1001
+#define SQL_FLOAT 1002
+#define SQL_ARRAY SQL_CUSTOM
+#define SQL_LOOKUP 1003
 
-typedef struct field_map
-{
-	const char *name;
-	const void *value;
-	int type;
-	const void *arg1;
-	const void *arg2;
-	int flags;
-	int (*funk)(sqlite3_stmt *, int, const struct field_map *);
+typedef struct field_map {
+  const char *name;
+  const void *value;
+  int type;
+  const void *arg1;
+  const void *arg2;
+  int flags;
+  int (*funk)(sqlite3_stmt *, int, const struct field_map *);
 } field_map;
 
-typedef int (*custom_field_t) (sql_stmt *, int, const field_map *);
-typedef void (*sql_callback_t) (sql_stmt *);
+typedef int (*custom_field_t)(sql_stmt *, int, const field_map *);
+typedef void (*sql_callback_t)(sql_stmt *);
 
 BEGIN_DECL
 const char *tablenameid(const char *tablename);
@@ -89,7 +120,7 @@ int db_save_lookup(sql_stmt *, int, field_map *);
  */
 identifier_t db_save(field_map *, const char *, identifier_t);
 int db_load_by_id(field_map *, const char *, identifier_t);
-int db_load_all(const char *, sql_callback_t, const char *, ...) __attribute__ ((format(printf, 3, 4)));
+int db_load_all(const char *, sql_callback_t, const char *, ...) __attribute__((format(printf, 3, 4)));
 int sql_load_columns(sql_stmt *stmt, field_map *table);
 int db_delete(const char *tablename, identifier_t);
 
@@ -104,33 +135,4 @@ Flag *fm_flag(const field_map *);
 
 END_DECL
 
-#define sql_step            sqlite3_step
-#define sql_finalize        sqlite3_finalize
-#define sql_reset           sqlite3_reset
-
-#define sql_bind_blob       sqlite3_bind_blob
-#define sql_bind_double     sqlite3_bind_double
-#define sql_bind_float      sqlite3_bind_double
-#define sql_bind_int        sqlite3_bind_int
-#define sql_bind_int64      sqlite3_bind_int64
-#define sql_bind_null       sqlite3_bind_null
-#define sql_bind_text       sqlite3_bind_text
-#define sql_bind_text16     sqlite3_bind_text16
-#define sql_bind_value      sqlite3_bind_value
-#define sql_bind_zeroblob   sqlite3_bind_zeroblob
-
-#define sql_column_blob     sqlite3_column_blob
-#define sql_column_bytes    sqlite3_column_bytes
-#define sql_column_bytes16  sqlite3_column_bytes16
-#define sql_column_double   sqlite3_column_double
-#define sql_column_float    sqlite3_column_double
-#define sql_column_int      sqlite3_column_int
-#define sql_column_int64    sqlite3_column_int64
-#define sql_column_text     sqlite3_column_text
-#define sql_column_text16   sqlite3_column_text16
-#define sql_column_type     sqlite3_column_type
-#define sql_column_value    sqlite3_column_value
-#define sql_column_name     sqlite3_column_name
-#define sql_column_count    sqlite3_column_count
-
-#endif              /* // #ifndef DB_H */
+#endif /* // #ifndef DB_H */

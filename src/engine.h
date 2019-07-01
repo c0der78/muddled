@@ -33,6 +33,7 @@
 
 #include <time.h>
 #include <stdio.h>
+#include "db.h"
 #include "cdecl.h"
 #include "typedef.h"
 #include "macro.h"

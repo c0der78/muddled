@@ -21,168 +21,145 @@
 #include "config.h"
 #endif
 #include <syslog.h>
-#include "websocket.h"
 #include "client.h"
+#include "websocket.h"
 
 short websocket_port = 0;
-struct libwebsocket_context *websocket_context = NULL;
+struct lws_context *websocket_context = NULL;
 
-extern void lws_set_log_level   (   int     level,
-                                    void(*)(int level, const char *line)
-                                )   ;
+extern void lws_set_log_level(int level, void (*)(int level, const char *line));
 extern int log_level;
 
 Client *first_websocket;
 
-typedef struct
-{
-    Client *client;
-}
-websocket_user_info;
+typedef struct {
+  Client *client;
+} websocket_user_info;
 
-static int callback_http(struct libwebsocket_context *context,
-                         struct libwebsocket *wsi,
-                         enum libwebsocket_callback_reasons reason, void *user,
-                         void *in, size_t len)
-{
-    return 0;
+static int callback_http(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len) {
+  return 0;
 }
 
-int websocket_server_callback(struct libwebsocket_context *context,
-                              struct libwebsocket *wsi,
-                              enum libwebsocket_callback_reasons reason,
-                              void *user, void *in, size_t len)
-{
-    websocket_user_info *info = (websocket_user_info *) user;
+int websocket_server_callback(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len) {
+  websocket_user_info *info = (websocket_user_info *)user;
 
-    switch (reason)
+  switch (reason) {
+    case LWS_CALLBACK_ESTABLISHED:  // just log message that someone is connecting
     {
-    case LWS_CALLBACK_ESTABLISHED: // just log message that someone is connecting
-    {
-        info->client = new_client();
-        info->client->websocket = wsi;
+      info->client = new_client();
+      info->client->websocket = wsi;
 
-        LINK(first_websocket, info->client, next);
+      LINK(first_websocket, info->client, next);
 
-        if (greeting == 0)
-        {
-            xwritelnf(info->client, "Welcome to %s!", engine_info.name);
-            xwriteln(info->client, "");
-        }
+      if (greeting == 0) {
+        xwritelnf(info->client, "Welcome to %s!", engine_info.name);
+        xwriteln(info->client, "");
+      }
 
-        else
-        {
-            xwriteln(info->client, greeting);
-        }
-        xwrite(info->client, "Login: ");
-        libwebsocket_callback_on_writable(context, wsi);
-        break;
+      else {
+        xwriteln(info->client, greeting);
+      }
+      xwrite(info->client, "Login: ");
+      lws_callback_on_writable(wsi);
+      break;
     }
-    case LWS_CALLBACK_RECEIVE:   // the funny part
+    case LWS_CALLBACK_RECEIVE:  // the funny part
     {
-        (*info->client->handler) (info->client, (char *)in);
-        /*info->conn->buffered_writer::xwriteln();
-        info->conn->process_input((char *) in);*/
-        libwebsocket_callback_on_writable(context, wsi);
-        break;
+      (*info->client->handler)(info->client, (char *)in);
+      /*info->conn->buffered_writer::xwriteln();
+      info->conn->process_input((char *) in);*/
+      lws_callback_on_writable(wsi);
+      break;
     }
-    case LWS_CALLBACK_SERVER_WRITEABLE:
-    {
-        // show prompt
-        // write output
-        process_output(info->client, true);
-        break;
+    case LWS_CALLBACK_SERVER_WRITEABLE: {
+      // show prompt
+      // write output
+      process_output(info->client, true);
+      break;
     }
     default:
-        break;
-    }
+      break;
+  }
 
-    return 0;
+  return 0;
 }
 
-static struct libwebsocket_protocols protocols[] =
-{
+static struct lws_protocols protocols[] = {
     /* first protocol must always be HTTP handler */
     {
-        "http-only",   // name
-        callback_http, // callback
-        0              // per_session_data_size
+        "http-only",    // name
+        callback_http,  // callback
+        0               // per_session_data_size
     },
+    {"muddy-protocol",            // protocol name - very important!
+     &websocket_server_callback,  // callback
+     sizeof(websocket_user_info)},
     {
-        "muddy-protocol", // protocol name - very important!
-        &websocket_server_callback,   // callback
-        sizeof(websocket_user_info)
-    },
-    {
-        NULL, NULL, 0   /* End of list */
-    }
-};
+        NULL, NULL, 0 /* End of list */
+    }};
 
-bool write_to_websocket(struct libwebsocket *websocket, char *txt, size_t len)
-{
+bool write_to_websocket(struct lws *websocket, char *txt, size_t len) {
+  if (!websocket) {
+    return false;
+  }
 
-    if (!websocket) { return false; }
+  if (!txt || !*txt || len == 0) {
+    return true;
+  }
+  /*unsigned char *buf = (unsigned char *) malloc(LWS_SEND_BUFFER_PRE_PADDING + len +
+                       LWS_SEND_BUFFER_POST_PADDING);
+  int i;
+  // pointer to `void *in` holds the incomming request
+  // we're just going to put it in reverse order and put it in `buf` with
+  // correct offset. `len` holds length of the request.
 
-    if (!txt || !*txt || len == 0) { return true; }
-    /*unsigned char *buf = (unsigned char *) malloc(LWS_SEND_BUFFER_PRE_PADDING + len +
-                         LWS_SEND_BUFFER_POST_PADDING);
-    int i;
-    // pointer to `void *in` holds the incomming request
-    // we're just going to put it in reverse order and put it in `buf` with
-    // correct offset. `len` holds length of the request.
-
-    for (i = 0; i < len; i++)
-    {
-        buf[LWS_SEND_BUFFER_PRE_PADDING + (len - 1) - i ] = ((char *) txt)[i];
-    }
-    // send response
-    // just notice that we have to tell where exactly our response starts. That's
-    // why there's `buf[LWS_SEND_BUFFER_PRE_PADDING]` and how long it is.
-    // we know that our response has the same length as request because
-    // it's the same message in reverse order.
-    int status = libwebsocket_write(websocket, &buf[LWS_SEND_BUFFER_PRE_PADDING], len, LWS_WRITE_TEXT);
-    // release memory back into the wild
-    free(buf);*/
-    int status = libwebsocket_write(websocket, (unsigned char *) txt, len, LWS_WRITE_TEXT);
-    return status > 0;
+  for (i = 0; i < len; i++)
+  {
+      buf[LWS_SEND_BUFFER_PRE_PADDING + (len - 1) - i ] = ((char *) txt)[i];
+  }
+  // send response
+  // just notice that we have to tell where exactly our response starts. That's
+  // why there's `buf[LWS_SEND_BUFFER_PRE_PADDING]` and how long it is.
+  // we know that our response has the same length as request because
+  // it's the same message in reverse order.
+  int status = lws_write(websocket, &buf[LWS_SEND_BUFFER_PRE_PADDING], len, LWS_WRITE_TEXT);
+  // release memory back into the wild
+  free(buf);*/
+  int status = lws_write(websocket, (unsigned char *)txt, len, LWS_WRITE_TEXT);
+  return status > 0;
 }
 
-static void lwsl_syslog(int level, const char *msg)
-{
-
-    switch (level)
-    {
+static void lwsl_syslog(int level, const char *msg) {
+  switch (level) {
     case LLL_ERR:
-        syslog(LOG_ERR, "%s", msg);
-        break;
+      syslog(LOG_ERR, "%s", msg);
+      break;
     case LLL_WARN:
     case LLL_NOTICE:
-        syslog(LOG_NOTICE, "%s", msg);
-        break;
+      syslog(LOG_NOTICE, "%s", msg);
+      break;
     case LLL_INFO:
-        syslog(LOG_INFO, "%s", msg);
-        break;
+      syslog(LOG_INFO, "%s", msg);
+      break;
     default:
-        syslog(LOG_DEBUG, "%s", msg);
-        break;
-    }
+      syslog(LOG_DEBUG, "%s", msg);
+      break;
+  }
 }
 
-struct libwebsocket_context *create_websocket(int port)
-{
-    struct lws_context_creation_info info;
-    memset(&info, 0, sizeof info);
-    info.port = port;
-    info.iface = NULL;
-    info.protocols = protocols;
-    info.extensions = libwebsocket_get_internal_extensions();
-    info.ssl_cert_filepath = NULL;
-    info.ssl_private_key_filepath = NULL;
-    info.gid = -1;
-    info.uid = -1;
-    info.options = 0;
-    info.user = NULL;
-    lws_set_log_level(LLL_NOTICE, lwsl_syslog);
-    return libwebsocket_create_context(&info);
+struct lws_context *create_websocket(int port) {
+  struct lws_context_creation_info info;
+  memset(&info, 0, sizeof info);
+  info.port = port;
+  info.iface = NULL;
+  info.protocols = protocols;
+  info.extensions = NULL;
+  info.ssl_cert_filepath = NULL;
+  info.ssl_private_key_filepath = NULL;
+  info.gid = -1;
+  info.uid = -1;
+  info.options = 0;
+  info.user = NULL;
+  lws_set_log_level(LLL_NOTICE, lwsl_syslog);
+  return lws_create_context(&info);
 }
-
