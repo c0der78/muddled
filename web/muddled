@@ -1,0 +1,17 @@
+#!/usr/bin/env morbo
+
+use Mojolicious::Lite -signatures;
+
+# Render template "index.html.ep" from the DATA section
+get '/' => sub {
+  my $c = shift;
+  $c->stash('hostname', 'muddled.micrantha.com');
+  $c->render('home/index');
+};
+
+# WebSocket service used by the template to extract the title from a web site
+websocket '/connect' => sub {
+  my $c = shift;
+};
+
+app->start;

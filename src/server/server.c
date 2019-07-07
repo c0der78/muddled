@@ -17,9 +17,6 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 #include <errno.h>
 #include <libgen.h>
 #include <netdb.h>
@@ -31,7 +28,6 @@
 #include "account.h"
 #include "character.h"
 #include "client.h"
-#include "config.h"
 #include "engine.h"
 #include "log.h"
 #include "macro.h"

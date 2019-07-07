@@ -1,0 +1,8 @@
+[Unit]
+Description=Muddled multi user dungeon
+
+[Service]
+ExecStart=/usr/sbin/muddled
+
+[Install]
+WantedBy=multi-user.target

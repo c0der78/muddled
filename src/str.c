@@ -17,9 +17,7 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "str.h"
 #include <ctype.h>
 #include <regex.h>
 #include <stdarg.h>
@@ -29,7 +27,6 @@
 #include "engine.h"
 #include "log.h"
 #include "macro.h"
-#include "str.h"
 
 const char str_empty[1] = {0};
 
@@ -569,7 +566,8 @@ const char *one_argument(const char *argument, char *arg) { return first_arg(arg
 const char *first_arg(const char *argument, char *arg_first, bool fCase) {
   char cEnd = 0;
 
-  if (nullstr(argument) || nullstr(arg_first)) {
+  if (nullstr(argument)) {
+    *arg_first = '\0';
     return str_empty;
   }
 

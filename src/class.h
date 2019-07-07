@@ -23,20 +23,17 @@
 
 typedef struct clazz Class;
 
-#include "character.h"
+#include <stdbool.h>
 #include "cdecl.h"
-#ifdef HAVE_STDBOOL_H
-#include  <stdbool.h>
-#endif
+#include "character.h"
 
-struct clazz
-{
-    identifier_t id;
-    const char *name;
-    const char *description;
-    bool fMana;
-    short thac0;
-    short thac32;
+struct clazz {
+  identifier_t id;
+  const char *name;
+  const char *description;
+  bool fMana;
+  short thac0;
+  short thac32;
 };
 
 extern Class *class_table;
@@ -56,4 +53,4 @@ const char *class_short(Character *);
 const char *class_who(Character *);
 END_DECL
 
-#endif              /* // #ifndef CLASS_H */
+#endif /* // #ifndef CLASS_H */

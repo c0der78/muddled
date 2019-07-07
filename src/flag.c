@@ -17,284 +17,234 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 #include "flag.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include "log.h"
 #include "engine.h"
+#include "log.h"
 #include "lookup.h"
 #include "str.h"
 
-Flag *new_flag()
-{
-    Flag *flags = (Flag *) alloc_mem(1, sizeof(Flag));
-    if (flags == NULL) {
-        log_errno(ENOMEM);
-        return NULL;
-    }
+Flag *new_flag() {
+  Flag *flags = (Flag *)alloc_mem(1, sizeof(Flag));
+  if (flags == NULL) {
+    log_errno(ENOMEM);
+    return NULL;
+  }
+  flags->size = 0;
+  flags->bits = 0;
+  return flags;
+}
+
+void destroy_flags(Flag *flags) {
+  if (flags->size > 0) {
+    free_mem(flags->bits);
+  }
+  free(flags);
+}
+
+static void resize_bits(Flag *flags, size_t size) {
+  size_t oldsize = flags->size;
+  flags->size = size + 1;
+  flags->bits = (int *)realloc(flags->bits, flags->size * sizeof(bit_t));
+
+  if (flags->bits == 0) {
+    log_error("unable to resize bit field");
     flags->size = 0;
-    flags->bits = 0;
+    return;
+  }
+
+  while (oldsize < flags->size) {
+    flags->bits[oldsize++] = 0;
+  }
+}
+
+Flag *init_flag(int bit) {
+  Flag *flag = new_flag();
+  flag->size = 1;
+  resize_bits(flag, 1);
+  flag->bits[0] = bit;
+  return flag;
+}
+
+Flag *copy_flags(Flag *f1, Flag *f2) {
+  resize_bits(f1, f2->size);
+
+  for (int i = 0; i < f1->size; i++) {
+    f1[i] = f2[i];
+  }
+  return f1;
+}
+
+Flag *set_bit(Flag *flags, bit_t bit) {
+  size_t pos = (size_t)(bit / sizeof(bit_t));
+
+  if (pos >= flags->size) {
+    resize_bits(flags, pos);
+  }
+  flags->bits[pos] |= (1 << (bit % sizeof(bit_t)));
+  return flags;
+}
+
+Flag *set_flags(Flag *flags, Flag *val) {
+  if (val->size > flags->size) {
+    resize_bits(flags, val->size - 1);
+  }
+
+  for (int i = 0; i < val->size; i++) {
+    flags->bits[i] |= val->bits[i];
+  }
+  return flags;
+}
+
+Flag *remove_bit(Flag *flags, bit_t bit) {
+  bit_t pos = bit / sizeof(bit_t);
+
+  if (pos >= flags->size) {
     return flags;
+  }
+  flags->bits[pos] &= ~(1 << (bit % sizeof(bit_t)));
+  return flags;
 }
 
-void destroy_flags(Flag *flags)
-{
-
-    if (flags->size > 0) {
-        free_mem(flags->bits);
+Flag *remove_flags(Flag *flags, Flag *val) {
+  for (int i = 0; i < val->size; i++) {
+    if (i >= flags->size) {
+      break;
     }
-    free(flags);
+    flags->bits[i] &= val->bits[i];
+  }
+  return flags;
 }
 
-static void resize_bits(Flag *flags, size_t size)
-{
-    size_t oldsize = flags->size;
-    flags->size = size + 1;
-    flags->bits = (int *)realloc(flags->bits, flags->size * sizeof(bit_t));
+Flag *toggle_bit(Flag *flags, bit_t bit) {
+  size_t pos = (size_t)(bit / sizeof(bit_t));
 
-    if (flags->bits == 0)
-    {
-        log_error("unable to resize bit field");
-        flags->size = 0;
-        return;
-    }
-
-    while (oldsize < flags->size) {
-        flags->bits[oldsize++] = 0;
-    }
+  if (pos >= flags->size) {
+    resize_bits(flags, pos);
+  }
+  flags->bits[pos] ^= (1 << (bit % sizeof(bit_t)));
+  return flags;
 }
 
-Flag *init_flag(int bit)
-{
-    Flag *flag = new_flag();
-    flag->size = 1;
-    resize_bits(flag, 1);
-    flag->bits[0] = bit;
-    return flag;
+Flag *toggle_flags(Flag *flags, Flag *val) {
+  if (val->size > flags->size) {
+    resize_bits(flags, val->size - 1);
+  }
+
+  for (int i = 0; i < val->size; i++) {
+    flags->bits[i] ^= val->bits[i];
+  }
+  return flags;
 }
 
-Flag *copy_flags(Flag *f1, Flag *f2)
-{
-    resize_bits(f1, f2->size);
-
-    for (int i = 0; i < f1->size; i++) {
-        f1[i] = f2[i];
-    }
-    return f1;
+int flag_toint(Flag *flags) {
+  if (flags->size == 0) {
+    return 0;
+  }
+  return flags->bits[0];
 }
 
-Flag *set_bit(Flag *flags, bit_t bit)
-{
-    size_t pos = (size_t) (bit / sizeof(bit_t));
+bool is_set(Flag *flags, bit_t bit) {
+  bit_t pos = bit / sizeof(bit_t);
 
-    if (pos >= flags->size)
-    {
-        resize_bits(flags, pos);
-    }
-    flags->bits[pos] |= (1 << (bit % sizeof(bit_t)));
-    return flags;
+  if (pos >= flags->size) {
+    return false;
+  }
+  return (flags->bits[pos] & (1 << (bit % sizeof(bit_t))));
 }
 
-Flag *set_flags(Flag *flags, Flag *val)
-{
+bool is_empty(Flag *flag) {
+  if (flag->size == 0) {
+    return true;
+  }
+  bool empty = true;
 
-    if (val->size > flags->size)
-    {
-        resize_bits(flags, val->size - 1);
-    }
-
-    for (int i = 0; i < val->size; i++)
-    {
-        flags->bits[i] |= val->bits[i];
-    }
-    return flags;
+  for (int i = 0; i < flag->size; i++) {
+    empty = empty && flag->bits[i] == 0;
+  }
+  return empty;
 }
 
-Flag *remove_bit(Flag *flags, bit_t bit)
-{
-    bit_t pos = bit / sizeof(bit_t);
+bool flags_set(Flag *flags, Flag *val) {
+  bool isset = true;
 
-    if (pos >= flags->size) {
-        return flags;
-    }
-    flags->bits[pos] &= ~(1 << (bit % sizeof(bit_t)));
-    return flags;
-}
+  if (flags == NULL || val == NULL) {
+    return false;
+  }
 
-Flag *remove_flags(Flag *flags, Flag *val)
-{
-
-    for (int i = 0; i < val->size; i++)
-    {
-
-        if (i >= flags->size) {
-            break;
-        }
-        flags->bits[i] &= val->bits[i];
-    }
-    return flags;
-}
-
-Flag *toggle_bit(Flag *flags, bit_t bit)
-{
-    size_t pos = (size_t) (bit / sizeof(bit_t));
-
-    if (pos >= flags->size)
-    {
-        resize_bits(flags, pos);
-    }
-    flags->bits[pos] ^= (1 << (bit % sizeof(bit_t)));
-    return flags;
-}
-
-Flag *toggle_flags(Flag *flags, Flag *val)
-{
-
-    if (val->size > flags->size)
-    {
-        resize_bits(flags, val->size - 1);
-    }
-
-    for (int i = 0; i < val->size; i++)
-    {
-        flags->bits[i] ^= val->bits[i];
-    }
-    return flags;
-}
-
-int flag_toint(Flag *flags)
-{
-
-    if (flags->size == 0) {
-        return 0;
-    }
-    return flags->bits[0];
-}
-
-bool is_set(Flag *flags, bit_t bit)
-{
-    bit_t pos = bit / sizeof(bit_t);
-
-    if (pos >= flags->size) {
+  for (int i = 0; i < val->size; i++) {
+    if (i >= flags->size) {
+      if (val->bits[i] != 0) {
         return false;
+      }
+      continue;
     }
-    return (flags->bits[pos] & (1 << (bit % sizeof(bit_t))));
+    isset = isset && (flags->bits[i] & val->bits[i]);
+  }
+  return isset;
 }
 
-bool is_empty(Flag *flag)
-{
+int parse_flags_toggle(Flag *flags, const char *arglist, const Lookup *table) {
+  int res = 0;
 
-    if (flag->size == 0)
-    {
-        return true;
-    }
-    bool empty = true;
-
-    for (int i = 0; i < flag->size; i++) {
-        empty = empty && flag->bits[i] == 0;
-    }
-    return empty;
-}
-
-bool flags_set(Flag *flags, Flag *val)
-{
-    bool isset = true;
-
-    if (flags == NULL || val == NULL) {
-        return false;
-    }
-
-    for (int i = 0; i < val->size; i++)
-    {
-
-        if (i >= flags->size)
-        {
-
-            if (val->bits[i] != 0) {
-                return false;
-            }
-            continue;
-        }
-        isset = isset && (flags->bits[i] & val->bits[i]);
-    }
-    return isset;
-}
-
-int parse_flags_toggle(Flag *flags, const char *arglist, const Lookup *table)
-{
-    int res = 0;
-
-    if (flags == NULL || arglist == NULL || table == NULL) {
-        return res;
-    }
-
-    for (const Lookup *t = table; t->name != 0; t++)
-    {
-
-        if (is_name(t->name, arglist))
-        {
-            toggle_bit(flags, t->value);
-            res++;
-        }
-    }
+  if (flags == NULL || arglist == NULL || table == NULL) {
     return res;
+  }
+
+  for (const Lookup *t = table; t->name != 0; t++) {
+    if (is_name(t->name, arglist)) {
+      toggle_bit(flags, t->value);
+      res++;
+    }
+  }
+  return res;
 }
 
-int parse_flags(Flag *flags, const char *format, const Lookup *table)
-{
-    const char *name = NULL;
-    int res = 0;
+int parse_flags(Flag *flags, const char *format, const Lookup *table) {
+  const char *name = NULL;
+  int res = 0;
 
-    if (format == NULL || *format == 0) {
-        return res;
-    }
-
-    name = strtok((char *)format, ",");
-
-    while (name != 0)
-    {
-        long f = value_lookup(table, name);
-
-        if (f != -1)
-        {
-            set_bit(flags, f);
-            res++;
-        }
-        name = strtok(NULL, ",");
-    }
+  if (format == NULL || *format == 0) {
     return res;
+  }
+
+  name = strtok((char *)format, ",");
+
+  while (name != 0) {
+    long f = value_lookup(table, name);
+
+    if (f != -1) {
+      set_bit(flags, f);
+      res++;
+    }
+    name = strtok(NULL, ",");
+  }
+  return res;
 }
 
-const char *format_flags(Flag *flags, const Lookup *table)
-{
-    static char buf[3][OUT_SIZ];
-    static int i;
-    ++i, i %= 3;
-    char *res = buf[i];
-    *res = 0;
+const char *format_flags(Flag *flags, const Lookup *table) {
+  static char buf[3][OUT_SIZ];
+  static int i;
+  ++i, i %= 3;
+  char *res = buf[i];
+  *res = 0;
 
-    for (const Lookup *t = table; t->name != 0; t++)
-    {
-
-        if (!is_set(flags, t->value)) {
-            continue;
-        }
-        strcat(res, t->name);
-        strcat(res, ",");
+  for (const Lookup *t = table; t->name != 0; t++) {
+    if (!is_set(flags, t->value)) {
+      continue;
     }
+    strcat(res, t->name);
+    strcat(res, ",");
+  }
 
-    if (res[0] != 0)
-    {
-        res[strlen(res) - 1] = 0;
-    }
+  if (res[0] != 0) {
+    res[strlen(res) - 1] = 0;
+  }
 
-    else
-    {
-        strcpy(res, "None");
-    }
-    return res;
+  else {
+    strcpy(res, "None");
+  }
+  return res;
 }

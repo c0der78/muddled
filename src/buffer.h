@@ -25,6 +25,7 @@
 #define TEMP_BUF_SIZ BUFSIZ
 
 #include "cdecl.h"
+#include "typedef.h"
 
 BEGIN_DECL
 
@@ -40,11 +41,9 @@ bool buf_add_len(Buffer *, const char *, size_t);
 
 bool buf_addln(Buffer *, const char *);
 
-bool buf_addf(Buffer *, const char *, ...)
-__attribute__ ((format(printf, 2, 3)));
+bool buf_addf(Buffer *, const char *, ...) __attribute__((format(printf, 2, 3)));
 
-bool buf_addlnf(Buffer *, const char *, ...)
-__attribute__ ((format(printf, 2, 3)));
+bool buf_addlnf(Buffer *, const char *, ...) __attribute__((format(printf, 2, 3)));
 
 void clear_buf(Buffer *);
 
@@ -52,4 +51,4 @@ char *buf_string(Buffer *);
 
 END_DECL
 
-#endif              /* // #ifndef BUFFER_H */
+#endif /* // #ifndef BUFFER_H */

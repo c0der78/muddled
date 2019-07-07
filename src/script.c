@@ -17,44 +17,23 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 #include "script.h"
 #include "log.h"
+#include "lua5.3/lauxlib.h"
+#include "lua5.3/lua.h"
+#include "lua5.3/lualib.h"
 
-#ifdef HAVE_LIBLUA
+static lua_State *lua_instance = 0;
 
-lua_State *lua_instance = 0;
-
-void init_lua()
-{
-    lua_instance = lua_open();
-    luaopen_base(lua_instance);
-    luaopen_string(lua_instance);
-
+void init_lua() {
+  lua_instance = luaL_newstate();
+  luaL_openlibs(lua_instance);
 }
 
-void close_lua()
-{
-
-    if (lua_instance != 0)
-    {
-        log_info("closing lua");
-        lua_close(lua_instance);
-        lua_instance = 0;
-    }
+void close_lua() {
+  if (lua_instance != 0) {
+    log_info("closing lua");
+    lua_close(lua_instance);
+    lua_instance = 0;
+  }
 }
-#else
-
-void init_lua()
-{
-    log_info("No lua scripting support");
-}
-
-void close_lua()
-{
-
-}
-
-#endif

@@ -17,12 +17,12 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "client.h"
 #include <arpa/inet.h>
 #include <assert.h>
+#include <crypt.h>
 #include <ctype.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -30,15 +30,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifdef HAVE_CRYPT_H
-#include <crypt.h>
-#endif
-#include <errno.h>
 #include "account.h"
 #include "channel.h"
 #include "character.h"
 #include "class.h"
-#include "client.h"
 #include "color.h"
 #include "command.h"
 #include "connection.h"

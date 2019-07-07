@@ -21,6 +21,10 @@
 #define MUDDLED_LOG_H
 
 #include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+#include "cdecl.h"
 
 BEGIN_DECL
 
@@ -42,4 +46,4 @@ void log_bug(const char *, ...) __attribute__((format(printf, 1, 2)));
 
 END_DECL
 
-#endif              /* // #ifndef LOG_H */
+#endif /* // #ifndef LOG_H */

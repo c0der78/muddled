@@ -22,6 +22,8 @@
 #define MUDDLED_FIGHT_H
 
 #include "cdecl.h"
+#include "lookup.h"
+#include "typedef.h"
 
 BEGIN_DECL
 
@@ -33,4 +35,4 @@ END_DECL
 
 extern const Lookup dam_types[];
 
-#endif              /* // #ifndef FIGHT_H */
+#endif /* // #ifndef FIGHT_H */

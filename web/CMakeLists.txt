@@ -1,0 +1,4 @@
+
+install( DIRECTORY public templates DESTINATION var/www)
+
+install ( FILES muddled DESTINATION var/www PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)

@@ -21,17 +21,17 @@
 #ifndef MUDDLED_FORUM_H
 #define MUDDLED_FORUM_H
 
+#include "cdecl.h"
 #include "typedef.h"
 
 extern Forum *forum_table;
 extern int max_forum;
 
-enum
-{
+enum {
 
-	FORUM_CHANGED = (1 << 0),
+  FORUM_CHANGED = (1 << 0),
 
-	FORUM_NOUNSUB = (1 << 1)
+  FORUM_NOUNSUB = (1 << 1)
 };
 
 #define FORUM_ERROR -1
@@ -61,4 +61,4 @@ int delete_note(Forum *, Note *);
 
 END_DECL
 
-#endif              /* // #ifndef FORUM_H */
+#endif /* // #ifndef FORUM_H */
