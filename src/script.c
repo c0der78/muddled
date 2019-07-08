@@ -19,9 +19,9 @@
  ******************************************************************************/
 #include "script.h"
 #include "log.h"
-#include "lua5.3/lauxlib.h"
-#include "lua5.3/lua.h"
-#include "lua5.3/lualib.h"
+#include "lauxlib.h"
+#include "lua.h"
+#include "lualib.h"
 
 static lua_State *lua_instance = 0;
 

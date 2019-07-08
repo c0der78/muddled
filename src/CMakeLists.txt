@@ -74,9 +74,23 @@ str.c
 util.c
 variant.c)
 
+find_package(Lua REQUIRED)
+
+if (APPLE AND IS_DIRECTORY /usr/local/opt/openssl)
+  set(OPENSSL_ROOT_DIR /usr/local/opt/openssl)
+endif()
+
+find_package(OpenSSL REQUIRED)
+
+find_package(Sqlite3 REQUIRED)
+
+set(SQLITE3_LIBRARIES sqlite3)
+
 add_library(muddle ${SOURCE_FILES})
 
-target_link_libraries(muddle m sqlite3 crypt lua5.3)
+target_link_libraries(muddle m ${SQLITE3_LIBRARIES} ${OPENSSL_LIBRARIES} ${LUA_LIBRARIES})
+
+target_include_directories(muddle PUBLIC ${LUA_INCLUDE_DIR} PUBLIC ${OPENSSL_INCLUDE_DIR})
 
 add_subdirectory(server)
 

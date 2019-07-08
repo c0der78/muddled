@@ -20,7 +20,6 @@
 #include "client.h"
 #include <arpa/inet.h>
 #include <assert.h>
-#include <crypt.h>
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>

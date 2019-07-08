@@ -33,11 +33,14 @@ telnet.c
 update.c
 websocket.c)
 
+find_library(WEBSOCKETS_LIB NAME websockets HINTS /usr/local/lib)
+find_path(WEBSOCKETS_INCLUDE_DIR NAME libwebsockets.h HINTS /usr/local/include)
+
 add_executable(muddled ${SOURCE_FILES})
 
-target_include_directories(muddled PUBLIC ..)
+target_include_directories(muddled PUBLIC .. PUBLIC ${WEBSOCKETS_INCLUDE_DIR})
 
-target_link_libraries(muddled muddle websockets)
+target_link_libraries(muddled muddle ${WEBSOCKETS_LIB})
 
 add_dependencies(muddled muddle)
 
