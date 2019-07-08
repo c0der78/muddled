@@ -33,8 +33,7 @@ telnet.c
 update.c
 websocket.c)
 
-find_library(WEBSOCKETS_LIB NAME websockets HINTS /usr/local/lib)
-find_path(WEBSOCKETS_INCLUDE_DIR NAME libwebsockets.h HINTS /usr/local/include)
+find_library_ext(WEBSOCKETS LIB websockets HEADER libwebsockets.h HINTS /usr/local)
 
 add_executable(muddled ${SOURCE_FILES})
 
@@ -44,7 +43,7 @@ target_link_libraries(muddled muddle ${WEBSOCKETS_LIB})
 
 add_dependencies(muddled muddle)
 
-add_definitions("-DROOT_DIR=\"${CMAKE_INSTALL_PREFIX}\"")
+add_definitions("-DROOT_DIR=\"${CMAKE_INSTALL_PREFIX}\"" "-DMUDDLED_VERSION=\"${PROJECT_VERSION}\"")
 
 install(TARGETS muddled RUNTIME DESTINATION sbin)
 

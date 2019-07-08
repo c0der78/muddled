@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set( CMAKE_C_STANDARD 11 )
 
-project(muddled)
+project(muddled VERSION 0.5.0)
 
 function(find_library_ext)
   set(options REQUIRED)
@@ -68,6 +68,8 @@ function(find_library_ext)
   endif()
 
 endfunction()
+
+add_definitions("-pedantic -Wall -Werror")
 
 add_subdirectory(src)
 add_subdirectory(tests)

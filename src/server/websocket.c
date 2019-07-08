@@ -17,12 +17,9 @@
  *     benefitting.  I hope that you share your changes too.  What goes       *
  *                            around, comes around.                           *
  ******************************************************************************/
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "websocket.h"
 #include <syslog.h>
 #include "client.h"
-#include "websocket.h"
 
 short websocket_port = 0;
 struct lws_context *websocket_context = NULL;

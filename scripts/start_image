@@ -1,42 +1,29 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
-DOCKER=$(which docker)
-DOCKERMACHINE=$(which docker-machine)
+PORT=${1:-"4000"}
 
-IP=`$DOCKERMACHINE ip default`
+EXISTS=`docker ps | grep muddled 2> /dev/null`
 
-if [ $? != 0 ]; then
-	echo "Docker not running"
-	exit 1
-fi
-
-EXISTS=`$DOCKER ps | grep muddled`
+abort() {
+  echo "Error $1 ($!)" 1>&2
+  exit 1
+}
 
 if [ ! -z "$EXISTS" ]; then
 	echo "Stopping muddled..."
-	$DOCKER stop muddled > /dev/null
+	docker stop muddled > /dev/null || abort
 	echo "Removing muddled container..."
-	$DOCKER rm muddled > /dev/null
-fi
-
-echo "Creating container..."
-
-$DOCKER create --name muddled --net host -P $1
-
-if [ $? != 0 ]; then 
-	echo "Unable to create container ($!)"
-	exit 1
+	docker rm muddled > /dev/null || abort
 fi
 
 echo "Starting muddled..."
 
-$DOCKER start muddled > /dev/null
+docker run --name muddled --net host -P -d muddled || abort "Running container"
 
-if [ $? != 0 ]; then
-	echo "Unable to start muddled ($!)"
-	exit 1
-fi
+sleep 5
 
-echo "Muddled started, you can connect at telnet://$IP/"
+IP=$(docker inspect muddled --format '{{ .NetworkSettings.IPAddress }}')
+
+echo "Muddled started, you can connect at $IP:$PORT"
 
 exit 0

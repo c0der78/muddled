@@ -28,10 +28,10 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #ifndef __APPLE__
 #include <crypt.h>
 #endif
+#include <unistd.h>
 #include "account.h"
 #include "channel.h"
 #include "character.h"
@@ -313,12 +313,12 @@ bool parse_input_buffer(Client *conn) {
     if (conn->inbuf[i] == '\b' && k > 0) {
       --k;
     }
-#define DISABLE_EXTENDED_ASCII_CHARS
+//#define DISABLE_EXTENDED_ASCII_CHARS
 #ifdef DISABLE_EXTENDED_ASCII_CHARS
 
     else {
 
-      if (isascii(conn->inbuf[i]) && isprint(conn->inbuf[i])) {
+      if (isalnum(conn->inbuf[i]) && isprint(conn->inbuf[i])) {
         conn->incomm[k++] = conn->inbuf[i];
       }
     }
