@@ -240,7 +240,7 @@ int delete_account(Account *acc) { return db_delete(ACCOUNT_TABLE, acc->id) == S
 int load_account_players(Account *acc) {
   char buf[400];
   sql_stmt *stmt;
-  int len = sprintf(buf, "select * from character natural join player where accountId=%" PRId64, acc->id);
+  int len = sprintf(buf, "select * from pc_chars where accountId=%" PRId64, acc->id);
 
   if (sql_query(buf, len, &stmt) != SQL_OK) {
     log_data("could not prepare sql statement");

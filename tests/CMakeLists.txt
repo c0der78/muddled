@@ -19,8 +19,6 @@ add_executable(muddle_test ${SOURCE_FILES})
 
 add_dependencies(muddle_test muddle)
 
-message(STATUS "CHECK_LIB = ${CHECK_LIB} CHECK_INCLUDE_DIR = ${CHECK_INCLUDE_DIR}")
-
 target_include_directories(muddle_test PUBLIC ../src PUBLIC ${CHECK_INCLUDE_DIR} PUBLIC ${RT_INCLUDE_DIR} PUBLIC ${SUBUNIT_INCLUDE_DIR})
 
 target_link_libraries(muddle_test muddle ${CHECK_LIB} pthread ${RT_LIB} ${SUBUNIT_LIB})

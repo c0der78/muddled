@@ -93,12 +93,15 @@ int save_player(Character *ch) {
     log_error("character not a player");
     return 0;
   }
-  db_begin_transaction();
 
+  // save the account id
   if (!save_account(ch->pc->account)) {
     return 0;
   }
+
+  // save the character id
   int res = save_character(ch, plr_flags);
+
   const size_t maxCond = MAX_COND;
   field_map pc_values[] = {{"playerId", &ch->id, SQL_INT},
                            {"accountId", &ch->pc->account->id, SQL_INT},
@@ -116,18 +119,22 @@ int save_player(Character *ch) {
                            {"created", &ch->pc->created, SQL_INT},
                            {0}};
 
-  if (res == 1) {
-    if (sql_insert_query(pc_values, "player") != SQL_OK) {
-      log_data("could not insert player");
-      return 0;
-    }
-  }
+  switch (res) {
+    case 1:
+      if (sql_insert_query(pc_values, "player") != SQL_OK) {
+        log_data("could not insert player");
+        return 0;
+      }
+      break;
 
-  else if (res == 2) {
-    if (sql_update_query(pc_values, "player", ch->id) != SQL_OK) {
-      log_data("could not update character");
+    case 2:
+      if (sql_update_query(pc_values, "player", ch->id) != SQL_OK) {
+        log_data("could not update character");
+        return 0;
+      }
+      break;
+    default:
       return 0;
-    }
   }
 
   if (!save_char_objs(ch)) {
@@ -137,7 +144,6 @@ int save_player(Character *ch) {
   if (!save_char_affects(ch)) {
     res = 0;
   }
-  db_end_transaction();
   return UMIN(res, 1);
 }
 
@@ -217,7 +223,6 @@ void load_player_columns(Account *acc, Character *ch, sql_stmt *stmt) {
 Character *load_player_by_id(Connection *conn, identifier_t charId) {
   char buf[400];
   sql_stmt *stmt;
-  db_begin_transaction();
   int len =
       sprintf(buf, "select * from character join player on playerId=characterId where characterId=%" PRId64, charId);
 
@@ -237,14 +242,12 @@ Character *load_player_by_id(Connection *conn, identifier_t charId) {
   }
   load_char_objs(ch);
   load_char_affects(ch);
-  db_end_transaction();
   return ch;
 }
 
 Character *load_player_by_name(Connection *conn, const char *name) {
   char buf[400];
   sql_stmt *stmt;
-  db_begin_transaction();
   int len = sprintf(buf, "select * from character natural join player where name='%s'", escape_sql_str(name));
 
   if (sql_query(buf, len, &stmt) != SQL_OK) {
@@ -263,7 +266,6 @@ Character *load_player_by_name(Connection *conn, const char *name) {
   }
   load_char_objs(ch);
   load_char_affects(ch);
-  db_end_transaction();
   return ch;
 }
 

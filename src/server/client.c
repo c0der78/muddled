@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#ifndef __APPLE__
+#include <crypt.h>
+#endif
 #include "account.h"
 #include "channel.h"
 #include "character.h"

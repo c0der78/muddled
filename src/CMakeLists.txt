@@ -82,15 +82,15 @@ endif()
 
 find_package(OpenSSL REQUIRED)
 
-find_package(Sqlite3 REQUIRED)
+find_library_ext(SQLITE3 LIB sqlite3 HEADER sqlite3.h HINTS /usr/local REQUIRED)
 
-set(SQLITE3_LIBRARIES sqlite3)
+find_library_ext(CRYPT LIB crypt HEADER crypt.h REQUIRED)
 
 add_library(muddle ${SOURCE_FILES})
 
-target_link_libraries(muddle m ${SQLITE3_LIBRARIES} ${OPENSSL_LIBRARIES} ${LUA_LIBRARIES})
+target_link_libraries(muddle m ${CRYPT_LIB} ${SQLITE3_LIB} ${OPENSSL_LIBRARIES} ${LUA_LIBRARIES})
 
-target_include_directories(muddle PUBLIC ${LUA_INCLUDE_DIR} PUBLIC ${OPENSSL_INCLUDE_DIR})
+target_include_directories(muddle PUBLIC ${SQLITE3_INCLUDE_DIR} PUBLIC ${LUA_INCLUDE_DIR} PUBLIC ${OPENSSL_INCLUDE_DIR})
 
 add_subdirectory(server)
 

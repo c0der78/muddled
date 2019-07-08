@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+usage() {
+  echo "usage: $0 [-d <distribution path> ] [ -t Release|Debug ]" 1>&2
+  echo "\n\tdistribution path defaults to 'dist' in current directory" 1>&2
+  echo "\tbuild type defaults to 'Debug'" 1>&2
+  exit 1
+}
+
+abort() {
+  [ -d "${BUILD_DIR}" ] && rm -rf "${BUILD_DIR}"
+  exit 1
+}
+
+CUR_DIR="$(pwd)"
+
+DIST_DIR="${CUR_DIR}/dist"
+BUILD_TYPE="Debug"
+
+while getopts "d:t:" o; do
+  case "${o}" in
+    d)
+      DIST_DIR=${OPTARG}
+      [ -d "${DIST_DIR}" ] || usage
+      ;;
+    t)
+      BUILD_TYPE=${OPTARG}
+      (( "${BUILD_TYPE}" = "Release" || "${BUILD_TYPE}" = "Debug" )) || usage
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+echo "Setting up temp workspace..."
+
+BUILD_DIR="$(mktemp -d -t muddled-XXXXXX)"
+
+cd "$BUILD_DIR" || abort
+
+cmake -DCMAKE_INSTALL_PREFIX="${DIST_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${CUR_DIR} || abort
+
+make install || abort
+
+rm -rf "${BUILD_DIR}"
+
+
