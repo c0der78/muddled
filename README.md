@@ -34,3 +34,8 @@ I would like to see what other people could do with this.
 - more lua scripting
 - expand the combat code
 - questing
+- fix security issues
+
+## Disclaimer
+
+Known security issues in sql injection and telnet.
